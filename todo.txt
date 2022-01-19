@@ -1,0 +1,134 @@
+dynamic types
+all instructions end with a ;
+comments: #
+
+global variables:
+  persistent -> optional, whether the value should be saved on disk
+  const -> cannot be modified by commands
+  var -> can be modified by commands but only with values of the same type
+  syntax:
+    [persistent] {var|const} <name> := <expr>;
+
+programs:
+  option to resume on world load if world unloaded during execution
+
+primitives:
+  animate(file, start, end): loads a structure file and moves the structure from <start> to <end>
+
+types:
+  any -> Object
+  number -> Double
+  boolean -> Boolean
+  string -> String
+  pos -> BlockPos
+  list -> List extends ArrayList<Object>
+  map -> Map extends HashMap<Object, Object>
+  set -> Set extends HashSet<Object>
+  entity -> Entity
+  block -> Block
+  item -> Item
+  world -> World
+
+  do as in GAMA: Java class vs wrapper class
+
+literals:
+  true/false -> boolean
+  null -> any
+  [] -> empty list
+  {} -> empty map
+  () -> empty set
+
+operators:
+  "+" (shortcut: "+="):
+    +number -> number
+    +boolean -> number
+    number + number -> number
+    number + boolean -> number
+    boolean + number -> number
+    boolean + boolean -> number
+    string + any -> string
+    number + string -> string
+    boolean + string -> string
+    pos + pos -> pos
+    list + list -> list
+    map + map -> map
+    set + set -> set
+    set + list -> set
+
+  "-" (shortcut: "-="):
+    -number -> number
+    -boolean -> number
+    number - number -> number
+    number - boolean -> number
+    boolean - number -> number
+    boolean - boolean -> number
+    pos - pos -> pos
+    list - list -> list
+    map - map -> map
+    set - set -> set
+    set - list -> set
+
+  "*" (shortcut: "*="):
+    number * number -> number
+    number * boolean -> number
+    boolean * number -> number
+    boolean * boolean -> number
+    string * number -> string
+    string * boolean -> string
+    pos * number -> pos
+    number * pos -> pos
+    pos * boolean -> pos
+    boolean * pos -> pos
+    list * number -> list
+    list * boolean -> list
+
+  "/" (shortcut: "/="):
+    number / number -> number
+    number / boolean -> number
+    boolean / number -> number
+    boolean / boolean -> number
+    pos / number -> pos
+    pos / boolean -> pos
+    set / set -> set
+
+  "//" (shortcut: "//="):
+    number // number -> number
+    number // boolean -> number
+    boolean // number -> number
+    boolean // boolean -> number
+    pos // number -> pos
+    pos // boolean -> pos
+
+  "%" (shortcut: "%="):
+    number % number -> number
+    number % boolean -> number
+    boolean % number -> number
+    boolean % boolean -> number
+    pos % number -> pos
+    pos % boolean -> pos
+
+  comparison ("=", "!=", "<", ">", "<=", ">="):
+    number <op> number -> boolean
+    number <op> boolean -> boolean
+    boolean <op> number -> boolean
+    boolean <op> boolean -> boolean
+    string <op> string -> boolean
+    pos <op> pos -> boolean
+    list <op> list -> boolean
+
+  logical ("or", "and"):
+    any <op> any -> boolean
+
+  logical "not":
+    not any -> boolean
+
+  if-else:
+    <expr> if <expr> else <expr>
+
+  "@":
+    entities selector
+
+functions:
+  function <name>(<param>[, <param>]*):
+    <instructions>
+  end

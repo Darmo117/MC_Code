@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "mccode",
+    "name": "MC_Code",
+    "description": "A mod that adds the possiblity to write scripts using a dedicated scripting language. A bit like vanilla functions but better.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "http://www.darmo-creations.net/",
+    "updateUrl": "",
+    "authorList": ["Darmo"],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
