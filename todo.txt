@@ -17,13 +17,15 @@ primitives:
 
 types:
   any -> Object
-  number -> Double
+  int -> Integer
+  float -> Double
   boolean -> Boolean
   string -> String
+  resource_location -> ResourceLocation
   pos -> BlockPos
-  list -> List extends ArrayList<Object>
-  map -> Map extends HashMap<Object, Object>
-  set -> Set extends HashSet<Object>
+  list -> MCList extends ArrayList<Object>
+  map -> MCMap extends HashMap<String, Object>
+  set -> MCSet extends HashSet<Object>
   entity -> Entity
   block -> Block
   item -> Item
@@ -42,11 +44,13 @@ operators:
   "+" (shortcut: "+="):
     +number -> number
     +boolean -> number
+    +pos -> pos
     number + number -> number
     number + boolean -> number
     boolean + number -> number
     boolean + boolean -> number
     string + any -> string
+    resource_location + any -> resource_location
     number + string -> string
     boolean + string -> string
     pos + pos -> pos
@@ -58,6 +62,7 @@ operators:
   "-" (shortcut: "-="):
     -number -> number
     -boolean -> number
+    -pos -> pos
     number - number -> number
     number - boolean -> number
     boolean - number -> number
@@ -107,12 +112,17 @@ operators:
     pos % number -> pos
     pos % boolean -> pos
 
-  comparison ("=", "!=", "<", ">", "<=", ">="):
+  comparison ("=", "!=", "<", ">", "<=", ">="): TODO detail
+    any = any -> boolean
+    any != any -> boolean
     number <op> number -> boolean
     number <op> boolean -> boolean
     boolean <op> number -> boolean
     boolean <op> boolean -> boolean
     string <op> string -> boolean
+    resource_location <op> resource_location -> boolean
+    string <op> resource_location -> boolean
+    resource_location <op> string -> boolean
     pos <op> pos -> boolean
     list <op> list -> boolean
 
@@ -122,10 +132,16 @@ operators:
   logical "not":
     not any -> boolean
 
+  "in", "not in":
+    string <op> string -> boolean
+    any <op> list -> boolean
+    any <op> map -> boolean
+    any <op> set -> boolean
+
   if-else:
     <expr> if <expr> else <expr>
 
-  "@":
+  "@<selector>(<params>)":
     entities selector
 
 functions:
