@@ -3,11 +3,10 @@ all instructions end with a ;
 comments: #
 
 global variables:
-  persistent -> optional, whether the value should be saved on disk
   const -> cannot be modified by commands
   var -> can be modified by commands but only with values of the same type
   syntax:
-    [persistent] {var|const} <name> := <expr>;
+    {var|const} <name> := <expr>;
 
 programs:
   option to resume on world load if world unloaded during execution
@@ -28,29 +27,23 @@ types:
   set -> MCSet extends HashSet<Object>
   entity -> Entity
   block -> Block
+  block_state -> BlockState
   item -> Item
   world -> World
-
-  do as in GAMA: Java class vs wrapper class
 
 literals:
   true/false -> boolean
   null -> any
   [] -> empty list
   {} -> empty map
-  () -> empty set
 
 operators:
   "+" (shortcut: "+="):
-    +number -> number
-    +boolean -> number
-    +pos -> pos
     number + number -> number
     number + boolean -> number
     boolean + number -> number
     boolean + boolean -> number
     string + any -> string
-    resource_location + any -> resource_location
     number + string -> string
     boolean + string -> string
     pos + pos -> pos
@@ -94,7 +87,6 @@ operators:
     boolean / boolean -> number
     pos / number -> pos
     pos / boolean -> pos
-    set / set -> set
 
   "//" (shortcut: "//="):
     number // number -> number

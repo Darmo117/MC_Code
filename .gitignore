@@ -116,3 +116,7 @@ run/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+
+# ANTLR4 generated files
+src/main/java/net/darmo_creations/mccode/interpreter/parser/*.interp
+src/main/java/net/darmo_creations/mccode/interpreter/parser/*.tokens

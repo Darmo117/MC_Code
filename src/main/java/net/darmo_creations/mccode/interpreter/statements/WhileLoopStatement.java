@@ -1,0 +1,106 @@
+package net.darmo_creations.mccode.interpreter.statements;
+
+import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.Utils;
+import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.nodes.Node;
+import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
+import net.darmo_creations.mccode.interpreter.type_wrappers.BooleanType;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class WhileLoopStatement extends Statement {
+  public static final int ID = 41;
+
+  private static final String CONDITION_KEY = "Condition";
+  private static final String STATEMENTS_KEY = "Statements";
+  private static final String IP_KEY = "IP";
+  private static final String PAUSED_KEY = "Paused";
+
+  private final Node condition;
+  private final List<Statement> statements;
+  private int ip;
+  private boolean paused;
+
+  public WhileLoopStatement(final Node condition, final List<Statement> statements) {
+    this.condition = condition;
+    this.statements = statements;
+    this.ip = 0;
+    this.paused = false;
+  }
+
+  public WhileLoopStatement(final NBTTagCompound tag) {
+    this.condition = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(CONDITION_KEY));
+    NBTTagList statementsTag = tag.getTagList(STATEMENTS_KEY, new NBTTagCompound().getId());
+    this.statements = new ArrayList<>();
+    for (NBTBase t : statementsTag) {
+      this.statements.add(StatementNBTHelper.getStatementForTag((NBTTagCompound) t));
+    }
+    this.ip = tag.getInteger(IP_KEY);
+    this.paused = tag.getBoolean(PAUSED_KEY);
+  }
+
+  @Override
+  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+    BooleanType booleanType = scope.getInterpreter().getTypeInstance(BooleanType.class);
+    exit:
+    // Do not re-evaluate condition if loop was paused by "wait" a statement
+    while (this.paused || booleanType.implicitCast(scope, this.condition.evaluate(scope))) {
+      if (this.paused) {
+        this.paused = false;
+      }
+      while (this.ip < this.statements.size()) {
+        StatementAction action = this.statements.get(this.ip).execute(scope);
+        if (action == StatementAction.EXIT_LOOP) {
+          break exit;
+        } else if (action == StatementAction.CONTINUE_LOOP) {
+          this.ip = 0;
+          break;
+        } else if (action == StatementAction.EXIT_FUNCTION || action == StatementAction.WAIT) {
+          if (action == StatementAction.WAIT) {
+            this.paused = true;
+            this.ip++;
+          } else {
+            this.ip = 0;
+          }
+          return action;
+        } else {
+          this.ip++;
+        }
+      }
+    }
+    this.ip = 0;
+
+    return StatementAction.PROCEED;
+  }
+
+  @Override
+  public int getID() {
+    return ID;
+  }
+
+  @Override
+  public NBTTagCompound writeToNBT() {
+    NBTTagCompound tag = super.writeToNBT();
+    tag.setTag(CONDITION_KEY, this.condition.writeToNBT());
+    NBTTagList statementsList = new NBTTagList();
+    this.statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
+    tag.setTag(STATEMENTS_KEY, statementsList);
+    tag.setInteger(IP_KEY, this.ip);
+    tag.setBoolean(PAUSED_KEY, this.paused);
+    return tag;
+  }
+
+  @Override
+  public String toString() {
+    String s = " ";
+    if (!this.statements.isEmpty()) {
+      s = Utils.indentStatements(this.statements);
+    }
+    return String.format("while %s do%send", this.condition, s);
+  }
+}

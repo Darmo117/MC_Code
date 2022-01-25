@@ -1,0 +1,17 @@
+mccode.interpreter.error.no_property_for_type=Type %s has no property named %s!
+mccode.interpreter.error.set_method_property=Cannot override member function %s.%s!
+mccode.interpreter.error.set_property=Cannot set value of property %s.%s!
+mccode.interpreter.error.undefined_variable=Variable %s is undefined!
+mccode.interpreter.error.cannot_delete_variable=Cannot delete variable %s!
+mccode.interpreter.error.calling_non_callable=Object of type %s is not callable!
+mccode.interpreter.error.variable_already_declared=Variable %s is already declared!
+mccode.interpreter.error.setting_constant_variable=Cannot set value of constant variable %s!
+mccode.interpreter.error.setting_from_command=Cannot set value of variable %s from command!
+mccode.interpreter.error.no_default_value=Type %s has no default value!
+mccode.interpreter.error.negative_wait_time=Negative value provided to wait instruction!
+mccode.interpreter.error.stack_overflow=Stack overflow, too many function calls!
+mccode.interpreter.error.no_cast_operator_for_type=No cast operator for type %s!
+mccode.interpreter.error.unsupported_operator=Type %s does not support operator %s with type %s!
+mccode.interpreter.error.unsupported_operator_unary=Type %s does not support operator %s!
+mccode.interpreter.error.no_type_for_name=No type named %s!
+mccode.interpreter.error.wait_in_function=Wait statement in function!
