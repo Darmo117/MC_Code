@@ -38,7 +38,7 @@ public class ListType extends Type<MCList> {
   @Override
   protected Object __get_item__(final Scope scope, final MCList self, final Object key) {
     if (!(key instanceof Integer)) {
-      throw new CastException(scope.getInterpreter().getTypeInstance(IntType.class),
+      throw new CastException(scope, scope.getInterpreter().getTypeInstance(IntType.class),
           scope.getInterpreter().getTypeForValue(key));
     }
     return self.get((Integer) key);
@@ -47,7 +47,7 @@ public class ListType extends Type<MCList> {
   @Override
   protected void __set_item__(final Scope scope, MCList self, final Object key, final Object value) {
     if (!(key instanceof Integer)) {
-      throw new CastException(scope.getInterpreter().getTypeInstance(IntType.class),
+      throw new CastException(scope, scope.getInterpreter().getTypeInstance(IntType.class),
           scope.getInterpreter().getTypeForValue(key));
     }
     self.set((Integer) key, value);
@@ -56,7 +56,7 @@ public class ListType extends Type<MCList> {
   @Override
   protected void __del_item__(final Scope scope, MCList self, final Object key) {
     if (!(key instanceof Integer)) {
-      throw new CastException(scope.getInterpreter().getTypeInstance(IntType.class),
+      throw new CastException(scope, scope.getInterpreter().getTypeInstance(IntType.class),
           scope.getInterpreter().getTypeForValue(key));
     }
     self.remove((int) (Integer) key);

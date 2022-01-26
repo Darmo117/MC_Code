@@ -51,11 +51,11 @@ public class UnaryOperatorNode extends OperatorNode {
 
   @Override
   public String toString() {
-    Node operand = this.operands.get(0);
+    Node operand = this.arguments.get(0);
     if (operand instanceof OperatorNode) {
       return String.format("%s(%s)", this.getSymbol(), operand);
     } else {
-      return this.getSymbol() + this.operands.get(0);
+      return this.getSymbol() + this.arguments.get(0);
     }
   }
 }

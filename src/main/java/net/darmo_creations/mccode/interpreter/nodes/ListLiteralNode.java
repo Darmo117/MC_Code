@@ -3,9 +3,7 @@ package net.darmo_creations.mccode.interpreter.nodes;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +34,7 @@ public class ListLiteralNode extends Node {
    * @param tag The tag to deserialize.
    */
   public ListLiteralNode(final NBTTagCompound tag) {
-    NBTTagList list = tag.getTagList(VALUES_KEY, new NBTTagCompound().getId());
-    this.values = new ArrayList<>();
-    for (NBTBase t : list) {
-      this.values.add(NodeNBTHelper.getNodeForTag((NBTTagCompound) t));
-    }
+    this(NodeNBTHelper.deserializeNodesList(tag, VALUES_KEY));
   }
 
   @Override
@@ -51,9 +45,7 @@ public class ListLiteralNode extends Node {
   @Override
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = super.writeToNBT();
-    NBTTagList list = new NBTTagList();
-    this.values.forEach(v -> list.appendTag(v.writeToNBT()));
-    tag.setTag(VALUES_KEY, list);
+    tag.setTag(VALUES_KEY, NodeNBTHelper.serializeNodesList(this.values));
     return tag;
   }
 

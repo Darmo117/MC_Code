@@ -1,9 +1,10 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -21,10 +22,10 @@ public final class NodeNBTHelper {
     NODE_PROVIDERS.put(ListLiteralNode.ID, ListLiteralNode::new);
     NODE_PROVIDERS.put(MapLiteralNode.ID, MapLiteralNode::new);
     NODE_PROVIDERS.put(SetLiteralNode.ID, SetLiteralNode::new);
-    NODE_PROVIDERS.put(FunctionLiteralNode.ID, FunctionLiteralNode::new);
 
     NODE_PROVIDERS.put(VariableNode.ID, VariableNode::new);
     NODE_PROVIDERS.put(PropertyCallNode.ID, PropertyCallNode::new);
+    NODE_PROVIDERS.put(MethodCallNode.ID, MethodCallNode::new);
     NODE_PROVIDERS.put(FunctionCallNode.ID, FunctionCallNode::new);
 
     NODE_PROVIDERS.put(CastOperatorNode.ID, CastOperatorNode::new);
@@ -45,6 +46,20 @@ public final class NodeNBTHelper {
       throw new IllegalArgumentException("Undefined node ID: " + tagID);
     }
     return NODE_PROVIDERS.get(tagID).apply(tag);
+  }
+
+  public static List<Node> deserializeNodesList(final NBTTagCompound tag, final String key) {
+    List<Node> statements = new ArrayList<>();
+    for (NBTBase t : tag.getTagList(key, new NBTTagCompound().getId())) {
+      statements.add(getNodeForTag((NBTTagCompound) t));
+    }
+    return statements;
+  }
+
+  public static NBTTagList serializeNodesList(final Collection<Node> statements) {
+    NBTTagList statementsList = new NBTTagList();
+    statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
+    return statementsList;
   }
 
   private NodeNBTHelper() {

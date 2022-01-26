@@ -52,9 +52,7 @@ public class SetLiteralNode extends Node {
   @Override
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = super.writeToNBT();
-    NBTTagList list = new NBTTagList();
-    this.values.forEach(v -> list.appendTag(v.writeToNBT()));
-    tag.setTag(VALUES_KEY, list);
+    tag.setTag(VALUES_KEY, NodeNBTHelper.serializeNodesList(this.values));
     return tag;
   }
 

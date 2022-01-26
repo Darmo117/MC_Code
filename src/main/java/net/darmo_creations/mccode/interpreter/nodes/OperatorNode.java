@@ -28,7 +28,7 @@ public abstract class OperatorNode extends OperationNode {
   public OperatorNode(final String symbol, final int arity, final List<Node> operands) throws SyntaxErrorException {
     super(operands);
     this.symbol = Objects.requireNonNull(symbol);
-    if (this.operands.size() != arity) {
+    if (this.arguments.size() != arity) {
       throw new SyntaxErrorException(String.format("operator %s expected %d arguments, got %d", symbol, arity, operands.size()));
     }
   }
@@ -61,7 +61,7 @@ public abstract class OperatorNode extends OperationNode {
    */
   @Override
   public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
-    return this.evaluateImpl(scope, this.operands.stream().map(node -> node.evaluate(scope)).collect(Collectors.toList()));
+    return this.evaluateImpl(scope, this.arguments.stream().map(node -> node.evaluate(scope)).collect(Collectors.toList()));
   }
 
   /**

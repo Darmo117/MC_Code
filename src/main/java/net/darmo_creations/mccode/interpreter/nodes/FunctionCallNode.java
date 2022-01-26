@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * A {@link Node} representing the call to a function.
  */
 public class FunctionCallNode extends OperationNode {
-  public static final int ID = 104;
+  public static final int ID = 103;
 
   private static final String FUNCTION_OBJ_KEY = "FunctionObject";
 
@@ -58,14 +58,15 @@ public class FunctionCallNode extends OperationNode {
 
     Scope functionScope;
     if (function instanceof UserFunction) {
-      functionScope = new Scope(function.getInternalName(), ((UserFunction) function).getClosure());
+      // User-defined functions use global scope as closure as they can only be declared in the global scope
+      functionScope = new Scope(function.getInternalName(), scope.getProgram().getScope());
     } else {
       functionScope = new Scope(function.getInternalName(), scope);
     }
 
-    for (int i = 0; i < this.operands.size(); i++) {
+    for (int i = 0; i < this.arguments.size(); i++) {
       Pair<String, ? extends Type<?>> parameter = function.getParameter(i);
-      functionScope.declareVariable(new Variable(parameter.getKey(), false, false, false, false, this.operands.get(i).evaluate(scope)));
+      functionScope.declareVariable(new Variable(parameter.getKey(), false, false, false, true, this.arguments.get(i).evaluate(scope)));
     }
 
     return function.apply(functionScope);
@@ -85,6 +86,6 @@ public class FunctionCallNode extends OperationNode {
 
   @Override
   public String toString() {
-    return String.format("%s(%s)", this.functionObject, this.operands.stream().map(Node::toString).collect(Collectors.joining(", ")));
+    return String.format("%s(%s)", this.functionObject, this.arguments.stream().map(Node::toString).collect(Collectors.joining(", ")));
   }
 }

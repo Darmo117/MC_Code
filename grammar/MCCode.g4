@@ -72,22 +72,23 @@ DELETE : 'del';
 BREAK  : 'break';
 CONTINUE: 'continue';
 WAIT   : 'wait';
+REPEAT : 'repeat';
+FOREVER: 'forever';
 
-// TODO authorize function declaration in global scope only (no nested functions, no anonymous functions)
 module:
-  SCHED ticks=INT SEMIC // TODO no statement, set property in interpreter instance
-  (IMPORT IDENT (DOT IDENT)* AS alias=IDENT SEMIC)* // ID: 0
+  (SCHED ticks=INT (REPEAT times=(INT | FOREVER))? SEMIC)?
+//  (IMPORT IDENT (DOT IDENT)* AS alias=IDENT SEMIC)* // ID: 0 TODO deactivated for now
   global_statement* EOF;
 
 global_statement:
     statement # Stmt
   | PUBLIC EDITABLE? VAR name=IDENT ASSIGN value=expr SEMIC # DeclareGlobalVariable // ID: 10
   | PUBLIC CONST name=IDENT ASSIGN value=expr SEMIC         # DeclareGlobalConstant // ID: 10
+//  | FUNC name=IDENT LPAREN (IDENT (COMMA IDENT)* COMMA?)? RPAREN statement* END # DefineFunctionStatement // ID: 11 TODO deactivated for now
 ;
 
 statement:
     (VAR | CONST) name=IDENT ASSIGN value=expr SEMIC # DeclareVariableStatement // ID: 10
-  | FUNC name=IDENT def=function_def                 # DefineFunctionStatement // ID: 11
   | name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC                         # VariableAssignmentStatement // ID: 12
   | target=expr LBRACK key=expr RBRACK operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC # SetItemStatement // ID: 13
   | target=expr DOT name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC         # SetPropertyStatement // ID: 14
@@ -97,7 +98,8 @@ statement:
   | IF if_cond=expr THEN if_stmts=statement* (ELIF elif_cond=expr THEN elif_stmts=statement*)* (ELSE else_stmts=statement*) END # IfStatement // ID: 40
   | WHILE cond=expr DO loop_stmt* END                  # WhileLoopStatement // ID: 41
   | FOR variable=IDENT IN range=expr DO loop_stmt* END # ForLoopStatement // ID: 42
-  | WAIT expr SEMIC # WaitStatement // ID: 50 Raises error if present in function
+  | WAIT expr SEMIC # WaitStatement // ID: 50 Raises an error if present in a function
+  | RETURN (returned=expr)? SEMIC # ReturnStatement // ID: 62 Raises an error if outside of a function
 ;
 
 loop_stmt:
@@ -105,10 +107,6 @@ loop_stmt:
   | BREAK     # BreakStatement // ID: 60
   | CONTINUE  # ContinueStatement // ID: 61
 ;
-
-function_def: LPAREN IDENT (COMMA IDENT)* COMMA? RPAREN statement*
-  (RETURN (returned=expr)? SEMIC)? // ID: 62
-  END;
 
 expr:
     LPAREN exp=expr RPAREN # Parentheses
@@ -121,12 +119,10 @@ expr:
   | LBRACK (expr (COMMA expr)* COMMA?)? RBRACK                       # ListLiteral // ID: 5
   | LCURL (IDENT COLON expr (COMMA IDENT COLON expr)* COMMA?)? RCURL # MapLiteral // ID: 6
   | LCURL expr (COMMA expr)* COMMA? RCURL                            # SetLiteral // ID: 7
-  | FUNC def=function_def  # FunctionLiteral // ID: 8
   | IDENT  # Variable // ID: 100
   | object=IDENT DOT property=IDENT                 # GetProperty // ID: 101
-  // TODO interdire la récupération des méthodes en tant que valeurs
-  | object=IDENT DOT property=IDENT LPAREN expr (COMMA expr)* COMMA? RPAREN # MethodCall // ID: 103
-  | expr LPAREN expr (COMMA expr)* COMMA? RPAREN    # FunctionCall // ID: 104
+  | object=IDENT DOT property=IDENT LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # MethodCall // ID: 102
+  | expr LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # FunctionCall // ID: 103
   | LPAREN type=IDENT RPAREN exp=expr               # CastValue // ID: 200
   | operator=(MINUS | NOT) operand=expr             # UnaryOperator // IDs: 201
   | source=expr LBRACK key=expr RBRACK              # GetItem // ID: 202

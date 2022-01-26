@@ -1,8 +1,12 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -26,6 +30,7 @@ public final class StatementNBTHelper {
 
     STMT_PROVIDERS.put(ExpressionStatement.ID, ExpressionStatement::new);
 
+    STMT_PROVIDERS.put(IfStatement.ID, IfStatement::new);
     STMT_PROVIDERS.put(WhileLoopStatement.ID, WhileLoopStatement::new);
     STMT_PROVIDERS.put(ForLoopStatement.ID, ForLoopStatement::new);
 
@@ -49,6 +54,20 @@ public final class StatementNBTHelper {
       throw new IllegalArgumentException("Undefined statement ID: " + tagID);
     }
     return STMT_PROVIDERS.get(tagID).apply(tag);
+  }
+
+  public static List<Statement> deserializeStatementsList(final NBTTagCompound tag, final String key) {
+    List<Statement> statements = new ArrayList<>();
+    for (NBTBase t : tag.getTagList(key, new NBTTagCompound().getId())) {
+      statements.add(getStatementForTag((NBTTagCompound) t));
+    }
+    return statements;
+  }
+
+  public static NBTTagList serializeStatementsList(final List<Statement> statements) {
+    NBTTagList statementsList = new NBTTagList();
+    statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
+    return statementsList;
   }
 
   private StatementNBTHelper() {

@@ -1,6 +1,6 @@
 package net.darmo_creations.mccode.interpreter.types;
 
-import net.darmo_creations.mccode.interpreter.Interpreter;
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.StackTraceElement;
 import net.darmo_creations.mccode.interpreter.Utils;
@@ -26,22 +26,19 @@ public class UserFunction extends Function {
 
   private static final String PARAMETERS_KEY = "Parameters";
   private static final String STATEMENTS_KEY = "Statements";
-  private static final String CLOSURE_KEY = "Closure";
   private static final String IP_KEY = "IP";
 
   private final List<Statement> statements;
-  private final Scope closure;
   private int ip;
 
-  public UserFunction(final List<String> parameterNames, final List<Statement> statements, final Scope closure) {
-    super(null, extractParameters(closure.getInterpreter(), parameterNames), closure.getInterpreter().getTypeInstance(AnyType.class));
+  public UserFunction(final ProgramManager programManager, final List<String> parameterNames, final List<Statement> statements) {
+    super(null, extractParameters(programManager, parameterNames), programManager.getTypeInstance(AnyType.class));
     this.statements = Objects.requireNonNull(statements);
-    this.closure = closure;
     this.ip = 0;
   }
 
-  public UserFunction(final NBTTagCompound tag) {
-    this(extractParameterNames(tag), extractStatement(tag), extractClosure(tag));
+  public UserFunction(final ProgramManager programManager, final NBTTagCompound tag) {
+    this(programManager, extractParameterNames(tag), StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY));
     this.ip = tag.getInteger(IP_KEY);
   }
 
@@ -54,25 +51,6 @@ public class UserFunction extends Function {
     return parametersNames;
   }
 
-  public static List<Statement> extractStatement(final NBTTagCompound tag) {
-    NBTTagList statementsTag = tag.getTagList(STATEMENTS_KEY, new NBTTagCompound().getId());
-    List<Statement> statements = new ArrayList<>();
-    for (NBTBase t : statementsTag) {
-      statements.add(StatementNBTHelper.getStatementForTag((NBTTagCompound) t));
-    }
-    return statements;
-  }
-
-  public static Scope extractClosure(final NBTTagCompound tag) {
-    // TODO deserialize closure -> problem with references
-    return null;
-  }
-
-  public Scope getClosure() {
-    return this.closure;
-  }
-
-  // TODO reload state after world reload or "wait" statement
   @Override
   public Object apply(Scope scope) {
     List<StackTraceElement> callStack = Arrays.asList(scope.getStackTrace());
@@ -106,11 +84,7 @@ public class UserFunction extends Function {
         .sorted(Comparator.comparing(e -> e.getValue().getLeft()))
         .forEach(e -> parametersList.appendTag(new NBTTagString(e.getKey())));
     tag.setTag(PARAMETERS_KEY, parametersList);
-    NBTTagList statementsList = new NBTTagList();
-    this.statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
-    tag.setTag(STATEMENTS_KEY, statementsList);
-    tag.setInteger(IP_KEY, this.ip);
-    tag.setTag(CLOSURE_KEY, this.closure.writeToNBT());
+    tag.setTag(STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(this.statements));
     tag.setInteger(IP_KEY, this.ip);
     return tag;
   }
@@ -120,10 +94,10 @@ public class UserFunction extends Function {
     return super.toString() + String.format("{%s}", Utils.indentStatements(this.statements));
   }
 
-  private static Map<String, Pair<Integer, ? extends Type<?>>> extractParameters(final Interpreter interpreter, final List<String> parameterNames) {
+  private static Map<String, Pair<Integer, ? extends Type<?>>> extractParameters(final ProgramManager programManager, final List<String> parameterNames) {
     Map<String, Pair<Integer, ? extends Type<?>>> map = new HashMap<>();
     for (int i = 0; i < parameterNames.size(); i++) {
-      map.put(parameterNames.get(i), new ImmutablePair<>(i, interpreter.getTypeInstance(AnyType.class)));
+      map.put(parameterNames.get(i), new ImmutablePair<>(i, programManager.getTypeInstance(AnyType.class)));
     }
     return map;
   }

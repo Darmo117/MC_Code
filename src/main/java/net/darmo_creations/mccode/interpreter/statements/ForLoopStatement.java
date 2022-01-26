@@ -8,11 +8,8 @@ import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,11 +43,7 @@ public class ForLoopStatement extends Statement {
   public ForLoopStatement(final NBTTagCompound tag) {
     this.variableName = tag.getString(VARIABLE_NAME_KEY);
     this.values = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUES_KEY));
-    NBTTagList statementsTag = tag.getTagList(STATEMENTS_KEY, new NBTTagCompound().getId());
-    this.statements = new ArrayList<>();
-    for (NBTBase t : statementsTag) {
-      this.statements.add(StatementNBTHelper.getStatementForTag((NBTTagCompound) t));
-    }
+    this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);
     this.ip = tag.getInteger(IP_KEY);
     this.iteratorIndex = tag.getInteger(ITERATOR_INDEX_KEY);
     this.paused = tag.getBoolean(PAUSED_KEY);
@@ -69,14 +62,13 @@ public class ForLoopStatement extends Statement {
       for (int i = 0; i <= this.iteratorIndex; i++) {
         iterator.next();
       }
-      this.resumeAfterLoad = false;
     }
 
     exit:
     // Do not test again if loop was paused by a "wait" statement
-    while (this.paused || iterator.hasNext()) {
+    while (this.paused || this.resumeAfterLoad || iterator.hasNext()) {
       // Do not re-declare or re-set variable if loop was paused by a "wait" statement
-      if (!this.paused) {
+      if (!this.paused && !this.resumeAfterLoad) {
         if (declareVariable) {
           scope.declareVariable(new Variable(this.variableName, false, false, false, true, iterator.next()));
           declareVariable = false;
@@ -85,7 +77,9 @@ public class ForLoopStatement extends Statement {
         }
       } else {
         this.paused = false;
+        this.resumeAfterLoad = false;
       }
+
       this.iteratorIndex++;
       while (this.ip < this.statements.size()) {
         StatementAction action = this.statements.get(this.ip).execute(scope);
@@ -122,9 +116,7 @@ public class ForLoopStatement extends Statement {
     NBTTagCompound tag = super.writeToNBT();
     tag.setString(VARIABLE_NAME_KEY, this.variableName);
     tag.setTag(VALUES_KEY, this.values.writeToNBT());
-    NBTTagList statementsList = new NBTTagList();
-    this.statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
-    tag.setTag(STATEMENTS_KEY, statementsList);
+    tag.setTag(STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(this.statements));
     tag.setInteger(IP_KEY, this.ip);
     tag.setInteger(ITERATOR_INDEX_KEY, this.iteratorIndex);
     tag.setBoolean(PAUSED_KEY, this.paused);

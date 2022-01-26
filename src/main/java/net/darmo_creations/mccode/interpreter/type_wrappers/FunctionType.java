@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
-import net.darmo_creations.mccode.interpreter.types.BoundMemberFunction;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 import net.darmo_creations.mccode.interpreter.types.Function;
 import net.darmo_creations.mccode.interpreter.types.UserFunction;
@@ -16,7 +15,6 @@ public class FunctionType extends Type<Function> {
 
   private static final String FUNCTION_TYPE_BUILTIN = "builtin";
   private static final String FUNCTION_TYPE_USER = "user";
-  private static final String FUNCTION_TYPE_METHOD = "method";
 
   @Override
   public String getName() {
@@ -38,10 +36,6 @@ public class FunctionType extends Type<Function> {
       tag.setString(FUNCTION_TYPE_KEY, FUNCTION_TYPE_USER);
       NBTTagCompound functionTag = ((UserFunction) self).writeToNBT();
       tag.setTag(FUNCTION_KEY, functionTag);
-    } else if (self instanceof BoundMemberFunction) {
-      tag.setString(FUNCTION_TYPE_KEY, FUNCTION_TYPE_METHOD);
-      NBTTagCompound functionTag = ((BoundMemberFunction) self).writeToNBT(scope);
-      tag.setTag(FUNCTION_KEY, functionTag);
     }
     return tag;
   }
@@ -54,9 +48,7 @@ public class FunctionType extends Type<Function> {
         // Type-safe as builtin functions cannot be deleted nor overridden
         return (Function) scope.getVariable(tag.getString(FUNCTION_KEY), false);
       case FUNCTION_TYPE_USER:
-        return new UserFunction(tag.getCompoundTag(FUNCTION_KEY));
-      case FUNCTION_TYPE_METHOD:
-        return new BoundMemberFunction(tag.getCompoundTag(FUNCTION_KEY), scope);
+        return new UserFunction(scope.getInterpreter(), tag.getCompoundTag(FUNCTION_KEY));
       default:
         throw new MCCodeException("invalid function type " + functionType);
     }

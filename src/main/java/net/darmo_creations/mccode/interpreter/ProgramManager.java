@@ -3,33 +3,44 @@ package net.darmo_creations.mccode.interpreter;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
-import net.darmo_creations.mccode.interpreter.exceptions.ProgramException;
+import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.darmo_creations.mccode.interpreter.exceptions.TypeException;
+import net.darmo_creations.mccode.interpreter.statements.Statement;
 import net.darmo_creations.mccode.interpreter.type_wrappers.*;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Interpreter implements NBTDeserializable {
+public class ProgramManager implements NBTDeserializable {
   private final Map<String, Type<?>> types = new HashMap<>();
   private final Map<Class<?>, Type<?>> wrappedTypes = new HashMap<>();
 
   private static final String PROGRAMS_KEY = "Programs";
+  private static final String PROGRAM_KEY = "Program";
+  private static final String SCHEDULE_KEY = "ScheduleDelay";
+  private static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
 
+  private final File programsDir;
   private final World world;
   private boolean initialized;
-  private Map<String, Program> programs; // TODO program scheduling
+  private final Map<String, Program> programs;
+  private final Map<String, Integer> programsSchedules;
+  private final Map<String, Integer> programsRepeats;
 
-  public Interpreter(World world) {
+  public ProgramManager(World world) {
     this.declareBuiltinTypes();
     this.world = world;
     this.programs = new HashMap<>();
+    this.programsSchedules = new HashMap<>();
+    this.programsRepeats = new HashMap<>();
+    this.programsDir = new File(new File(this.world.getSaveHandler().getWorldDirectory(), "data"), "mccode_programs");
   }
 
   /**
@@ -46,26 +57,71 @@ public class Interpreter implements NBTDeserializable {
   }
 
   public void executePrograms(final int worldTick) {
-    Iterator<Map.Entry<String, Program>> programs = this.programs.entrySet().iterator();
-    while (programs.hasNext()) {
-      Map.Entry<String, Program> p = programs.next();
+    // Execute all programs
+    List<Program> toRemove = new LinkedList<>();
+    for (Program program : this.programs.values()) {
       try {
-        p.getValue().execute(worldTick);
-      } catch (ProgramException e) {
-        programs.remove();
-        // TODO report exception
+        program.execute(worldTick);
+      } catch (MCCodeRuntimeException e) {
+        // TODO report exceptions to players
+        toRemove.add(program);
+      }
+    }
+    toRemove.forEach(p -> this.unloadProgram(p.getName()));
+
+    // Update schedules and repeats of terminated programs
+    for (Map.Entry<String, Integer> e : this.programsSchedules.entrySet()) {
+      String programName = e.getKey();
+      int delay = e.getValue();
+      Program program = this.programs.get(programName);
+
+      if (program.hasTerminated()) {
+        if (delay <= 0) {
+          if (this.programsRepeats.containsKey(programName)) {
+            int repeatAmount = this.programsRepeats.get(programName);
+            //noinspection OptionalGetWithoutIsPresent
+            this.programsSchedules.put(programName, program.getScheduleDelay().get());
+            if (repeatAmount > 1) {
+              this.programsRepeats.put(programName, repeatAmount - 1);
+            } else {
+              this.unloadProgram(programName);
+            }
+          } else {
+            this.unloadProgram(programName);
+          }
+          if (this.programs.containsKey(programName)) {
+            program.reset();
+          }
+
+        } else {
+          this.programsSchedules.put(programName, delay - 1);
+        }
       }
     }
   }
 
   public void loadProgram(final String name) {
-    Program program = null; // TODO load from file here
-    // TODO throw error if no program with this name exists
+    if (this.programs.containsKey(name)) {
+      // TODO throw error
+    }
+    File programFile = new File(this.programsDir, name + ".mccode");
+    if (!programFile.exists()) {
+      // TODO throw error
+    }
+    // TODO give file contents to parser
+    List<Statement> statements = new ArrayList<>();
+    Integer scheduleTime = null;
+    Integer repeatAmount = null;
+    Program program = new Program(name, statements, scheduleTime, repeatAmount, this);
+    program.getScheduleDelay().ifPresent(t -> this.programsSchedules.put(program.getName(), t));
+    program.getRepeatAmount().ifPresent(t -> this.programsRepeats.put(program.getName(), t));
     this.programs.put(name, program);
   }
 
   public void unloadProgram(final String name) {
     this.programs.remove(name);
+    this.programsSchedules.remove(name);
+    this.programsRepeats.remove(name);
   }
 
   public List<String> getLoadedPrograms() {
@@ -126,9 +182,20 @@ public class Interpreter implements NBTDeserializable {
   @Override
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
-    NBTTagList statementsList = new NBTTagList();
-    this.programs.values().forEach(p -> statementsList.appendTag(p.writeToNBT()));
-    tag.setTag(PROGRAMS_KEY, statementsList);
+    NBTTagList programs = new NBTTagList();
+    for (Program p : this.programs.values()) {
+      NBTTagCompound programTag = new NBTTagCompound();
+      programTag.setTag(PROGRAM_KEY, p.writeToNBT());
+      String programName = p.getName();
+      if (this.programsSchedules.containsKey(programName)) {
+        programTag.setInteger(SCHEDULE_KEY, this.programsSchedules.get(programName));
+        if (this.programsRepeats.containsKey(programName)) {
+          programTag.setInteger(REPEAT_AMOUNT_KEY, this.programsRepeats.get(programName));
+        }
+      }
+      programs.appendTag(programTag);
+    }
+    tag.setTag(PROGRAMS_KEY, programs);
     return tag;
   }
 
@@ -138,10 +205,19 @@ public class Interpreter implements NBTDeserializable {
       throw new MCCodeException("interpreter not yet initialized");
     }
     NBTTagList list = tag.getTagList(PROGRAMS_KEY, new NBTTagCompound().getId());
-    this.programs = new HashMap<>();
+    this.programs.clear();
+    this.programsSchedules.clear();
+    this.programsRepeats.clear();
     for (NBTBase t : list) {
-      Program program = new Program((NBTTagCompound) t, this);
+      NBTTagCompound programTag = (NBTTagCompound) t;
+      Program program = new Program(programTag.getCompoundTag(PROGRAM_KEY), this);
       this.programs.put(program.getName(), program);
+      if (programTag.hasKey(SCHEDULE_KEY)) {
+        this.programsSchedules.put(program.getName(), programTag.getInteger(SCHEDULE_KEY));
+        if (programTag.hasKey(REPEAT_AMOUNT_KEY)) {
+          this.programsRepeats.put(program.getName(), programTag.getInteger(REPEAT_AMOUNT_KEY));
+        }
+      }
     }
   }
 

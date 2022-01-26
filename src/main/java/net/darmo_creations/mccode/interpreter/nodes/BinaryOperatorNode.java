@@ -54,6 +54,6 @@ public class BinaryOperatorNode extends OperatorNode {
 
   @Override
   public String toString() {
-    return String.format("%s %s %s", this.operands.get(0), this.getSymbol(), this.operands.get(1));
+    return String.format("%s %s %s", this.arguments.get(0), this.getSymbol(), this.arguments.get(1));
   }
 }

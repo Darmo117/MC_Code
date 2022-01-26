@@ -49,7 +49,7 @@ public class MemberFunction extends Function {
       Map<String, Object> variables = scope.getVariables();
       Object self = variables.get(SELF_PARAM_NAME);
       if (!this.targetType.getWrappedType().isAssignableFrom(self.getClass())) {
-        throw new MCCodeException("type mismatch");
+        throw new MCCodeException(String.format("method %s expected instance of type %s, got %s", this.getName(), this.targetType.getWrappedType(), self.getClass()));
       }
       variables.remove(SELF_PARAM_NAME);
       // Extract parameter variables from scope to array

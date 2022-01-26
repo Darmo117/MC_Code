@@ -44,7 +44,7 @@ public class Scope implements NBTDeserializable {
     return this.parentScope;
   }
 
-  public Interpreter getInterpreter() {
+  public ProgramManager getInterpreter() {
     return this.program.getInterpreter();
   }
 
@@ -54,6 +54,12 @@ public class Scope implements NBTDeserializable {
 
   public Map<String, Object> getVariables() {
     return new HashMap<>(this.variables);
+  }
+
+  public void reset() {
+    this.variables.clear();
+    this.defineBuiltinConstants();
+    this.defineBuiltinFunctions();
   }
 
   public boolean isVariableDefined(final String name) {
@@ -120,7 +126,7 @@ public class Scope implements NBTDeserializable {
   }
 
   // FIXME what about same object in different variables/collections?
-  // TODO -> associate unique ID with each instance
+  // TODO -> associate unique ID with each instance?
   @Override
   public NBTTagCompound writeToNBT() {
     if (this.parentScope != null) {

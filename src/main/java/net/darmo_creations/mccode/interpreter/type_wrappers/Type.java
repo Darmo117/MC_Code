@@ -1,13 +1,12 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
-import net.darmo_creations.mccode.interpreter.Interpreter;
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.MemberFunction;
 import net.darmo_creations.mccode.interpreter.ObjectProperty;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.*;
-import net.darmo_creations.mccode.interpreter.types.BoundMemberFunction;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.*;
@@ -16,7 +15,7 @@ import java.util.*;
  * A type is a class that wraps a data type to make it usable from programs.
  * It may possess properties and methods annoted with {@link Property} and {@link Method}.
  * <p>
- * Once declared in an {@link Interpreter} instance it becomes available to programs of this interpreter.
+ * Once declared in an {@link ProgramManager} instance it becomes available to programs of this interpreter.
  *
  * @param <T> Type of data wrapped by this class.
  */
@@ -82,8 +81,6 @@ public abstract class Type<T> {
         String.format("attempt to get property from type \"%s\" for object of type \"%s\"", this, self));
     if (this.properties.containsKey(propertyName)) {
       return this.properties.get(propertyName).get(self);
-    } else if (this.methods.containsKey(propertyName)) { // TODO do not return methods
-      return new BoundMemberFunction(self, this.methods.get(propertyName));
     }
     throw new EvaluationException(scope, "mccode.interpreter.error.no_property_for_type", this, propertyName);
   }
@@ -96,15 +93,13 @@ public abstract class Type<T> {
    * @param propertyName Name of the property.
    * @param value        Value to assign to the property.
    * @throws TypeException          If the MCCode type of the instance differs from this type.
-   * @throws MCCodeRuntimeException If the instance object does not have a property with the given name, or the property is a member function.
+   * @throws MCCodeRuntimeException If the instance object does not have a property with the given name.
    */
   public void setProperty(final Scope scope, final Object self, final String propertyName, final Object value) {
     this.ensureType(scope.getInterpreter(), self,
         String.format("attempt to get property from type \"%s\" for object of type \"%s\"", this, self));
     if (this.properties.containsKey(propertyName)) {
       this.properties.get(propertyName).set(scope, self, value);
-    } else if (this.methods.containsKey(propertyName)) { // TODO delete as methods should not be returned as property values
-      throw new EvaluationException(scope, "mccode.interpreter.error.set_method_property", this, propertyName);
     }
     throw new EvaluationException(scope, "mccode.interpreter.error.no_property_for_type", this, propertyName);
   }
@@ -131,7 +126,7 @@ public abstract class Type<T> {
       //noinspection unchecked
       return (T) o;
     }
-    throw new CastException(this, scope.getInterpreter().getTypeForValue(o));
+    throw new CastException(scope, this, scope.getInterpreter().getTypeForValue(o));
   }
 
   /**
@@ -158,16 +153,15 @@ public abstract class Type<T> {
    *
    * @param self An instance of this type to convert.
    * @return The boolean value for the object.
-   * @apiNote API method to circumvent generic type restrictions.
    */
-  final boolean toBoolean(final Object self) {
+  public final boolean toBoolean(final Object self) {
     //noinspection unchecked
     return this.__bool__((T) self);
   }
 
   public Object applyOperator(final Scope scope, final Operator operator, Object self, Object o, final boolean inPlace) {
     if (scope.getInterpreter().getTypeForValue(self) != this) {
-      throw new MCCodeException("mismatch types");
+      throw new MCCodeException(String.format("operator %s expected instance object of type %s, got %s", operator.getSymbol(), this.getWrappedType(), self.getClass()));
     }
     //noinspection unchecked
     T $this = (T) self;
@@ -221,7 +215,7 @@ public abstract class Type<T> {
 
   public void setItem(final Scope scope, Object self, final Object key, final Object value) {
     if (scope.getInterpreter().getTypeForValue(self) != this) {
-      throw new MCCodeException("mismatch types");
+      throw new MCCodeException(String.format("setItem expected instance object of type %s, got %s", this.getWrappedType(), self.getClass()));
     }
     //noinspection unchecked
     this.__set_item__(scope, (T) self, key, value);
@@ -229,7 +223,7 @@ public abstract class Type<T> {
 
   public void deleteItem(final Scope scope, Object self, final Object key) {
     if (scope.getInterpreter().getTypeForValue(self) != this) {
-      throw new MCCodeException("mismatch types");
+      throw new MCCodeException(String.format("deleteItem expected instance object of type %s, got %s", this.getWrappedType(), self.getClass()));
     }
     //noinspection unchecked
     this.__del_item__(scope, (T) self, key);
@@ -334,9 +328,9 @@ public abstract class Type<T> {
   }
 
   public NBTTagCompound writeToNBT(final Scope scope, final Object self) {
-    Interpreter interpreter = scope.getInterpreter();
-    this.ensureType(interpreter, self,
-        String.format("attempt to serialize object of type \"%s\" from type \"%s\"", interpreter.getTypeForValue(self), this));
+    ProgramManager programManager = scope.getInterpreter();
+    this.ensureType(programManager, self,
+        String.format("attempt to serialize object of type \"%s\" from type \"%s\"", programManager.getTypeForValue(self), this));
     //noinspection unchecked
     return this._writeToNBT(scope, (T) self);
   }
@@ -354,8 +348,8 @@ public abstract class Type<T> {
     return this.getName();
   }
 
-  private void ensureType(final Interpreter interpreter, final Object o, final String errorMessage) {
-    if (interpreter.getTypeForValue(o) != this) {
+  private void ensureType(final ProgramManager programManager, final Object o, final String errorMessage) {
+    if (programManager.getTypeForValue(o) != this) {
       throw new TypeException(errorMessage);
     }
   }

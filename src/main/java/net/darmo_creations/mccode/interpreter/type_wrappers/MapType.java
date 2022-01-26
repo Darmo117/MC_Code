@@ -1,6 +1,6 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
-import net.darmo_creations.mccode.interpreter.Interpreter;
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
@@ -47,7 +47,7 @@ public class MapType extends Type<MCMap> {
   @Override
   protected Object __get_item__(final Scope scope, final MCMap self, final Object key) {
     if (!(key instanceof String)) {
-      throw new CastException(scope.getInterpreter().getTypeInstance(StringType.class),
+      throw new CastException(scope, scope.getInterpreter().getTypeInstance(StringType.class),
           scope.getInterpreter().getTypeForValue(self));
     }
     return self.get((String) key);
@@ -56,7 +56,7 @@ public class MapType extends Type<MCMap> {
   @Override
   protected void __set_item__(final Scope scope, MCMap self, final Object key, final Object value) {
     if (!(key instanceof String)) {
-      throw new CastException(scope.getInterpreter().getTypeInstance(StringType.class),
+      throw new CastException(scope, scope.getInterpreter().getTypeInstance(StringType.class),
           scope.getInterpreter().getTypeForValue(self));
     }
     self.put((String) key, value);
@@ -65,7 +65,7 @@ public class MapType extends Type<MCMap> {
   @Override
   protected void __del_item__(final Scope scope, MCMap self, final Object key) {
     if (!(key instanceof String)) {
-      throw new CastException(scope.getInterpreter().getTypeInstance(StringType.class),
+      throw new CastException(scope, scope.getInterpreter().getTypeInstance(StringType.class),
           scope.getInterpreter().getTypeForValue(self));
     }
     self.remove(key);
@@ -125,8 +125,8 @@ public class MapType extends Type<MCMap> {
         //noinspection unchecked
         return new MCMap((Map<String, ?>) o);
       } catch (ClassCastException e) {
-        Interpreter interpreter = scope.getInterpreter();
-        throw new CastException(interpreter.getTypeInstance(MapType.class), interpreter.getTypeForValue(o));
+        ProgramManager programManager = scope.getInterpreter();
+        throw new CastException(scope, programManager.getTypeInstance(MapType.class), programManager.getTypeForValue(o));
       }
     } else {
       Type<?> type = scope.getInterpreter().getTypeForValue(o);

@@ -6,11 +6,8 @@ import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.darmo_creations.mccode.interpreter.type_wrappers.BooleanType;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WhileLoopStatement extends Statement {
@@ -35,11 +32,7 @@ public class WhileLoopStatement extends Statement {
 
   public WhileLoopStatement(final NBTTagCompound tag) {
     this.condition = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(CONDITION_KEY));
-    NBTTagList statementsTag = tag.getTagList(STATEMENTS_KEY, new NBTTagCompound().getId());
-    this.statements = new ArrayList<>();
-    for (NBTBase t : statementsTag) {
-      this.statements.add(StatementNBTHelper.getStatementForTag((NBTTagCompound) t));
-    }
+    this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);
     this.ip = tag.getInteger(IP_KEY);
     this.paused = tag.getBoolean(PAUSED_KEY);
   }
@@ -87,9 +80,7 @@ public class WhileLoopStatement extends Statement {
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = super.writeToNBT();
     tag.setTag(CONDITION_KEY, this.condition.writeToNBT());
-    NBTTagList statementsList = new NBTTagList();
-    this.statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
-    tag.setTag(STATEMENTS_KEY, statementsList);
+    tag.setTag(STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(this.statements));
     tag.setInteger(IP_KEY, this.ip);
     tag.setBoolean(PAUSED_KEY, this.paused);
     return tag;
