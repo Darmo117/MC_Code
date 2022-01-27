@@ -25,9 +25,7 @@ types:
   list -> MCList extends ArrayList<Object>
   map -> MCMap extends HashMap<String, Object>
   set -> MCSet extends HashSet<Object>
-  entity -> Entity
   block -> Block
-  block_state -> BlockState
   item -> Item
   world -> World
 
@@ -104,7 +102,7 @@ operators:
     pos % number -> pos
     pos % boolean -> pos
 
-  comparison ("=", "!=", "<", ">", "<=", ">="): TODO detail
+  comparison ("=", "!=", "<", ">", "<=", ">="):
     any = any -> boolean
     any != any -> boolean
     number <op> number -> boolean
@@ -113,8 +111,6 @@ operators:
     boolean <op> boolean -> boolean
     string <op> string -> boolean
     resource_location <op> resource_location -> boolean
-    string <op> resource_location -> boolean
-    resource_location <op> string -> boolean
     pos <op> pos -> boolean
     list <op> list -> boolean
 
@@ -129,12 +125,6 @@ operators:
     any <op> list -> boolean
     any <op> map -> boolean
     any <op> set -> boolean
-
-  if-else:
-    <expr> if <expr> else <expr>
-
-  "@<selector>(<params>)":
-    entities selector
 
 functions:
   function <name>(<param>[, <param>]*):

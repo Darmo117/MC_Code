@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
@@ -36,12 +37,13 @@ public class AssignVariableStatement extends Statement {
 
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+    ProgramManager pm = scope.getProgramManager();
     Object targetObject = scope.getVariable(this.variableName, false);
-    Type<?> targetType = scope.getInterpreter().getTypeForValue(targetObject);
+    Type<?> targetType = pm.getTypeForValue(targetObject);
     Object valueObject = this.value.evaluate(scope);
     Object result = this.operator.getBaseOperator()
         .map(op -> targetType.applyOperator(scope, op, targetObject, valueObject, true))
-        .orElse(valueObject);
+        .orElse(pm.getTypeForValue(valueObject).copy(scope, valueObject));
     scope.setVariable(this.variableName, result, false);
 
     return StatementAction.PROCEED;

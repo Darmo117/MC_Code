@@ -58,7 +58,7 @@ public class IfStatement extends Statement {
     if (this.branchIndex == -1) {
       for (int i = 0; i < this.conditions.size(); i++) {
         Object value = this.conditions.get(i).evaluate(scope);
-        Type<?> valueType = scope.getInterpreter().getTypeForValue(value);
+        Type<?> valueType = scope.getProgramManager().getTypeForValue(value);
         if (valueType.toBoolean(valueType)) {
           this.branchIndex = i;
         }

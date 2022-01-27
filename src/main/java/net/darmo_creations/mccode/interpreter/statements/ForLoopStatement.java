@@ -53,7 +53,7 @@ public class ForLoopStatement extends Statement {
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     Object valuesObject = this.values.evaluate(scope);
-    Type<?> type = scope.getInterpreter().getTypeForValue(valuesObject);
+    Type<?> type = scope.getProgramManager().getTypeForValue(valuesObject);
     Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, Operator.ITERATE, valuesObject, null, false);
     boolean declareVariable = true;
 

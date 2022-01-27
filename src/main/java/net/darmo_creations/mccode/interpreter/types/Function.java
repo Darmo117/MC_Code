@@ -6,7 +6,6 @@ import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -15,7 +14,7 @@ import java.util.Objects;
  * Base class for functions.
  */
 public abstract class Function {
-  protected final Type<?> returnType;
+  private final Type<?> returnType;
   private final String name;
   protected final Map<String, Pair<Integer, ? extends Type<?>>> parameters;
 
@@ -37,13 +36,6 @@ public abstract class Function {
    */
   public String getName() {
     return this.name;
-  }
-
-  /**
-   * Return the internal name of this function, i.e. {@code &lt;name>@&lt;hashcode>}.
-   */
-  public String getInternalName() {
-    return this.getName() + "@" + this.hashCode();
   }
 
   /**
@@ -83,15 +75,6 @@ public abstract class Function {
    * @return A value.
    */
   public abstract Object apply(Scope scope);
-
-  @Override
-  public String toString() {
-    String params = this.parameters.entrySet().stream()
-        .sorted(Comparator.comparing(e -> this.parameters.get(e.getKey()).getLeft()))
-        .map(e -> e.getValue().getRight() + " " + e.getKey())
-        .reduce("", (e1, e2) -> e1 + ", " + e2);
-    return String.format("function %s(%s) -> %s", this.getName(), params, this.returnType);
-  }
 
   /**
    * Generate a parameter types map from an array of types.

@@ -2,6 +2,7 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
+import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
@@ -33,15 +34,41 @@ public class ResourceLocationType extends Type<ResourceLocation> {
   }
 
   @Override
-  public ResourceLocation implicitCast(Scope scope, final Object o) {
+  protected Object __eq__(final Scope scope, final ResourceLocation self, final Object o) {
+    if (!(o instanceof ResourceLocation)) {
+      return false;
+    }
+    return self.equals(o);
+  }
+
+  @Override
+  protected Object __gt__(final Scope scope, final ResourceLocation self, final Object o) {
+    if (o instanceof ResourceLocation) {
+      return self.compareTo((ResourceLocation) o) > 0;
+    }
+    return super.__gt__(scope, self, o);
+  }
+
+  @Override
+  public ResourceLocation explicitCast(Scope scope, final Object o) {
     if (o instanceof String) {
       return new ResourceLocation((String) o);
     } else if (o instanceof Map) {
-      StringType stringType = scope.getInterpreter().getTypeInstance(StringType.class);
+      StringType stringType = scope.getProgramManager().getTypeInstance(StringType.class);
       Map<?, ?> m = (Map<?, ?>) o;
-      return new ResourceLocation(stringType.implicitCast(scope, m.get("namespace")), stringType.implicitCast(scope, m.get("path")));
+      Object namespace = m.get("namespace");
+      Object path = m.get("path");
+      if (!(path instanceof String)) {
+        throw new CastException(scope, stringType, scope.getProgramManager().getTypeForValue(path));
+      }
+      if (namespace == null) {
+        return new ResourceLocation((String) path);
+      } else if (!(namespace instanceof String)) {
+        throw new CastException(scope, stringType, scope.getProgramManager().getTypeForValue(path));
+      }
+      return new ResourceLocation((String) namespace, (String) path);
     }
-    return super.implicitCast(scope, o);
+    return super.explicitCast(scope, o);
   }
 
   @Override

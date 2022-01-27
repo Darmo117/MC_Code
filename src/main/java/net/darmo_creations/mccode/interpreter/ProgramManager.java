@@ -62,7 +62,7 @@ public class ProgramManager implements NBTDeserializable {
     for (Program program : this.programs.values()) {
       try {
         program.execute(worldTick);
-      } catch (MCCodeRuntimeException e) {
+      } catch (MCCodeRuntimeException | ArithmeticException e) {
         // TODO report exceptions to players
         toRemove.add(program);
       }
@@ -128,6 +128,10 @@ public class ProgramManager implements NBTDeserializable {
     List<String> list = new ArrayList<>(this.programs.keySet());
     list.sort(Comparator.comparing(String::toLowerCase));
     return list;
+  }
+
+  public List<Type<?>> getTypes() {
+    return new ArrayList<>(this.types.values());
   }
 
   public <T extends Type<?>> T getTypeInstance(final Class<T> typeClass) {
@@ -243,6 +247,7 @@ public class ProgramManager implements NBTDeserializable {
     this.declareType(ItemType.class);
     this.declareType(WorldType.class);
     this.declareType(FunctionType.class);
+    this.declareType(RangeType.class);
   }
 
   /**
@@ -250,8 +255,8 @@ public class ProgramManager implements NBTDeserializable {
    */
   private void processTypeAnnotations() {
     for (Type<?> type : this.types.values()) {
-      Map<String, ObjectProperty> properties = this.setTypeProperties(type);
-      this.setTypeMethods(type, properties);
+      this.setTypeProperties(type);
+      this.setTypeMethods(type);
       this.setTypeDoc(type);
     }
   }
@@ -275,7 +280,7 @@ public class ProgramManager implements NBTDeserializable {
   }
 
   // Set private "properties" field
-  private Map<String, ObjectProperty> setTypeProperties(Type<?> type) {
+  private void setTypeProperties(Type<?> type) {
     //noinspection unchecked
     Class<? extends Type<?>> typeClass = (Class<? extends Type<?>>) type.getClass();
     String typeName = type.getName();
@@ -326,11 +331,10 @@ public class ProgramManager implements NBTDeserializable {
     } catch (NoSuchFieldException | IllegalAccessException e) {
       throw new TypeException("missing field 'properties' for class " + typeClass);
     }
-    return properties;
   }
 
   // Set private "methods" field
-  private void setTypeMethods(Type<?> type, final Map<String, ObjectProperty> properties) {
+  private void setTypeMethods(Type<?> type) {
     //noinspection unchecked
     Class<? extends Type<?>> typeClass = (Class<? extends Type<?>>) type.getClass();
     String typeName = type.getName();
@@ -344,10 +348,6 @@ public class ProgramManager implements NBTDeserializable {
         String methodName = methodAnnotation.name();
         Class<?>[] parameterTypes = method.getParameterTypes();
 
-        if (properties.containsKey(methodName)) {
-          throw new MCCodeException(String.format("a property named %s already exists for type %s",
-              methodName, typeName));
-        }
         if (methods.containsKey(methodName)) {
           throw new MCCodeException(String.format("method %s already defined for type %s",
               methodName, typeName));

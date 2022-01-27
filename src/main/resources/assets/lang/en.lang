@@ -19,3 +19,5 @@ mccode.interpreter.error.invalid_schedule_delay=Invalid program schedule delay: 
 mccode.interpreter.error.invalid_schedule_repeat=Invalid program schedule repeat amount: %d!
 mccode.interpreter.error.missing_schedule_delay=Missing schedule delay!
 mccode.interpreter.error.invalid_cast=Unable to cast object of type %s to %s!
+mccode.interpreter.error.index_out_of_bounds=List index out of bounds: %d!
+mccode.interpreter.error.empty_list=List is empty!

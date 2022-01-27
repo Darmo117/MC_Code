@@ -33,7 +33,7 @@ public class DeleteItemStatement extends Statement {
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     Object targetValue = this.target.evaluate(scope);
-    Type<?> targetType = scope.getInterpreter().getTypeForValue(targetValue);
+    Type<?> targetType = scope.getProgramManager().getTypeForValue(targetValue);
     targetType.deleteItem(scope, targetType, this.key.evaluate(scope));
 
     return StatementAction.PROCEED;

@@ -3,6 +3,9 @@ package net.darmo_creations.mccode.interpreter.types;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
 /**
  * Base class for builtin functions.
  */
@@ -36,6 +39,10 @@ public abstract class BuiltinFunction extends Function {
 
   @Override
   public String toString() {
-    return super.toString() + " {<builtin>}";
+    String params = this.parameters.entrySet().stream()
+        .sorted(Comparator.comparing(e -> e.getValue().getLeft()))
+        .map(e -> e.getValue().getRight().getName() + " " + e.getKey())
+        .collect(Collectors.joining(", "));
+    return String.format("builtin function %s(%s) -> %s", this.getName(), params, this.getReturnType());
   }
 }

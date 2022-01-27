@@ -12,7 +12,7 @@ import java.util.List;
  * A {@link Node} representing an operator with two operands that does no assignment.
  */
 public class BinaryOperatorNode extends OperatorNode {
-  public static final int ID = 202;
+  public static final int ID = 201;
 
   private final Operator operator;
 
@@ -43,7 +43,7 @@ public class BinaryOperatorNode extends OperatorNode {
     boolean flipped = this.operator.isFlipped();
     Object arg1 = values.get(0);
     Object arg2 = values.get(1);
-    Type<?> argType = scope.getInterpreter().getTypeForValue(flipped ? arg2 : arg1);
+    Type<?> argType = scope.getProgramManager().getTypeForValue(flipped ? arg2 : arg1);
     return argType.applyOperator(scope, this.operator, flipped ? arg2 : arg1, flipped ? arg1 : arg2, false);
   }
 

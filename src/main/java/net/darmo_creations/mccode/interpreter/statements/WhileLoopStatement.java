@@ -39,7 +39,7 @@ public class WhileLoopStatement extends Statement {
 
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
-    BooleanType booleanType = scope.getInterpreter().getTypeInstance(BooleanType.class);
+    BooleanType booleanType = scope.getProgramManager().getTypeInstance(BooleanType.class);
     exit:
     // Do not re-evaluate condition if loop was paused by "wait" a statement
     while (this.paused || booleanType.implicitCast(scope, this.condition.evaluate(scope))) {

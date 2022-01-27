@@ -1,15 +1,19 @@
 package net.darmo_creations.mccode.interpreter;
 
-import net.darmo_creations.mccode.interpreter.builtin_functions.CeilFunction;
-import net.darmo_creations.mccode.interpreter.builtin_functions.FloorFunction;
+import net.darmo_creations.mccode.interpreter.builtin_functions.*;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
+import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
+import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
+import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 import net.darmo_creations.mccode.interpreter.types.Function;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Scope implements NBTDeserializable {
@@ -44,8 +48,8 @@ public class Scope implements NBTDeserializable {
     return this.parentScope;
   }
 
-  public ProgramManager getInterpreter() {
-    return this.program.getInterpreter();
+  public ProgramManager getProgramManager() {
+    return this.program.getProgramManager();
   }
 
   public Program getProgram() {
@@ -110,34 +114,69 @@ public class Scope implements NBTDeserializable {
   }
 
   private void defineBuiltinConstants() {
+    this.declareVariable(new Variable("INF", true, false, true, false, Double.POSITIVE_INFINITY));
     this.declareVariable(new Variable("PI", true, false, true, false, Math.PI));
     this.declareVariable(new Variable("E", true, false, true, false, Math.E));
   }
 
   private void defineBuiltinFunctions() {
-    Function[] functions = {
-        new FloorFunction(this.getInterpreter()),
-        new CeilFunction(this.getInterpreter()),
-    };
+    ProgramManager pm = this.getProgramManager();
+
+    List<Function> functions = Arrays.asList(
+        new FloorFunction(pm),
+        new CeilFunction(pm),
+        new LenFunction(pm),
+        new HypotFunction(pm),
+        new SqrtFunction(pm),
+        new CbrtFunction(pm),
+        new ExpFunction(pm),
+        new CosFunction(pm),
+        new SinFunction(pm),
+        new TanFunction(pm),
+        new AcosFunction(pm),
+        new AsinFunction(pm),
+        new AtanFunction(pm),
+        new Atan2Function(pm),
+        new LogFunction(pm),
+        new Log10Function(pm),
+        new AbsFunction(pm),
+        new RoundFunction(pm),
+        new ToDegreesFunction(pm),
+        new ToRadiansFunction(pm),
+        new RangeFunction(pm),
+        new SortedFunction(pm),
+        new ReversedFunction(pm),
+        new MinFunction(pm),
+        new MaxFunction(pm)
+    );
+    for (Type<?> type : pm.getTypes()) {
+      if (type.generateCastOperator()) {
+        functions.add(new BuiltinFunction("to_" + type.getName(), type, pm.getTypeInstance(AnyType.class)) {
+          @Override
+          public Object apply(final Scope scope) {
+            return type.explicitCast(scope, this.getParameter(0));
+          }
+        });
+      }
+    }
+
     for (Function function : functions) {
       // TODO generate doc
       this.declareVariable(new Variable(function.getName(), true, false, true, false, function));
     }
   }
 
-  // FIXME what about same object in different variables/collections?
-  // TODO -> associate unique ID with each instance?
   @Override
   public NBTTagCompound writeToNBT() {
     if (this.parentScope != null) {
       throw new MCCodeException("cannot save non-global scope");
     }
     NBTTagCompound tag = new NBTTagCompound();
-    NBTTagList statementsList = new NBTTagList();
+    NBTTagList variablesList = new NBTTagList();
     this.variables.values().stream()
-        .filter(v -> !v.isDeletable())
-        .forEach(v -> statementsList.appendTag(v.writeToNBT(this)));
-    tag.setTag(VARIABLES_KEY, statementsList);
+        .filter(Variable::isDeletable)
+        .forEach(v -> variablesList.appendTag(v.writeToNBT(this)));
+    tag.setTag(VARIABLES_KEY, variablesList);
     return tag;
   }
 

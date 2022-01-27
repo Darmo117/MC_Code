@@ -12,7 +12,7 @@ import java.util.List;
  * A {@link Node} representing an operator with a single operand.
  */
 public class UnaryOperatorNode extends OperatorNode {
-  public static final int ID = 201;
+  public static final int ID = 200;
 
   private final Operator operator;
 
@@ -40,7 +40,7 @@ public class UnaryOperatorNode extends OperatorNode {
   @Override
   protected final Object evaluateImpl(Scope scope, final List<Object> values) {
     Object arg1 = values.get(0);
-    Type<?> arg1Type = scope.getInterpreter().getTypeForValue(arg1);
+    Type<?> arg1Type = scope.getProgramManager().getTypeForValue(arg1);
     return arg1Type.applyOperator(scope, this.operator, arg1, null, false);
   }
 

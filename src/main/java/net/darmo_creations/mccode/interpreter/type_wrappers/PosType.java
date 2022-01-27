@@ -40,65 +40,81 @@ public class PosType extends Type<BlockPos> {
 
   @Override
   protected Object __minus__(final Scope scope, final BlockPos self) {
-    return super.__minus__(scope, self); // TODO
+    return new BlockPos(-self.getX(), -self.getY(), -self.getZ());
   }
 
   @Override
   protected Object __add__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    return self.add(scope.getInterpreter().getTypeInstance(PosType.class).implicitCast(scope, o));
+    return self.add(scope.getProgramManager().getTypeInstance(PosType.class).implicitCast(scope, o));
   }
 
   @Override
   protected Object __sub__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    return self.subtract(scope.getInterpreter().getTypeInstance(PosType.class).implicitCast(scope, o));
+    return self.subtract(scope.getProgramManager().getTypeInstance(PosType.class).implicitCast(scope, o));
   }
 
   @Override
   protected Object __mul__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    return super.__mul__(scope, self, o, inPlace); // TODO
+    double n = scope.getProgramManager().getTypeInstance(FloatType.class).implicitCast(scope, o);
+    return new BlockPos(self.getX() * n, self.getY() * n, self.getZ() * n);
   }
 
   @Override
   protected Object __div__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    return super.__div__(scope, self, o, inPlace); // TODO
+    double n = scope.getProgramManager().getTypeInstance(FloatType.class).implicitCast(scope, o);
+    return new BlockPos(self.getX() / n, self.getY() / n, self.getZ() / n);
   }
 
   @Override
   protected Object __intdiv__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    return super.__intdiv__(scope, self, o, inPlace); // TODO
+    double n = scope.getProgramManager().getTypeInstance(FloatType.class).implicitCast(scope, o);
+    return new BlockPos((int) (self.getX() / n), (int) (self.getY() / n), (int) (self.getZ() / n));
   }
 
   @Override
   protected Object __mod__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    return super.__mod__(scope, self, o, inPlace); // TODO
+    double n = scope.getProgramManager().getTypeInstance(FloatType.class).implicitCast(scope, o);
+    return new BlockPos(self.getX() % n, self.getY() % n, self.getZ() % n); // TODO true modulo
   }
 
   @Override
   protected Object __pow__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    return super.__pow__(scope, self, o, inPlace); // TODO
+    double n = scope.getProgramManager().getTypeInstance(FloatType.class).implicitCast(scope, o);
+    return new BlockPos(Math.pow(self.getX(), n), Math.pow(self.getY(), n), Math.pow(self.getZ(), n));
   }
 
   @Override
-  protected Object __eq__(Scope scope, final BlockPos self, final Object o) {
-    return super.__eq__(scope, self, o); // TODO
+  protected Object __eq__(final Scope scope, final BlockPos self, final Object o) {
+    if (!(o instanceof BlockPos)) {
+      return false;
+    }
+    return self.equals(o);
   }
 
   @Override
-  public BlockPos implicitCast(final Scope scope, final Object o) {
+  protected Object __gt__(final Scope scope, final BlockPos self, final Object o) {
+    if (o instanceof BlockPos) {
+      return self.compareTo((BlockPos) o) > 0;
+    }
+    return super.__gt__(scope, self, o);
+  }
+
+  @Override
+  public BlockPos explicitCast(final Scope scope, final Object o) {
     if (o instanceof List) {
       //noinspection unchecked
       List<Object> list = (List<Object>) o;
       if (list.size() == 3) {
-        IntType numberType = scope.getInterpreter().getTypeInstance(IntType.class);
+        IntType numberType = scope.getProgramManager().getTypeInstance(IntType.class);
         List<Integer> values = list.stream().map(o1 -> numberType.implicitCast(scope, o1)).collect(Collectors.toList());
         return new BlockPos(values.get(0), values.get(1), values.get(2));
       }
     } else if (o instanceof Map) {
-      IntType intType = scope.getInterpreter().getTypeInstance(IntType.class);
+      IntType intType = scope.getProgramManager().getTypeInstance(IntType.class);
       Map<?, ?> m = (Map<?, ?>) o;
       return new BlockPos(intType.implicitCast(scope, m.get("x")), intType.implicitCast(scope, m.get("y")), intType.implicitCast(scope, m.get("z")));
     }
-    return super.implicitCast(scope, o);
+    return super.explicitCast(scope, o);
   }
 
   @Override

@@ -23,17 +23,25 @@ public class BlockType extends Type<Block> {
     return Block.class;
   }
 
-  // TODO add properties and methods
-
   @Property(name = "id")
   public ResourceLocation getID(final Block self) {
     return ForgeRegistries.BLOCKS.getKey(self);
   }
 
   @Override
+  protected Object __eq__(final Scope scope, final Block self, final Object o) {
+    if (!(o instanceof Block)) {
+      return false;
+    }
+    return this.getID(self).equals(this.getID((Block) o));
+  }
+
+  @Override
   public Block explicitCast(final Scope scope, final Object o) throws MCCodeRuntimeException {
     if (o instanceof String) {
       return ForgeRegistries.BLOCKS.getValue(new ResourceLocation((String) o));
+    } else if (o instanceof ResourceLocation) {
+      return ForgeRegistries.BLOCKS.getValue((ResourceLocation) o);
     }
     return super.explicitCast(scope, o);
   }

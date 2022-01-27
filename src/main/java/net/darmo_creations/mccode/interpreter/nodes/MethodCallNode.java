@@ -50,8 +50,8 @@ public class MethodCallNode extends OperationNode {
   @Override
   public Object evaluate(final Scope scope) throws EvaluationException, ArithmeticException {
     Object self = this.instance.evaluate(scope);
-    MemberFunction method = scope.getInterpreter().getTypeForValue(self).getMethod(this.methodName);
-    Scope functionScope = new Scope(method.getInternalName(), scope);
+    MemberFunction method = scope.getProgramManager().getTypeForValue(self).getMethod(this.methodName);
+    Scope functionScope = new Scope(method.getName(), scope);
 
     functionScope.declareVariable(new Variable(MemberFunction.SELF_PARAM_NAME, false, false, true, false, self));
     for (int i = 0; i < this.arguments.size(); i++) {

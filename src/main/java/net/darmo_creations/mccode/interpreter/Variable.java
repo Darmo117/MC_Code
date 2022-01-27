@@ -40,7 +40,7 @@ public class Variable {
     this.publiclyVisible = tag.getBoolean(PUBLIC_KEY);
     this.editableThroughCommands = tag.getBoolean(EDITABLE_KEY);
     this.constant = tag.getBoolean(CONSTANT_KEY);
-    this.value = scope.getInterpreter().getTypeForName(tag.getString(TYPE_KEY)).readFromNBT(scope, tag.getCompoundTag(VALUE_KEY));
+    this.value = scope.getProgramManager().getTypeForName(tag.getString(TYPE_KEY)).readFromNBT(scope, tag.getCompoundTag(VALUE_KEY));
     this.deletable = false;
   }
 
@@ -84,7 +84,7 @@ public class Variable {
     tag.setBoolean(PUBLIC_KEY, this.publiclyVisible);
     tag.setBoolean(EDITABLE_KEY, this.editableThroughCommands);
     tag.setBoolean(CONSTANT_KEY, this.constant);
-    Type<?> type = scope.getInterpreter().getTypeForValue(this.value);
+    Type<?> type = scope.getProgramManager().getTypeForValue(this.value);
     tag.setString(TYPE_KEY, type.getName());
     tag.setTag(VALUE_KEY, type.writeToNBT(scope, this.value));
     return tag;

@@ -20,6 +20,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UserFunction extends Function {
   public static final int MAX_CALL_DEPTH = 100;
@@ -91,7 +92,11 @@ public class UserFunction extends Function {
 
   @Override
   public String toString() {
-    return super.toString() + String.format("{%s}", Utils.indentStatements(this.statements));
+    String params = this.parameters.entrySet().stream()
+        .sorted(Comparator.comparing(e -> e.getValue().getLeft()))
+        .map(Map.Entry::getKey)
+        .collect(Collectors.joining(", "));
+    return String.format("function %s(%s) do%send", this.getName(), params, Utils.indentStatements(this.statements));
   }
 
   private static Map<String, Pair<Integer, ? extends Type<?>>> extractParameters(final ProgramManager programManager, final List<String> parameterNames) {

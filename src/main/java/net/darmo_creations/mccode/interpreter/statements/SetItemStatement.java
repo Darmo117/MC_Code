@@ -42,7 +42,7 @@ public class SetItemStatement extends Statement {
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     Object targetObject = this.target.evaluate(scope);
-    Type<?> targetObjectType = scope.getInterpreter().getTypeForValue(targetObject);
+    Type<?> targetObjectType = scope.getProgramManager().getTypeForValue(targetObject);
     Object keyValue = this.key.evaluate(scope);
     Object newValue = this.value.evaluate(scope);
     Object oldValue = targetObjectType.applyOperator(scope, Operator.GET_ITEM, targetObject, keyValue, false);

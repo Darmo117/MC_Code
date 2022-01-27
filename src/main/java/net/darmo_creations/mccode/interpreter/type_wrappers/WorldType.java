@@ -28,6 +28,11 @@ public class WorldType extends Type<WorldProxy> {
     return WorldProxy.class;
   }
 
+  @Override
+  public boolean generateCastOperator() {
+    return false;
+  }
+
   @Property(name = "tick")
   @Doc("The current tick for this world.")
   public Integer getWorldTick(final Scope scope, final WorldProxy self) {

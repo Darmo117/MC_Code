@@ -1,18 +1,41 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.annotations.Doc;
+import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
+import net.darmo_creations.mccode.interpreter.exceptions.IndexOutOfBoundsException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class ListType extends Type<MCList> {
   public static final String NAME = "list";
 
   private static final String VALUES_KEY = "Values";
+
+  public static Comparator<Object> comparator(final Scope scope, final boolean reversed) {
+    return (e1, e2) -> {
+      ProgramManager pm = scope.getProgramManager();
+      Type<?> e1Type = pm.getTypeForValue(e1);
+      Object gt = e1Type.applyOperator(scope, Operator.GT, e1, e2, false);
+      if (pm.getTypeForValue(gt).toBoolean(gt)) {
+        return reversed ? -1 : 1;
+      }
+      Object equal = e1Type.applyOperator(scope, Operator.EQUAL, e1, e2, false);
+      return pm.getTypeForValue(equal).toBoolean(equal) ? 0 : (reversed ? 1 : -1);
+    };
+  }
 
   @Override
   public String getName() {
@@ -24,58 +47,111 @@ public class ListType extends Type<MCList> {
     return MCList.class;
   }
 
-  @Property(name = "length")
-  public Integer getLength(final MCList self) {
-    return self.size();
-  }
-
   @Property(name = "clear")
+  @Doc("Remove all values from this list.")
   public Void clear(final MCList self) {
     self.clear();
+    return null;
+  }
+
+  @Method(name = "add")
+  @Doc("Add a value at the end of this list. Modifies this list.")
+  public Void add(final Scope scope, final MCList self, final Object value) {
+    self.add(scope.getProgramManager().getTypeForValue(value).copy(scope, value));
+    return null;
+  }
+
+  @Method(name = "insert")
+  @Doc("Add a value at the specified index of this list. Modifies this list.")
+  public Void insert(final Scope scope, final MCList self, final Integer index, final Object value) {
+    if (index < 0 || index > self.size()) {
+      throw new IndexOutOfBoundsException(scope, index);
+    }
+    self.add(index, scope.getProgramManager().getTypeForValue(value).copy(scope, value));
+    return null;
+  }
+
+  @Method(name = "count")
+  @Doc("Count the number of times the given value occurs in this list.")
+  public Integer count(final Scope scope, final MCList self, final Object value) {
+    return Math.toIntExact(self.stream().filter(e -> e.equals(value)).count());
+  }
+
+  @Method(name = "index")
+  @Doc("Return the index of the first occurence of the given value in this list." +
+      " Return -1 if the value is not present in this list.")
+  public Integer indexOf(final Scope scope, final MCList self, final Object value) {
+    return self.indexOf(value);
+  }
+
+  @Method(name = "sort")
+  @Doc("Sort this list using natural ordering of its elements.")
+  public Void sort(final Scope scope, final MCList self) {
+    self.sort(comparator(scope, false));
     return null;
   }
 
   @Override
   protected Object __get_item__(final Scope scope, final MCList self, final Object key) {
     if (!(key instanceof Integer)) {
-      throw new CastException(scope, scope.getInterpreter().getTypeInstance(IntType.class),
-          scope.getInterpreter().getTypeForValue(key));
+      throw new CastException(scope, scope.getProgramManager().getTypeInstance(IntType.class),
+          scope.getProgramManager().getTypeForValue(key));
     }
-    return self.get((Integer) key);
+    int index = (Integer) key;
+    if (index < 0 || index > self.size()) {
+      throw new IndexOutOfBoundsException(scope, index);
+    }
+    return self.get(index);
   }
 
   @Override
   protected void __set_item__(final Scope scope, MCList self, final Object key, final Object value) {
     if (!(key instanceof Integer)) {
-      throw new CastException(scope, scope.getInterpreter().getTypeInstance(IntType.class),
-          scope.getInterpreter().getTypeForValue(key));
+      throw new CastException(scope, scope.getProgramManager().getTypeInstance(IntType.class),
+          scope.getProgramManager().getTypeForValue(key));
     }
-    self.set((Integer) key, value);
+    int index = (Integer) key;
+    if (index < 0 || index > self.size()) {
+      throw new IndexOutOfBoundsException(scope, index);
+    }
+    // Deep copy value
+    self.set(index, scope.getProgramManager().getTypeForValue(value).copy(scope, value));
   }
 
   @Override
   protected void __del_item__(final Scope scope, MCList self, final Object key) {
     if (!(key instanceof Integer)) {
-      throw new CastException(scope, scope.getInterpreter().getTypeInstance(IntType.class),
-          scope.getInterpreter().getTypeForValue(key));
+      throw new CastException(scope, scope.getProgramManager().getTypeInstance(IntType.class),
+          scope.getProgramManager().getTypeForValue(key));
     }
-    self.remove((int) (Integer) key);
+    int index = (Integer) key;
+    if (index < 0 || index > self.size()) {
+      throw new IndexOutOfBoundsException(scope, index);
+    }
+    self.remove(index);
   }
 
+  /**
+   * Add all values of o to self.
+   */
   @Override
   protected Object __add__(final Scope scope, MCList self, final Object o, final boolean inPlace) {
     MCList other = this.implicitCast(scope, o);
     if (inPlace) {
-      return this.add(self, other);
+      return this.add(scope, self, other);
     }
-    return this.add(new MCList(self), other);
+    return this.add(scope, new MCList(self), other);
   }
 
-  private Object add(MCList list1, final MCList list2) {
-    list1.addAll(list2);
+  private Object add(final Scope scope, MCList list1, final MCList list2) {
+    // Deep copy all elements to add
+    list1.addAll(this.__copy__(scope, list2));
     return list1;
   }
 
+  /**
+   * Remove all values of o from self.
+   */
   @Override
   protected Object __sub__(final Scope scope, MCList self, final Object o, final boolean inPlace) {
     MCList other = this.implicitCast(scope, o);
@@ -90,25 +166,47 @@ public class ListType extends Type<MCList> {
     return list1;
   }
 
+  /**
+   * Duplicates this list o times.
+   */
   @Override
   protected Object __mul__(final Scope scope, MCList self, final Object o, final boolean inPlace) {
-    int nb = scope.getInterpreter().getTypeInstance(IntType.class).implicitCast(scope, o);
+    int nb = scope.getProgramManager().getTypeInstance(IntType.class).implicitCast(scope, o);
     if (inPlace) {
-      return this.mul(self, nb);
+      return this.mul(scope, self, nb);
     }
-    return this.mul(new MCList(self), nb);
+    return this.mul(scope, new MCList(self), nb);
   }
 
-  private Object mul(MCList list, final int nb) {
+  private Object mul(final Scope scope, MCList list, final int nb) {
     if (nb <= 0) {
       list.clear();
       return list;
     }
     for (int i = 0; i < nb - 1; i++) {
-      //noinspection CollectionAddedToSelf
-      list.addAll(list);
+      // Deep copy all elements to add
+      list.addAll(this.__copy__(scope, list));
     }
     return list;
+  }
+
+  @Override
+  protected Object __eq__(final Scope scope, final MCList self, final Object o) {
+    if (!(o instanceof MCList)) {
+      return false;
+    }
+    return self.equals(o);
+  }
+
+  @Override
+  protected Object __gt__(final Scope scope, final MCList self, final Object o) {
+    if (o instanceof MCList) {
+      MCList other = (MCList) o;
+      Stream<?> s = IntStream.range(0, self.size())
+          .mapToObj(i -> scope.getProgramManager().getTypeForValue(self.get(i)).applyOperator(scope, Operator.GT, self.get(i), other.get(i), false));
+      return self.size() > other.size() || self.size() == other.size() && s.allMatch(e -> scope.getProgramManager().getTypeForValue(e).toBoolean(e));
+    }
+    return super.__gt__(scope, self, o);
   }
 
   @Override
@@ -127,20 +225,43 @@ public class ListType extends Type<MCList> {
   }
 
   @Override
-  public MCList implicitCast(final Scope scope, final Object o) {
-    if (o instanceof List || o instanceof Set) {
-      return new MCList((Collection<?>) o);
+  protected MCList __copy__(final Scope scope, final MCList self) {
+    return new MCList(self.stream().map(e -> scope.getProgramManager().getTypeForValue(e).copy(scope, e)).collect(Collectors.toList()));
+  }
+
+  @Override
+  protected int __len__(final Scope scope, final MCList self) {
+    return self.size();
+  }
+
+  @Override
+  public MCList explicitCast(final Scope scope, final Object o) {
+    if (o instanceof Collection) {
+      return this.__copy__(scope, new MCList((Collection<?>) o));
+    } else if (o instanceof Iterable) {
+      MCList list = new MCList();
+      for (Object e : (Iterable<?>) o) {
+        list.add(scope.getProgramManager().getTypeForValue(e).copy(scope, e));
+      }
+      return list;
     } else if (o instanceof Map) {
-      return new MCList(((Map<?, ?>) o).keySet());
+      return this.__copy__(scope, new MCList(((Map<?, ?>) o).keySet()));
+    } else if (o instanceof String) {
+      MCList list = new MCList();
+      String s = (String) o;
+      for (int i = 0; i < s.length(); i++) {
+        list.add(String.valueOf(s.charAt(i)));
+      }
+      return list;
     }
-    return super.implicitCast(scope, o);
+    return super.explicitCast(scope, o);
   }
 
   @Override
   protected NBTTagCompound _writeToNBT(final Scope scope, final MCList self) {
     NBTTagCompound tag = super._writeToNBT(scope, self);
     NBTTagList list = new NBTTagList();
-    self.forEach(v -> list.appendTag(scope.getInterpreter().getTypeForValue(v).writeToNBT(scope, v)));
+    self.forEach(v -> list.appendTag(scope.getProgramManager().getTypeForValue(v).writeToNBT(scope, v)));
     tag.setTag(VALUES_KEY, list);
     return tag;
   }
@@ -149,7 +270,7 @@ public class ListType extends Type<MCList> {
   public MCList readFromNBT(final Scope scope, final NBTTagCompound tag) {
     MCList list = new MCList();
     NBTTagList tagsList = tag.getTagList(VALUES_KEY, new NBTTagCompound().getId());
-    tagsList.forEach(t -> list.add(scope.getInterpreter().getTypeForName(((NBTTagCompound) t).getString(Type.NAME_KEY)).readFromNBT(scope, (NBTTagCompound) t)));
+    tagsList.forEach(t -> list.add(scope.getProgramManager().getTypeForName(((NBTTagCompound) t).getString(Type.NAME_KEY)).readFromNBT(scope, (NBTTagCompound) t)));
     return list;
   }
 }

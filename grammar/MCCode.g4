@@ -47,8 +47,8 @@ NULL  : 'null';
 TRUE  : 'true';
 FALSE : 'false';
 INT   : [0-9]+;
-FLOAT : [0-9]+'.'?[0-9]*;
-STRING: '"'([^"\n\r]|'\\"')+'"';
+FLOAT : ([0-9]+'.'[0-9]*|'.'?[0-9]+)([eE]'-'?[0-9]+)?;
+STRING: '"'([^"\n\r]|'\\'[n"\\])*'"';
 IDENT : [a-zA-Z_][a-zA-Z0-9_]*;
 
 IMPORT : 'import';
@@ -123,14 +123,13 @@ expr:
   | object=IDENT DOT property=IDENT                 # GetProperty // ID: 101
   | object=IDENT DOT property=IDENT LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # MethodCall // ID: 102
   | expr LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # FunctionCall // ID: 103
-  | LPAREN type=IDENT RPAREN exp=expr               # CastValue // ID: 200
-  | operator=(MINUS | NOT) operand=expr             # UnaryOperator // IDs: 201
-  | source=expr LBRACK key=expr RBRACK              # GetItem // ID: 202
-  | left=expr operator=POWER right=expr             # BinaryOperator // ID: 202
-  | left=expr operator=(MUL | DIV | INTDIV | MOD) right=expr # BinaryOperator // ID: 202
-  | left=expr operator=(PLUS | MINUS) right=expr    # BinaryOperator // ID: 202
-  | left=expr NOT? IN right=expr                    # BinaryOperator // ID: 202
-  | left=expr operator=(EQUAL | NEQUAL | GT | GE | LT | LE) right=expr # BinaryOperator // ID: 202
-  | left=expr operator=AND right=expr               # BinaryOperator // ID: 202
-  | left=expr operator=OR right=expr                # BinaryOperator // ID: 202
+  | operator=(MINUS | NOT) operand=expr             # UnaryOperator // IDs: 200
+  | source=expr LBRACK key=expr RBRACK              # GetItem // ID: 201
+  | left=expr operator=POWER right=expr             # BinaryOperator // ID: 201
+  | left=expr operator=(MUL | DIV | INTDIV | MOD) right=expr # BinaryOperator // ID: 201
+  | left=expr operator=(PLUS | MINUS) right=expr    # BinaryOperator // ID: 201
+  | left=expr NOT? IN right=expr                    # BinaryOperator // ID: 201
+  | left=expr operator=(EQUAL | NEQUAL | GT | GE | LT | LE) right=expr # BinaryOperator // ID: 201
+  | left=expr operator=AND right=expr               # BinaryOperator // ID: 201
+  | left=expr operator=OR right=expr                # BinaryOperator // ID: 201
 ;

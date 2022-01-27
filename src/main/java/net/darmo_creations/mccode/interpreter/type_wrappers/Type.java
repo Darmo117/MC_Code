@@ -1,8 +1,8 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
-import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.MemberFunction;
 import net.darmo_creations.mccode.interpreter.ObjectProperty;
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
@@ -77,7 +77,7 @@ public abstract class Type<T> {
    * @throws MCCodeRuntimeException If the instance object does not have a property with the given name.
    */
   public Object getProperty(final Scope scope, final Object self, final String propertyName) {
-    this.ensureType(scope.getInterpreter(), self,
+    this.ensureType(scope.getProgramManager(), self,
         String.format("attempt to get property from type \"%s\" for object of type \"%s\"", this, self));
     if (this.properties.containsKey(propertyName)) {
       return this.properties.get(propertyName).get(self);
@@ -96,7 +96,7 @@ public abstract class Type<T> {
    * @throws MCCodeRuntimeException If the instance object does not have a property with the given name.
    */
   public void setProperty(final Scope scope, final Object self, final String propertyName, final Object value) {
-    this.ensureType(scope.getInterpreter(), self,
+    this.ensureType(scope.getProgramManager(), self,
         String.format("attempt to get property from type \"%s\" for object of type \"%s\"", this, self));
     if (this.properties.containsKey(propertyName)) {
       this.properties.get(propertyName).set(scope, self, value);
@@ -126,7 +126,7 @@ public abstract class Type<T> {
       //noinspection unchecked
       return (T) o;
     }
-    throw new CastException(scope, this, scope.getInterpreter().getTypeForValue(o));
+    throw new CastException(scope, this, scope.getProgramManager().getTypeForValue(o));
   }
 
   /**
@@ -160,7 +160,7 @@ public abstract class Type<T> {
   }
 
   public Object applyOperator(final Scope scope, final Operator operator, Object self, Object o, final boolean inPlace) {
-    if (scope.getInterpreter().getTypeForValue(self) != this) {
+    if (scope.getProgramManager().getTypeForValue(self) != this) {
       throw new MCCodeException(String.format("operator %s expected instance object of type %s, got %s", operator.getSymbol(), this.getWrappedType(), self.getClass()));
     }
     //noinspection unchecked
@@ -214,7 +214,7 @@ public abstract class Type<T> {
   }
 
   public void setItem(final Scope scope, Object self, final Object key, final Object value) {
-    if (scope.getInterpreter().getTypeForValue(self) != this) {
+    if (scope.getProgramManager().getTypeForValue(self) != this) {
       throw new MCCodeException(String.format("setItem expected instance object of type %s, got %s", this.getWrappedType(), self.getClass()));
     }
     //noinspection unchecked
@@ -222,7 +222,7 @@ public abstract class Type<T> {
   }
 
   public void deleteItem(final Scope scope, Object self, final Object key) {
-    if (scope.getInterpreter().getTypeForValue(self) != this) {
+    if (scope.getProgramManager().getTypeForValue(self) != this) {
       throw new MCCodeException(String.format("deleteItem expected instance object of type %s, got %s", this.getWrappedType(), self.getClass()));
     }
     //noinspection unchecked
@@ -230,51 +230,52 @@ public abstract class Type<T> {
   }
 
   protected Object __get_item__(Scope scope, T self, Object key) {
-    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getInterpreter().getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getProgramManager().getTypeForValue(key));
   }
 
   protected void __set_item__(Scope scope, T self, Object key, Object value) {
-    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getInterpreter().getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getProgramManager().getTypeForValue(key));
   }
 
   protected void __del_item__(Scope scope, T self, Object key) {
-    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getInterpreter().getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getProgramManager().getTypeForValue(key));
   }
 
   protected Object __minus__(Scope scope, T self) {
     throw new UnsupportedOperatorException(scope, Operator.MINUS, this);
   }
 
+  @SuppressWarnings("unused")
   protected Object __not__(Scope scope, T self) {
     return !this.toBoolean(self);
   }
 
   protected Object __add__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getInterpreter().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getProgramManager().getTypeForValue(o));
   }
 
   protected Object __sub__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.SUB, this, scope.getInterpreter().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.SUB, this, scope.getProgramManager().getTypeForValue(o));
   }
 
   protected Object __mul__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.MUL, this, scope.getInterpreter().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.MUL, this, scope.getProgramManager().getTypeForValue(o));
   }
 
   protected Object __div__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.DIV, this, scope.getInterpreter().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.DIV, this, scope.getProgramManager().getTypeForValue(o));
   }
 
   protected Object __intdiv__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.INT_DIV, this, scope.getInterpreter().getTypeForValue(o));
+    return (int) Math.floor(((Number) this.__div__(scope, self, o, inPlace)).doubleValue());
   }
 
   protected Object __mod__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.MOD, this, scope.getInterpreter().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.MOD, this, scope.getProgramManager().getTypeForValue(o));
   }
 
   protected Object __pow__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.POW, this, scope.getInterpreter().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.POW, this, scope.getProgramManager().getTypeForValue(o));
   }
 
   protected Object __eq__(Scope scope, T self, Object o) {
@@ -286,7 +287,7 @@ public abstract class Type<T> {
   }
 
   protected Object __gt__(Scope scope, T self, Object o) {
-    throw new UnsupportedOperatorException(scope, Operator.GT, this, scope.getInterpreter().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.GT, this, scope.getProgramManager().getTypeForValue(o));
   }
 
   protected Object __ge__(Scope scope, T self, Object o) {
@@ -302,15 +303,36 @@ public abstract class Type<T> {
   }
 
   protected Object __in__(Scope scope, T self, Object o) {
-    throw new UnsupportedOperatorException(scope, Operator.IN, this, scope.getInterpreter().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.IN, this, scope.getProgramManager().getTypeForValue(o));
   }
 
+  public int size(Scope scope, Object self) {
+    this.ensureType(scope.getProgramManager(), self,
+        String.format("attempt to get length of object of type \"%s\" from type \"%s\"", self, this));
+    //noinspection unchecked
+    return this.__len__(scope, (T) self);
+  }
+
+  protected int __len__(Scope scope, T self) {
+    throw new UnsupportedOperatorException(scope, Operator.LENGTH, this);
+  }
+
+  @SuppressWarnings("unused")
   protected Object __and__(Scope scope, T self, Object o) {
-    return this.toBoolean(self) && scope.getInterpreter().getTypeForValue(o).toBoolean(o);
+    if (!this.toBoolean(self)) {
+      return self;
+    } else {
+      return o;
+    }
   }
 
+  @SuppressWarnings("unused")
   protected Object __or__(Scope scope, T self, Object o) {
-    return this.toBoolean(self) || scope.getInterpreter().getTypeForValue(o).toBoolean(o);
+    if (this.toBoolean(self)) {
+      return self;
+    } else {
+      return o;
+    }
   }
 
   /**
@@ -327,8 +349,19 @@ public abstract class Type<T> {
     throw new UnsupportedOperatorException(scope, Operator.ITERATE, this);
   }
 
+  public T copy(final Scope scope, final Object self) {
+    this.ensureType(scope.getProgramManager(), self,
+        String.format("attempt to clone object of type \"%s\" from type \"%s\"", self, this));
+    //noinspection unchecked
+    return this.__copy__(scope, (T) self);
+  }
+
+  protected T __copy__(final Scope scope, final T self) {
+    return self;
+  }
+
   public NBTTagCompound writeToNBT(final Scope scope, final Object self) {
-    ProgramManager programManager = scope.getInterpreter();
+    ProgramManager programManager = scope.getProgramManager();
     this.ensureType(programManager, self,
         String.format("attempt to serialize object of type \"%s\" from type \"%s\"", programManager.getTypeForValue(self), this));
     //noinspection unchecked

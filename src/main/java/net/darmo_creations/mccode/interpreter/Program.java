@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * The program’s state can be saved and restored and world loading and unloading.
  */
 public class Program {
-  public static final String WORLD_VAR_NAME = "world";
+  public static final String WORLD_VAR_NAME = "WORLD";
 
   private static final String NAME_KEY = "Name";
   private static final String STATEMENTS_KEY = "Statements";
@@ -99,7 +99,7 @@ public class Program {
     return Optional.ofNullable(this.repeatAmount);
   }
 
-  public ProgramManager getInterpreter() {
+  public ProgramManager getProgramManager() {
     return this.programManager;
   }
 

@@ -41,7 +41,7 @@ public class SetPropertyStatement extends Statement {
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     Object targetObject = this.target.evaluate(scope);
-    Type<?> targetType = scope.getInterpreter().getTypeForValue(targetObject);
+    Type<?> targetType = scope.getProgramManager().getTypeForValue(targetObject);
     Object valueObject = this.value.evaluate(scope);
     Object result = this.operator.getBaseOperator()
         .map(op -> targetType.applyOperator(scope, op, targetObject, valueObject, true))

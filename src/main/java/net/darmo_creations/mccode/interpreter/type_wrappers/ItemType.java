@@ -25,17 +25,31 @@ public class ItemType extends Type<Item> {
     return Item.class;
   }
 
-  // TODO add properties
-
   @Property(name = "id")
   public ResourceLocation getID(final Item instance) {
     return ForgeRegistries.ITEMS.getKey(instance);
+  }
+
+  @Property(name = "max_stack_size")
+  public Integer getMaxStackSize(final Item self) {
+    //noinspection deprecation
+    return self.getItemStackLimit();
+  }
+
+  @Override
+  protected Object __eq__(final Scope scope, final Item self, final Object o) {
+    if (!(o instanceof Item)) {
+      return false;
+    }
+    return this.getID(self).equals(this.getID((Item) o));
   }
 
   @Override
   public Item explicitCast(final Scope scope, final Object o) throws MCCodeRuntimeException {
     if (o instanceof String) {
       return ForgeRegistries.ITEMS.getValue(new ResourceLocation((String) o));
+    } else if (o instanceof ResourceLocation) {
+      return ForgeRegistries.ITEMS.getValue((ResourceLocation) o);
     } else if (o instanceof Block) {
       Item itemBlock = Item.getItemFromBlock((Block) o);
       if (itemBlock == Items.AIR) {

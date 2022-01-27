@@ -5,7 +5,7 @@ public enum Operator {
   PLUS("+"), SUB("-"), MUL("*"), DIV("/"), INT_DIV("//"), MOD("%"), POW("^"),
   EQUAL("="), NOT_EQUAL("!="), GT(">"), GE(">="), LT("<"), LE("<="), IN("in", true), NOT_IN("not in", true),
   AND("and"), OR("or"),
-  GET_ITEM("get_item"), ITERATE("iterate");
+  GET_ITEM("get_item"), ITERATE("iter"), LENGTH("len");
 
   private final String symbol;
   private final boolean flipped;

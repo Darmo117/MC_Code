@@ -53,15 +53,15 @@ public class FunctionCallNode extends OperationNode {
       function = (Function) o;
     } catch (ClassCastException e) {
       throw new EvaluationException(scope, "mccode.interpreter.error.calling_non_callable",
-          scope.getInterpreter().getTypeForValue(o));
+          scope.getProgramManager().getTypeForValue(o));
     }
 
     Scope functionScope;
     if (function instanceof UserFunction) {
       // User-defined functions use global scope as closure as they can only be declared in the global scope
-      functionScope = new Scope(function.getInternalName(), scope.getProgram().getScope());
+      functionScope = new Scope(function.getName(), scope.getProgram().getScope());
     } else {
-      functionScope = new Scope(function.getInternalName(), scope);
+      functionScope = new Scope(function.getName(), scope);
     }
 
     for (int i = 0; i < this.arguments.size(); i++) {

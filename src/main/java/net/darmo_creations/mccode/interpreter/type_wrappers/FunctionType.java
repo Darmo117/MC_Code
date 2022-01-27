@@ -27,6 +27,11 @@ public class FunctionType extends Type<Function> {
   }
 
   @Override
+  public boolean generateCastOperator() {
+    return false;
+  }
+
+  @Override
   protected NBTTagCompound _writeToNBT(final Scope scope, final Function self) {
     NBTTagCompound tag = super._writeToNBT(scope, self);
     if (self instanceof BuiltinFunction) {
@@ -48,7 +53,7 @@ public class FunctionType extends Type<Function> {
         // Type-safe as builtin functions cannot be deleted nor overridden
         return (Function) scope.getVariable(tag.getString(FUNCTION_KEY), false);
       case FUNCTION_TYPE_USER:
-        return new UserFunction(scope.getInterpreter(), tag.getCompoundTag(FUNCTION_KEY));
+        return new UserFunction(scope.getProgramManager(), tag.getCompoundTag(FUNCTION_KEY));
       default:
         throw new MCCodeException("invalid function type " + functionType);
     }
