@@ -1,9 +1,7 @@
 package net.darmo_creations.mccode.interpreter.types;
 
-import net.darmo_creations.mccode.interpreter.ProgramManager;
-import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.StackTraceElement;
-import net.darmo_creations.mccode.interpreter.Utils;
+import net.darmo_creations.mccode.interpreter.*;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.darmo_creations.mccode.interpreter.statements.ReturnStatement;
@@ -11,20 +9,20 @@ import net.darmo_creations.mccode.interpreter.statements.Statement;
 import net.darmo_creations.mccode.interpreter.statements.StatementAction;
 import net.darmo_creations.mccode.interpreter.statements.StatementNBTHelper;
 import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
-import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class UserFunction extends Function {
   public static final int MAX_CALL_DEPTH = 100;
 
+  private static final String NAME_KEY = "Name";
   private static final String PARAMETERS_KEY = "Parameters";
   private static final String STATEMENTS_KEY = "Statements";
   private static final String IP_KEY = "IP";
@@ -32,29 +30,21 @@ public class UserFunction extends Function {
   private final List<Statement> statements;
   private int ip;
 
-  public UserFunction(final ProgramManager programManager, final List<String> parameterNames, final List<Statement> statements) {
-    super(null, extractParameters(programManager, parameterNames), programManager.getTypeInstance(AnyType.class));
+  public UserFunction(final String name, final ProgramManager programManager, final List<String> parameterNames, final List<Statement> statements) {
+    super(name, extractParameters(programManager, parameterNames), programManager.getTypeInstance(AnyType.class));
     this.statements = Objects.requireNonNull(statements);
     this.ip = 0;
   }
 
   public UserFunction(final ProgramManager programManager, final NBTTagCompound tag) {
-    this(programManager, extractParameterNames(tag), StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY));
+    super(tag.getString(NAME_KEY), extractParameters(programManager, tag), programManager.getTypeInstance(AnyType.class));
+    this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);
     this.ip = tag.getInteger(IP_KEY);
-  }
-
-  public static List<String> extractParameterNames(final NBTTagCompound tag) {
-    NBTTagList statementsTag = tag.getTagList(PARAMETERS_KEY, new NBTTagString().getId());
-    List<String> parametersNames = new ArrayList<>();
-    for (NBTBase t : statementsTag) {
-      parametersNames.add(((NBTTagString) t).getString());
-    }
-    return parametersNames;
   }
 
   @Override
   public Object apply(Scope scope) {
-    List<StackTraceElement> callStack = Arrays.asList(scope.getStackTrace());
+    List<StackTraceElement> callStack = scope.getStackTrace();
     if (callStack.size() == MAX_CALL_DEPTH) {
       throw new EvaluationException(scope, "mccode.interpreter.error.stack_overflow");
     }
@@ -81,9 +71,10 @@ public class UserFunction extends Function {
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     NBTTagList parametersList = new NBTTagList();
-    this.parameters.entrySet().stream()
-        .sorted(Comparator.comparing(e -> e.getValue().getLeft()))
-        .forEach(e -> parametersList.appendTag(new NBTTagString(e.getKey())));
+    this.parameters.stream()
+        .map(Parameter::getName)
+        .sorted()
+        .forEach(paramName -> parametersList.appendTag(new NBTTagString(paramName)));
     tag.setTag(PARAMETERS_KEY, parametersList);
     tag.setTag(STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(this.statements));
     tag.setInteger(IP_KEY, this.ip);
@@ -92,18 +83,23 @@ public class UserFunction extends Function {
 
   @Override
   public String toString() {
-    String params = this.parameters.entrySet().stream()
-        .sorted(Comparator.comparing(e -> e.getValue().getLeft()))
-        .map(Map.Entry::getKey)
+    String params = this.parameters.stream()
+        .map(Parameter::getName)
+        .sorted()
         .collect(Collectors.joining(", "));
     return String.format("function %s(%s) do%send", this.getName(), params, Utils.indentStatements(this.statements));
   }
 
-  private static Map<String, Pair<Integer, ? extends Type<?>>> extractParameters(final ProgramManager programManager, final List<String> parameterNames) {
-    Map<String, Pair<Integer, ? extends Type<?>>> map = new HashMap<>();
-    for (int i = 0; i < parameterNames.size(); i++) {
-      map.put(parameterNames.get(i), new ImmutablePair<>(i, programManager.getTypeInstance(AnyType.class)));
+  public static List<Parameter> extractParameters(final ProgramManager programManager, final NBTTagCompound tag) {
+    NBTTagList parametersTag = tag.getTagList(PARAMETERS_KEY, new NBTTagString().getId());
+    List<Parameter> parameters = new ArrayList<>();
+    for (NBTBase t : parametersTag) {
+      parameters.add(new Parameter(((NBTTagString) t).getString(), programManager.getTypeInstance(AnyType.class)));
     }
-    return map;
+    return parameters;
+  }
+
+  private static List<Parameter> extractParameters(final ProgramManager programManager, final List<String> parameterNames) {
+    return parameterNames.stream().map(n -> new Parameter(n, programManager.getTypeInstance(AnyType.class))).collect(Collectors.toList());
   }
 }

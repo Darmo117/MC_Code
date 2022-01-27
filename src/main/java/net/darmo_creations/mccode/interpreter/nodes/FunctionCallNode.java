@@ -1,13 +1,12 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
-import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 import net.darmo_creations.mccode.interpreter.types.Function;
 import net.darmo_creations.mccode.interpreter.types.UserFunction;
 import net.minecraft.nbt.NBTTagCompound;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.Objects;
@@ -65,8 +64,8 @@ public class FunctionCallNode extends OperationNode {
     }
 
     for (int i = 0; i < this.arguments.size(); i++) {
-      Pair<String, ? extends Type<?>> parameter = function.getParameter(i);
-      functionScope.declareVariable(new Variable(parameter.getKey(), false, false, false, true, this.arguments.get(i).evaluate(scope)));
+      Parameter parameter = function.getParameter(i);
+      functionScope.declareVariable(new Variable(parameter.getName(), false, false, false, true, this.arguments.get(i).evaluate(scope)));
     }
 
     return function.apply(functionScope);

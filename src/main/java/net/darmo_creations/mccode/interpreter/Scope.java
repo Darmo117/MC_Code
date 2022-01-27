@@ -11,10 +11,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Scope implements NBTDeserializable {
   public static final String MAIN_SCOPE_NAME = "$main";
@@ -193,7 +190,14 @@ public class Scope implements NBTDeserializable {
     }
   }
 
-  public StackTraceElement[] getStackTrace() {
-    return null; // TODO
+  public List<StackTraceElement> getStackTrace() {
+    List<StackTraceElement> trace;
+    if (this.parentScope != null) {
+      trace = this.parentScope.getStackTrace();
+    } else {
+      trace = new ArrayList<>();
+    }
+    trace.add(0, new StackTraceElement(this.getName()));
+    return trace;
   }
 }

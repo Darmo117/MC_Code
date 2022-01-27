@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.types;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 
@@ -31,17 +32,16 @@ public abstract class BuiltinFunction extends Function {
    * @return Parameter’s value.
    */
   protected <T> T getParameter(final Scope scope, final int index) {
-    String paramName = getAutoParameterNameForIndex(index);
     //noinspection unchecked
-    return (T) this.parameters.get(paramName).getRight()
-        .implicitCast(scope, scope.getVariable(paramName, false));
+    return (T) this.parameters.get(index).getType()
+        .implicitCast(scope, scope.getVariable(getAutoParameterNameForIndex(index), false));
   }
 
   @Override
   public String toString() {
-    String params = this.parameters.entrySet().stream()
-        .sorted(Comparator.comparing(e -> e.getValue().getLeft()))
-        .map(e -> e.getValue().getRight().getName() + " " + e.getKey())
+    String params = this.parameters.stream()
+        .sorted(Comparator.comparing(Parameter::getName))
+        .map(p -> p.getType().getName() + " " + p.getName())
         .collect(Collectors.joining(", "));
     return String.format("builtin function %s(%s) -> %s", this.getName(), params, this.getReturnType());
   }

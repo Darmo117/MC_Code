@@ -1,13 +1,11 @@
 package net.darmo_creations.mccode.interpreter.types;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -16,7 +14,7 @@ import java.util.Objects;
 public abstract class Function {
   private final Type<?> returnType;
   private final String name;
-  protected final Map<String, Pair<Integer, ? extends Type<?>>> parameters;
+  protected final List<Parameter> parameters;
 
   /**
    * Create a function with the given name.
@@ -25,9 +23,9 @@ public abstract class Function {
    * @param parameters Functions parameters.
    * @param returnType Function’s return type.
    */
-  public Function(final String name, final Map<String, Pair<Integer, ? extends Type<?>>> parameters, final Type<?> returnType) {
+  public Function(final String name, final List<Parameter> parameters, final Type<?> returnType) {
     this.name = name == null ? "<anonymous>" : name;
-    this.parameters = parameters; // TODO check indices
+    this.parameters = Objects.requireNonNull(parameters);
     this.returnType = Objects.requireNonNull(returnType);
   }
 
@@ -36,13 +34,6 @@ public abstract class Function {
    */
   public String getName() {
     return this.name;
-  }
-
-  /**
-   * Return the types of the parameters of this function.
-   */
-  public Map<String, Pair<Integer, ? extends Type<?>>> getParametersTypes() {
-    return new HashMap<>(this.parameters);
   }
 
   /**
@@ -56,15 +47,10 @@ public abstract class Function {
    * Return the name and type of the parameter at the given index.
    *
    * @param index Parameter’s index.
-   * @return Parameter’s name and type.
-   * @throws MCCodeException If no parameter with this index exist.
+   * @return The parameter object.
    */
-  public Pair<String, ? extends Type<?>> getParameter(final int index) {
-    return this.parameters.entrySet().stream()
-        .filter(e -> e.getValue().getLeft() == index)
-        .findFirst()
-        .map(e -> new ImmutablePair<>(e.getKey(), e.getValue().getRight()))
-        .orElseThrow(() -> new MCCodeException(String.format("no parameter at index %s for function %s", index, this.name)));
+  public Parameter getParameter(final int index) {
+    return this.parameters.get(index);
   }
 
   /**
@@ -77,19 +63,19 @@ public abstract class Function {
   public abstract Object apply(Scope scope);
 
   /**
-   * Generate a parameter types map from an array of types.
+   * Generate a parameter types list from an array of types.
    * <p>
    * This is a helper method for subclasses of this class.
    *
-   * @param types The array to generate types map from.
-   * @return The types map.
+   * @param types The array to generate types list from.
+   * @return The types list.
    */
-  protected static Map<String, Pair<Integer, ? extends Type<?>>> generateParameters(final Type<?>... types) {
-    Map<String, Pair<Integer, ? extends Type<?>>> map = new HashMap<>();
+  protected static List<Parameter> generateParameters(final Type<?>... types) {
+    List<Parameter> list = new ArrayList<>();
     for (int i = 0; i < types.length; i++) {
-      map.put(getAutoParameterNameForIndex(i), new ImmutablePair<>(i, types[i]));
+      list.add(new Parameter(getAutoParameterNameForIndex(i), types[i]));
     }
-    return map;
+    return list;
   }
 
   /**

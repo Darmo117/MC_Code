@@ -6,7 +6,11 @@ import net.darmo_creations.mccode.interpreter.types.Function;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a method of a builtin type.
@@ -46,27 +50,15 @@ public class MemberFunction extends Function {
   @Override
   public Object apply(Scope scope) {
     try {
-      Map<String, Object> variables = scope.getVariables();
-      Object self = variables.get(SELF_PARAM_NAME);
+      Object self = scope.getVariable(SELF_PARAM_NAME, false);
       if (!this.targetType.getWrappedType().isAssignableFrom(self.getClass())) {
         throw new MCCodeException(String.format("method %s expected instance of type %s, got %s", this.getName(), this.targetType.getWrappedType(), self.getClass()));
       }
-      variables.remove(SELF_PARAM_NAME);
-      // Extract parameter variables from scope to array
-      Object[] args = variables.entrySet().stream()
-          // Sort parameter values to match declared parameters order
-          .sorted(Comparator.comparing(e -> this.parameters.get(e.getKey()).getLeft()))
-          // Cast each value to the declared parameter type
-          .map(e -> this.parameters.get(e.getKey()).getRight().implicitCast(scope, e.getValue()))
-          .toArray();
+      Object[] args = this.parameters.stream().map(p -> scope.getVariable(p.getName(), false)).toArray();
       return this.method.invoke(self, args);
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new MCCodeException(e);
     }
-  }
-
-  public Type<?> getTargetType() {
-    return this.targetType;
   }
 
   public Optional<String> getDoc() {
@@ -75,6 +67,10 @@ public class MemberFunction extends Function {
 
   @Override
   public String toString() {
-    return super.toString() + " {<builtin method>}";
+    String params = this.parameters.stream()
+        .sorted(Comparator.comparing(Parameter::getName))
+        .map(p -> p.getType().getName() + " " + p.getName())
+        .collect(Collectors.joining(", "));
+    return String.format("builtin method %s.%s(%s) -> %s", this.targetType, this.getName(), params, this.getReturnType());
   }
 }
