@@ -1,6 +1,8 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.Utils;
+import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -38,6 +40,36 @@ public class PosType extends Type<BlockPos> {
     return self.getZ();
   }
 
+  @Method(name = "up")
+  public BlockPos up(final Scope scope, final BlockPos self, final Integer offset) {
+    return self.up(offset);
+  }
+
+  @Method(name = "down")
+  public BlockPos down(final Scope scope, final BlockPos self, final Integer offset) {
+    return self.down(offset);
+  }
+
+  @Method(name = "north")
+  public BlockPos north(final Scope scope, final BlockPos self, final Integer offset) {
+    return self.north(offset);
+  }
+
+  @Method(name = "south")
+  public BlockPos south(final Scope scope, final BlockPos self, final Integer offset) {
+    return self.south(offset);
+  }
+
+  @Method(name = "west")
+  public BlockPos west(final Scope scope, final BlockPos self, final Integer offset) {
+    return self.west(offset);
+  }
+
+  @Method(name = "east")
+  public BlockPos east(final Scope scope, final BlockPos self, final Integer offset) {
+    return self.east(offset);
+  }
+
   @Override
   protected Object __minus__(final Scope scope, final BlockPos self) {
     return new BlockPos(-self.getX(), -self.getY(), -self.getZ());
@@ -62,19 +94,25 @@ public class PosType extends Type<BlockPos> {
   @Override
   protected Object __div__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
     double n = scope.getProgramManager().getTypeInstance(FloatType.class).implicitCast(scope, o);
+    if (n == 0) {
+      throw new ArithmeticException("/ by 0");
+    }
     return new BlockPos(self.getX() / n, self.getY() / n, self.getZ() / n);
   }
 
   @Override
   protected Object __intdiv__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
     double n = scope.getProgramManager().getTypeInstance(FloatType.class).implicitCast(scope, o);
+    if (n == 0) {
+      throw new ArithmeticException("/ by 0");
+    }
     return new BlockPos((int) (self.getX() / n), (int) (self.getY() / n), (int) (self.getZ() / n));
   }
 
   @Override
   protected Object __mod__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
     double n = scope.getProgramManager().getTypeInstance(FloatType.class).implicitCast(scope, o);
-    return new BlockPos(self.getX() % n, self.getY() % n, self.getZ() % n); // TODO true modulo
+    return new BlockPos(Utils.trueModulo(self.getX(), n), Utils.trueModulo(self.getY(), n), Utils.trueModulo(self.getZ(), n));
   }
 
   @Override

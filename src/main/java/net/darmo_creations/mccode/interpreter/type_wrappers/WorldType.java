@@ -73,6 +73,48 @@ public class WorldType extends Type<WorldProxy> {
     return true;
   }
 
+  @Method(name = "fill_meta")
+  public Boolean fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final Block block, final int meta) {
+    World world = self.getWorld();
+    MinecraftServer server = world.getMinecraftServer();
+    if (server != null) {
+      //noinspection ConstantConditions
+      String[] args = {
+          "" + pos1.getX(), "" + pos1.getY(), "" + pos1.getZ(),
+          "" + pos2.getX(), "" + pos2.getY(), "" + pos2.getZ(),
+          block.getRegistryName().toString(), "" + meta
+      };
+      ICommand setblockCommand = server.commandManager.getCommands().get("fill");
+      try {
+        setblockCommand.execute(server, server, args);
+      } catch (CommandException e) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Method(name = "fill_block_state")
+  public Boolean fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final Block block, final MCMap state) {
+    World world = self.getWorld();
+    MinecraftServer server = world.getMinecraftServer();
+    if (server != null) {
+      //noinspection ConstantConditions
+      String[] args = {
+          "" + pos1.getX(), "" + pos1.getY(), "" + pos1.getZ(),
+          "" + pos2.getX(), "" + pos2.getY(), "" + pos2.getZ(),
+          block.getRegistryName().toString(), "" + state
+      };
+      ICommand setblockCommand = server.commandManager.getCommands().get("fill");
+      try {
+        setblockCommand.execute(server, server, args);
+      } catch (CommandException e) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   // TODO add properties and methods
 
   @Override

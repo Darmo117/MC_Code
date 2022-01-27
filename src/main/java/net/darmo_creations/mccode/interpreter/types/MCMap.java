@@ -25,20 +25,21 @@ public class MCMap extends HashMap<String, Object> {
 
   @Override
   public String toString() {
-    Iterator<Entry<String, Object>> i = this.entrySet().iterator();
-    if (!i.hasNext()) {
+    Iterator<Entry<String, Object>> iterator = this.entrySet().iterator();
+    if (!iterator.hasNext()) {
       return "{}";
     }
     StringBuilder sb = new StringBuilder();
     sb.append('{');
     while (true) {
-      Entry<String, Object> e = i.next();
-      String key = e.getKey();
+      Entry<String, Object> e = iterator.next();
+      String key = e.getKey().replace("\n", "\\n")
+          .replaceAll("([\"\\\\])", "\\\\$1");
       Object value = e.getValue();
-      sb.append(key);
+      sb.append('"').append(key).append('"');
       sb.append(':').append(' ');
       sb.append(value == this ? "(this map)" : value);
-      if (!i.hasNext()) {
+      if (!iterator.hasNext()) {
         return sb.append('}').toString();
       }
       sb.append(',').append(' ');

@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -68,22 +69,30 @@ public class FloatType extends Type<Double> {
   @Override
   protected Object __div__(final Scope scope, final Double self, final Object o, boolean inPlace) {
     if (o instanceof Integer) {
+      if ((Integer) o == 0) {
+        throw new ArithmeticException("/ by 0");
+      }
       return self / (Integer) o;
     } else if (o instanceof Double) {
+      if ((Double) o == 0) {
+        throw new ArithmeticException("/ by 0");
+      }
       return self / (Double) o;
     } else if (o instanceof Boolean) {
-      return self / ((Boolean) o ? 1.0 : 0.0);
+      if (!(Boolean) o) {
+        throw new ArithmeticException("/ by 0");
+      }
+      return self;
     }
     return super.__div__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __mod__(final Scope scope, final Double self, final Object o, boolean inPlace) {
-    // TODO true modulo
     if (o instanceof Integer) {
-      return self % (Integer) o;
+      return Utils.trueModulo(self, (Integer) o);
     } else if (o instanceof Double) {
-      return self % (Double) o;
+      return Utils.trueModulo(self, (Double) o);
     } else if (o instanceof Boolean) {
       if ((Boolean) o) {
         return 0;

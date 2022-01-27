@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
@@ -32,7 +33,9 @@ public class IfStatement extends Statement {
     if (conditions.size() != branchesStatements.size()) {
       throw new MCCodeException("\"if\" statement should have the same number of branches and conditions");
     }
-    branchesStatements.add(elseStatements);
+    if (elseStatements != null) {
+      branchesStatements.add(elseStatements);
+    }
     this.branchesStatements = branchesStatements;
     this.branchIndex = -1;
     this.ip = 0;
@@ -105,6 +108,19 @@ public class IfStatement extends Statement {
 
   @Override
   public String toString() {
-    return null; // TODO
+    StringBuilder s = new StringBuilder();
+    for (int i = 0; i < this.conditions.size(); i++) {
+      if (i > 0) {
+        s.append("else");
+      }
+      s.append(String.format("if %s then", this.conditions.get(i)));
+      s.append(Utils.indentStatements(this.branchesStatements.get(i)));
+    }
+    if (this.conditions.size() == this.branchesStatements.size() - 1) {
+      s.append("else");
+      s.append(Utils.indentStatements(this.branchesStatements.get(this.branchesStatements.size() - 1)));
+    }
+    s.append("end");
+    return s.toString();
   }
 }

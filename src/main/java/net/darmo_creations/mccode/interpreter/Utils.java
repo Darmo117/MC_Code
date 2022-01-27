@@ -27,6 +27,21 @@ public final class Utils {
     return code.toString();
   }
 
+  /**
+   * Performs a true modulo operation using the mathematical definition of "a mod b".
+   *
+   * @param a Value to get the modulo of.
+   * @param b The divisor.
+   * @return a mod b
+   * @throws ArithmeticException If b == 0.
+   */
+  public static double trueModulo(final double a, final double b) {
+    if (b == 0) {
+      throw new ArithmeticException("/ by 0");
+    }
+    return ((a % b) + b) % b;
+  }
+
   private Utils() {
   }
 }
