@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
@@ -43,7 +44,7 @@ public class BinaryOperatorNode extends OperatorNode {
     boolean flipped = this.operator.isFlipped();
     Object arg1 = values.get(0);
     Object arg2 = values.get(1);
-    Type<?> argType = scope.getProgramManager().getTypeForValue(flipped ? arg2 : arg1);
+    Type<?> argType = ProgramManager.getTypeForValue(flipped ? arg2 : arg1);
     return argType.applyOperator(scope, this.operator, flipped ? arg2 : arg1, flipped ? arg1 : arg2, null, false);
   }
 

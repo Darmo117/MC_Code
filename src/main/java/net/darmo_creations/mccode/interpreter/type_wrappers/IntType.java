@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
@@ -64,27 +65,27 @@ public class IntType extends Type<Integer> {
     } else if (o instanceof Boolean) {
       return self * ((Boolean) o ? 1 : 0);
     } else if (o instanceof BlockPos) {
-      return scope.getProgramManager().getTypeInstance(PosType.class).__mul__(scope, (BlockPos) o, self, inPlace);
+      return ProgramManager.getTypeInstance(PosType.class).__mul__(scope, (BlockPos) o, self, inPlace);
     } else if (o instanceof String) {
       // Return a new string instance everytime
-      return scope.getProgramManager().getTypeInstance(StringType.class).__mul__(scope, (String) o, self, false);
+      return ProgramManager.getTypeInstance(StringType.class).__mul__(scope, (String) o, self, false);
     } else if (o instanceof MCList) {
       // Return a new list instance everytime
-      return scope.getProgramManager().getTypeInstance(ListType.class).__mul__(scope, (MCList) o, self, false);
+      return ProgramManager.getTypeInstance(ListType.class).__mul__(scope, (MCList) o, self, false);
     }
     return super.__mul__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __div__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    FloatType floatType = scope.getProgramManager().getTypeInstance(FloatType.class);
+    FloatType floatType = ProgramManager.getTypeInstance(FloatType.class);
     double d = floatType.implicitCast(scope, self);
     return floatType.__div__(scope, d, o, inPlace);
   }
 
   @Override
   protected Object __mod__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    FloatType floatType = scope.getProgramManager().getTypeInstance(FloatType.class);
+    FloatType floatType = ProgramManager.getTypeInstance(FloatType.class);
     double d = floatType.implicitCast(scope, self);
     return floatType.__mod__(scope, d, o, inPlace);
   }
@@ -103,14 +104,14 @@ public class IntType extends Type<Integer> {
 
   @Override
   protected Object __eq__(final Scope scope, final Integer self, final Object o) {
-    FloatType floatType = scope.getProgramManager().getTypeInstance(FloatType.class);
+    FloatType floatType = ProgramManager.getTypeInstance(FloatType.class);
     double d = floatType.implicitCast(scope, self);
     return floatType.__eq__(scope, d, o);
   }
 
   @Override
   protected Object __gt__(final Scope scope, final Integer self, final Object o) {
-    FloatType floatType = scope.getProgramManager().getTypeInstance(FloatType.class);
+    FloatType floatType = ProgramManager.getTypeInstance(FloatType.class);
     double d = floatType.implicitCast(scope, self);
     return floatType.__gt__(scope, d, o);
   }
@@ -139,8 +140,8 @@ public class IntType extends Type<Integer> {
   }
 
   @Override
-  protected NBTTagCompound _writeToNBT(final Scope scope, final Integer self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  protected NBTTagCompound _writeToNBT(final Integer self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     tag.setInteger(VALUE_KEY, self);
     return tag;
   }

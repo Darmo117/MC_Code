@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
@@ -64,7 +65,7 @@ public class FloatType extends Type<Double> {
     } else if (o instanceof Boolean) {
       return self * ((Boolean) o ? 1 : 0);
     } else if (o instanceof BlockPos) {
-      return scope.getProgramManager().getTypeInstance(PosType.class).__mul__(scope, (BlockPos) o, self, inPlace);
+      return ProgramManager.getTypeInstance(PosType.class).__mul__(scope, (BlockPos) o, self, inPlace);
     }
     return super.__mul__(scope, self, o, inPlace);
   }
@@ -156,8 +157,8 @@ public class FloatType extends Type<Double> {
   }
 
   @Override
-  protected NBTTagCompound _writeToNBT(final Scope scope, final Double self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  protected NBTTagCompound _writeToNBT(final Double self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     tag.setDouble(VALUE_KEY, self);
     return tag;
   }

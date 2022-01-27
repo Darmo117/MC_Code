@@ -70,13 +70,6 @@ public class Scope implements NBTDeserializable {
   }
 
   /**
-   * Return the program manager this scope’s program is loaded in.
-   */
-  public ProgramManager getProgramManager() {
-    return this.program.getProgramManager();
-  }
-
-  /**
    * Return this scope’s program.
    */
   public Program getProgram() {
@@ -209,38 +202,36 @@ public class Scope implements NBTDeserializable {
    * Declare builtin functions and cast operators of declared types.
    */
   private void defineBuiltinFunctions() {
-    ProgramManager pm = this.getProgramManager();
-
     List<Function> functions = Arrays.asList(
-        new FloorFunction(pm),
-        new CeilFunction(pm),
-        new LenFunction(pm),
-        new HypotFunction(pm),
-        new SqrtFunction(pm),
-        new CbrtFunction(pm),
-        new ExpFunction(pm),
-        new CosFunction(pm),
-        new SinFunction(pm),
-        new TanFunction(pm),
-        new AcosFunction(pm),
-        new AsinFunction(pm),
-        new AtanFunction(pm),
-        new Atan2Function(pm),
-        new LogFunction(pm),
-        new Log10Function(pm),
-        new AbsFunction(pm),
-        new RoundFunction(pm),
-        new ToDegreesFunction(pm),
-        new ToRadiansFunction(pm),
-        new RangeFunction(pm),
-        new SortedFunction(pm),
-        new ReversedFunction(pm),
-        new MinFunction(pm),
-        new MaxFunction(pm)
+        new FloorFunction(),
+        new CeilFunction(),
+        new LenFunction(),
+        new HypotFunction(),
+        new SqrtFunction(),
+        new CbrtFunction(),
+        new ExpFunction(),
+        new CosFunction(),
+        new SinFunction(),
+        new TanFunction(),
+        new AcosFunction(),
+        new AsinFunction(),
+        new AtanFunction(),
+        new Atan2Function(),
+        new LogFunction(),
+        new Log10Function(),
+        new AbsFunction(),
+        new RoundFunction(),
+        new ToDegreesFunction(),
+        new ToRadiansFunction(),
+        new RangeFunction(),
+        new SortedFunction(),
+        new ReversedFunction(),
+        new MinFunction(),
+        new MaxFunction()
     );
-    for (Type<?> type : pm.getTypes()) {
+    for (Type<?> type : ProgramManager.getTypes()) {
       if (type.generateCastOperator()) {
-        functions.add(new BuiltinFunction("to_" + type.getName(), type, pm.getTypeInstance(AnyType.class)) {
+        functions.add(new BuiltinFunction("to_" + type.getName(), type, ProgramManager.getTypeInstance(AnyType.class)) {
           @Override
           public Object apply(final Scope scope) {
             return type.explicitCast(scope, this.getParameter(0));
@@ -264,7 +255,7 @@ public class Scope implements NBTDeserializable {
     NBTTagList variablesList = new NBTTagList();
     this.variables.values().stream()
         .filter(Variable::isDeletable)
-        .forEach(v -> variablesList.appendTag(v.writeToNBT(this)));
+        .forEach(v -> variablesList.appendTag(v.writeToNBT()));
     tag.setTag(VARIABLES_KEY, variablesList);
     return tag;
   }

@@ -55,8 +55,8 @@ public class BlockType extends Type<Block> {
   }
 
   @Override
-  public NBTTagCompound _writeToNBT(final Scope scope, final Block self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  public NBTTagCompound _writeToNBT(final Block self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     tag.setString(ID_KEY, this.getID(self).toString());
     return tag;
   }

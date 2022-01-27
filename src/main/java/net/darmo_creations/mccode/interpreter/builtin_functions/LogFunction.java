@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class LogFunction extends BuiltinFunction {
   /**
    * Create a function that returns the natural logarithm (base e) of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public LogFunction(final ProgramManager programManager) {
-    super("log", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public LogFunction() {
+    super("log", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

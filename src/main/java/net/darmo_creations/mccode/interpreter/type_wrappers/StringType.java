@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
@@ -123,17 +124,15 @@ public class StringType extends Type<String> {
   @Method(name = "join")
   @Doc("Joins all strings from the given list using this string as a delimiter.")
   public String join(final Scope scope, final String self, final Object collection) {
-    MCList list = scope.getProgramManager().getTypeInstance(ListType.class).implicitCast(scope, collection);
-    return list.stream()
-        .map(e -> scope.getProgramManager().getTypeInstance(StringType.class).implicitCast(scope, e))
-        .collect(Collectors.joining(self));
+    MCList list = ProgramManager.getTypeInstance(ListType.class).implicitCast(scope, collection);
+    return list.stream().map(e -> this.implicitCast(scope, e)).collect(Collectors.joining(self));
   }
 
   @Override
   protected Object __get_item__(final Scope scope, final String self, final Object key) {
     if (!(key instanceof Integer)) {
-      throw new CastException(scope, scope.getProgramManager().getTypeInstance(IntType.class),
-          scope.getProgramManager().getTypeForValue(key));
+      throw new CastException(scope, ProgramManager.getTypeInstance(IntType.class),
+          ProgramManager.getTypeForValue(key));
     }
     int index = (Integer) key;
     if (index < 0 || index > self.length()) {
@@ -149,7 +148,7 @@ public class StringType extends Type<String> {
 
   @Override
   protected Object __mul__(final Scope scope, final String self, final Object o, final boolean inPlace) {
-    int nb = scope.getProgramManager().getTypeInstance(IntType.class).implicitCast(scope, o);
+    int nb = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, o);
     if (nb <= 0) {
       return "";
     }
@@ -231,8 +230,8 @@ public class StringType extends Type<String> {
   }
 
   @Override
-  protected NBTTagCompound _writeToNBT(final Scope scope, final String self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  protected NBTTagCompound _writeToNBT(final String self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     tag.setString(VALUE_KEY, self);
     return tag;
   }

@@ -13,11 +13,10 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class HypotFunction extends BuiltinFunction {
   /**
    * Create a function that returns sqrt(x² + y²).
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public HypotFunction(final ProgramManager programManager) {
-    super("hypot", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public HypotFunction() {
+    super("hypot", ProgramManager.getTypeInstance(FloatType.class),
+        ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

@@ -15,12 +15,10 @@ import net.darmo_creations.mccode.interpreter.types.Range;
 public class RangeFunction extends BuiltinFunction {
   /**
    * Create a function that returns an integer range generator.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public RangeFunction(final ProgramManager programManager) {
-    super("range", programManager.getTypeInstance(RangeType.class),
-        programManager.getTypeInstance(IntType.class), programManager.getTypeInstance(IntType.class), programManager.getTypeInstance(IntType.class));
+  public RangeFunction() {
+    super("range", ProgramManager.getTypeInstance(RangeType.class),
+        ProgramManager.getTypeInstance(IntType.class), ProgramManager.getTypeInstance(IntType.class), ProgramManager.getTypeInstance(IntType.class));
   }
 
   @Override

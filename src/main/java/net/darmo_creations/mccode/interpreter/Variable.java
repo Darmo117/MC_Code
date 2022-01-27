@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * A constant variable cannot have its value changed. If the deletable flag is set to false,
  * any attempt to delete through {@link Scope#declareVariable(Variable)} will throw an error.
  */
-public class Variable {
+public class Variable implements NBTSerializable {
   private static final String NAME_KEY = "Name";
   private static final String PUBLIC_KEY = "Public";
   private static final String EDITABLE_KEY = "Editable";
@@ -61,7 +61,7 @@ public class Variable {
     this.publiclyVisible = tag.getBoolean(PUBLIC_KEY);
     this.editableThroughCommands = tag.getBoolean(EDITABLE_KEY);
     this.constant = tag.getBoolean(CONSTANT_KEY);
-    this.value = scope.getProgramManager().getTypeForName(tag.getString(TYPE_KEY)).readFromNBT(scope, tag.getCompoundTag(VALUE_KEY));
+    this.value = ProgramManager.getTypeForName(tag.getString(TYPE_KEY)).readFromNBT(scope, tag.getCompoundTag(VALUE_KEY));
     this.deletable = false;
   }
 
@@ -128,18 +128,18 @@ public class Variable {
   /**
    * Serialize this variable to an NBT tag.
    *
-   * @param scope Scope this variable is declared in.
    * @return The tag.
    */
-  public NBTTagCompound writeToNBT(final Scope scope) {
+  @Override
+  public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(NAME_KEY, this.name);
     tag.setBoolean(PUBLIC_KEY, this.publiclyVisible);
     tag.setBoolean(EDITABLE_KEY, this.editableThroughCommands);
     tag.setBoolean(CONSTANT_KEY, this.constant);
-    Type<?> type = scope.getProgramManager().getTypeForValue(this.value);
+    Type<?> type = ProgramManager.getTypeForValue(this.value);
     tag.setString(TYPE_KEY, type.getName());
-    tag.setTag(VALUE_KEY, type.writeToNBT(scope, this.value));
+    tag.setTag(VALUE_KEY, type.writeToNBT(this.value));
     return tag;
   }
 }

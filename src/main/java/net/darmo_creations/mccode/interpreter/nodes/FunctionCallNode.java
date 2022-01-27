@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.Parameter;
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
@@ -52,7 +53,7 @@ public class FunctionCallNode extends OperationNode {
       function = (Function) o;
     } catch (ClassCastException e) {
       throw new EvaluationException(scope, "mccode.interpreter.error.calling_non_callable",
-          scope.getProgramManager().getTypeForValue(o));
+          ProgramManager.getTypeForValue(o));
     }
 
     Scope functionScope;

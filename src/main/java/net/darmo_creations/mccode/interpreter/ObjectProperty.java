@@ -86,7 +86,7 @@ public class ObjectProperty {
         throw new MCCodeException(e);
       }
     } else {
-      throw new EvaluationException(scope, "mccode.interpreter.error.set_property", scope.getProgramManager().getTypeForValue(self), this.name);
+      throw new EvaluationException(scope, "mccode.interpreter.error.set_property", ProgramManager.getTypeForValue(self), this.name);
     }
   }
 }

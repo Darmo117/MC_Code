@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
@@ -48,7 +49,7 @@ public class DeleteItemStatement extends Statement {
   @Override
   public StatementAction execute(final Scope scope) throws EvaluationException, ArithmeticException {
     Object targetValue = this.target.evaluate(scope);
-    Type<?> targetType = scope.getProgramManager().getTypeForValue(targetValue);
+    Type<?> targetType = ProgramManager.getTypeForValue(targetValue);
     targetType.applyOperator(scope, Operator.DEL_ITEM, targetValue, this.key.evaluate(scope), null, true);
     return StatementAction.PROCEED;
   }

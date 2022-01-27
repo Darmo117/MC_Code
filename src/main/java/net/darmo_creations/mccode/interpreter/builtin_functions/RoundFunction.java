@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class RoundFunction extends BuiltinFunction {
   /**
    * Create a function that returns the integer closest to its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public RoundFunction(final ProgramManager programManager) {
-    super("round", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public RoundFunction() {
+    super("round", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

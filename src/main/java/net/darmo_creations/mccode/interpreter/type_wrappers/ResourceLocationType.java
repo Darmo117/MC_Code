@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
@@ -62,17 +63,17 @@ public class ResourceLocationType extends Type<ResourceLocation> {
     if (o instanceof String) {
       return new ResourceLocation((String) o);
     } else if (o instanceof Map) {
-      StringType stringType = scope.getProgramManager().getTypeInstance(StringType.class);
+      StringType stringType = ProgramManager.getTypeInstance(StringType.class);
       Map<?, ?> m = (Map<?, ?>) o;
       Object namespace = m.get("namespace");
       Object path = m.get("path");
       if (!(path instanceof String)) {
-        throw new CastException(scope, stringType, scope.getProgramManager().getTypeForValue(path));
+        throw new CastException(scope, stringType, ProgramManager.getTypeForValue(path));
       }
       if (namespace == null) {
         return new ResourceLocation((String) path);
       } else if (!(namespace instanceof String)) {
-        throw new CastException(scope, stringType, scope.getProgramManager().getTypeForValue(path));
+        throw new CastException(scope, stringType, ProgramManager.getTypeForValue(path));
       }
       return new ResourceLocation((String) namespace, (String) path);
     }
@@ -80,8 +81,8 @@ public class ResourceLocationType extends Type<ResourceLocation> {
   }
 
   @Override
-  protected NBTTagCompound _writeToNBT(final Scope scope, final ResourceLocation self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  protected NBTTagCompound _writeToNBT(final ResourceLocation self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     tag.setString(VALUE_KEY, self.toString());
     return tag;
   }

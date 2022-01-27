@@ -15,16 +15,14 @@ import net.darmo_creations.mccode.interpreter.types.MCList;
 public class SortedFunction extends BuiltinFunction {
   /**
    * Create a function that sorts the given iterable object.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public SortedFunction(final ProgramManager programManager) {
-    super("sorted", programManager.getTypeInstance(ListType.class), programManager.getTypeInstance(AnyType.class));
+  public SortedFunction() {
+    super("sorted", ProgramManager.getTypeInstance(ListType.class), ProgramManager.getTypeInstance(AnyType.class));
   }
 
   @Override
   public Object apply(final Scope scope) {
-    MCList list = scope.getProgramManager().getTypeInstance(ListType.class).explicitCast(scope, this.getParameter(scope, 0));
+    MCList list = ProgramManager.getTypeInstance(ListType.class).explicitCast(scope, this.getParameter(scope, 0));
     list.sort(ListType.comparator(scope, false));
     return list;
   }

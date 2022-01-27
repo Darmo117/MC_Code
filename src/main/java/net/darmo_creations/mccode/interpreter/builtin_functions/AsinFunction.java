@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class AsinFunction extends BuiltinFunction {
   /**
    * Create a function that returns the arc sine of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public AsinFunction(final ProgramManager programManager) {
-    super("asin", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public AsinFunction() {
+    super("asin", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

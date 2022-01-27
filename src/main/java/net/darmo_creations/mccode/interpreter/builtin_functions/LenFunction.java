@@ -16,16 +16,14 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class LenFunction extends BuiltinFunction {
   /**
    * Create a function that returns the length of a collection.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public LenFunction(final ProgramManager programManager) {
-    super("len", programManager.getTypeInstance(IntType.class), programManager.getTypeInstance(AnyType.class));
+  public LenFunction() {
+    super("len", ProgramManager.getTypeInstance(IntType.class), ProgramManager.getTypeInstance(AnyType.class));
   }
 
   @Override
   public Object apply(Scope scope) {
     Object parameter = this.getParameter(scope, 0);
-    return scope.getProgramManager().getTypeForValue(parameter).applyOperator(scope, Operator.LENGTH, parameter, null, null, false);
+    return ProgramManager.getTypeForValue(parameter).applyOperator(scope, Operator.LENGTH, parameter, null, null, false);
   }
 }

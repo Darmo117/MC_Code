@@ -1,11 +1,13 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +26,7 @@ public class ListLiteralNode extends Node {
    *
    * @param values List’s values.
    */
-  public ListLiteralNode(final List<Node> values) {
+  public ListLiteralNode(final Collection<Node> values) {
     this.values = new ArrayList<>(values);
   }
 
@@ -41,7 +43,7 @@ public class ListLiteralNode extends Node {
   public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
     return new MCList(this.values.stream().map(node -> {
       Object v = node.evaluate(scope);
-      return scope.getProgramManager().getTypeForValue(v).copy(scope, v);
+      return ProgramManager.getTypeForValue(v).copy(scope, v);
     }).collect(Collectors.toList()));
   }
 

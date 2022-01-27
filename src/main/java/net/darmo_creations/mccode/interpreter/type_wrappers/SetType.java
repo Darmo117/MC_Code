@@ -1,10 +1,10 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
-import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.darmo_creations.mccode.interpreter.types.MCSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -44,7 +44,7 @@ public class SetType extends Type<MCSet> {
   @Method(name = "add")
   @Doc("Adds a value to this set. Modifies this set.")
   public MCSet add(final Scope scope, final MCSet self, final Object value) {
-    self.add(scope.getProgramManager().getTypeForValue(value).copy(scope, value));
+    self.add(ProgramManager.getTypeForValue(value).copy(scope, value));
     return self;
   }
 
@@ -168,7 +168,7 @@ public class SetType extends Type<MCSet> {
 
   @Override
   protected MCSet __copy__(final Scope scope, final MCSet self) {
-    return new MCSet(self.stream().map(e -> scope.getProgramManager().getTypeForValue(e).copy(scope, e)).collect(Collectors.toSet()));
+    return new MCSet(self.stream().map(e -> ProgramManager.getTypeForValue(e).copy(scope, e)).collect(Collectors.toSet()));
   }
 
   @Override
@@ -183,7 +183,7 @@ public class SetType extends Type<MCSet> {
     } else if (o instanceof Iterable) {
       MCSet list = new MCSet();
       for (Object e : (Iterable<?>) o) {
-        list.add(scope.getProgramManager().getTypeForValue(e).copy(scope, e));
+        list.add(ProgramManager.getTypeForValue(e).copy(scope, e));
       }
       return list;
     } else if (o instanceof Map) {
@@ -200,10 +200,10 @@ public class SetType extends Type<MCSet> {
   }
 
   @Override
-  protected NBTTagCompound _writeToNBT(final Scope scope, final MCSet self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  protected NBTTagCompound _writeToNBT(final MCSet self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     NBTTagList list = new NBTTagList();
-    self.forEach(v -> list.appendTag(scope.getProgramManager().getTypeForValue(v).writeToNBT(scope, v)));
+    self.forEach(v -> list.appendTag(ProgramManager.getTypeForValue(v).writeToNBT(v)));
     tag.setTag(VALUES_KEY, list);
     return tag;
   }
@@ -212,7 +212,7 @@ public class SetType extends Type<MCSet> {
   public MCSet readFromNBT(final Scope scope, final NBTTagCompound tag) {
     MCSet set = new MCSet();
     NBTTagList tagsList = tag.getTagList(VALUES_KEY, new NBTTagCompound().getId());
-    tagsList.forEach(t -> set.add(scope.getProgramManager().getTypeForName(((NBTTagCompound) t).getString(Type.NAME_KEY)).readFromNBT(scope, (NBTTagCompound) t)));
+    tagsList.forEach(t -> set.add(ProgramManager.getTypeForName(((NBTTagCompound) t).getString(Type.NAME_KEY)).readFromNBT(scope, (NBTTagCompound) t)));
     return set;
   }
 }

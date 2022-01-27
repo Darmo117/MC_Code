@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
@@ -81,7 +82,7 @@ public class IfStatement extends Statement {
     if (this.branchIndex == -1) {
       for (int i = 0; i < this.conditions.size(); i++) { // Check every branch until a condition evaluates to true
         Object value = this.conditions.get(i).evaluate(scope);
-        Type<?> valueType = scope.getProgramManager().getTypeForValue(value);
+        Type<?> valueType = ProgramManager.getTypeForValue(value);
         if (valueType.toBoolean(valueType)) {
           this.branchIndex = i;
         }

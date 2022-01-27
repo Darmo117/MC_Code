@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class AbsFunction extends BuiltinFunction {
   /**
    * Create a function that returns the absolute value of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public AbsFunction(final ProgramManager programManager) {
-    super("abs", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public AbsFunction() {
+    super("abs", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

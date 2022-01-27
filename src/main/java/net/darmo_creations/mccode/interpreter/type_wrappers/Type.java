@@ -78,7 +78,7 @@ public abstract class Type<T> {
    * @throws MCCodeRuntimeException If the instance object does not have a property with the given name.
    */
   public Object getProperty(final Scope scope, final Object self, final String propertyName) {
-    this.ensureType(scope.getProgramManager(), self,
+    this.ensureType(self,
         String.format("attempt to get property from type \"%s\" for object of type \"%s\"", this, self));
     if (this.properties.containsKey(propertyName)) {
       return this.properties.get(propertyName).get(self);
@@ -97,7 +97,7 @@ public abstract class Type<T> {
    * @throws MCCodeRuntimeException If the instance object does not have a property with the given name.
    */
   public void setProperty(final Scope scope, final Object self, final String propertyName, final Object value) {
-    this.ensureType(scope.getProgramManager(), self,
+    this.ensureType(self,
         String.format("attempt to get property from type \"%s\" for object of type \"%s\"", this, self));
     if (this.properties.containsKey(propertyName)) {
       this.properties.get(propertyName).set(scope, self, value);
@@ -127,7 +127,7 @@ public abstract class Type<T> {
       //noinspection unchecked
       return (T) o;
     }
-    throw new CastException(scope, this, scope.getProgramManager().getTypeForValue(o));
+    throw new CastException(scope, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -168,7 +168,7 @@ public abstract class Type<T> {
    * @return A deep copy of the argument.
    */
   public T copy(final Scope scope, final Object self) {
-    this.ensureType(scope.getProgramManager(), self,
+    this.ensureType(self,
         String.format("attempt to clone object of type \"%s\" from type \"%s\"", self, this));
     //noinspection unchecked
     return this.__copy__(scope, (T) self);
@@ -190,7 +190,7 @@ public abstract class Type<T> {
    * @throws MCCodeException If the given operator is invalid.
    */
   public Object applyOperator(final Scope scope, final Operator operator, Object self, Object o1, Object o2, final boolean inPlace) {
-    if (scope.getProgramManager().getTypeForValue(self) != this) {
+    if (ProgramManager.getTypeForValue(self) != this) {
       throw new MCCodeException(String.format("operator %s expected instance object of type %s, got %s", operator.getSymbol(), this.getWrappedType(), self.getClass()));
     }
     //noinspection unchecked
@@ -260,7 +260,7 @@ public abstract class Type<T> {
    * @return The value for the key.
    */
   protected Object __get_item__(Scope scope, T self, Object key) {
-    throw new UnsupportedOperatorException(scope, Operator.GET_ITEM, this, scope.getProgramManager().getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, Operator.GET_ITEM, this, ProgramManager.getTypeForValue(key));
   }
 
   /**
@@ -272,7 +272,7 @@ public abstract class Type<T> {
    * @param value The value to set.
    */
   protected void __set_item__(Scope scope, T self, Object key, Object value) {
-    throw new UnsupportedOperatorException(scope, Operator.SET_ITEM, this, scope.getProgramManager().getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, Operator.SET_ITEM, this, ProgramManager.getTypeForValue(key));
   }
 
   /**
@@ -283,7 +283,7 @@ public abstract class Type<T> {
    * @param key   Key to delete.
    */
   protected void __del_item__(Scope scope, T self, Object key) {
-    throw new UnsupportedOperatorException(scope, Operator.DEL_ITEM, this, scope.getProgramManager().getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, Operator.DEL_ITEM, this, ProgramManager.getTypeForValue(key));
   }
 
   /**
@@ -318,7 +318,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __add__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getProgramManager().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -331,7 +331,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __sub__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.SUB, this, scope.getProgramManager().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.SUB, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -344,7 +344,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __mul__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.MUL, this, scope.getProgramManager().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.MUL, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -357,7 +357,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __div__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.DIV, this, scope.getProgramManager().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.DIV, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -383,7 +383,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __mod__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.MOD, this, scope.getProgramManager().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.MOD, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -396,7 +396,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __pow__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.POW, this, scope.getProgramManager().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.POW, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -432,7 +432,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __gt__(Scope scope, T self, Object o) {
-    throw new UnsupportedOperatorException(scope, Operator.GT, this, scope.getProgramManager().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.GT, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -480,7 +480,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __in__(Scope scope, T self, Object o) {
-    throw new UnsupportedOperatorException(scope, Operator.IN, this, scope.getProgramManager().getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, Operator.IN, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -566,26 +566,23 @@ public abstract class Type<T> {
   /**
    * Serialize an instance of this type to an NBT tag.
    *
-   * @param scope Scope the operation is performed from.
-   * @param self  Instance of this type to apply the serialize.
+   * @param self Instance of this type to apply the serialize.
    * @return A tag.
    */
-  public NBTTagCompound writeToNBT(final Scope scope, final Object self) {
-    ProgramManager programManager = scope.getProgramManager();
-    this.ensureType(programManager, self,
-        String.format("attempt to serialize object of type \"%s\" from type \"%s\"", programManager.getTypeForValue(self), this));
+  public NBTTagCompound writeToNBT(final Object self) {
+    this.ensureType(self, String.format("attempt to serialize object of type \"%s\" from type \"%s\"",
+        ProgramManager.getTypeForValue(self), this));
     //noinspection unchecked
-    return this._writeToNBT(scope, (T) self);
+    return this._writeToNBT((T) self);
   }
 
   /**
    * Serialize an instance of this type to an NBT tag.
    *
-   * @param scope Scope the operation is performed from.
-   * @param self  Instance of this type to apply the serialize.
+   * @param self Instance of this type to apply the serialize.
    * @return A tag.
    */
-  protected NBTTagCompound _writeToNBT(final Scope scope, final T self) {
+  protected NBTTagCompound _writeToNBT(final T self) {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(NAME_KEY, this.getName());
     return tag;
@@ -608,8 +605,8 @@ public abstract class Type<T> {
   /**
    * Raise an exception if the type of the given object does not match this type.
    */
-  private void ensureType(final ProgramManager programManager, final Object o, final String errorMessage) {
-    if (programManager.getTypeForValue(o) != this) {
+  private void ensureType(final Object o, final String errorMessage) {
+    if (ProgramManager.getTypeForValue(o) != this) {
       throw new TypeException(errorMessage);
     }
   }

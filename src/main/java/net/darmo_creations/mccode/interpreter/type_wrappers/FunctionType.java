@@ -37,8 +37,8 @@ public class FunctionType extends Type<Function> {
   }
 
   @Override
-  protected NBTTagCompound _writeToNBT(final Scope scope, final Function self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  protected NBTTagCompound _writeToNBT(final Function self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     if (self instanceof BuiltinFunction) {
       tag.setString(FUNCTION_TYPE_KEY, FUNCTION_TYPE_BUILTIN);
       tag.setString(FUNCTION_KEY, self.getName());
@@ -58,7 +58,7 @@ public class FunctionType extends Type<Function> {
         // Type-safe as builtin functions cannot be deleted nor overridden
         return (Function) scope.getVariable(tag.getString(FUNCTION_KEY), false);
       case FUNCTION_TYPE_USER:
-        return new UserFunction(scope.getProgramManager(), tag.getCompoundTag(FUNCTION_KEY));
+        return new UserFunction(tag.getCompoundTag(FUNCTION_KEY));
       default:
         throw new MCCodeException("invalid function type " + functionType);
     }

@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class CbrtFunction extends BuiltinFunction {
   /**
    * Create a function that returns the cube root of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public CbrtFunction(final ProgramManager programManager) {
-    super("cbrt", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public CbrtFunction() {
+    super("cbrt", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

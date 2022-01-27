@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
@@ -45,7 +46,7 @@ public class PropertyCallNode extends Node {
   @Override
   public Object evaluate(final Scope scope) throws EvaluationException, ArithmeticException {
     Object obj = this.object.evaluate(scope);
-    Type<?> objectType = scope.getProgramManager().getTypeForValue(obj);
+    Type<?> objectType = ProgramManager.getTypeForValue(obj);
     return objectType.getProperty(scope, obj, this.propertyName);
   }
 

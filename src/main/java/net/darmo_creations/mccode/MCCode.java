@@ -1,8 +1,17 @@
 package net.darmo_creations.mccode;
 
+import net.darmo_creations.mccode.commands.CommandProgram;
+import net.darmo_creations.mccode.interpreter.ProgramManager;
+import net.minecraft.world.World;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Mod’s main class. MCCode adds the possibility to write scripts to load and interact with Minecraft worlds.
@@ -20,12 +29,17 @@ public class MCCode {
   public static MCCode INSTANCE;
 
   /**
+   * Map associating worlds to their program managers.
+   */
+  public final Map<World, ProgramManager> PROGRAM_MANAGERS = new HashMap<>();
+
+  /**
    * This is the first initialization event. Register tile entities here.
    * The registry events below will have fired prior to entry to this method.
    */
   @Mod.EventHandler
   public void preinit(FMLPreInitializationEvent event) {
-
+    ProgramManager.declareBuiltinTypes();
   }
 
   /**
@@ -33,6 +47,19 @@ public class MCCode {
    */
   @Mod.EventHandler
   public void init(FMLInitializationEvent event) {
+    ProgramManager.initialize();
+  }
 
+  @Mod.EventHandler
+  public void serverStarting(FMLServerStartingEvent event) {
+    event.registerServerCommand(new CommandProgram());
+  }
+
+  @Mod.EventBusSubscriber
+  static class EventsHandler {
+    @SubscribeEvent
+    public static void onWorldLoad(WorldEvent.Load event) {
+      INSTANCE.PROGRAM_MANAGERS.put(event.getWorld(), ProgramManager.attachToGlobalStorage(event.getWorld()));
+    }
   }
 }

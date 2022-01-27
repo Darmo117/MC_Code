@@ -11,13 +11,26 @@ import org.antlr.v4.runtime.dfa.DFA;
 
 import java.util.BitSet;
 
+/**
+ * Parser that returns a {@link Program} instance for the given code.
+ */
 public class ProgramParser {
-  public static Program parse(final ProgramManager programManager, final String script) {
+  /**
+   * Return a {@link Program} instance for the given code.
+   *
+   * @param programManager The manager that requests the program.
+   * @param programName    Name of the program.
+   * @param script         Code of the program.
+   * @return The program instance.
+   * @throws SyntaxErrorException If a syntax error is encountered.
+   */
+  public static Program parse(final ProgramManager programManager, final String programName, final String script)
+      throws SyntaxErrorException {
     MCCodeLexer lexer = new MCCodeLexer(CharStreams.fromString(script));
     MCCodeParser parser = new MCCodeParser(new CommonTokenStream(lexer));
     ErrorListener errorListener = new ErrorListener();
     parser.addErrorListener(errorListener);
-    return new ProgramVisitor(programManager).visit(parser.module());
+    return new ProgramVisitor(programManager, programName).visit(parser.module());
   }
 
   /**

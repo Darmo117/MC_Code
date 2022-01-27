@@ -20,7 +20,7 @@ public class ReturnStatement extends Statement {
   /**
    * Create a return statement.
    *
-   * @param node Expression to return.
+   * @param node Expression to return. May be null.
    */
   public ReturnStatement(final Node node) {
     this.node = node;

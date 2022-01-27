@@ -1,9 +1,6 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
-import net.darmo_creations.mccode.interpreter.MemberFunction;
-import net.darmo_creations.mccode.interpreter.Parameter;
-import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.Variable;
+import net.darmo_creations.mccode.interpreter.*;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -49,7 +46,7 @@ public class MethodCallNode extends OperationNode {
   @Override
   public Object evaluate(final Scope scope) throws EvaluationException, ArithmeticException {
     Object self = this.instance.evaluate(scope);
-    MemberFunction method = scope.getProgramManager().getTypeForValue(self).getMethod(this.methodName);
+    MemberFunction method = ProgramManager.getTypeForValue(self).getMethod(this.methodName);
     Scope functionScope = new Scope(method.getName(), scope);
 
     functionScope.declareVariable(new Variable(MemberFunction.SELF_PARAM_NAME, false, false, true, false, self));

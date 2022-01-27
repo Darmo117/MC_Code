@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class TanFunction extends BuiltinFunction {
   /**
    * Create a function that returns the tangent of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public TanFunction(final ProgramManager programManager) {
-    super("tan", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public TanFunction() {
+    super("tan", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

@@ -17,12 +17,10 @@ public class Atan2Function extends BuiltinFunction {
    * Create a function that returns the angle θ from the conversion of rectangular coordinates (x, y)
    * to polar coordinates (r, θ). This method computes the phase θ by computing an arc tangent
    * of y/x in the range of -π to π.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public Atan2Function(final ProgramManager programManager) {
-    super("atan2", programManager.getTypeInstance(FloatType.class),
-        programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public Atan2Function() {
+    super("atan2", ProgramManager.getTypeInstance(FloatType.class),
+        ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

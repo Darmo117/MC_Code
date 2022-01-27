@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class SinFunction extends BuiltinFunction {
   /**
    * Create a function that returns the sine of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public SinFunction(final ProgramManager programManager) {
-    super("sin", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public SinFunction() {
+    super("sin", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

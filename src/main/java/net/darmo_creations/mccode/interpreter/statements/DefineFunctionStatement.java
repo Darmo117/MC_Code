@@ -62,7 +62,7 @@ public class DefineFunctionStatement extends Statement {
 
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
-    UserFunction function = new UserFunction(this.name, scope.getProgramManager(), this.parametersNames, this.statements);
+    UserFunction function = new UserFunction(this.name, this.parametersNames, this.statements);
     scope.declareVariable(new Variable(this.name, false, false, true, true, function));
     return StatementAction.PROCEED;
   }

@@ -44,8 +44,8 @@ public class RangeType extends Type<Range> {
   }
 
   @Override
-  protected NBTTagCompound _writeToNBT(final Scope scope, final Range self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  protected NBTTagCompound _writeToNBT(final Range self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     tag.setInteger(START_KEY, self.getStart());
     tag.setInteger(END_KEY, self.getEnd());
     tag.setInteger(STEP_KEY, self.getStep());

@@ -1,3 +1,5 @@
+commands.mccode.error.invalid_option=Invalid option %s!
+
 mccode.interpreter.error.no_property_for_type=Type %s has no property named %s!
 mccode.interpreter.error.set_property=Cannot set value of property %s.%s!
 mccode.interpreter.error.undefined_variable=Variable %s is undefined!

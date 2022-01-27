@@ -35,7 +35,7 @@ public class AnyType extends Type<Object> {
   }
 
   @Override
-  public NBTTagCompound _writeToNBT(final Scope scope, final Object self) {
+  public NBTTagCompound _writeToNBT(final Object self) {
     throw new MCCodeException("cannot serialize objects of type any");
   }
 

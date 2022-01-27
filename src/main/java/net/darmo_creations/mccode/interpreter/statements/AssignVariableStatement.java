@@ -52,13 +52,12 @@ public class AssignVariableStatement extends Statement {
 
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
-    ProgramManager pm = scope.getProgramManager();
     Object targetObject = scope.getVariable(this.variableName, false);
-    Type<?> targetType = pm.getTypeForValue(targetObject);
+    Type<?> targetType = ProgramManager.getTypeForValue(targetObject);
     Object valueObject = this.value.evaluate(scope);
     Object result = this.operator.getBaseOperator()
         .map(op -> targetType.applyOperator(scope, op, targetObject, valueObject, null, true))
-        .orElse(pm.getTypeForValue(valueObject).copy(scope, valueObject));
+        .orElse(ProgramManager.getTypeForValue(valueObject).copy(scope, valueObject));
     scope.setVariable(this.variableName, result, false);
 
     return StatementAction.PROCEED;

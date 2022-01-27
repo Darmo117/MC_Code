@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class Log10Function extends BuiltinFunction {
   /**
    * Create a function that returns the base 10 logarithm of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public Log10Function(final ProgramManager programManager) {
-    super("log10", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public Log10Function() {
+    super("log10", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
@@ -41,7 +42,7 @@ public class SetPropertyStatement extends Statement {
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     Object targetObject = this.target.evaluate(scope);
-    Type<?> targetType = scope.getProgramManager().getTypeForValue(targetObject);
+    Type<?> targetType = ProgramManager.getTypeForValue(targetObject);
     Object valueObject = this.value.evaluate(scope);
     Object result = this.operator.getBaseOperator()
         .map(op -> targetType.applyOperator(scope, op, targetObject, valueObject, null, true))

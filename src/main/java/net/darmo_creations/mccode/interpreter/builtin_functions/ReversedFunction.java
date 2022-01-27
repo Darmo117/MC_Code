@@ -15,16 +15,14 @@ import net.darmo_creations.mccode.interpreter.types.MCList;
 public class ReversedFunction extends BuiltinFunction {
   /**
    * Create a function that reverses the given iterable object.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public ReversedFunction(final ProgramManager programManager) {
-    super("reversed", programManager.getTypeInstance(ListType.class), programManager.getTypeInstance(AnyType.class));
+  public ReversedFunction() {
+    super("reversed", ProgramManager.getTypeInstance(ListType.class), ProgramManager.getTypeInstance(AnyType.class));
   }
 
   @Override
   public Object apply(final Scope scope) {
-    MCList list = scope.getProgramManager().getTypeInstance(ListType.class).explicitCast(scope, this.getParameter(scope, 0));
+    MCList list = ProgramManager.getTypeInstance(ListType.class).explicitCast(scope, this.getParameter(scope, 0));
     list.sort(ListType.comparator(scope, true));
     return list;
   }

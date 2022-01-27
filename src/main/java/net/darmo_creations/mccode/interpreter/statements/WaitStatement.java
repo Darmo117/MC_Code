@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
@@ -40,8 +41,7 @@ public class WaitStatement extends Statement {
 
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
-    int ticks = scope.getProgramManager().getTypeInstance(IntType.class)
-        .implicitCast(scope, this.value.evaluate(scope));
+    int ticks = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, this.value.evaluate(scope));
     scope.getProgram().wait(scope, ticks);
     return StatementAction.WAIT;
   }

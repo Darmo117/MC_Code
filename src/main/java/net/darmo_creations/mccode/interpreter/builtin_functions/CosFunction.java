@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class CosFunction extends BuiltinFunction {
   /**
    * Create a function that returns the cosine of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public CosFunction(final ProgramManager programManager) {
-    super("cos", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public CosFunction() {
+    super("cos", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

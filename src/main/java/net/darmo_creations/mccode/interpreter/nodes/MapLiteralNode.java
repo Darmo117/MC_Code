@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.MCMap;
@@ -45,7 +46,7 @@ public class MapLiteralNode extends Node {
   public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
     return new MCMap(this.values.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
       Object v = e.getValue().evaluate(scope);
-      return scope.getProgramManager().getTypeForValue(v).copy(scope, v);
+      return ProgramManager.getTypeForValue(v).copy(scope, v);
     })));
   }
 

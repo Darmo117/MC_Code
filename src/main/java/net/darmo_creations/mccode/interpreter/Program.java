@@ -132,13 +132,6 @@ public class Program {
   }
 
   /**
-   * Return this program’s manager.
-   */
-  public ProgramManager getProgramManager() {
-    return this.programManager;
-  }
-
-  /**
    * Return this program’s global scope.
    */
   public Scope getScope() {

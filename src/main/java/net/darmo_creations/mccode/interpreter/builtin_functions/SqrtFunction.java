@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class SqrtFunction extends BuiltinFunction {
   /**
    * Create a function that returns the square root of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public SqrtFunction(final ProgramManager programManager) {
-    super("sqrt", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public SqrtFunction() {
+    super("sqrt", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

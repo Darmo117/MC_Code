@@ -16,11 +16,9 @@ import net.darmo_creations.mccode.interpreter.types.MCList;
 public class MaxFunction extends BuiltinFunction {
   /**
    * Create a function that returns the maximum value of an iterable object.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public MaxFunction(final ProgramManager programManager) {
-    super("max", programManager.getTypeInstance(AnyType.class), programManager.getTypeInstance(ListType.class));
+  public MaxFunction() {
+    super("max", ProgramManager.getTypeInstance(AnyType.class), ProgramManager.getTypeInstance(ListType.class));
   }
 
   @Override

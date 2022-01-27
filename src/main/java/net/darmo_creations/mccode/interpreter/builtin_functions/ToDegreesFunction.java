@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class ToDegreesFunction extends BuiltinFunction {
   /**
    * Create a function that converts the given angle in radians to degrees.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public ToDegreesFunction(final ProgramManager programManager) {
-    super("degrees", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public ToDegreesFunction() {
+    super("degrees", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

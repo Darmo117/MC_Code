@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
@@ -40,7 +41,7 @@ public class UnaryOperatorNode extends OperatorNode {
   @Override
   protected final Object evaluateImpl(Scope scope, final List<Object> values) {
     Object arg1 = values.get(0);
-    Type<?> arg1Type = scope.getProgramManager().getTypeForValue(arg1);
+    Type<?> arg1Type = ProgramManager.getTypeForValue(arg1);
     return arg1Type.applyOperator(scope, this.operator, arg1, null, null, false);
   }
 

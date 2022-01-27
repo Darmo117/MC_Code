@@ -59,8 +59,8 @@ public class MapType extends Type<MCMap> {
   @Override
   protected Object __get_item__(final Scope scope, final MCMap self, final Object key) {
     if (!(key instanceof String)) {
-      throw new CastException(scope, scope.getProgramManager().getTypeInstance(StringType.class),
-          scope.getProgramManager().getTypeForValue(self));
+      throw new CastException(scope, ProgramManager.getTypeInstance(StringType.class),
+          ProgramManager.getTypeForValue(self));
     }
     return self.get((String) key);
   }
@@ -68,18 +68,18 @@ public class MapType extends Type<MCMap> {
   @Override
   protected void __set_item__(final Scope scope, MCMap self, final Object key, final Object value) {
     if (!(key instanceof String)) {
-      throw new CastException(scope, scope.getProgramManager().getTypeInstance(StringType.class),
-          scope.getProgramManager().getTypeForValue(self));
+      throw new CastException(scope, ProgramManager.getTypeInstance(StringType.class),
+          ProgramManager.getTypeForValue(self));
     }
     // Deep copy value
-    self.put((String) key, scope.getProgramManager().getTypeForValue(value).copy(scope, value));
+    self.put((String) key, ProgramManager.getTypeForValue(value).copy(scope, value));
   }
 
   @Override
   protected void __del_item__(final Scope scope, MCMap self, final Object key) {
     if (!(key instanceof String)) {
-      throw new CastException(scope, scope.getProgramManager().getTypeInstance(StringType.class),
-          scope.getProgramManager().getTypeForValue(self));
+      throw new CastException(scope, ProgramManager.getTypeInstance(StringType.class),
+          ProgramManager.getTypeForValue(self));
     }
     self.remove(key);
   }
@@ -99,7 +99,7 @@ public class MapType extends Type<MCMap> {
   private Object add(final Scope scope, MCMap map1, final MCMap map2) {
     // Deep copy all elements to add
     map1.putAll(map2.entrySet().stream()
-        .collect(Collectors.toMap(Map.Entry::getKey, e -> scope.getProgramManager().getTypeForValue(e).copy(scope, e))));
+        .collect(Collectors.toMap(Map.Entry::getKey, e -> ProgramManager.getTypeForValue(e).copy(scope, e))));
     return map1;
   }
 
@@ -108,7 +108,7 @@ public class MapType extends Type<MCMap> {
    */
   @Override
   protected Object __sub__(final Scope scope, MCMap self, final Object o, final boolean inPlace) {
-    MCList keys = scope.getProgramManager().getTypeInstance(ListType.class).implicitCast(scope, o);
+    MCList keys = ProgramManager.getTypeInstance(ListType.class).implicitCast(scope, o);
     if (inPlace) {
       return this.sub(scope, self, keys);
     }
@@ -116,7 +116,7 @@ public class MapType extends Type<MCMap> {
   }
 
   private Object sub(final Scope scope, MCMap map, final MCList keys) {
-    StringType stringType = scope.getProgramManager().getTypeInstance(StringType.class);
+    StringType stringType = ProgramManager.getTypeInstance(StringType.class);
     keys.stream().map(k -> stringType.implicitCast(scope, k)).forEach(map::remove);
     return map;
   }
@@ -162,11 +162,10 @@ public class MapType extends Type<MCMap> {
         //noinspection unchecked
         return new MCMap((Map<String, ?>) o);
       } catch (ClassCastException e) {
-        ProgramManager programManager = scope.getProgramManager();
-        throw new CastException(scope, programManager.getTypeInstance(MapType.class), programManager.getTypeForValue(o));
+        throw new CastException(scope, ProgramManager.getTypeInstance(MapType.class), ProgramManager.getTypeForValue(o));
       }
     } else {
-      Type<?> type = scope.getProgramManager().getTypeForValue(o);
+      Type<?> type = ProgramManager.getTypeForValue(o);
       List<String> properties = type.getPropertiesNames();
       MCMap map = new MCMap();
       if (!properties.isEmpty()) {
@@ -179,10 +178,10 @@ public class MapType extends Type<MCMap> {
   }
 
   @Override
-  protected NBTTagCompound _writeToNBT(final Scope scope, final MCMap self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  protected NBTTagCompound _writeToNBT(final MCMap self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     NBTTagCompound entries = new NBTTagCompound();
-    self.forEach((key, value) -> entries.setTag(key, scope.getProgramManager().getTypeForValue(value).writeToNBT(scope, value)));
+    self.forEach((key, value) -> entries.setTag(key, ProgramManager.getTypeForValue(value).writeToNBT(value)));
     tag.setTag(ENTRIES_KEY, entries);
     return tag;
   }
@@ -193,7 +192,7 @@ public class MapType extends Type<MCMap> {
     NBTTagCompound entries = tag.getCompoundTag(ENTRIES_KEY);
     entries.getKeySet().stream()
         .map(k -> new ImmutablePair<>(k, entries.getCompoundTag(k)))
-        .forEach(e -> map.put(e.getKey(), scope.getProgramManager().getTypeForName(e.getValue().getString(Type.NAME_KEY)).readFromNBT(scope, e.getValue())));
+        .forEach(e -> map.put(e.getKey(), ProgramManager.getTypeForName(e.getValue().getString(Type.NAME_KEY)).readFromNBT(scope, e.getValue())));
     return map;
   }
 }

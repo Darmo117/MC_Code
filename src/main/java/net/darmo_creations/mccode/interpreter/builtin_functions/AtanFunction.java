@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class AtanFunction extends BuiltinFunction {
   /**
    * Create a function that returns the arc tangent of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public AtanFunction(final ProgramManager programManager) {
-    super("atan", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public AtanFunction() {
+    super("atan", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

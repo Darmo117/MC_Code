@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
@@ -42,7 +43,7 @@ public class SetItemStatement extends Statement {
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     Object targetObject = this.target.evaluate(scope);
-    Type<?> targetObjectType = scope.getProgramManager().getTypeForValue(targetObject);
+    Type<?> targetObjectType = ProgramManager.getTypeForValue(targetObject);
     Object keyValue = this.key.evaluate(scope);
     Object newValue = this.value.evaluate(scope);
     Object oldValue = targetObjectType.applyOperator(scope, Operator.GET_ITEM, targetObject, keyValue, null, false);

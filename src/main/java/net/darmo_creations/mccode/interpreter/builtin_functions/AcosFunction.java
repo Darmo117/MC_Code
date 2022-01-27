@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class AcosFunction extends BuiltinFunction {
   /**
    * Create a function that returns the arc cosine of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public AcosFunction(final ProgramManager programManager) {
-    super("acos", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public AcosFunction() {
+    super("acos", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

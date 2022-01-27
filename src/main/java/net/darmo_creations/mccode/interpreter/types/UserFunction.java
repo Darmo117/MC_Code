@@ -42,12 +42,11 @@ public class UserFunction extends Function {
    * Create a user function.
    *
    * @param name           Function’s name.
-   * @param programManager Program manager of the program the function is declared in.
    * @param parameterNames Names of the function’s parameters.
    * @param statements     List of function’s statements.
    */
-  public UserFunction(final String name, final ProgramManager programManager, final List<String> parameterNames, final List<Statement> statements) {
-    super(name, extractParameters(programManager, parameterNames), programManager.getTypeInstance(AnyType.class));
+  public UserFunction(final String name, final List<String> parameterNames, final List<Statement> statements) {
+    super(name, extractParameters(parameterNames), ProgramManager.getTypeInstance(AnyType.class));
     this.statements = Objects.requireNonNull(statements);
     this.ip = 0;
   }
@@ -55,11 +54,10 @@ public class UserFunction extends Function {
   /**
    * Create a user function from a NBT tag.
    *
-   * @param programManager Program manager of the program the function is declared in.
-   * @param tag            The tag to deserialize.
+   * @param tag The tag to deserialize.
    */
-  public UserFunction(final ProgramManager programManager, final NBTTagCompound tag) {
-    super(tag.getString(NAME_KEY), extractParameters(programManager, tag), programManager.getTypeInstance(AnyType.class));
+  public UserFunction(final NBTTagCompound tag) {
+    super(tag.getString(NAME_KEY), extractParameters(tag), ProgramManager.getTypeInstance(AnyType.class));
     this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);
     this.ip = tag.getInteger(IP_KEY);
   }
@@ -120,15 +118,14 @@ public class UserFunction extends Function {
   /**
    * Extract function parameters from the given tag.
    *
-   * @param programManager Program manager of the program the function is declared in.
-   * @param tag            The tag to extract parameters from.
+   * @param tag The tag to extract parameters from.
    * @return The parameters list.
    */
-  public static List<Parameter> extractParameters(final ProgramManager programManager, final NBTTagCompound tag) {
+  public static List<Parameter> extractParameters(final NBTTagCompound tag) {
     NBTTagList parametersTag = tag.getTagList(PARAMETERS_KEY, new NBTTagString().getId());
     List<Parameter> parameters = new ArrayList<>();
     for (NBTBase t : parametersTag) {
-      parameters.add(new Parameter(((NBTTagString) t).getString(), programManager.getTypeInstance(AnyType.class)));
+      parameters.add(new Parameter(((NBTTagString) t).getString(), ProgramManager.getTypeInstance(AnyType.class)));
     }
     return parameters;
   }
@@ -136,11 +133,10 @@ public class UserFunction extends Function {
   /**
    * Generate function parameters from a list of names.
    *
-   * @param programManager Program manager of the program the function is declared in.
    * @param parameterNames List of parameter names.
    * @return The parameters list.
    */
-  private static List<Parameter> extractParameters(final ProgramManager programManager, final List<String> parameterNames) {
-    return parameterNames.stream().map(n -> new Parameter(n, programManager.getTypeInstance(AnyType.class))).collect(Collectors.toList());
+  private static List<Parameter> extractParameters(final List<String> parameterNames) {
+    return parameterNames.stream().map(n -> new Parameter(n, ProgramManager.getTypeInstance(AnyType.class))).collect(Collectors.toList());
   }
 }

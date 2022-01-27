@@ -16,11 +16,9 @@ import net.darmo_creations.mccode.interpreter.types.MCList;
 public class MinFunction extends BuiltinFunction {
   /**
    * Create a function that returns the minimum value of an iterable object.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public MinFunction(final ProgramManager programManager) {
-    super("min", programManager.getTypeInstance(AnyType.class), programManager.getTypeInstance(ListType.class));
+  public MinFunction() {
+    super("min", ProgramManager.getTypeInstance(AnyType.class), ProgramManager.getTypeInstance(ListType.class));
   }
 
   @Override

@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
@@ -59,7 +60,7 @@ public class WhileLoopStatement extends Statement {
 
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
-    BooleanType booleanType = scope.getProgramManager().getTypeInstance(BooleanType.class);
+    BooleanType booleanType = ProgramManager.getTypeInstance(BooleanType.class);
     exit:
     // Do not re-evaluate condition if loop was paused by "wait" a statement
     while (this.paused || booleanType.implicitCast(scope, this.condition.evaluate(scope))) {

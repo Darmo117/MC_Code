@@ -70,8 +70,8 @@ public class ItemType extends Type<Item> {
   }
 
   @Override
-  public NBTTagCompound _writeToNBT(final Scope scope, final Item self) {
-    NBTTagCompound tag = super._writeToNBT(scope, self);
+  public NBTTagCompound _writeToNBT(final Item self) {
+    NBTTagCompound tag = super._writeToNBT(self);
     tag.setString(ID_KEY, this.getID(self).toString());
     return tag;
   }

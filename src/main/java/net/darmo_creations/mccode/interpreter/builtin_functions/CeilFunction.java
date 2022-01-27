@@ -15,11 +15,9 @@ public class CeilFunction extends BuiltinFunction {
   /**
    * Create a function that returns the smallest float value
    * that is greater than or equal to the argument and is equal to a mathematical integer.
-   *
-   * @param programManager The interpreter this function is declared in.
    */
-  public CeilFunction(final ProgramManager programManager) {
-    super("ceil", programManager.getTypeInstance(IntType.class), programManager.getTypeInstance(FloatType.class));
+  public CeilFunction() {
+    super("ceil", ProgramManager.getTypeInstance(IntType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

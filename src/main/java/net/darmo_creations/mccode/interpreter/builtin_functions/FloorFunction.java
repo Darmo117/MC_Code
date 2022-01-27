@@ -15,11 +15,9 @@ public class FloorFunction extends BuiltinFunction {
   /**
    * Create a function that returns largest float value
    * that is less than or equal to the argument and is equal to a mathematical integer.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public FloorFunction(final ProgramManager programManager) {
-    super("floor", programManager.getTypeInstance(IntType.class), programManager.getTypeInstance(FloatType.class));
+  public FloorFunction() {
+    super("floor", ProgramManager.getTypeInstance(IntType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

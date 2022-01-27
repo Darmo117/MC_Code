@@ -120,8 +120,8 @@ expr:
   | LCURL (IDENT COLON expr (COMMA IDENT COLON expr)* COMMA?)? RCURL # MapLiteral // ID: 6
   | LCURL expr (COMMA expr)* COMMA? RCURL                            # SetLiteral // ID: 7
   | IDENT  # Variable // ID: 100
-  | object=IDENT DOT property=IDENT                 # GetProperty // ID: 101
-  | object=IDENT DOT property=IDENT LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # MethodCall // ID: 102
+  | object=expr DOT property=IDENT                  # GetProperty // ID: 101
+  | object=expr DOT property=IDENT LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # MethodCall // ID: 102
   | expr LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # FunctionCall // ID: 103
   | operator=(MINUS | NOT) operand=expr             # UnaryOperator // IDs: 200
   | source=expr LBRACK key=expr RBRACK              # GetItem // ID: 201

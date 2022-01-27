@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter;
 
+import net.darmo_creations.mccode.MCCode;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.*;
@@ -9,6 +10,8 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.MapStorage;
+import net.minecraft.world.storage.WorldSavedData;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,43 +27,33 @@ import java.util.stream.Collectors;
  * <p>
  * The state of program managers can be saved and restored.
  */
-public class ProgramManager implements NBTDeserializable {
-  private final Map<String, Type<?>> types = new HashMap<>();
-  private final Map<Class<?>, Type<?>> wrappedTypes = new HashMap<>();
+public class ProgramManager extends WorldSavedData {
+  public static final String DATA_NAME = MCCode.MOD_ID + ":program_manager";
+
+  private static final Map<String, Type<?>> TYPES = new HashMap<>();
+  private static final Map<Class<?>, Type<?>> WRAPPED_TYPES = new HashMap<>();
+  private static boolean initialized;
 
   private static final String PROGRAMS_KEY = "Programs";
   private static final String PROGRAM_KEY = "Program";
   private static final String SCHEDULE_KEY = "ScheduleDelay";
   private static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
 
-  private final File programsDir;
-  private final World world;
-  private boolean initialized;
+  private File programsDir;
+  private World world;
   private final Map<String, Program> programs;
   private final Map<String, Integer> programsSchedules;
   private final Map<String, Integer> programsRepeats;
 
   /**
-   * Create a program manager for the given world.
-   *
-   * @param world The world to attach this manager to.
+   * Create a program manager with the given name.
+   * Required by {@link MapStorage#getOrLoadData(Class, String)}.
    */
-  public ProgramManager(World world) {
-    this.declareBuiltinTypes();
-    this.world = world;
+  private ProgramManager(final String name) {
+    super(name);
     this.programs = new HashMap<>();
     this.programsSchedules = new HashMap<>();
     this.programsRepeats = new HashMap<>();
-    this.programsDir = new File(new File(this.world.getSaveHandler().getWorldDirectory(), "data"), "mccode_programs");
-  }
-
-  /**
-   * Finish setup of this interpreter.
-   * Call only after all types have been declared.
-   */
-  public void initialize() {
-    this.processTypeAnnotations();
-    this.initialized = true;
   }
 
   /**
@@ -68,6 +61,14 @@ public class ProgramManager implements NBTDeserializable {
    */
   public World getWorld() {
     return this.world;
+  }
+
+  /**
+   * Set the world of this manager.
+   */
+  public void setWorld(World world) {
+    this.world = world;
+    this.programsDir = new File(new File(this.world.getSaveHandler().getWorldDirectory(), "data"), "mccode_programs");
   }
 
   /**
@@ -154,7 +155,7 @@ public class ProgramManager implements NBTDeserializable {
       throw new ProgramFileNotFoundException(programFile.getName());
     }
 
-    Program program = ProgramParser.parse(this, code.toString());
+    Program program = ProgramParser.parse(this, name, code.toString());
     program.getScheduleDelay().ifPresent(t -> this.programsSchedules.put(program.getName(), t));
     program.getRepeatAmount().ifPresent(t -> this.programsRepeats.put(program.getName(), t));
     this.programs.put(name, program);
@@ -184,100 +185,8 @@ public class ProgramManager implements NBTDeserializable {
     return list;
   }
 
-  /**
-   * Return all declared types.
-   */
-  public List<Type<?>> getTypes() {
-    return new ArrayList<>(this.types.values());
-  }
-
-  /**
-   * Return the {@link Type} instance for the given class.
-   *
-   * @param typeClass Type’s class.
-   * @param <T>       Type’s wrapped type.
-   * @return The type class’ instance.
-   */
-  public <T extends Type<?>> T getTypeInstance(final Class<T> typeClass) {
-    //noinspection unchecked
-    return (T) this.types.values().stream().filter(t -> t.getClass() == typeClass).findFirst().orElse(null);
-  }
-
-  /**
-   * Return the {@link Type} instance for the given type name.
-   *
-   * @param name Type’s name.
-   * @param <T>  Type’s wrapped type.
-   * @return The type instance.
-   */
-  public <T extends Type<?>> T getTypeForName(final String name) {
-    //noinspection unchecked
-    return (T) this.types.get(name);
-  }
-
-  /**
-   * Return the {@link Type} instance for the given wrapped class.
-   *
-   * @param wrappedClass Wrapped type’s class.
-   * @param <T>          Type’s wrapped type.
-   * @param <U>          Instance’s type.
-   * @return The type instance.
-   */
-  public <T, U extends Type<T>> U getTypeForWrappedClass(final Class<T> wrappedClass) {
-    //noinspection unchecked
-    return (U) this.wrappedTypes.entrySet().stream()
-        .filter(e -> e.getKey().isAssignableFrom(wrappedClass))
-        .findFirst()
-        .map(Map.Entry::getValue)
-        .orElse(null);
-  }
-
-  /**
-   * Return the {@link Type} instance for the given object.
-   *
-   * @param o Object to get the type of.
-   * @return The type instance.
-   */
-  public Type<?> getTypeForValue(final Object o) {
-    return o != null ? this.getTypeForWrappedClass(o.getClass()) : this.getTypeInstance(NullType.class);
-  }
-
-  /**
-   * Declare a new wrapper type.
-   *
-   * @param typeClass Wrapper type’s class.
-   * @throws TypeException If any error occurs related to {@link Property} or
-   *                       {@link net.darmo_creations.mccode.interpreter.annotations.Method} annotations.
-   */
-  public void declareType(final Class<? extends Type<?>> typeClass) throws TypeException {
-    this.ensureNotInitialized();
-
-    Type<?> type;
-    try {
-      type = typeClass.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
-      throw new TypeException("missing empty constructor for class %s" + typeClass);
-    }
-    String name = type.getName();
-    Class<?> wrappedType = type.getWrappedType();
-
-    if (this.types.containsKey(name)) {
-      throw new TypeException(String.format("a type with the name \"%s\" already exists", name));
-    }
-    if (this.types.values().stream().anyMatch(t -> t.getClass() == type.getClass())) {
-      throw new TypeException(String.format("cannot redeclare type \"%s\"", name));
-    }
-    if (this.wrappedTypes.containsKey(wrappedType)) {
-      throw new TypeException("a wrapper class is already declared for class %s" + wrappedType);
-    }
-
-    this.types.put(name, type);
-    this.wrappedTypes.put(wrappedType, type);
-  }
-
   @Override
-  public NBTTagCompound writeToNBT() {
-    NBTTagCompound tag = new NBTTagCompound();
+  public NBTTagCompound writeToNBT(NBTTagCompound tag) {
     NBTTagList programs = new NBTTagList();
     for (Program p : this.programs.values()) {
       NBTTagCompound programTag = new NBTTagCompound();
@@ -297,9 +206,6 @@ public class ProgramManager implements NBTDeserializable {
 
   @Override
   public void readFromNBT(final NBTTagCompound tag) {
-    if (!this.initialized) {
-      throw new MCCodeException("interpreter not yet initialized");
-    }
     NBTTagList list = tag.getTagList(PROGRAMS_KEY, new NBTTagCompound().getId());
     this.programs.clear();
     this.programsSchedules.clear();
@@ -318,51 +224,162 @@ public class ProgramManager implements NBTDeserializable {
   }
 
   /**
-   * Raise an {@link MCCodeException} if this manager is not yet initialized.
+   * Attaches a manager to the global storage through a world instance.
+   * If no manager instance is already defined, a new one is created and attached to the storage.
+   *
+   * @param world The world used to access the global storage.
+   * @return The manager instance.
    */
-  private void ensureNotInitialized() {
-    if (this.initialized) {
-      throw new MCCodeException("interpreter already initialized");
+  public static ProgramManager attachToGlobalStorage(World world) {
+    MapStorage storage = world.getMapStorage();
+    //noinspection ConstantConditions
+    ProgramManager instance = (ProgramManager) storage.getOrLoadData(ProgramManager.class, DATA_NAME);
+
+    if (instance == null) {
+      instance = new ProgramManager(DATA_NAME);
+      storage.setData(DATA_NAME, instance);
     }
+    instance.setWorld(world);
+    return instance;
+  }
+
+  /**
+   * Finish setup of this interpreter.
+   * Call only after all types have been declared.
+   */
+  public static void initialize() {
+    processTypeAnnotations();
+    initialized = true;
+  }
+
+  /**
+   * Return all declared types.
+   */
+  public static List<Type<?>> getTypes() {
+    return new ArrayList<>(TYPES.values());
+  }
+
+  /**
+   * Return the {@link Type} instance for the given class.
+   *
+   * @param typeClass Type’s class.
+   * @param <T>       Type’s wrapped type.
+   * @return The type class’ instance.
+   */
+  public static <T extends Type<?>> T getTypeInstance(final Class<T> typeClass) {
+    //noinspection unchecked
+    return (T) TYPES.values().stream().filter(t -> t.getClass() == typeClass).findFirst().orElse(null);
+  }
+
+  /**
+   * Return the {@link Type} instance for the given type name.
+   *
+   * @param name Type’s name.
+   * @param <T>  Type’s wrapped type.
+   * @return The type instance.
+   */
+  public static <T extends Type<?>> T getTypeForName(final String name) {
+    //noinspection unchecked
+    return (T) TYPES.get(name);
+  }
+
+  /**
+   * Return the {@link Type} instance for the given wrapped class.
+   *
+   * @param wrappedClass Wrapped type’s class.
+   * @param <T>          Type’s wrapped type.
+   * @param <U>          Instance’s type.
+   * @return The type instance.
+   */
+  public static <T, U extends Type<T>> U getTypeForWrappedClass(final Class<T> wrappedClass) {
+    //noinspection unchecked
+    return (U) WRAPPED_TYPES.entrySet().stream()
+        .filter(e -> e.getKey().isAssignableFrom(wrappedClass))
+        .findFirst()
+        .map(Map.Entry::getValue)
+        .orElse(null);
+  }
+
+  /**
+   * Return the {@link Type} instance for the given object.
+   *
+   * @param o Object to get the type of.
+   * @return The type instance.
+   */
+  public static Type<?> getTypeForValue(final Object o) {
+    return o != null ? getTypeForWrappedClass(o.getClass()) : getTypeInstance(NullType.class);
+  }
+
+  /**
+   * Declare a new wrapper type.
+   *
+   * @param typeClass Wrapper type’s class.
+   * @throws TypeException If any error occurs related to {@link Property} or
+   *                       {@link net.darmo_creations.mccode.interpreter.annotations.Method} annotations.
+   */
+  public static void declareType(final Class<? extends Type<?>> typeClass) throws TypeException {
+    ensureNotInitialized();
+
+    Type<?> type;
+    try {
+      type = typeClass.newInstance();
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw new TypeException("missing empty constructor for class %s" + typeClass);
+    }
+    String name = type.getName();
+    Class<?> wrappedType = type.getWrappedType();
+
+    if (TYPES.containsKey(name)) {
+      throw new TypeException(String.format("a type with the name \"%s\" already exists", name));
+    }
+    if (TYPES.values().stream().anyMatch(t -> t.getClass() == type.getClass())) {
+      throw new TypeException(String.format("cannot redeclare type \"%s\"", name));
+    }
+    if (WRAPPED_TYPES.containsKey(wrappedType)) {
+      throw new TypeException("a wrapper class is already declared for class %s" + wrappedType);
+    }
+
+    TYPES.put(name, type);
+    WRAPPED_TYPES.put(wrappedType, type);
   }
 
   /**
    * Declare all builtin types.
    */
-  private void declareBuiltinTypes() {
-    this.declareType(AnyType.class);
-    this.declareType(NullType.class);
-    this.declareType(BooleanType.class);
-    this.declareType(IntType.class);
-    this.declareType(FloatType.class);
-    this.declareType(StringType.class);
-    this.declareType(ResourceLocationType.class);
-    this.declareType(PosType.class);
-    this.declareType(ListType.class);
-    this.declareType(SetType.class);
-    this.declareType(MapType.class);
-    this.declareType(BlockType.class);
-    this.declareType(ItemType.class);
-    this.declareType(WorldType.class);
-    this.declareType(FunctionType.class);
-    this.declareType(RangeType.class);
+  public static void declareBuiltinTypes() {
+    declareType(AnyType.class);
+    declareType(NullType.class);
+    declareType(BooleanType.class);
+    declareType(IntType.class);
+    declareType(FloatType.class);
+    declareType(StringType.class);
+    declareType(ResourceLocationType.class);
+    declareType(PosType.class);
+    declareType(ListType.class);
+    declareType(SetType.class);
+    declareType(MapType.class);
+    declareType(BlockType.class);
+    declareType(ItemType.class);
+    declareType(WorldType.class);
+    declareType(FunctionType.class);
+    declareType(RangeType.class);
   }
 
   /**
    * Process annotations of all declared types.
    */
-  private void processTypeAnnotations() {
-    for (Type<?> type : this.types.values()) {
-      this.setTypeProperties(type);
-      this.setTypeMethods(type);
-      this.setTypeDoc(type);
+  private static void processTypeAnnotations() {
+    for (Type<?> type : TYPES.values()) {
+      setTypeProperties(type);
+      setTypeMethods(type);
+      setTypeDoc(type);
     }
   }
 
   /**
    * Set private "doc" field of the given type.
    */
-  private void setTypeDoc(Type<?> type) {
+  private static void setTypeDoc(Type<?> type) {
     //noinspection unchecked
     Class<? extends Type<?>> typeClass = (Class<? extends Type<?>>) type.getClass();
 
@@ -382,7 +399,7 @@ public class ProgramManager implements NBTDeserializable {
   /**
    * Set private "properties" field of the given type.
    */
-  private void setTypeProperties(Type<?> type) {
+  private static void setTypeProperties(Type<?> type) {
     //noinspection unchecked
     Class<? extends Type<?>> typeClass = (Class<? extends Type<?>>) type.getClass();
     String typeName = type.getName();
@@ -410,7 +427,7 @@ public class ProgramManager implements NBTDeserializable {
               typeName, propertyName));
         }
 
-        Type<?> returnType = this.getTypeForWrappedClass(getterMethod.getReturnType());
+        Type<?> returnType = getTypeForWrappedClass(getterMethod.getReturnType());
         if (returnType == null) {
           throw new TypeException(String.format("method return type does not match declared Property annotation type: %s.%s",
               typeName, propertyName));
@@ -438,7 +455,7 @@ public class ProgramManager implements NBTDeserializable {
   /**
    * Set private "methods" field of the given type.
    */
-  private void setTypeMethods(Type<?> type) {
+  private static void setTypeMethods(Type<?> type) {
     //noinspection unchecked
     Class<? extends Type<?>> typeClass = (Class<? extends Type<?>>) type.getClass();
     String typeName = type.getName();
@@ -471,14 +488,14 @@ public class ProgramManager implements NBTDeserializable {
 
         List<? extends Type<?>> paramsTypes = Arrays.stream(parameterTypes)
             .skip(2) // Skip scope and instance arguments
-            .map(c -> (Type<?>) this.getTypeForWrappedClass(c))
+            .map(c -> (Type<?>) getTypeForWrappedClass(c))
             .collect(Collectors.toList());
         if (paramsTypes.stream().anyMatch(Objects::isNull)) {
           throw new TypeException(String.format("method argument type does not match any declared type: %s in %s.%s",
               paramsTypes, typeName, methodName));
         }
 
-        Type<?> returnType = this.getTypeForWrappedClass(method.getReturnType());
+        Type<?> returnType = getTypeForWrappedClass(method.getReturnType());
         if (returnType == null) {
           throw new TypeException(String.format("method return type does not match any declared type: %s in %s.%s",
               method.getReturnType(), typeName, methodName));
@@ -501,6 +518,12 @@ public class ProgramManager implements NBTDeserializable {
       nameField.set(type, methods);
     } catch (NoSuchFieldException | IllegalAccessException e) {
       throw new TypeException("missing field 'methods' for class " + typeClass);
+    }
+  }
+
+  private static void ensureNotInitialized() {
+    if (initialized) {
+      throw new MCCodeException("interpreter already initialized");
     }
   }
 }

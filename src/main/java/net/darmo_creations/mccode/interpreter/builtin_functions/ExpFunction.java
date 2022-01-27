@@ -13,11 +13,9 @@ import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 public class ExpFunction extends BuiltinFunction {
   /**
    * Create a function that returns Euler's number e raised to the power of its parameter.
-   *
-   * @param programManager The manager this function is declared in.
    */
-  public ExpFunction(final ProgramManager programManager) {
-    super("exp", programManager.getTypeInstance(FloatType.class), programManager.getTypeInstance(FloatType.class));
+  public ExpFunction() {
+    super("exp", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override
