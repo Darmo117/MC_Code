@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,6 +9,11 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Map;
 
+/**
+ * Wrapper type for {@link ResourceLocation} class.
+ * <p>
+ * New instances can be created by casting {@link String}s or {@link Map}s.
+ */
 public class ResourceLocationType extends Type<ResourceLocation> {
   public static final String NAME = "resource_location";
 
@@ -24,11 +30,13 @@ public class ResourceLocationType extends Type<ResourceLocation> {
   }
 
   @Property(name = "namespace")
+  @Doc("Returns the namespace of this resource.")
   public String getNamespace(final ResourceLocation self) {
     return self.getNamespace();
   }
 
   @Property(name = "path")
+  @Doc("Returns the path of this resource.")
   public String getPath(final ResourceLocation self) {
     return self.getPath();
   }

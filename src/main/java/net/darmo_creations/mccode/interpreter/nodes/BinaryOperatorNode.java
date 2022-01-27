@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A {@link Node} representing an operator with two operands that does no assignment.
+ * A node that represents an operator with two operands.
  */
 public class BinaryOperatorNode extends OperatorNode {
   public static final int ID = 201;
@@ -17,7 +17,7 @@ public class BinaryOperatorNode extends OperatorNode {
   private final Operator operator;
 
   /**
-   * Create a binary operator {@link Node} with two operands.
+   * Create a binary operator node with two operands.
    *
    * @param operator Operator to apply.
    * @param left     Left operand.
@@ -29,7 +29,7 @@ public class BinaryOperatorNode extends OperatorNode {
   }
 
   /**
-   * Create a binary operator {@link Node} from an NBT tag.
+   * Create a binary operator node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */
@@ -44,7 +44,7 @@ public class BinaryOperatorNode extends OperatorNode {
     Object arg1 = values.get(0);
     Object arg2 = values.get(1);
     Type<?> argType = scope.getProgramManager().getTypeForValue(flipped ? arg2 : arg1);
-    return argType.applyOperator(scope, this.operator, flipped ? arg2 : arg1, flipped ? arg1 : arg2, false);
+    return argType.applyOperator(scope, this.operator, flipped ? arg2 : arg1, flipped ? arg1 : arg2, null, false);
   }
 
   @Override

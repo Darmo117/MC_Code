@@ -5,6 +5,7 @@ import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
 import net.darmo_creations.mccode.interpreter.type_wrappers.IntType;
+import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 
 /**
@@ -25,6 +26,6 @@ public class LenFunction extends BuiltinFunction {
   @Override
   public Object apply(Scope scope) {
     Object parameter = this.getParameter(scope, 0);
-    return scope.getProgramManager().getTypeForValue(parameter).size(scope, parameter);
+    return scope.getProgramManager().getTypeForValue(parameter).applyOperator(scope, Operator.LENGTH, parameter, null, null, false);
   }
 }

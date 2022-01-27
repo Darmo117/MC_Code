@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * A {@link Node} representing a map literal.
+ * A node that represents a map literal.
  */
 public class MapLiteralNode extends Node {
   public static final int ID = 6;
@@ -20,7 +20,7 @@ public class MapLiteralNode extends Node {
   private final Map<String, Node> values;
 
   /**
-   * Create a map literal {@link Node}.
+   * Create a map literal node.
    *
    * @param values Map’s entries.
    */
@@ -29,7 +29,7 @@ public class MapLiteralNode extends Node {
   }
 
   /**
-   * Create a map literal {@link Node} from an NBT tag.
+   * Create a map literal node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */
@@ -43,6 +43,7 @@ public class MapLiteralNode extends Node {
 
   @Override
   public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
+    // TODO copy
     return new MCMap(this.values.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().evaluate(scope))));
   }
 

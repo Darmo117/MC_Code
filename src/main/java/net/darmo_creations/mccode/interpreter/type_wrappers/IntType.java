@@ -6,6 +6,9 @@ import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
+/**
+ * Wrapper type for {@link Integer}.
+ */
 public class IntType extends Type<Integer> {
   public static final String NAME = "int";
 

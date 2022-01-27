@@ -1,11 +1,43 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
+/**
+ * Enumarates all available operators.
+ */
 public enum Operator {
-  MINUS("-"), NOT("not"),
-  PLUS("+"), SUB("-"), MUL("*"), DIV("/"), INT_DIV("//"), MOD("%"), POW("^"),
-  EQUAL("="), NOT_EQUAL("!="), GT(">"), GE(">="), LT("<"), LE("<="), IN("in", true), NOT_IN("not in", true),
-  AND("and"), OR("or"),
-  GET_ITEM("get_item"), ITERATE("iter"), LENGTH("len");
+  // Unary
+  MINUS("-"),
+  NOT("not"),
+
+  // Binary math
+  PLUS("+"),
+  SUB("-"),
+  MUL("*"),
+  DIV("/"),
+  INT_DIV("//"),
+  MOD("%"),
+  POW("^"),
+
+  // Binary comparison
+  EQUAL("="),
+  NOT_EQUAL("!="),
+  GT(">"),
+  GE(">="),
+  LT("<"),
+  LE("<="),
+
+  // Binary logic
+  AND("and"),
+  OR("or"),
+
+  // Collections
+  IN("in", true),
+  NOT_IN("not in", true),
+  GET_ITEM("get_item"),
+  SET_ITEM("set_item"),
+  DEL_ITEM("del_item"),
+  ITERATE("iter"),
+  LENGTH("len"),
+  ;
 
   private final String symbol;
   private final boolean flipped;
@@ -20,17 +52,31 @@ public enum Operator {
     this.flipped = flipped;
   }
 
+  /**
+   * Return the symbol of this operator.
+   */
   public String getSymbol() {
     return this.symbol;
   }
 
+  /**
+   * Return whether the instance and second argument of this operator are flipped.
+   * <p>
+   * Specifically concerns the {@link #IN} and {@link #NOT_IN} operators.
+   */
   public boolean isFlipped() {
     return this.flipped;
   }
 
-  public static Operator fromString(final String s) {
+  /**
+   * Return the operator with the given symbol.
+   *
+   * @param symbol The symbol.
+   * @return The operator or null if none matched.
+   */
+  public static Operator fromString(final String symbol) {
     for (Operator operator : values()) {
-      if (operator.getSymbol().equals(s)) {
+      if (operator.getSymbol().equals(symbol)) {
         return operator;
       }
     }

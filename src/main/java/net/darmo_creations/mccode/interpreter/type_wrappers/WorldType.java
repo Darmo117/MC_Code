@@ -15,6 +15,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+/**
+ * Wrapper type for {@link WorldProxy} class.
+ * <p>
+ * It does not have a cast operator.
+ */
 public class WorldType extends Type<WorldProxy> {
   public static final String NAME = "world";
 
@@ -39,7 +44,10 @@ public class WorldType extends Type<WorldProxy> {
     return self.getWorldTick();
   }
 
+  // TODO add properties and methods
+
   @Method(name = "set_block_meta")
+  @Doc("Sets the block at the given position in this world with the given block and metadata.")
   public Boolean setBlock(final Scope scope, WorldProxy self, final BlockPos pos, final Block block, final int meta) {
     World world = self.getWorld();
     MinecraftServer server = world.getMinecraftServer();
@@ -57,6 +65,7 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Method(name = "set_block_state")
+  @Doc("Sets the block at the given position in this world with the given block and block state.")
   public Boolean setBlock(final Scope scope, WorldProxy self, final BlockPos pos, final Block block, final MCMap state) {
     World world = self.getWorld();
     MinecraftServer server = world.getMinecraftServer();
@@ -74,6 +83,7 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Method(name = "fill_meta")
+  @Doc("Fills the region between the given positions in this world with the specified block and metadata.")
   public Boolean fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final Block block, final int meta) {
     World world = self.getWorld();
     MinecraftServer server = world.getMinecraftServer();
@@ -95,6 +105,7 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Method(name = "fill_block_state")
+  @Doc("Fills the region between the given positions in this world with the specified block and block state.")
   public Boolean fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final Block block, final MCMap state) {
     World world = self.getWorld();
     MinecraftServer server = world.getMinecraftServer();
@@ -114,8 +125,6 @@ public class WorldType extends Type<WorldProxy> {
     }
     return true;
   }
-
-  // TODO add properties and methods
 
   @Override
   public WorldProxy readFromNBT(final Scope scope, final NBTTagCompound tag) {

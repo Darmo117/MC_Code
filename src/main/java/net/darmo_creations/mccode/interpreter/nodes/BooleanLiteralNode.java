@@ -5,13 +5,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.function.BiConsumer;
 
 /**
- * A {@link Node} representing a boolean literal.
+ * A node that represents a boolean literal.
  */
 public class BooleanLiteralNode extends LiteralNode<Boolean> {
   public static final int ID = 1;
 
   /**
-   * Create a boolean literal {@link Node}.
+   * Create a boolean literal node.
    *
    * @param value Boolean value.
    */
@@ -20,7 +20,7 @@ public class BooleanLiteralNode extends LiteralNode<Boolean> {
   }
 
   /**
-   * Create a boolean literal {@link Node} from an NBT tag.
+   * Create a boolean literal node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */

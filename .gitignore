@@ -118,5 +118,5 @@ run/
 !gradle-wrapper.jar
 
 # ANTLR4 generated files
-src/main/java/net/darmo_creations/mccode/interpreter/parser/*.interp
-src/main/java/net/darmo_creations/mccode/interpreter/parser/*.tokens
+src/main/java/net/darmo_creations/mccode/interpreter/parser/antlr4/*.interp
+src/main/java/net/darmo_creations/mccode/interpreter/parser/antlr4/*.tokens

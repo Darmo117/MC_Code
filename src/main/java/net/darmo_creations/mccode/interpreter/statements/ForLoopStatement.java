@@ -13,6 +13,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Statement that represents a for-loop.
+ */
 public class ForLoopStatement extends Statement {
   public static final int ID = 42;
 
@@ -26,11 +29,30 @@ public class ForLoopStatement extends Statement {
   private final String variableName;
   private final Node values;
   private final List<Statement> statements;
+  /**
+   * Instruction pointer.
+   */
   private int ip;
+  /**
+   * Index of the current value from the iterator.
+   */
   private int iteratorIndex;
+  /**
+   * Whether the for-loop was just reloaded from an NBT tag.
+   */
   private boolean resumeAfterLoad;
+  /**
+   * Whether the loop encountered a "wait" statement.
+   */
   private boolean paused;
 
+  /**
+   * Create a statement that represents a for-loop.
+   *
+   * @param variableName Name of the loop variable.
+   * @param values       Expression that returns an iterator.
+   * @param statements   Statements of the loop.
+   */
   public ForLoopStatement(final String variableName, final Node values, final List<Statement> statements) {
     this.variableName = variableName;
     this.values = values;
@@ -40,6 +62,11 @@ public class ForLoopStatement extends Statement {
     this.paused = false;
   }
 
+  /**
+   * Create a statement that represents a for-loop from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
   public ForLoopStatement(final NBTTagCompound tag) {
     this.variableName = tag.getString(VARIABLE_NAME_KEY);
     this.values = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUES_KEY));
@@ -54,7 +81,7 @@ public class ForLoopStatement extends Statement {
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     Object valuesObject = this.values.evaluate(scope);
     Type<?> type = scope.getProgramManager().getTypeForValue(valuesObject);
-    Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, Operator.ITERATE, valuesObject, null, false);
+    Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, Operator.ITERATE, valuesObject, null, null, false);
     boolean declareVariable = true;
 
     if (this.resumeAfterLoad) {

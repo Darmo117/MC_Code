@@ -6,6 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Objects;
 
+/**
+ * Statement that deletes a variable or function.
+ */
 public class DeleteVariableStatement extends Statement {
   public static final int ID = 20;
 
@@ -13,10 +16,20 @@ public class DeleteVariableStatement extends Statement {
 
   private final String variableName;
 
+  /**
+   * Create a statement that deletes a variable or function.
+   *
+   * @param variableName Name of the variable or function to delete.
+   */
   public DeleteVariableStatement(final String variableName) {
     this.variableName = Objects.requireNonNull(variableName);
   }
 
+  /**
+   * Create a statement that deletes a variable or function from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
   public DeleteVariableStatement(final NBTTagCompound tag) {
     this(tag.getString(NAME_KEY));
   }

@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * A {@link Node} representing an operator.
+ * A node that represents an operator.
  */
 public abstract class OperatorNode extends OperationNode {
   public static final String SYMBOL_KEY = "Symbol";
@@ -18,7 +18,7 @@ public abstract class OperatorNode extends OperationNode {
   private final String symbol;
 
   /**
-   * Create an operator.
+   * Create an operator node.
    *
    * @param symbol   Operator’s symbol.
    * @param arity    Operator’s arity, i.e. its number of operands.
@@ -34,7 +34,7 @@ public abstract class OperatorNode extends OperationNode {
   }
 
   /**
-   * Create an operator {@link Node} from an NBT tag.
+   * Create an operator node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */
@@ -50,15 +50,6 @@ public abstract class OperatorNode extends OperationNode {
     return this.symbol;
   }
 
-  /**
-   * Evaluate the operator then return its value.
-   * Different implementations of the same operator may be called depending on the types of the operands.
-   *
-   * @param scope Scope this operator is called from.
-   * @return Operator’s result.
-   * @throws EvaluationException If an error occured during {@link Node} evaluation.
-   * @throws ArithmeticException If a math error occured.
-   */
   @Override
   public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
     return this.evaluateImpl(scope, this.arguments.stream().map(node -> node.evaluate(scope)).collect(Collectors.toList()));

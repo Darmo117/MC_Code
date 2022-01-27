@@ -3,6 +3,9 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * Wrapper type for {@link Boolean} class.
+ */
 public class BooleanType extends Type<Boolean> {
   public static final String NAME = "boolean";
 

@@ -19,20 +19,32 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * Wrapper type for {@link MCList} class.
+ * <p>
+ * Lists are iterable and support the __get_item__, __set_item__ and __del_item__ operators.
+ */
 public class ListType extends Type<MCList> {
   public static final String NAME = "list";
 
   private static final String VALUES_KEY = "Values";
 
+  /**
+   * Return a comparator to sort instances of this type.
+   *
+   * @param scope    A scope object to query types from.
+   * @param reversed Whether to reverse sort the target list.
+   * @return The comparator.
+   */
   public static Comparator<Object> comparator(final Scope scope, final boolean reversed) {
     return (e1, e2) -> {
       ProgramManager pm = scope.getProgramManager();
       Type<?> e1Type = pm.getTypeForValue(e1);
-      Object gt = e1Type.applyOperator(scope, Operator.GT, e1, e2, false);
+      Object gt = e1Type.applyOperator(scope, Operator.GT, e1, e2, null, false);
       if (pm.getTypeForValue(gt).toBoolean(gt)) {
         return reversed ? -1 : 1;
       }
-      Object equal = e1Type.applyOperator(scope, Operator.EQUAL, e1, e2, false);
+      Object equal = e1Type.applyOperator(scope, Operator.EQUAL, e1, e2, null, false);
       return pm.getTypeForValue(equal).toBoolean(equal) ? 0 : (reversed ? 1 : -1);
     };
   }
@@ -48,21 +60,21 @@ public class ListType extends Type<MCList> {
   }
 
   @Property(name = "clear")
-  @Doc("Remove all values from this list.")
+  @Doc("Removes all values from this list. Modifies this list.")
   public Void clear(final MCList self) {
     self.clear();
     return null;
   }
 
   @Method(name = "add")
-  @Doc("Add a value at the end of this list. Modifies this list.")
+  @Doc("Adds a value at the end of this list. Modifies this list.")
   public Void add(final Scope scope, final MCList self, final Object value) {
     self.add(scope.getProgramManager().getTypeForValue(value).copy(scope, value));
     return null;
   }
 
   @Method(name = "insert")
-  @Doc("Add a value at the specified index of this list. Modifies this list.")
+  @Doc("Adds a value at the specified index of this list. Modifies this list.")
   public Void insert(final Scope scope, final MCList self, final Integer index, final Object value) {
     if (index < 0 || index > self.size()) {
       throw new IndexOutOfBoundsException(scope, index);
@@ -72,20 +84,20 @@ public class ListType extends Type<MCList> {
   }
 
   @Method(name = "count")
-  @Doc("Count the number of times the given value occurs in this list.")
+  @Doc("Counts the number of times the given value occurs in this list.")
   public Integer count(final Scope scope, final MCList self, final Object value) {
     return Math.toIntExact(self.stream().filter(e -> e.equals(value)).count());
   }
 
   @Method(name = "index")
-  @Doc("Return the index of the first occurence of the given value in this list." +
-      " Return -1 if the value is not present in this list.")
+  @Doc("Returns the index of the first occurence of the given value in this list." +
+      " Returns -1 if the value is not present in this list.")
   public Integer indexOf(final Scope scope, final MCList self, final Object value) {
     return self.indexOf(value);
   }
 
   @Method(name = "sort")
-  @Doc("Sort this list using natural ordering of its elements.")
+  @Doc("Sorts this list using natural ordering of its elements. Modifies this list.")
   public Void sort(final Scope scope, final MCList self) {
     self.sort(comparator(scope, false));
     return null;
@@ -203,7 +215,7 @@ public class ListType extends Type<MCList> {
     if (o instanceof MCList) {
       MCList other = (MCList) o;
       Stream<?> s = IntStream.range(0, self.size())
-          .mapToObj(i -> scope.getProgramManager().getTypeForValue(self.get(i)).applyOperator(scope, Operator.GT, self.get(i), other.get(i), false));
+          .mapToObj(i -> scope.getProgramManager().getTypeForValue(self.get(i)).applyOperator(scope, Operator.GT, self.get(i), other.get(i), null, false));
       return self.size() > other.size() || self.size() == other.size() && s.allMatch(e -> scope.getProgramManager().getTypeForValue(e).toBoolean(e));
     }
     return super.__gt__(scope, self, o);

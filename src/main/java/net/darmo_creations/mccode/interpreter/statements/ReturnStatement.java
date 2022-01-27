@@ -6,6 +6,9 @@ import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * Statement that exits the function it is in.
+ */
 public class ReturnStatement extends Statement {
   public static final int ID = 62;
   public static final String RETURN_SPECIAL_VAR_NAME = "$return";
@@ -14,12 +17,22 @@ public class ReturnStatement extends Statement {
 
   private final Node node;
 
+  /**
+   * Create a return statement.
+   *
+   * @param node Expression to return.
+   */
   public ReturnStatement(final Node node) {
     this.node = node;
   }
 
-  public ReturnStatement(final NBTTagCompound tagCompound) {
-    this(NodeNBTHelper.getNodeForTag(tagCompound.getCompoundTag(EXPR_KEY)));
+  /**
+   * Create a return statement from an NBT statement.
+   *
+   * @param tag The tag to deserialize.
+   */
+  public ReturnStatement(final NBTTagCompound tag) {
+    this(NodeNBTHelper.getNodeForTag(tag.getCompoundTag(EXPR_KEY)));
   }
 
   @Override

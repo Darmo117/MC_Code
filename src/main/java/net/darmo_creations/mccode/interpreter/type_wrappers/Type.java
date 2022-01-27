@@ -6,6 +6,7 @@ import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
+import net.darmo_creations.mccode.interpreter.annotations.PropertySetter;
 import net.darmo_creations.mccode.interpreter.exceptions.*;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -13,22 +14,22 @@ import java.util.*;
 
 /**
  * A type is a class that wraps a data type to make it usable from programs.
- * It may possess properties and methods annoted with {@link Property} and {@link Method}.
+ * It may possess properties and methods annoted with {@link Property}, {@link PropertySetter} or {@link Method}.
  * <p>
- * Once declared in an {@link ProgramManager} instance it becomes available to programs of this interpreter.
+ * Once declared in an {@link ProgramManager} instance it becomes available to programs of the manager.
  *
  * @param <T> Type of data wrapped by this class.
  */
 public abstract class Type<T> {
   public static final String NAME_KEY = "Name";
 
-  // Set by Interpreter.processTypeAnnotations() method
+  // Set by ProgramManager.processTypeAnnotations() method
   @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
   private Map<String, ObjectProperty> properties;
-  // Set by Interpreter.processTypeAnnotations() method
+  // Set by ProgramManager.processTypeAnnotations() method
   @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
   private Map<String, MemberFunction> methods;
-  // Set by Interpreter.processTypeAnnotations() method
+  // Set by ProgramManager.processTypeAnnotations() method
   @SuppressWarnings("unused")
   private String doc;
 
@@ -159,7 +160,36 @@ public abstract class Type<T> {
     return this.__bool__((T) self);
   }
 
-  public Object applyOperator(final Scope scope, final Operator operator, Object self, Object o, final boolean inPlace) {
+  /**
+   * Returns a deep copy of the given object.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @return A deep copy of the argument.
+   */
+  public T copy(final Scope scope, final Object self) {
+    this.ensureType(scope.getProgramManager(), self,
+        String.format("attempt to clone object of type \"%s\" from type \"%s\"", self, this));
+    //noinspection unchecked
+    return this.__copy__(scope, (T) self);
+  }
+
+  /**
+   * Applies the an operator on the given values.
+   *
+   * @param scope    Scope the operator is applied from.
+   * @param operator Operator to apply.
+   * @param self     The object to apply the operator on.
+   * @param o1       An optional second object to apply the operator on.
+   *                 Ignored if the passed operator supports only one operand.
+   * @param o2       An optional third object to apply the operator on.
+   *                 Ignored if the passed operator supports only one or two operands.
+   * @param inPlace  Whether this operator should modify the object instead of creating a new instance.
+   *                 May be ignored by some operators.
+   * @return The result of the operation; null if the operator does not return anything.
+   * @throws MCCodeException If the given operator is invalid.
+   */
+  public Object applyOperator(final Scope scope, final Operator operator, Object self, Object o1, Object o2, final boolean inPlace) {
     if (scope.getProgramManager().getTypeForValue(self) != this) {
       throw new MCCodeException(String.format("operator %s expected instance object of type %s, got %s", operator.getSymbol(), this.getWrappedType(), self.getClass()));
     }
@@ -172,151 +202,307 @@ public abstract class Type<T> {
       case NOT:
         return this.__not__(scope, $this);
       case PLUS:
-        return this.__add__(scope, $this, o, inPlace);
+        return this.__add__(scope, $this, o1, inPlace);
       case SUB:
-        return this.__sub__(scope, $this, o, inPlace);
+        return this.__sub__(scope, $this, o1, inPlace);
       case MUL:
-        return this.__mul__(scope, $this, o, inPlace);
+        return this.__mul__(scope, $this, o1, inPlace);
       case DIV:
-        return this.__div__(scope, $this, o, inPlace);
+        return this.__div__(scope, $this, o1, inPlace);
       case INT_DIV:
-        return this.__intdiv__(scope, $this, o, inPlace);
+        return this.__intdiv__(scope, $this, o1, inPlace);
       case MOD:
-        return this.__mod__(scope, $this, o, inPlace);
+        return this.__mod__(scope, $this, o1, inPlace);
       case POW:
-        return this.__pow__(scope, $this, o, inPlace);
+        return this.__pow__(scope, $this, o1, inPlace);
       case EQUAL:
-        return this.__eq__(scope, $this, o);
+        return this.__eq__(scope, $this, o1);
       case NOT_EQUAL:
-        return this.__neq__(scope, $this, o);
+        return this.__neq__(scope, $this, o1);
       case GT:
-        return this.__gt__(scope, $this, o);
+        return this.__gt__(scope, $this, o1);
       case GE:
-        return this.__ge__(scope, $this, o);
+        return this.__ge__(scope, $this, o1);
       case LT:
-        return this.__lt__(scope, $this, o);
+        return this.__lt__(scope, $this, o1);
       case LE:
-        return this.__le__(scope, $this, o);
+        return this.__le__(scope, $this, o1);
       case IN:
-        return this.__in__(scope, $this, o);
+        return this.__in__(scope, $this, o1);
       case NOT_IN:
-        return !this.toBoolean(this.__in__(scope, $this, o));
+        return !this.toBoolean(this.__in__(scope, $this, o1));
       case AND:
-        return this.__and__(scope, $this, o);
+        return this.__and__(scope, $this, o1);
       case OR:
-        return this.__or__(scope, $this, o);
+        return this.__or__(scope, $this, o1);
       case GET_ITEM:
-        return this.__get_item__(scope, $this, o);
+        return this.__get_item__(scope, $this, o1);
+      case SET_ITEM:
+        this.__set_item__(scope, $this, o1, o2);
+        return null;
+      case DEL_ITEM:
+        this.__del_item__(scope, $this, o1);
+        return null;
       case ITERATE:
         return this.__iter__(scope, $this);
+      case LENGTH:
+        return this.__len__(scope, $this);
     }
     throw new MCCodeException("invalid operator " + operator);
   }
 
-  public void setItem(final Scope scope, Object self, final Object key, final Object value) {
-    if (scope.getProgramManager().getTypeForValue(self) != this) {
-      throw new MCCodeException(String.format("setItem expected instance object of type %s, got %s", this.getWrappedType(), self.getClass()));
-    }
-    //noinspection unchecked
-    this.__set_item__(scope, (T) self, key, value);
-  }
-
-  public void deleteItem(final Scope scope, Object self, final Object key) {
-    if (scope.getProgramManager().getTypeForValue(self) != this) {
-      throw new MCCodeException(String.format("deleteItem expected instance object of type %s, got %s", this.getWrappedType(), self.getClass()));
-    }
-    //noinspection unchecked
-    this.__del_item__(scope, (T) self, key);
-  }
-
+  /**
+   * Method that performs the GET_ITEM operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param key   Key to get the value of.
+   * @return The value for the key.
+   */
   protected Object __get_item__(Scope scope, T self, Object key) {
-    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getProgramManager().getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, Operator.GET_ITEM, this, scope.getProgramManager().getTypeForValue(key));
   }
 
+  /**
+   * Method that performs the SET_ITEM operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param key   Key to set the value of.
+   * @param value The value to set.
+   */
   protected void __set_item__(Scope scope, T self, Object key, Object value) {
-    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getProgramManager().getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, Operator.SET_ITEM, this, scope.getProgramManager().getTypeForValue(key));
   }
 
+  /**
+   * Method that performs the DELETE_ITEM operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param key   Key to delete.
+   */
   protected void __del_item__(Scope scope, T self, Object key) {
-    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getProgramManager().getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, Operator.DEL_ITEM, this, scope.getProgramManager().getTypeForValue(key));
   }
 
+  /**
+   * Method that performs the unary "minus" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @return The result of the operator.
+   */
   protected Object __minus__(Scope scope, T self) {
     throw new UnsupportedOperatorException(scope, Operator.MINUS, this);
   }
 
-  @SuppressWarnings("unused")
-  protected Object __not__(Scope scope, T self) {
+  /**
+   * Method that performs the "not" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @return The result of the operator.
+   */
+  protected Object __not__(@SuppressWarnings("unused") Scope scope, T self) {
     return !this.toBoolean(self);
   }
 
+  /**
+   * Method that performs the "addition" operation.
+   *
+   * @param scope   Scope the operation is performed from.
+   * @param self    Instance of this type to apply the operator to.
+   * @param o       The second object.
+   * @param inPlace Whether this operation should modify the instance instead of creating a new one.
+   * @return The result of the operator.
+   */
   protected Object __add__(Scope scope, T self, Object o, final boolean inPlace) {
     throw new UnsupportedOperatorException(scope, Operator.PLUS, this, scope.getProgramManager().getTypeForValue(o));
   }
 
+  /**
+   * Method that performs the "subtraction" operation.
+   *
+   * @param scope   Scope the operation is performed from.
+   * @param self    Instance of this type to apply the operator to.
+   * @param o       The second object.
+   * @param inPlace Whether this operation should modify the instance instead of creating a new one.
+   * @return The result of the operator.
+   */
   protected Object __sub__(Scope scope, T self, Object o, final boolean inPlace) {
     throw new UnsupportedOperatorException(scope, Operator.SUB, this, scope.getProgramManager().getTypeForValue(o));
   }
 
+  /**
+   * Method that performs the "multiplication" operation.
+   *
+   * @param scope   Scope the operation is performed from.
+   * @param self    Instance of this type to apply the operator to.
+   * @param o       The second object.
+   * @param inPlace Whether this operation should modify the instance instead of creating a new one.
+   * @return The result of the operator.
+   */
   protected Object __mul__(Scope scope, T self, Object o, final boolean inPlace) {
     throw new UnsupportedOperatorException(scope, Operator.MUL, this, scope.getProgramManager().getTypeForValue(o));
   }
 
+  /**
+   * Method that performs the "division" operation.
+   *
+   * @param scope   Scope the operation is performed from.
+   * @param self    Instance of this type to apply the operator to.
+   * @param o       The second object.
+   * @param inPlace Whether this operation should modify the instance instead of creating a new one.
+   * @return The result of the operator.
+   */
   protected Object __div__(Scope scope, T self, Object o, final boolean inPlace) {
     throw new UnsupportedOperatorException(scope, Operator.DIV, this, scope.getProgramManager().getTypeForValue(o));
   }
 
+  /**
+   * Method that performs the "integer division" operation.
+   *
+   * @param scope   Scope the operation is performed from.
+   * @param self    Instance of this type to apply the operator to.
+   * @param o       The second object.
+   * @param inPlace Whether this operation should modify the instance instead of creating a new one.
+   * @return The result of the operator.
+   */
   protected Object __intdiv__(Scope scope, T self, Object o, final boolean inPlace) {
     return (int) Math.floor(((Number) this.__div__(scope, self, o, inPlace)).doubleValue());
   }
 
+  /**
+   * Method that performs the "modulus" operation.
+   *
+   * @param scope   Scope the operation is performed from.
+   * @param self    Instance of this type to apply the operator to.
+   * @param o       The second object.
+   * @param inPlace Whether this operation should modify the instance instead of creating a new one.
+   * @return The result of the operator.
+   */
   protected Object __mod__(Scope scope, T self, Object o, final boolean inPlace) {
     throw new UnsupportedOperatorException(scope, Operator.MOD, this, scope.getProgramManager().getTypeForValue(o));
   }
 
+  /**
+   * Method that performs the "power/exponent" operation.
+   *
+   * @param scope   Scope the operation is performed from.
+   * @param self    Instance of this type to apply the operator to.
+   * @param o       The second object.
+   * @param inPlace Whether this operation should modify the instance instead of creating a new one.
+   * @return The result of the operator.
+   */
   protected Object __pow__(Scope scope, T self, Object o, final boolean inPlace) {
     throw new UnsupportedOperatorException(scope, Operator.POW, this, scope.getProgramManager().getTypeForValue(o));
   }
 
+  /**
+   * Method that performs the "equality" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param o     The second object.
+   * @return The result of the operator.
+   */
   protected Object __eq__(Scope scope, T self, Object o) {
     return self == o;
   }
 
+  /**
+   * Method that performs the "inequality" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param o     The second object.
+   * @return The result of the operator.
+   */
   protected Object __neq__(Scope scope, T self, Object o) {
     return !this.toBoolean(this.__eq__(scope, self, o));
   }
 
+  /**
+   * Method that performs the "greater than" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param o     The second object.
+   * @return The result of the operator.
+   */
   protected Object __gt__(Scope scope, T self, Object o) {
     throw new UnsupportedOperatorException(scope, Operator.GT, this, scope.getProgramManager().getTypeForValue(o));
   }
 
+  /**
+   * Method that performs the "greater than or equal to" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param o     The second object.
+   * @return The result of the operator.
+   */
   protected Object __ge__(Scope scope, T self, Object o) {
     return this.toBoolean(this.__gt__(scope, self, o)) || this.toBoolean(this.__eq__(scope, self, o));
   }
 
+  /**
+   * Method that performs the "less than" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param o     The second object.
+   * @return The result of the operator.
+   */
   protected Object __lt__(Scope scope, T self, Object o) {
     return !this.toBoolean(this.__ge__(scope, self, o));
   }
 
+  /**
+   * Method that performs the "less than or equal to" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param o     The second object.
+   * @return The result of the operator.
+   */
   protected Object __le__(Scope scope, T self, Object o) {
     return !this.toBoolean(this.__gt__(scope, self, o));
   }
 
+  /**
+   * Method that performs the "in" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param o     The second object.
+   * @return The result of the operator.
+   */
   protected Object __in__(Scope scope, T self, Object o) {
     throw new UnsupportedOperatorException(scope, Operator.IN, this, scope.getProgramManager().getTypeForValue(o));
   }
 
-  public int size(Scope scope, Object self) {
-    this.ensureType(scope.getProgramManager(), self,
-        String.format("attempt to get length of object of type \"%s\" from type \"%s\"", self, this));
-    //noinspection unchecked
-    return this.__len__(scope, (T) self);
-  }
-
+  /**
+   * Method that performs the "len" operation.
+   * It should return the length of the given object.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @return The length of the object.
+   */
   protected int __len__(Scope scope, T self) {
     throw new UnsupportedOperatorException(scope, Operator.LENGTH, this);
   }
 
+  /**
+   * Method that performs the "logical and" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param o     The second object.
+   * @return The result of the operator.
+   */
   @SuppressWarnings("unused")
   protected Object __and__(Scope scope, T self, Object o) {
     if (!this.toBoolean(self)) {
@@ -326,6 +512,14 @@ public abstract class Type<T> {
     }
   }
 
+  /**
+   * Method that performs the "logical or" operation.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @param o     The second object.
+   * @return The result of the operator.
+   */
   @SuppressWarnings("unused")
   protected Object __or__(Scope scope, T self, Object o) {
     if (this.toBoolean(self)) {
@@ -345,21 +539,37 @@ public abstract class Type<T> {
     return true;
   }
 
+  /**
+   * Method that performs the "iterator" operation.
+   * It should return an iterator over the values of the given object.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @return An iterator over the values of the object..
+   */
   protected Iterator<?> __iter__(Scope scope, T self) {
     throw new UnsupportedOperatorException(scope, Operator.ITERATE, this);
   }
 
-  public T copy(final Scope scope, final Object self) {
-    this.ensureType(scope.getProgramManager(), self,
-        String.format("attempt to clone object of type \"%s\" from type \"%s\"", self, this));
-    //noinspection unchecked
-    return this.__copy__(scope, (T) self);
-  }
-
+  /**
+   * Method that performs the "deep copy" operation.
+   * It should return a deep copy of the given object.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the operator to.
+   * @return A deep copy of the argument.
+   */
   protected T __copy__(final Scope scope, final T self) {
     return self;
   }
 
+  /**
+   * Serialize an instance of this type to an NBT tag.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the serialize.
+   * @return A tag.
+   */
   public NBTTagCompound writeToNBT(final Scope scope, final Object self) {
     ProgramManager programManager = scope.getProgramManager();
     this.ensureType(programManager, self,
@@ -368,12 +578,26 @@ public abstract class Type<T> {
     return this._writeToNBT(scope, (T) self);
   }
 
+  /**
+   * Serialize an instance of this type to an NBT tag.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param self  Instance of this type to apply the serialize.
+   * @return A tag.
+   */
   protected NBTTagCompound _writeToNBT(final Scope scope, final T self) {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(NAME_KEY, this.getName());
     return tag;
   }
 
+  /**
+   * Create a new instance of this type by deserializing the given NBT tag.
+   *
+   * @param scope Scope the operation is performed from.
+   * @param tag   Tag to deserialize.
+   * @return A new instance of this type.
+   */
   public abstract T readFromNBT(final Scope scope, final NBTTagCompound tag);
 
   @Override
@@ -381,6 +605,9 @@ public abstract class Type<T> {
     return this.getName();
   }
 
+  /**
+   * Raise an exception if the type of the given object does not match this type.
+   */
   private void ensureType(final ProgramManager programManager, final Object o, final String errorMessage) {
     if (programManager.getTypeForValue(o) != this) {
       throw new TypeException(errorMessage);

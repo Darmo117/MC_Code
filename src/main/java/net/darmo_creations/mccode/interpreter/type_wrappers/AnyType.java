@@ -6,7 +6,9 @@ import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
- * Wrapper type for any value type, i.e. {@link Object} class.
+ * Wrapper type for {@link Object} class.
+ * <p>
+ * It does not have a cast operator.
  */
 @Doc("Base type.")
 public class AnyType extends Type<Object> {

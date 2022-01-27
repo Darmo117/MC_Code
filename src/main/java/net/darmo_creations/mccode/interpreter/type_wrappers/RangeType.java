@@ -6,6 +6,11 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Iterator;
 
+/**
+ * Wrapper type for {@link Range} class.
+ * <p>
+ * Ranges are iterable.
+ */
 public class RangeType extends Type<Range> {
   public static final String NAME = "range";
 

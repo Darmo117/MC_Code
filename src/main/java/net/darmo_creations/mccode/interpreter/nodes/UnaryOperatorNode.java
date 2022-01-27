@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A {@link Node} representing an operator with a single operand.
+ * A node that represents an operator with a single operand.
  */
 public class UnaryOperatorNode extends OperatorNode {
   public static final int ID = 200;
@@ -17,7 +17,7 @@ public class UnaryOperatorNode extends OperatorNode {
   private final Operator operator;
 
   /**
-   * Create a unary operator {@link Node}.
+   * Create a unary operator node.
    *
    * @param operator Operator’s symbol.
    * @param operand  Operator’s operand.
@@ -28,7 +28,7 @@ public class UnaryOperatorNode extends OperatorNode {
   }
 
   /**
-   * Create a unary operator {@link Node} from an NBT tag.
+   * Create a unary operator node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */
@@ -41,7 +41,7 @@ public class UnaryOperatorNode extends OperatorNode {
   protected final Object evaluateImpl(Scope scope, final List<Object> values) {
     Object arg1 = values.get(0);
     Type<?> arg1Type = scope.getProgramManager().getTypeForValue(arg1);
-    return arg1Type.applyOperator(scope, this.operator, arg1, null, false);
+    return arg1Type.applyOperator(scope, this.operator, arg1, null, null, false);
   }
 
   @Override

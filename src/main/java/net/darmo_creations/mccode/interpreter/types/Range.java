@@ -3,25 +3,44 @@ package net.darmo_creations.mccode.interpreter.types;
 import java.util.Iterator;
 import java.util.Objects;
 
+/**
+ * A range is an iterable object that generates integers between two bounds.
+ */
 public class Range implements Iterable<Integer>, Cloneable {
   private final int start; // Included
   private final int end; // Excluded
   private final int step;
 
+  /**
+   * Create a range generator.
+   *
+   * @param start Range’s start value (included).
+   * @param end   Range’s end value (excluded).
+   * @param step  Range’s step.
+   */
   public Range(final int start, final int end, final int step) {
     this.start = start;
     this.end = end;
     this.step = step;
   }
 
+  /**
+   * Return range’s start value.
+   */
   public int getStart() {
     return this.start;
   }
 
+  /**
+   * Return range’s end value.
+   */
   public int getEnd() {
     return this.end;
   }
 
+  /**
+   * Return range’s step.
+   */
   public int getStep() {
     return this.step;
   }

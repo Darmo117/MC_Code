@@ -19,6 +19,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * This class represents a user-defined function.
+ * <p>
+ * User functions can be serialized an deserialized to and from NBT tags.
+ */
 public class UserFunction extends Function {
   public static final int MAX_CALL_DEPTH = 100;
 
@@ -28,14 +33,31 @@ public class UserFunction extends Function {
   private static final String IP_KEY = "IP";
 
   private final List<Statement> statements;
+  /**
+   * Instruction pointer.
+   */
   private int ip;
 
+  /**
+   * Create a user function.
+   *
+   * @param name           Function’s name.
+   * @param programManager Program manager of the program the function is declared in.
+   * @param parameterNames Names of the function’s parameters.
+   * @param statements     List of function’s statements.
+   */
   public UserFunction(final String name, final ProgramManager programManager, final List<String> parameterNames, final List<Statement> statements) {
     super(name, extractParameters(programManager, parameterNames), programManager.getTypeInstance(AnyType.class));
     this.statements = Objects.requireNonNull(statements);
     this.ip = 0;
   }
 
+  /**
+   * Create a user function from a NBT tag.
+   *
+   * @param programManager Program manager of the program the function is declared in.
+   * @param tag            The tag to deserialize.
+   */
   public UserFunction(final ProgramManager programManager, final NBTTagCompound tag) {
     super(tag.getString(NAME_KEY), extractParameters(programManager, tag), programManager.getTypeInstance(AnyType.class));
     this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);
@@ -68,6 +90,11 @@ public class UserFunction extends Function {
     return null;
   }
 
+  /**
+   * Serialize this function to an NBT tag.
+   *
+   * @return The tag.
+   */
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     NBTTagList parametersList = new NBTTagList();
@@ -90,6 +117,13 @@ public class UserFunction extends Function {
     return String.format("function %s(%s) do%send", this.getName(), params, Utils.indentStatements(this.statements));
   }
 
+  /**
+   * Extract function parameters from the given tag.
+   *
+   * @param programManager Program manager of the program the function is declared in.
+   * @param tag            The tag to extract parameters from.
+   * @return The parameters list.
+   */
   public static List<Parameter> extractParameters(final ProgramManager programManager, final NBTTagCompound tag) {
     NBTTagList parametersTag = tag.getTagList(PARAMETERS_KEY, new NBTTagString().getId());
     List<Parameter> parameters = new ArrayList<>();
@@ -99,6 +133,13 @@ public class UserFunction extends Function {
     return parameters;
   }
 
+  /**
+   * Generate function parameters from a list of names.
+   *
+   * @param programManager Program manager of the program the function is declared in.
+   * @param parameterNames List of parameter names.
+   * @return The parameters list.
+   */
   private static List<Parameter> extractParameters(final ProgramManager programManager, final List<String> parameterNames) {
     return parameterNames.stream().map(n -> new Parameter(n, programManager.getTypeInstance(AnyType.class))).collect(Collectors.toList());
   }

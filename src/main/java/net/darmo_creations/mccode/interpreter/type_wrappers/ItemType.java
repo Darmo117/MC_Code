@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.minecraft.block.Block;
@@ -10,6 +11,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+/**
+ * Wrapper type for {@link Item} class.
+ * <p>
+ * Implements __eq__ operator. Can explicitly cast {@link String}s, {@link ResourceLocation}s and {@link Block}s.
+ */
+@Doc("Type that represents an item.")
 public class ItemType extends Type<Item> {
   public static final String NAME = "item";
 
@@ -26,11 +33,13 @@ public class ItemType extends Type<Item> {
   }
 
   @Property(name = "id")
-  public ResourceLocation getID(final Item instance) {
-    return ForgeRegistries.ITEMS.getKey(instance);
+  @Doc("Returns the ID of this item.")
+  public ResourceLocation getID(final Item self) {
+    return ForgeRegistries.ITEMS.getKey(self);
   }
 
   @Property(name = "max_stack_size")
+  @Doc("Return the max stack size of this item.")
   public Integer getMaxStackSize(final Item self) {
     //noinspection deprecation
     return self.getItemStackLimit();

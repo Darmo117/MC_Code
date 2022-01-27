@@ -6,6 +6,9 @@ import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
+/**
+ * Wrapper type for {@link Double}.
+ */
 public class FloatType extends Type<Double> {
   public static final String NAME = "float";
 

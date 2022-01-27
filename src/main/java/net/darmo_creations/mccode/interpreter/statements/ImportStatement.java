@@ -10,6 +10,9 @@ import net.minecraft.nbt.NBTTagString;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Statement that imports another module.
+ */
 public class ImportStatement extends Statement {
   public static final int ID = 0;
 
@@ -19,11 +22,22 @@ public class ImportStatement extends Statement {
   private final List<String> moduleNamePath;
   private final String alias;
 
+  /**
+   * Create a statement that imports another module.
+   *
+   * @param moduleNamePath Module’s name.
+   * @param alias          Alias to use instead of the full name. May be null.
+   */
   public ImportStatement(final List<String> moduleNamePath, final String alias) {
     this.moduleNamePath = new ArrayList<>(moduleNamePath);
     this.alias = alias;
   }
 
+  /**
+   * Create a statement that imports another module from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
   public ImportStatement(final NBTTagCompound tag) {
     NBTTagList list = tag.getTagList(NAME_KEY, new NBTTagCompound().getId());
     this.moduleNamePath = new ArrayList<>();
@@ -56,6 +70,7 @@ public class ImportStatement extends Statement {
 
   @Override
   public String toString() {
-    return null;
+    return String.format("import %s%s;",
+        String.join(".", this.moduleNamePath), this.alias != null ? (" as " + this.alias) : "");
   }
 }

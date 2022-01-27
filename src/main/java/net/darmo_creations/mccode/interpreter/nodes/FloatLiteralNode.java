@@ -5,13 +5,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.function.BiConsumer;
 
 /**
- * A {@link Node} representing a float literal.
+ * A node that represents a float literal.
  */
 public class FloatLiteralNode extends LiteralNode<Double> {
   public static final int ID = 3;
 
   /**
-   * Create a float literal {@link Node}.
+   * Create a float literal node.
    *
    * @param value Float value.
    */
@@ -20,7 +20,7 @@ public class FloatLiteralNode extends LiteralNode<Double> {
   }
 
   /**
-   * Create a float literal {@link Node} from an NBT tag.
+   * Create a float literal node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */

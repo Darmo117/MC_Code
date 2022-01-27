@@ -28,7 +28,6 @@ public final class NodeNBTHelper {
     NODE_PROVIDERS.put(MethodCallNode.ID, MethodCallNode::new);
     NODE_PROVIDERS.put(FunctionCallNode.ID, FunctionCallNode::new);
 
-    NODE_PROVIDERS.put(CastOperatorNode.ID, CastOperatorNode::new);
     NODE_PROVIDERS.put(UnaryOperatorNode.ID, UnaryOperatorNode::new);
     NODE_PROVIDERS.put(BinaryOperatorNode.ID, BinaryOperatorNode::new);
   }
@@ -48,18 +47,31 @@ public final class NodeNBTHelper {
     return NODE_PROVIDERS.get(tagID).apply(tag);
   }
 
+  /**
+   * Deserialize a list of nodes.
+   *
+   * @param tag The tag to extract nodes from.
+   * @param key The key where the list is located.
+   * @return The nodes list.
+   */
   public static List<Node> deserializeNodesList(final NBTTagCompound tag, final String key) {
-    List<Node> statements = new ArrayList<>();
+    List<Node> nodes = new ArrayList<>();
     for (NBTBase t : tag.getTagList(key, new NBTTagCompound().getId())) {
-      statements.add(getNodeForTag((NBTTagCompound) t));
+      nodes.add(getNodeForTag((NBTTagCompound) t));
     }
-    return statements;
+    return nodes;
   }
 
-  public static NBTTagList serializeNodesList(final Collection<Node> statements) {
-    NBTTagList statementsList = new NBTTagList();
-    statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
-    return statementsList;
+  /**
+   * Serialize a list of nodes.
+   *
+   * @param nodes The nodes to serialize.
+   * @return The tag list.
+   */
+  public static NBTTagList serializeNodesList(final Collection<Node> nodes) {
+    NBTTagList nodesList = new NBTTagList();
+    nodes.forEach(s -> nodesList.appendTag(s.writeToNBT()));
+    return nodesList;
   }
 
   private NodeNBTHelper() {

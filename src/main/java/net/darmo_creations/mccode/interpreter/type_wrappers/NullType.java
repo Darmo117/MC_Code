@@ -3,6 +3,11 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * Wrapper type for {@link Void} class (null value).
+ * <p>
+ * It does not have a cast operator.
+ */
 public class NullType extends Type<Void> {
   public static final String NAME = "null";
 

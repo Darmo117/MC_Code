@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A {@link Node} representing an list literal.
+ * A node that represents an list literal.
  */
 public class ListLiteralNode extends Node {
   public static final int ID = 5;
@@ -20,7 +20,7 @@ public class ListLiteralNode extends Node {
   private final List<Node> values;
 
   /**
-   * Create an list literal {@link Node}.
+   * Create an list literal node.
    *
    * @param values List’s values.
    */
@@ -29,7 +29,7 @@ public class ListLiteralNode extends Node {
   }
 
   /**
-   * Create an list literal {@link Node} from an NBT tag.
+   * Create an list literal node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */
@@ -39,6 +39,7 @@ public class ListLiteralNode extends Node {
 
   @Override
   public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
+    // TODO copy
     return new MCList(this.values.stream().map(node -> node.evaluate(scope)).collect(Collectors.toList()));
   }
 

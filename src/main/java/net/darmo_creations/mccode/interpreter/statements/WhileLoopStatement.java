@@ -10,6 +10,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.List;
 
+/**
+ * Statement that represents a while-loop.
+ */
 public class WhileLoopStatement extends Statement {
   public static final int ID = 41;
 
@@ -20,9 +23,21 @@ public class WhileLoopStatement extends Statement {
 
   private final Node condition;
   private final List<Statement> statements;
+  /**
+   * Instruction pointer.
+   */
   private int ip;
+  /**
+   * Whether the loop encountered a "wait" statement.
+   */
   private boolean paused;
 
+  /**
+   * Create a statement that represents a while-loop.
+   *
+   * @param condition  Expression that evaluates to a boolean.
+   * @param statements Statements of the loop.
+   */
   public WhileLoopStatement(final Node condition, final List<Statement> statements) {
     this.condition = condition;
     this.statements = statements;
@@ -30,6 +45,11 @@ public class WhileLoopStatement extends Statement {
     this.paused = false;
   }
 
+  /**
+   * Create a statement that represents a while-loop.
+   *
+   * @param tag The tag to deserialize.
+   */
   public WhileLoopStatement(final NBTTagCompound tag) {
     this.condition = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(CONDITION_KEY));
     this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);

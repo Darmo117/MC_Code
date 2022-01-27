@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * A {@link Node} representing the call to a function.
+ * A node that represents the call to a function.
  */
 public class FunctionCallNode extends OperationNode {
   public static final int ID = 103;
@@ -23,9 +23,9 @@ public class FunctionCallNode extends OperationNode {
   protected final Node functionObject;
 
   /**
-   * Create a function call.
+   * Create a function call node.
    *
-   * @param functionObject A node that evaluates to a {@link Function} object.
+   * @param functionObject Expression that evaluates to a {@link Function} object.
    * @param arguments      Function’s arguments.
    */
   public FunctionCallNode(final Node functionObject, final List<Node> arguments) {
@@ -34,7 +34,7 @@ public class FunctionCallNode extends OperationNode {
   }
 
   /**
-   * Create a function call {@link Node} from an NBT tag.
+   * Create a function call node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */

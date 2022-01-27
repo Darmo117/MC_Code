@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Wrapper type for {@link BlockPos} class.
+ * <p>
+ * New instances can be created by casting {@link List}s or {@link Map}s.
+ */
 public class PosType extends Type<BlockPos> {
   public static final String NAME = "pos";
 

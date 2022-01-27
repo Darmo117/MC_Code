@@ -5,13 +5,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.function.BiConsumer;
 
 /**
- * A {@link Node} representing an integer literal.
+ * A node that represents an integer literal.
  */
 public class IntLiteralNode extends LiteralNode<Integer> {
   public static final int ID = 2;
 
   /**
-   * Create an integer literal {@link Node}.
+   * Create an integer literal node.
    *
    * @param value Integer value.
    */
@@ -20,7 +20,7 @@ public class IntLiteralNode extends LiteralNode<Integer> {
   }
 
   /**
-   * Create an int literal {@link Node} from an NBT tag.
+   * Create an int literal node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */

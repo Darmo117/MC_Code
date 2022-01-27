@@ -4,6 +4,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+/**
+ * Mod’s main class. MCCode adds the possibility to write scripts to load and interact with Minecraft worlds.
+ */
 @Mod(modid = MCCode.MOD_ID, name = MCCode.MOD_NAME, version = MCCode.VERSION)
 public class MCCode {
   public static final String MOD_ID = "mccode";

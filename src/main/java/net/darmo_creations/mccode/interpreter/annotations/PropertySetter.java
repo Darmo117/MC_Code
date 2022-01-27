@@ -10,7 +10,8 @@ import java.lang.annotation.*;
  * <p>
  * Annotated methods must feature a two parameters:
  * the instance object to set the property on and the new property value.
- * They must also reference an existing property.
+ * <p>
+ * {@link #forProperty()} must refer to an existing {@link Property} annotation in the same class.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -18,6 +19,8 @@ import java.lang.annotation.*;
 public @interface PropertySetter {
   /**
    * MCCode name of the property it is the setter for.
+   * <p>
+   * Must refer to a {@link Property} annotation in the same class.
    */
   String forProperty();
 }

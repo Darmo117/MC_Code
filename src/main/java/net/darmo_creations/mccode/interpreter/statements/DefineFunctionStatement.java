@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Statement that defines a function.
+ */
 public class DefineFunctionStatement extends Statement {
   public static final int ID = 11;
 
@@ -25,12 +28,24 @@ public class DefineFunctionStatement extends Statement {
   private final List<String> parametersNames;
   private final List<Statement> statements;
 
+  /**
+   * Create a statement that defines a function.
+   *
+   * @param name            Function’s name.
+   * @param parametersNames Function’s parameter names.
+   * @param statements      Function’s statements.
+   */
   public DefineFunctionStatement(final String name, final List<String> parametersNames, final List<Statement> statements) {
     this.name = Objects.requireNonNull(name);
     this.parametersNames = parametersNames;
     this.statements = statements;
   }
 
+  /**
+   * Create a statement that defines a function from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
   public DefineFunctionStatement(final NBTTagCompound tag) {
     this.name = tag.getString(NAME_KEY);
     NBTTagList paramsTag = tag.getTagList(PARAMS_LIST_KEY, new NBTTagString().getId());

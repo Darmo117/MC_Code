@@ -7,6 +7,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Objects;
 
+/**
+ * A node that represents a call to an object’s property.
+ */
 public class PropertyCallNode extends Node {
   public static final int ID = 101;
 
@@ -16,11 +19,22 @@ public class PropertyCallNode extends Node {
   private final Node object;
   private final String propertyName;
 
+  /**
+   * Create a node that represents a call to an object’s property.
+   *
+   * @param object       Expression that evaluates to the object to get the property of.
+   * @param propertyName Name of the property.
+   */
   public PropertyCallNode(final Node object, final String propertyName) {
     this.object = Objects.requireNonNull(object);
     this.propertyName = Objects.requireNonNull(propertyName);
   }
 
+  /**
+   * Create a node that represents a call to an object’s property from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
   public PropertyCallNode(final NBTTagCompound tag) {
     this(
         NodeNBTHelper.getNodeForTag(tag.getCompoundTag(OBJECT_KEY)),

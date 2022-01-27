@@ -6,6 +6,9 @@ import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * Statement that contains a single expression.
+ */
 public class ExpressionStatement extends Statement {
   public static final int ID = 30;
 
@@ -13,10 +16,20 @@ public class ExpressionStatement extends Statement {
 
   private final Node expression;
 
+  /**
+   * Create a statement that contains a single expression.
+   *
+   * @param expression The expression to evaluate.
+   */
   public ExpressionStatement(final Node expression) {
     this.expression = expression;
   }
 
+  /**
+   * Create a statement that contains a single expression.
+   *
+   * @param tag The tag to deserialize.
+   */
   public ExpressionStatement(final NBTTagCompound tag) {
     this(NodeNBTHelper.getNodeForTag(tag.getCompoundTag(EXPRESSION_KEY)));
   }

@@ -45,11 +45,11 @@ public class SetItemStatement extends Statement {
     Type<?> targetObjectType = scope.getProgramManager().getTypeForValue(targetObject);
     Object keyValue = this.key.evaluate(scope);
     Object newValue = this.value.evaluate(scope);
-    Object oldValue = targetObjectType.applyOperator(scope, Operator.GET_ITEM, targetObject, keyValue, false);
+    Object oldValue = targetObjectType.applyOperator(scope, Operator.GET_ITEM, targetObject, keyValue, null, false);
     Object resultValue = this.operator.getBaseOperator()
-        .map(op -> targetObjectType.applyOperator(scope, op, oldValue, newValue, true))
+        .map(op -> targetObjectType.applyOperator(scope, op, oldValue, newValue, null, true))
         .orElse(targetObject);
-    targetObjectType.setItem(scope, targetObject, keyValue, resultValue);
+    targetObjectType.applyOperator(scope, Operator.SET_ITEM, targetObject, keyValue, resultValue, true);
 
     return StatementAction.PROCEED;
   }

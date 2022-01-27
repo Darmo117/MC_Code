@@ -41,6 +41,17 @@ public class Program {
    */
   private int ip;
 
+  /**
+   * Create a new program.
+   *
+   * @param name           Program’s name.
+   * @param statements     Program’s statements.
+   * @param scheduleDelay  Program’s schedule delay. May be null.
+   * @param repeatAmount   Program’s repeat amount. May be null.
+   * @param programManager Program’s manager.
+   * @throws MCCodeRuntimeException If the schedule delay or repeat amount is negative,
+   *                                or a repeat amount is defined without a schedule delay.
+   */
   public Program(final String name, final List<Statement> statements, final Integer scheduleDelay, final Integer repeatAmount, ProgramManager programManager) {
     this.programManager = Objects.requireNonNull(programManager);
     this.name = Objects.requireNonNull(name);
@@ -62,6 +73,12 @@ public class Program {
     this.setup();
   }
 
+  /**
+   * Create a program from the given NBT tag.
+   *
+   * @param tag            Tag to deserialize.
+   * @param programManager Program’s manager.
+   */
   public Program(final NBTTagCompound tag, ProgramManager programManager) {
     this.programManager = Objects.requireNonNull(programManager);
     this.name = tag.getString(NAME_KEY);
@@ -75,11 +92,17 @@ public class Program {
     this.setup();
   }
 
+  /**
+   * Declare global variables.
+   */
   private void setup() {
     this.scope.declareVariable(new Variable(WORLD_VAR_NAME, false, false, true,
         false, new WorldProxy(this.programManager.getWorld(), -1)));
   }
 
+  /**
+   * Reset this program: delete all variables, reset instruction pointer and wait time.
+   */
   public void reset() {
     this.scope.reset();
     this.timeToWait = 0;
@@ -87,31 +110,56 @@ public class Program {
     this.setup();
   }
 
+  /**
+   * Return this program’s name.
+   */
   public String getName() {
     return this.name;
   }
 
+  /**
+   * Return this program’s schedule delay.
+   */
   public Optional<Integer> getScheduleDelay() {
     return Optional.of(this.scheduleDelay);
   }
 
+  /**
+   * Return this program’s repeat amount.
+   */
   public Optional<Integer> getRepeatAmount() {
     return Optional.ofNullable(this.repeatAmount);
   }
 
+  /**
+   * Return this program’s manager.
+   */
   public ProgramManager getProgramManager() {
     return this.programManager;
   }
 
+  /**
+   * Return this program’s global scope.
+   */
   public Scope getScope() {
     return this.scope;
   }
 
+  /**
+   * Return whether this program has terminated, i.e executed its last statement and wait time is 0.
+   */
   public boolean hasTerminated() {
     return this.ip == this.statements.size() && this.timeToWait == 0;
   }
 
-  public void execute(final int worldTick) throws MCCodeRuntimeException {
+  /**
+   * Execute this program.
+   *
+   * @param worldTick Current world tick.
+   * @throws MCCodeRuntimeException If any error occurs.
+   * @throws ArithmeticException    If any math error occurs.
+   */
+  public void execute(final int worldTick) throws MCCodeRuntimeException, ArithmeticException {
     if (this.timeToWait > 0) {
       this.timeToWait--;
     } else if (this.ip < this.statements.size()) {
@@ -129,13 +177,23 @@ public class Program {
     }
   }
 
+  /**
+   * Set the wait time of this program.
+   *
+   * @param scope Scope this instruction is called from.
+   * @param ticks Number of ticks to wait for.
+   * @throws EvaluationException If ticks amount is negative or 0.
+   */
   public void wait(final Scope scope, int ticks) throws EvaluationException {
-    if (ticks < 0) {
+    if (ticks <= 0) {
       throw new EvaluationException(scope, "mccode.interpreter.error.negative_wait_time");
     }
     this.timeToWait = ticks;
   }
 
+  /**
+   * Export the state of this program to NBT.
+   */
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(NAME_KEY, this.name);

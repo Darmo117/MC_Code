@@ -1,5 +1,7 @@
 package net.darmo_creations.mccode.interpreter;
 
+import net.darmo_creations.mccode.interpreter.annotations.Property;
+import net.darmo_creations.mccode.interpreter.annotations.PropertySetter;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
@@ -9,6 +11,12 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * This class represents a property of a builtin type.
+ * It wraps one or two Java {@link Method} objects annoted by the
+ * {@link Property} or {@link PropertySetter} annotations inside
+ * a class extending {@link Type}.
+ */
 public class ObjectProperty {
   private final String name;
   private final Type<?> type;
@@ -16,6 +24,15 @@ public class ObjectProperty {
   private final Method setter;
   private final String doc;
 
+  /**
+   * Create a type property.
+   *
+   * @param name   Property’s name.
+   * @param type   Property’s type.
+   * @param getter Java method to get this property’s value.
+   * @param setter Java method to set this property’s value.
+   * @param doc    Property’s documentation. May be null.
+   */
   public ObjectProperty(final String name, Type<?> type, final Method getter, final Method setter, final String doc) {
     this.name = Objects.requireNonNull(name);
     this.type = Objects.requireNonNull(type);
@@ -24,14 +41,27 @@ public class ObjectProperty {
     this.doc = doc;
   }
 
+  /**
+   * Return this property’s name.
+   */
   public String getName() {
     return this.name;
   }
 
+  /**
+   * Return this property’s documentation.
+   */
   public Optional<String> getDoc() {
     return Optional.ofNullable(this.doc);
   }
 
+  /**
+   * Return the value of this property for the given instance.
+   *
+   * @param self The instance to get the value from.
+   * @return The property’s value.
+   * @apiNote Type checks should be performed prior to calling this method.
+   */
   public Object get(final Object self) {
     try {
       return this.getter.invoke(self);
@@ -40,7 +70,15 @@ public class ObjectProperty {
     }
   }
 
-  public void set(final Scope scope, Object self, final Object value) {
+  /**
+   * Set the value of this property for the given instance.
+   *
+   * @param self  The instance to get set value on.
+   * @param value The new value.
+   * @throws EvaluationException If this property cannot be set.
+   * @apiNote Type checks should be performed prior to calling this method.
+   */
+  public void set(final Scope scope, Object self, final Object value) throws EvaluationException {
     if (this.setter != null) {
       try {
         this.setter.invoke(self, this.type.implicitCast(scope, value));

@@ -12,7 +12,7 @@ import java.lang.annotation.*;
  * Annotated methods should return a value matching the declared wrapping type and must feature at least two parameters:
  * <li>the {@link Scope} the method is called from;
  * <li>the instance object;
- * <li>additional parameters.
+ * <li>optional additional parameters.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

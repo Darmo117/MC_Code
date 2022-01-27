@@ -17,16 +17,16 @@ public abstract class LiteralNode<T> extends Node {
   private final T value;
 
   /**
-   * Create a float {@link Node}.
+   * Create a literal node.
    *
-   * @param value Float value.
+   * @param value Literal’s value.
    */
   public LiteralNode(final T value) {
     this.value = value;
   }
 
   /**
-   * Create a literal {@link Node} from deserializing function.
+   * Create a literal node from deserializing function.
    *
    * @param deserializer The type-specific function to deserialize the tag.
    */
@@ -34,11 +34,6 @@ public abstract class LiteralNode<T> extends Node {
     this(deserializer.apply(VALUE_KEY));
   }
 
-  /**
-   * Return the value of this node.
-   *
-   * @return The associated float.
-   */
   @Override
   public Object evaluate(final Scope scope) {
     return this.value;
@@ -55,10 +50,10 @@ public abstract class LiteralNode<T> extends Node {
   }
 
   /**
-   * Return a method from the given NBT tag that accepts a string key and this literal’s value.
+   * Return a method for the given NBT tag that accepts a string key and this literal’s value.
    *
-   * @param tag The tag to serialize the value into..
-   * @return The value serializing function.
+   * @param tag The tag to serialize the value into.
+   * @return The serializing function.
    */
   protected abstract BiConsumer<String, T> getValueSerializer(final NBTTagCompound tag);
 

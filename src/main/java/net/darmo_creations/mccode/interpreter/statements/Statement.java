@@ -6,9 +6,15 @@ import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
+ * Base class for statements.
  * A statement is an instruction that can be executed in a given scope.
+ * <p>
+ * Statements can be serialized to NBT tags.
  */
 public abstract class Statement implements NBTSerializable {
+  /**
+   * NBT tag key of statement ID property.
+   */
   public static final String ID_KEY = "StatementID";
 
   /**
@@ -21,11 +27,6 @@ public abstract class Statement implements NBTSerializable {
    */
   public abstract StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException;
 
-  /**
-   * Serialize this statement into an NBT tag.
-   *
-   * @return The serialized data.
-   */
   @Override
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
@@ -34,7 +35,8 @@ public abstract class Statement implements NBTSerializable {
   }
 
   /**
-   * Return the type ID of this statement.
+   * Return the ID of this statement.
+   * Used to serialize this statement; must be unique to each concrete subclass.
    */
   public abstract int getID();
 

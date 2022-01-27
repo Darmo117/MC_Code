@@ -44,7 +44,7 @@ public class SetPropertyStatement extends Statement {
     Type<?> targetType = scope.getProgramManager().getTypeForValue(targetObject);
     Object valueObject = this.value.evaluate(scope);
     Object result = this.operator.getBaseOperator()
-        .map(op -> targetType.applyOperator(scope, op, targetObject, valueObject, true))
+        .map(op -> targetType.applyOperator(scope, op, targetObject, valueObject, null, true))
         .orElse(valueObject);
     targetType.setProperty(scope, targetObject, this.propertyName, result);
 

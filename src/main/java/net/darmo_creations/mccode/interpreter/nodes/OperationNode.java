@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link Node} representing the call to a function or operator.
+ * A node that represents the call to a function or operator.
  */
 public abstract class OperationNode extends Node {
   private static final String ARGUMENTS_KEY = "Arguments";
@@ -14,16 +14,16 @@ public abstract class OperationNode extends Node {
   protected final List<Node> arguments;
 
   /**
-   * Create an operation call.
+   * Create an operation call node.
    *
-   * @param arguments Function’s arguments.
+   * @param arguments Operation’s arguments.
    */
   public OperationNode(final List<Node> arguments) {
     this.arguments = new ArrayList<>(arguments);
   }
 
   /**
-   * Create an operation {@link Node} from an NBT tag.
+   * Create an operation node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */

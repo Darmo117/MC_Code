@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A {@link Node} representing a set literal.
+ * A node that represents a set literal.
  */
 public class SetLiteralNode extends Node {
   public static final int ID = 7;
@@ -23,7 +23,7 @@ public class SetLiteralNode extends Node {
   private final Set<Node> values;
 
   /**
-   * Create a set literal {@link Node}.
+   * Create a set literal node.
    *
    * @param values Set’s values.
    */
@@ -32,7 +32,7 @@ public class SetLiteralNode extends Node {
   }
 
   /**
-   * Create a set literal {@link Node} from an NBT tag.
+   * Create a set literal node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */
@@ -46,6 +46,7 @@ public class SetLiteralNode extends Node {
 
   @Override
   public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
+    // TODO copy
     return new MCSet(this.values.stream().map(node -> node.evaluate(scope)).collect(Collectors.toSet()));
   }
 

@@ -9,6 +9,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Objects;
 
+/**
+ * Statement that pauses the execution of a program.
+ */
 public class WaitStatement extends Statement {
   public static final int ID = 50;
 
@@ -16,10 +19,21 @@ public class WaitStatement extends Statement {
 
   private final Node value;
 
+  /**
+   * Create a "wait" statement.
+   *
+   * @param value Amount of ticks to pause the program.
+   *              Expression that evaluates to a positive integer.
+   */
   public WaitStatement(final Node value) {
     this.value = Objects.requireNonNull(value);
   }
 
+  /**
+   * Create a "wait" statement from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
   public WaitStatement(final NBTTagCompound tag) {
     this(NodeNBTHelper.getNodeForTag(tag.getCompoundTag(TICKS_KEY)));
   }

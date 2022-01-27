@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.IndexOutOfBoundsException;
@@ -11,6 +12,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
+/**
+ * Wrapper type for {@link String} class.
+ * <p>
+ * Strings are iterable and support the __get_item__ operator.
+ */
 public class StringType extends Type<String> {
   public static final String NAME = "string";
 
@@ -27,16 +33,19 @@ public class StringType extends Type<String> {
   }
 
   @Method(name = "lower")
+  @Doc("Returns this string as lower case.")
   public String toLowerCase(final Scope scope, final String self) {
     return self.toLowerCase();
   }
 
   @Method(name = "upper")
+  @Doc("Returns this string as upper case.")
   public String toUpperCase(final Scope scope, final String self) {
     return self.toUpperCase();
   }
 
   @Method(name = "title")
+  @Doc("Returns this string as title case.")
   public String toTitleCase(final Scope scope, final String self) {
     // Code from https://stackoverflow.com/a/1086134/3779986
     StringBuilder titleCase = new StringBuilder(self.length());
@@ -46,8 +55,9 @@ public class StringType extends Type<String> {
       if (Character.isSpaceChar(c)) {
         nextTitleCase = true;
       } else if (nextTitleCase) {
+        char oldC = c;
         c = Character.toTitleCase(c);
-        nextTitleCase = false;
+        nextTitleCase = oldC == c;
       }
 
       titleCase.append(c);
@@ -57,51 +67,61 @@ public class StringType extends Type<String> {
   }
 
   @Method(name = "starts_with")
+  @Doc("Returns whether this string starts with the given string.")
   public Boolean startsWith(final Scope scope, final String self, final String prefix) {
     return self.startsWith(prefix);
   }
 
   @Method(name = "ends_with")
+  @Doc("Returns whether this string ends with the given string.")
   public Boolean endsWith(final Scope scope, final String self, final String suffix) {
     return self.endsWith(suffix);
   }
 
   @Method(name = "count")
+  @Doc("Returns the number of times the given string is present in this string.")
   public Integer count(final Scope scope, final String self, final String needle) {
     return self.length() - self.replace(needle, "").length();
   }
 
   @Method(name = "index")
+  @Doc("Returns the index of the first occurence of the given string in this string.")
   public Integer indexOf(final Scope scope, final String self, final String needle) {
     return self.indexOf(needle);
   }
 
   @Method(name = "strip")
+  @Doc("Removes all leading and trailing whitespace from this string.")
   public String trim(final Scope scope, final String self) {
     return self.trim();
   }
 
   @Method(name = "left_strip")
+  @Doc("Removes all leading whitespace from this string.")
   public String trimLeft(final Scope scope, final String self) {
     return self.replaceFirst("^\\s+", "");
   }
 
   @Method(name = "right_strip")
+  @Doc("Removes all trailing whitespace from this string.")
   public String trimRight(final Scope scope, final String self) {
     return self.replaceFirst("\\s+$", "");
   }
 
   @Method(name = "replace")
+  @Doc("Replaces each substring of this string that matches the target string with the specified literal replacement sequence.")
   public String replace(final Scope scope, final String self, final String target, final String replacement) {
     return self.replace(target, replacement);
   }
 
   @Method(name = "split")
+  @Doc("Splits this string around matches of the given regular expression.")
   public MCList split(final Scope scope, final String self, final String separator) {
     return new MCList(Arrays.asList(self.split(separator)));
   }
 
   @Method(name = "join")
+  @Doc("Joins all strings from the given list using this string as a delimiter.")
   public String join(final Scope scope, final String self, final Object collection) {
     MCList list = scope.getProgramManager().getTypeInstance(ListType.class).implicitCast(scope, collection);
     return list.stream()

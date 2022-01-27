@@ -4,6 +4,7 @@ import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
+import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.darmo_creations.mccode.interpreter.types.MCSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -13,6 +14,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Wrapper type for {@link MCSet} class.
+ * <p>
+ * Sets are iterable.
+ */
 public class SetType extends Type<MCSet> {
   public static final String NAME = "set";
 
@@ -29,27 +35,27 @@ public class SetType extends Type<MCSet> {
   }
 
   @Property(name = "clear")
-  @Doc("Remove all values from this set.")
+  @Doc("Removes all values from this set. Modifies this set.")
   public Void clear(final MCSet self) {
     self.clear();
     return null;
   }
 
   @Method(name = "add")
-  @Doc("Add a value to this set. Modifies this set.")
+  @Doc("Adds a value to this set. Modifies this set.")
   public MCSet add(final Scope scope, final MCSet self, final Object value) {
     self.add(scope.getProgramManager().getTypeForValue(value).copy(scope, value));
     return self;
   }
 
   @Method(name = "union")
-  @Doc("Return the union of values from this set and the other. Alias of '+' operator. Does not modify this set.")
+  @Doc("Returns the union of values from this set and the other. Alias of '+' operator. Does not modify this set.")
   public MCSet union(final Scope scope, final MCSet self, final MCSet other) {
     return (MCSet) this.__add__(scope, self, other, false);
   }
 
   @Method(name = "intersection")
-  @Doc("Return the intersection of values from this set and the other. Does not modify this set.")
+  @Doc("Returns the intersection of values from this set and the other. Does not modify this set.")
   public MCSet intersection(final Scope scope, final MCSet self, final MCSet other) {
     MCSet set = this.__copy__(scope, self);
     set.retainAll(other);

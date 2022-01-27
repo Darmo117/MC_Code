@@ -56,6 +56,13 @@ public final class StatementNBTHelper {
     return STMT_PROVIDERS.get(tagID).apply(tag);
   }
 
+  /**
+   * Deserialize a list of statements.
+   *
+   * @param tag The tag to extract statements from.
+   * @param key The key where the list is located.
+   * @return The statements list.
+   */
   public static List<Statement> deserializeStatementsList(final NBTTagCompound tag, final String key) {
     List<Statement> statements = new ArrayList<>();
     for (NBTBase t : tag.getTagList(key, new NBTTagCompound().getId())) {
@@ -64,6 +71,12 @@ public final class StatementNBTHelper {
     return statements;
   }
 
+  /**
+   * Serialize a list of statements.
+   *
+   * @param statements The statements to serialize.
+   * @return The tag list.
+   */
   public static NBTTagList serializeStatementsList(final List<Statement> statements) {
     NBTTagList statementsList = new NBTTagList();
     statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));

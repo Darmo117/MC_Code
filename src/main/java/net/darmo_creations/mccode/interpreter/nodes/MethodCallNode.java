@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * A {@link Node} representing the call to an object’s method.
+ * A node that represents the call to an object’s method.
  */
 public class MethodCallNode extends OperationNode {
   public static final int ID = 102;
@@ -24,9 +24,9 @@ public class MethodCallNode extends OperationNode {
   private final String methodName;
 
   /**
-   * Create a method call {@link Node}.
+   * Create a method call node.
    *
-   * @param instance  A node evaluating to an object the method will be applied on.
+   * @param instance  Expression evaluating to an object the method will be applied on.
    * @param arguments Method’s arguments.
    */
   public MethodCallNode(final Node instance, final String methodName, final List<Node> arguments) {
@@ -36,7 +36,7 @@ public class MethodCallNode extends OperationNode {
   }
 
   /**
-   * Create a method call {@link Node} from an NBT tag.
+   * Create a method call node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */

@@ -7,6 +7,11 @@ import net.darmo_creations.mccode.interpreter.types.Function;
 import net.darmo_creations.mccode.interpreter.types.UserFunction;
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * Wrapper for {@link Function} class.
+ * <p>
+ * It does not have a cast operator.
+ */
 public class FunctionType extends Type<Function> {
   public static final String NAME = "function";
 

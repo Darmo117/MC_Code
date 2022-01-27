@@ -5,20 +5,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.function.BiConsumer;
 
 /**
- * A {@link Node} representing a null value.
+ * A node that represents a null value.
  */
 public class NullLiteralNode extends LiteralNode<Void> {
   public static final int ID = 0;
 
   /**
-   * Create the null literal {@link Node}.
+   * Create the null literal node.
    */
   public NullLiteralNode() {
     super((Void) null);
   }
 
   /**
-   * Create the null literal {@link Node} from an NBT tag.
+   * Create the null literal node from an NBT tag.
    *
    * @param ignored The tag to deserialize.
    */
@@ -31,10 +31,9 @@ public class NullLiteralNode extends LiteralNode<Void> {
     return new NBTTagCompound(); // Return empty placeholder tag
   }
 
-  // No value to serialize
   @Override
   protected BiConsumer<String, Void> getValueSerializer(final NBTTagCompound tag) {
-    return null;
+    return null; // No value to serialize
   }
 
   @Override

@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.minecraft.block.Block;
@@ -8,6 +9,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+/**
+ * Wrapper type for {@link Block} class.
+ * <p>
+ * New instances can be created by casting {@link String}s or {@link ResourceLocation}s.
+ */
+@Doc("Type that represents a block.")
 public class BlockType extends Type<Block> {
   public static final String NAME = "block";
 
@@ -24,6 +31,7 @@ public class BlockType extends Type<Block> {
   }
 
   @Property(name = "id")
+  @Doc("Returns the ID of this block.")
   public ResourceLocation getID(final Block self) {
     return ForgeRegistries.BLOCKS.getKey(self);
   }

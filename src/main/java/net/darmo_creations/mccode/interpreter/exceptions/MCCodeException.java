@@ -1,18 +1,14 @@
 package net.darmo_creations.mccode.interpreter.exceptions;
 
+/**
+ * Base class for interpreter’s exceptions.
+ */
 public class MCCodeException extends RuntimeException {
-  public MCCodeException() {
-  }
-
-  public MCCodeException(String s) {
+  public MCCodeException(final String s) {
     super(s);
   }
 
-  public MCCodeException(String s, Throwable throwable) {
-    super(s, throwable);
-  }
-
-  public MCCodeException(Throwable throwable) {
+  public MCCodeException(final Throwable throwable) {
     super(throwable);
   }
 }

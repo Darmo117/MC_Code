@@ -16,6 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Wrapper type for {@link MCMap} class.
+ * <p>
+ * Maps are iterable and support the __get_item__, __set_item__ and __del_item__ operators.
+ * Maps iterate over their keys.
+ */
 public class MapType extends Type<MCMap> {
   public static final String NAME = "map";
 
@@ -32,19 +38,19 @@ public class MapType extends Type<MCMap> {
   }
 
   @Property(name = "keys")
-  @Doc("Return the set of all keys of this map.")
+  @Doc("Returns the set of all keys of this map.")
   public MCSet getKeys(final MCMap self) {
     return new MCSet(self.keySet());
   }
 
   @Property(name = "values")
-  @Doc("Return the set of all values of this map.")
+  @Doc("Returns the set of all values of this map.")
   public MCSet getValues(final MCMap self) {
     return new MCSet(self.values());
   }
 
   @Property(name = "clear")
-  @Doc("Remove all entries from this map.")
+  @Doc("Removes all entries from this map. Modifies this map.")
   public Void clear(final MCMap self) {
     self.clear();
     return null;

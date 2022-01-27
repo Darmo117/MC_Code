@@ -2,22 +2,28 @@ package net.darmo_creations.mccode.interpreter;
 
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
-import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
-import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
-import net.darmo_creations.mccode.interpreter.exceptions.TypeException;
-import net.darmo_creations.mccode.interpreter.statements.Statement;
+import net.darmo_creations.mccode.interpreter.exceptions.*;
+import net.darmo_creations.mccode.interpreter.parser.ProgramParser;
 import net.darmo_creations.mccode.interpreter.type_wrappers.*;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * A class that lets users load/unload programs.
+ * <p>
+ * The state of program managers can be saved and restored.
+ */
 public class ProgramManager implements NBTDeserializable {
   private final Map<String, Type<?>> types = new HashMap<>();
   private final Map<Class<?>, Type<?>> wrappedTypes = new HashMap<>();
@@ -34,6 +40,11 @@ public class ProgramManager implements NBTDeserializable {
   private final Map<String, Integer> programsSchedules;
   private final Map<String, Integer> programsRepeats;
 
+  /**
+   * Create a program manager for the given world.
+   *
+   * @param world The world to attach this manager to.
+   */
   public ProgramManager(World world) {
     this.declareBuiltinTypes();
     this.world = world;
@@ -52,18 +63,33 @@ public class ProgramManager implements NBTDeserializable {
     this.initialized = true;
   }
 
+  /**
+   * Return the world associated to this manager.
+   */
   public World getWorld() {
     return this.world;
   }
 
-  public void executePrograms(final int worldTick) {
+  /**
+   * Execute all loaded programs. If a program raises an error,
+   * it is automatically unloaded and the error is returned.
+   *
+   * @param worldTick Current world tick.
+   * @return A list of program errors that have occured.
+   */
+  public List<ProgramErrorReport> executePrograms(final int worldTick) {
+    List<ProgramErrorReport> errorReports = new ArrayList<>();
+
     // Execute all programs
     List<Program> toRemove = new LinkedList<>();
     for (Program program : this.programs.values()) {
       try {
         program.execute(worldTick);
-      } catch (MCCodeRuntimeException | ArithmeticException e) {
-        // TODO report exceptions to players
+      } catch (MCCodeRuntimeException e) {
+        errorReports.add(new ProgramErrorReport(e.getScope(), e.getTranslationKey(), e.getArgs()));
+        toRemove.add(program);
+      } catch (ArithmeticException e) {
+        errorReports.add(new ProgramErrorReport(program.getScope(), "mccode.interpreter.error.math_error", e.getMessage()));
         toRemove.add(program);
       }
     }
@@ -98,52 +124,105 @@ public class ProgramManager implements NBTDeserializable {
         }
       }
     }
+
+    return errorReports;
   }
 
-  public void loadProgram(final String name) {
+  /**
+   * Load a program.
+   *
+   * @param name Program’s name.
+   * @throws SyntaxErrorException         If a syntax error is present in the program’s source file.
+   * @throws ProgramFileNotFoundException If no .mccode file was found for the given name.
+   */
+  public void loadProgram(final String name)
+      throws SyntaxErrorException, ProgramFileNotFoundException {
     if (this.programs.containsKey(name)) {
-      // TODO throw error
+      throw new ProgramAlreadyLoadedException(name);
     }
     File programFile = new File(this.programsDir, name + ".mccode");
     if (!programFile.exists()) {
-      // TODO throw error
+      throw new ProgramFileNotFoundException(programFile.getName());
     }
-    // TODO give file contents to parser
-    List<Statement> statements = new ArrayList<>();
-    Integer scheduleTime = null;
-    Integer repeatAmount = null;
-    Program program = new Program(name, statements, scheduleTime, repeatAmount, this);
+    StringBuilder code = new StringBuilder();
+    try (BufferedReader br = new BufferedReader(new FileReader(programFile))) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        code.append(line).append('\n');
+      }
+    } catch (IOException e) {
+      throw new ProgramFileNotFoundException(programFile.getName());
+    }
+
+    Program program = ProgramParser.parse(this, code.toString());
     program.getScheduleDelay().ifPresent(t -> this.programsSchedules.put(program.getName(), t));
     program.getRepeatAmount().ifPresent(t -> this.programsRepeats.put(program.getName(), t));
     this.programs.put(name, program);
   }
 
+  /**
+   * Unload the given program.
+   *
+   * @param name Program’s name.
+   * @throws ProgramFileNotFoundException If no program with this name is loaded.
+   */
   public void unloadProgram(final String name) {
+    if (!this.programs.containsKey(name)) {
+      throw new ProgramNotFoundException(name);
+    }
     this.programs.remove(name);
     this.programsSchedules.remove(name);
     this.programsRepeats.remove(name);
   }
 
+  /**
+   * Return the names of all loaded programs.
+   */
   public List<String> getLoadedPrograms() {
     List<String> list = new ArrayList<>(this.programs.keySet());
     list.sort(Comparator.comparing(String::toLowerCase));
     return list;
   }
 
+  /**
+   * Return all declared types.
+   */
   public List<Type<?>> getTypes() {
     return new ArrayList<>(this.types.values());
   }
 
+  /**
+   * Return the {@link Type} instance for the given class.
+   *
+   * @param typeClass Type’s class.
+   * @param <T>       Type’s wrapped type.
+   * @return The type class’ instance.
+   */
   public <T extends Type<?>> T getTypeInstance(final Class<T> typeClass) {
     //noinspection unchecked
     return (T) this.types.values().stream().filter(t -> t.getClass() == typeClass).findFirst().orElse(null);
   }
 
+  /**
+   * Return the {@link Type} instance for the given type name.
+   *
+   * @param name Type’s name.
+   * @param <T>  Type’s wrapped type.
+   * @return The type instance.
+   */
   public <T extends Type<?>> T getTypeForName(final String name) {
     //noinspection unchecked
     return (T) this.types.get(name);
   }
 
+  /**
+   * Return the {@link Type} instance for the given wrapped class.
+   *
+   * @param wrappedClass Wrapped type’s class.
+   * @param <T>          Type’s wrapped type.
+   * @param <U>          Instance’s type.
+   * @return The type instance.
+   */
   public <T, U extends Type<T>> U getTypeForWrappedClass(final Class<T> wrappedClass) {
     //noinspection unchecked
     return (U) this.wrappedTypes.entrySet().stream()
@@ -153,10 +232,23 @@ public class ProgramManager implements NBTDeserializable {
         .orElse(null);
   }
 
+  /**
+   * Return the {@link Type} instance for the given object.
+   *
+   * @param o Object to get the type of.
+   * @return The type instance.
+   */
   public Type<?> getTypeForValue(final Object o) {
     return o != null ? this.getTypeForWrappedClass(o.getClass()) : this.getTypeInstance(NullType.class);
   }
 
+  /**
+   * Declare a new wrapper type.
+   *
+   * @param typeClass Wrapper type’s class.
+   * @throws TypeException If any error occurs related to {@link Property} or
+   *                       {@link net.darmo_creations.mccode.interpreter.annotations.Method} annotations.
+   */
   public void declareType(final Class<? extends Type<?>> typeClass) throws TypeException {
     this.ensureNotInitialized();
 
@@ -225,12 +317,18 @@ public class ProgramManager implements NBTDeserializable {
     }
   }
 
+  /**
+   * Raise an {@link MCCodeException} if this manager is not yet initialized.
+   */
   private void ensureNotInitialized() {
     if (this.initialized) {
       throw new MCCodeException("interpreter already initialized");
     }
   }
 
+  /**
+   * Declare all builtin types.
+   */
   private void declareBuiltinTypes() {
     this.declareType(AnyType.class);
     this.declareType(NullType.class);
@@ -261,7 +359,9 @@ public class ProgramManager implements NBTDeserializable {
     }
   }
 
-  // Set private "doc" field
+  /**
+   * Set private "doc" field of the given type.
+   */
   private void setTypeDoc(Type<?> type) {
     //noinspection unchecked
     Class<? extends Type<?>> typeClass = (Class<? extends Type<?>>) type.getClass();
@@ -279,7 +379,9 @@ public class ProgramManager implements NBTDeserializable {
     }
   }
 
-  // Set private "properties" field
+  /**
+   * Set private "properties" field of the given type.
+   */
   private void setTypeProperties(Type<?> type) {
     //noinspection unchecked
     Class<? extends Type<?>> typeClass = (Class<? extends Type<?>>) type.getClass();
@@ -333,7 +435,9 @@ public class ProgramManager implements NBTDeserializable {
     }
   }
 
-  // Set private "methods" field
+  /**
+   * Set private "methods" field of the given type.
+   */
   private void setTypeMethods(Type<?> type) {
     //noinspection unchecked
     Class<? extends Type<?>> typeClass = (Class<? extends Type<?>>) type.getClass();

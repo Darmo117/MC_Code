@@ -10,6 +10,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Objects;
 
+/**
+ * Statement that assigns a value to a variable.
+ */
 public class AssignVariableStatement extends Statement {
   public static final int ID = 12;
 
@@ -21,12 +24,24 @@ public class AssignVariableStatement extends Statement {
   private final AssigmentOperator operator;
   private final Node value;
 
+  /**
+   * Create a variable assignment statement.
+   *
+   * @param variableName Name of the variable to assign the value to.
+   * @param operator     Operation to perform before assigning the value.
+   * @param value        The value to assign.
+   */
   public AssignVariableStatement(final String variableName, final AssigmentOperator operator, final Node value) {
     this.variableName = Objects.requireNonNull(variableName);
     this.operator = Objects.requireNonNull(operator);
     this.value = Objects.requireNonNull(value);
   }
 
+  /**
+   * Create a variable assignment statement from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
   public AssignVariableStatement(final NBTTagCompound tag) {
     this(
         tag.getString(VAR_NAME_KEY),
@@ -42,7 +57,7 @@ public class AssignVariableStatement extends Statement {
     Type<?> targetType = pm.getTypeForValue(targetObject);
     Object valueObject = this.value.evaluate(scope);
     Object result = this.operator.getBaseOperator()
-        .map(op -> targetType.applyOperator(scope, op, targetObject, valueObject, true))
+        .map(op -> targetType.applyOperator(scope, op, targetObject, valueObject, null, true))
         .orElse(pm.getTypeForValue(valueObject).copy(scope, valueObject));
     scope.setVariable(this.variableName, result, false);
 

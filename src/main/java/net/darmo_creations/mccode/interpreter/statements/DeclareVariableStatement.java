@@ -9,6 +9,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Objects;
 
+/**
+ * Statement that declares a new variable.
+ */
 public class DeclareVariableStatement extends Statement {
   public static final int ID = 10;
 
@@ -24,6 +27,15 @@ public class DeclareVariableStatement extends Statement {
   private final String variableName;
   private final Node value;
 
+  /**
+   * Create a statement that declares a new variable.
+   *
+   * @param publiclyVisible    Whether the variable should be visible from in-game commands.
+   * @param editableByCommands Whether the variable should be editable from in-game commands.
+   * @param constant           Whether the variable should be a constant.
+   * @param variableName       Variable’s name.
+   * @param value              Variable’s value.
+   */
   public DeclareVariableStatement(final boolean publiclyVisible, final boolean editableByCommands, final boolean constant,
                                   final String variableName, final Node value) {
     this.publiclyVisible = publiclyVisible;
@@ -33,6 +45,11 @@ public class DeclareVariableStatement extends Statement {
     this.value = Objects.requireNonNull(value);
   }
 
+  /**
+   * Create a statement that declares a new variable from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
   public DeclareVariableStatement(final NBTTagCompound tag) {
     this(
         tag.getBoolean(PUBLIC_KEY),

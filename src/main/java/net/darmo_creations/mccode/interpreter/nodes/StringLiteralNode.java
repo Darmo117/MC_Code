@@ -6,13 +6,13 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
- * A {@link Node} representing a string literal.
+ * A node that represents a string literal.
  */
 public class StringLiteralNode extends LiteralNode<String> {
   public static final int ID = 4;
 
   /**
-   * Create a string literal {@link Node}.
+   * Create a string literal node.
    *
    * @param value String value.
    */
@@ -21,7 +21,7 @@ public class StringLiteralNode extends LiteralNode<String> {
   }
 
   /**
-   * Create a string literal {@link Node} from an NBT tag.
+   * Create a string literal node from an NBT tag.
    *
    * @param tag The tag to deserialize.
    */

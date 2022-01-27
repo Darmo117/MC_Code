@@ -6,8 +6,10 @@ import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
- * A node is the base component of an expression tree.
+ * A node is a component of an expression tree.
  * It returns a value when evaluated in a given scope.
+ * <p>
+ * Nodes can be serialized to NBT tags.
  */
 public abstract class Node implements NBTSerializable {
   public static final String ID_KEY = "NodeID";
@@ -18,15 +20,10 @@ public abstract class Node implements NBTSerializable {
    * @param scope The scope this node is evaluated from.
    * @return The value of this node.
    * @throws EvaluationException If an error occured during evaluation.
-   * @throws ArithmeticException If a math error occured.
+   * @throws ArithmeticException If a math error occured during evaluation.
    */
   public abstract Object evaluate(Scope scope) throws EvaluationException, ArithmeticException;
 
-  /**
-   * Serialize this node into an NBT tag.
-   *
-   * @return The serialized data.
-   */
   @Override
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();

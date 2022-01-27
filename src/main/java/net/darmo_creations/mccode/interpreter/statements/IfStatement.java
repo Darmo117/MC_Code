@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Statement that represents an if-elseif-else statement.
+ */
 public class IfStatement extends Statement {
   public static final int ID = 40;
 
@@ -25,22 +28,39 @@ public class IfStatement extends Statement {
 
   private final List<Node> conditions;
   private final List<List<Statement>> branchesStatements;
+  /**
+   * Index of the current branch.
+   */
   private int branchIndex;
+  /**
+   * Instruction pointer.
+   */
   private int ip;
 
+  /**
+   * Create a statement that represents an if-elseif-else statement.
+   *
+   * @param conditions         List of conditions for each branch.
+   *                           Each expression should evaluate to boolean values.
+   * @param branchesStatements List of statements for each branch.
+   * @param elseStatements     Statements for the default branch.
+   */
   public IfStatement(final List<Node> conditions, final List<List<Statement>> branchesStatements, final List<Statement> elseStatements) {
     this.conditions = Objects.requireNonNull(conditions);
     if (conditions.size() != branchesStatements.size()) {
       throw new MCCodeException("\"if\" statement should have the same number of branches and conditions");
     }
-    if (elseStatements != null) {
-      branchesStatements.add(elseStatements);
-    }
+    branchesStatements.add(elseStatements);
     this.branchesStatements = branchesStatements;
     this.branchIndex = -1;
     this.ip = 0;
   }
 
+  /**
+   * Create a statement that represents an if-elseif-else statement from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
   public IfStatement(final NBTTagCompound tag) {
     this.conditions = NodeNBTHelper.deserializeNodesList(tag, CONDITIONS_KEY);
     this.branchesStatements = new ArrayList<>();
@@ -59,12 +79,15 @@ public class IfStatement extends Statement {
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     if (this.branchIndex == -1) {
-      for (int i = 0; i < this.conditions.size(); i++) {
+      for (int i = 0; i < this.conditions.size(); i++) { // Check every branch until a condition evaluates to true
         Object value = this.conditions.get(i).evaluate(scope);
         Type<?> valueType = scope.getProgramManager().getTypeForValue(value);
         if (valueType.toBoolean(valueType)) {
           this.branchIndex = i;
         }
+      }
+      if (this.branchIndex == -1) { // Else branch
+        this.branchIndex = this.branchesStatements.size();
       }
     }
 
@@ -116,7 +139,7 @@ public class IfStatement extends Statement {
       s.append(String.format("if %s then", this.conditions.get(i)));
       s.append(Utils.indentStatements(this.branchesStatements.get(i)));
     }
-    if (this.conditions.size() == this.branchesStatements.size() - 1) {
+    if (!this.branchesStatements.get(this.branchesStatements.size() - 1).isEmpty()) {
       s.append("else");
       s.append(Utils.indentStatements(this.branchesStatements.get(this.branchesStatements.size() - 1)));
     }

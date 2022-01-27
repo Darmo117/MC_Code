@@ -33,7 +33,7 @@ public final class Utils {
    * @param a Value to get the modulo of.
    * @param b The divisor.
    * @return a mod b
-   * @throws ArithmeticException If b == 0.
+   * @throws ArithmeticException If b = 0.
    */
   public static double trueModulo(final double a, final double b) {
     if (b == 0) {
