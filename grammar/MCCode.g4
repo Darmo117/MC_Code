@@ -92,20 +92,20 @@ statement:
   | name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC                         # VariableAssignmentStatement // ID: 12
   | target=expr LBRACK key=expr RBRACK operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC # SetItemStatement // ID: 13
   | target=expr DOT name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC         # SetPropertyStatement // ID: 14
-  | DELETE name=IDENT SEMIC # DeleteStatement // ID: 20
+  | DELETE name=IDENT SEMIC                         # DeleteStatement // ID: 20
   | DELETE target=expr LBRACK key=expr RBRACK SEMIC # DeleteItemStatement // ID: 21
   | expr SEMIC # ExpressionStatement // ID: 30
-  | IF if_cond=expr THEN if_stmts=statement* (ELIF elif_cond=expr THEN elif_stmts=statement*)* (ELSE else_stmts=statement*) END # IfStatement // ID: 40
+  | IF if_cond=expr THEN if_stmts=statement* (ELIF elif_cond=expr THEN elif_stmts=statement*)* (ELSE else_stmts=statement*)? END # IfStatement // ID: 40
   | WHILE cond=expr DO loop_stmt* END                  # WhileLoopStatement // ID: 41
   | FOR variable=IDENT IN range=expr DO loop_stmt* END # ForLoopStatement // ID: 42
-  | WAIT expr SEMIC # WaitStatement // ID: 50 Raises an error if present in a function
+  | WAIT expr SEMIC               # WaitStatement // ID: 50 Raises an error if present in a function
   | RETURN (returned=expr)? SEMIC # ReturnStatement // ID: 62 Raises an error if outside of a function
 ;
 
 loop_stmt:
-    statement # Statement_
-  | BREAK     # BreakStatement // ID: 60
-  | CONTINUE  # ContinueStatement // ID: 61
+    statement      # Statement_
+  | BREAK SEMIC    # BreakStatement // ID: 60
+  | CONTINUE SEMIC # ContinueStatement // ID: 61
 ;
 
 expr:
