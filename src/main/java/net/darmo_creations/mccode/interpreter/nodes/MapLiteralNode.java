@@ -43,8 +43,10 @@ public class MapLiteralNode extends Node {
 
   @Override
   public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
-    // TODO copy
-    return new MCMap(this.values.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().evaluate(scope))));
+    return new MCMap(this.values.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
+      Object v = e.getValue().evaluate(scope);
+      return scope.getProgramManager().getTypeForValue(v).copy(scope, v);
+    })));
   }
 
   @Override

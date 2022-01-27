@@ -46,8 +46,10 @@ public class SetLiteralNode extends Node {
 
   @Override
   public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
-    // TODO copy
-    return new MCSet(this.values.stream().map(node -> node.evaluate(scope)).collect(Collectors.toSet()));
+    return new MCSet(this.values.stream().map(node -> {
+      Object v = node.evaluate(scope);
+      return scope.getProgramManager().getTypeForValue(v).copy(scope, v);
+    }).collect(Collectors.toSet()));
   }
 
   @Override
