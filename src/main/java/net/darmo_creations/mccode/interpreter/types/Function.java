@@ -54,6 +54,13 @@ public abstract class Function {
   }
 
   /**
+   * Return the list of parameters of this function.
+   */
+  public List<Parameter> getParameters() {
+    return this.parameters;
+  }
+
+  /**
    * Call this function in the given scope.
    *
    * @param scope The scope the function is called from.It contains variables named

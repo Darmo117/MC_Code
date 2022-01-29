@@ -22,6 +22,6 @@ public class CeilFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return (int) Math.ceil(this.getParameter(scope, 0));
+    return (int) Math.ceil(this.getParameterValue(scope, 0));
   }
 }

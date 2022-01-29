@@ -40,7 +40,9 @@ public class NodeVisitor extends MCCodeBaseVisitor<Node> {
 
   @Override
   public Node visitStringLiteral(MCCodeParser.StringLiteralContext ctx) {
-    return new StringLiteralNode(ctx.STRING().getText());
+    String s = ctx.STRING().getText();
+    s = s.substring(1, s.length() - 1); // Remove quotes
+    return new StringLiteralNode(s);
   }
 
   @Override
@@ -77,7 +79,7 @@ public class NodeVisitor extends MCCodeBaseVisitor<Node> {
     return new MethodCallNode(
         super.visit(ctx.object),
         ctx.property.getText(),
-        ctx.expr().stream().map(super::visit).collect(Collectors.toList())
+        ctx.expr().stream().skip(1).map(super::visit).collect(Collectors.toList())
     );
   }
 

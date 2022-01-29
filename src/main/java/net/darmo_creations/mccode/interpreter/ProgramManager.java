@@ -38,12 +38,14 @@ public class ProgramManager extends WorldSavedData {
   private static final String PROGRAM_KEY = "Program";
   private static final String SCHEDULE_KEY = "ScheduleDelay";
   private static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
+  private static final String RUNNING_KEY = "Running";
 
   private File programsDir;
   private World world;
   private final Map<String, Program> programs;
   private final Map<String, Integer> programsSchedules;
   private final Map<String, Integer> programsRepeats;
+  private final Map<String, Boolean> runningPrograms;
 
   /**
    * Create a program manager with the given name.
@@ -54,6 +56,7 @@ public class ProgramManager extends WorldSavedData {
     this.programs = new HashMap<>();
     this.programsSchedules = new HashMap<>();
     this.programsRepeats = new HashMap<>();
+    this.runningPrograms = new HashMap<>();
   }
 
   /**
@@ -75,23 +78,24 @@ public class ProgramManager extends WorldSavedData {
    * Execute all loaded programs. If a program raises an error,
    * it is automatically unloaded and the error is returned.
    *
-   * @param worldTick Current world tick.
    * @return A list of program errors that have occured.
    */
-  public List<ProgramErrorReport> executePrograms(final int worldTick) {
+  public List<ProgramErrorReport> executePrograms() {
     List<ProgramErrorReport> errorReports = new ArrayList<>();
 
     // Execute all programs
     List<Program> toRemove = new LinkedList<>();
     for (Program program : this.programs.values()) {
-      try {
-        program.execute(worldTick);
-      } catch (MCCodeRuntimeException e) {
-        errorReports.add(new ProgramErrorReport(e.getScope(), e.getTranslationKey(), e.getArgs()));
-        toRemove.add(program);
-      } catch (ArithmeticException e) {
-        errorReports.add(new ProgramErrorReport(program.getScope(), "mccode.interpreter.error.math_error", e.getMessage()));
-        toRemove.add(program);
+      if (this.runningPrograms.get(program.getName())) {
+        try {
+          program.execute();
+        } catch (MCCodeRuntimeException e) {
+          errorReports.add(new ProgramErrorReport(e.getScope(), e.getTranslationKey(), e.getArgs()));
+          toRemove.add(program);
+        } catch (ArithmeticException e) {
+          errorReports.add(new ProgramErrorReport(program.getScope(), "mccode.interpreter.error.math_error", e.getMessage()));
+          toRemove.add(program);
+        }
       }
     }
     toRemove.forEach(p -> this.unloadProgram(p.getName()));
@@ -159,21 +163,71 @@ public class ProgramManager extends WorldSavedData {
     program.getScheduleDelay().ifPresent(t -> this.programsSchedules.put(program.getName(), t));
     program.getRepeatAmount().ifPresent(t -> this.programsRepeats.put(program.getName(), t));
     this.programs.put(name, program);
+    this.runningPrograms.put(name, false);
   }
 
   /**
    * Unload the given program.
    *
    * @param name Program’s name.
-   * @throws ProgramFileNotFoundException If no program with this name is loaded.
+   * @throws ProgramNotFoundException If no program with this name is loaded.
    */
-  public void unloadProgram(final String name) {
+  public void unloadProgram(final String name) throws ProgramNotFoundException {
     if (!this.programs.containsKey(name)) {
       throw new ProgramNotFoundException(name);
     }
     this.programs.remove(name);
     this.programsSchedules.remove(name);
     this.programsRepeats.remove(name);
+    this.runningPrograms.remove(name);
+  }
+
+  /**
+   * Reset the given program.
+   *
+   * @param name Program’s name.
+   * @throws ProgramNotFoundException If no program with this name is loaded.
+   */
+  public void resetProgram(final String name) throws ProgramNotFoundException {
+    if (!this.programs.containsKey(name)) {
+      throw new ProgramNotFoundException(name);
+    }
+    this.programs.get(name).reset();
+    this.runningPrograms.put(name, false);
+  }
+
+  /**
+   * Run the given program.
+   *
+   * @param name Program’s name.
+   * @throws ProgramNotFoundException       If no program with this name is loaded.
+   * @throws ProgramAlreadyRunningException If the program is already running.
+   */
+  public void runProgram(final String name) throws ProgramNotFoundException, ProgramAlreadyRunningException {
+    if (!this.programs.containsKey(name)) {
+      throw new ProgramNotFoundException(name);
+    }
+    if (this.runningPrograms.get(name)) {
+      throw new ProgramAlreadyRunningException(name);
+    }
+    this.runningPrograms.put(name, true);
+  }
+
+  /**
+   * Pause the given program.
+   *
+   * @param name Program’s name.
+   * @throws ProgramNotFoundException      If no program with this name is loaded.
+   * @throws ProgramAlreadyPausedException If the program is already paused.
+   */
+  public void pauseProgram(final String name) throws ProgramNotFoundException, ProgramAlreadyPausedException {
+    if (!this.programs.containsKey(name)) {
+      throw new ProgramNotFoundException(name);
+    }
+    if (!this.runningPrograms.get(name)) {
+      throw new ProgramAlreadyPausedException(name);
+    }
+    this.runningPrograms.put(name, false);
   }
 
   /**
@@ -183,6 +237,16 @@ public class ProgramManager extends WorldSavedData {
     List<String> list = new ArrayList<>(this.programs.keySet());
     list.sort(Comparator.comparing(String::toLowerCase));
     return list;
+  }
+
+  /**
+   * Return the program with the given name.
+   *
+   * @param name Program’s name.
+   * @return The program.
+   */
+  public Optional<Program> getProgram(final String name) {
+    return Optional.ofNullable(this.programs.get(name));
   }
 
   @Override
@@ -198,6 +262,7 @@ public class ProgramManager extends WorldSavedData {
           programTag.setInteger(REPEAT_AMOUNT_KEY, this.programsRepeats.get(programName));
         }
       }
+      programTag.setBoolean(RUNNING_KEY, this.runningPrograms.get(programName));
       programs.appendTag(programTag);
     }
     tag.setTag(PROGRAMS_KEY, programs);
@@ -210,6 +275,7 @@ public class ProgramManager extends WorldSavedData {
     this.programs.clear();
     this.programsSchedules.clear();
     this.programsRepeats.clear();
+    this.runningPrograms.clear();
     for (NBTBase t : list) {
       NBTTagCompound programTag = (NBTTagCompound) t;
       Program program = new Program(programTag.getCompoundTag(PROGRAM_KEY), this);
@@ -220,6 +286,7 @@ public class ProgramManager extends WorldSavedData {
           this.programsRepeats.put(program.getName(), programTag.getInteger(REPEAT_AMOUNT_KEY));
         }
       }
+      this.runningPrograms.put(program.getName(), programTag.getBoolean(RUNNING_KEY));
     }
   }
 
@@ -294,10 +361,29 @@ public class ProgramManager extends WorldSavedData {
   public static <T, U extends Type<T>> U getTypeForWrappedClass(final Class<T> wrappedClass) {
     //noinspection unchecked
     return (U) WRAPPED_TYPES.entrySet().stream()
-        .filter(e -> e.getKey().isAssignableFrom(wrappedClass))
-        .findFirst()
+        .min(Comparator.comparing(e -> classDistance(e.getKey(), wrappedClass)))
         .map(Map.Entry::getValue)
         .orElse(null);
+  }
+
+  /**
+   * Return the class hierarchy distance between the two given classes.
+   *
+   * @param key          A superclass of the second argument.
+   * @param wrappedClass The class to get the distance to the first one.
+   * @return The distance between the two classes.
+   */
+  private static int classDistance(final Class<?> key, final Class<?> wrappedClass) {
+    if (!key.isAssignableFrom(wrappedClass)) {
+      return Integer.MAX_VALUE;
+    }
+    Class<?> c = wrappedClass;
+    int distance = 0;
+    while (c != key) {
+      c = c.getSuperclass();
+      distance++;
+    }
+    return distance;
   }
 
   /**
@@ -386,12 +472,19 @@ public class ProgramManager extends WorldSavedData {
     if (typeClass.isAnnotationPresent(Doc.class)) {
       Doc docAnnotation = typeClass.getAnnotation(Doc.class);
       String doc = docAnnotation.value();
+
+      // Retrieve Type class
+      Class<?> c = typeClass;
+      while (c != Type.class) {
+        c = c.getSuperclass();
+      }
+
       try {
-        Field nameField = type.getClass().getField("doc");
+        Field nameField = c.getDeclaredField("doc");
         nameField.setAccessible(true);
         nameField.set(type, doc);
       } catch (NoSuchFieldException | IllegalAccessException e) {
-        throw new TypeException("missing field 'doc' for class " + typeClass);
+        throw new TypeException("missing field 'doc' for class " + c);
       }
     }
   }
@@ -418,7 +511,7 @@ public class ProgramManager extends WorldSavedData {
         }
 
         if (parameterTypes.length != 1) {
-          throw new MCCodeException(String.format("invalid number of arguments for property %s.%s: expected at 1, got %s",
+          throw new MCCodeException(String.format("invalid number of arguments for property %s.%s: expected 1, got %s",
               typeName, propertyName, parameterTypes.length));
         }
 
@@ -438,17 +531,23 @@ public class ProgramManager extends WorldSavedData {
           doc = getterMethod.getAnnotation(Doc.class).value();
         }
 
-        ObjectProperty property = new ObjectProperty(propertyName, returnType, getterMethod, null, doc);
+        ObjectProperty property = new ObjectProperty(type, propertyName, returnType, getterMethod, null, doc);
         properties.put(property.getName(), property);
       }
     }
 
+    // Retrieve Type class
+    Class<?> c = typeClass;
+    while (c != Type.class) {
+      c = c.getSuperclass();
+    }
+
     try {
-      Field nameField = type.getClass().getField("properties");
+      Field nameField = c.getDeclaredField("properties");
       nameField.setAccessible(true);
       nameField.set(type, properties);
     } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw new TypeException("missing field 'properties' for class " + typeClass);
+      throw new TypeException("missing field 'properties' for class " + c);
     }
   }
 
@@ -512,12 +611,18 @@ public class ProgramManager extends WorldSavedData {
       }
     }
 
+    // Retrieve Type class
+    Class<?> c = typeClass;
+    while (c != Type.class) {
+      c = c.getSuperclass();
+    }
+
     try {
-      Field nameField = type.getClass().getField("methods");
+      Field nameField = c.getDeclaredField("methods");
       nameField.setAccessible(true);
       nameField.set(type, methods);
     } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw new TypeException("missing field 'methods' for class " + typeClass);
+      throw new TypeException("missing field 'methods' for class " + c);
     }
   }
 

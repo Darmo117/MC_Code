@@ -23,7 +23,7 @@ public class MinFunction extends BuiltinFunction {
 
   @Override
   public Object apply(Scope scope) {
-    MCList list = this.getParameter(scope, 0);
+    MCList list = this.getParameterValue(scope, 0);
     if (list.isEmpty()) {
       throw new EvaluationException(scope, "mccode.interpreter.error.empty_list");
     }

@@ -20,6 +20,6 @@ public class SinFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.sin(this.getParameter(scope, 0));
+    return Math.sin(this.getParameterValue(scope, 0));
   }
 }

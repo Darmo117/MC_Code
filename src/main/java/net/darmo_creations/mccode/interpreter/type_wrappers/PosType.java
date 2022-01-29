@@ -149,8 +149,8 @@ public class PosType extends Type<BlockPos> {
       //noinspection unchecked
       List<Object> list = (List<Object>) o;
       if (list.size() == 3) {
-        IntType numberType = ProgramManager.getTypeInstance(IntType.class);
-        List<Integer> values = list.stream().map(o1 -> numberType.implicitCast(scope, o1)).collect(Collectors.toList());
+        IntType intType = ProgramManager.getTypeInstance(IntType.class);
+        List<Integer> values = list.stream().map(o1 -> intType.implicitCast(scope, o1)).collect(Collectors.toList());
         return new BlockPos(values.get(0), values.get(1), values.get(2));
       }
     } else if (o instanceof Map) {

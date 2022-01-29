@@ -3,7 +3,7 @@ package net.darmo_creations.mccode.interpreter.exceptions;
 /**
  * Exception thrown when attempting to delete a program that is not loaded.
  */
-public class ProgramNotFoundException extends ProgramLoadException {
+public class ProgramNotFoundException extends ProgramStatusException {
   /**
    * Create an exception.
    *

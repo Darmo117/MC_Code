@@ -20,6 +20,6 @@ public class ToRadiansFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.toRadians(this.getParameter(scope, 0));
+    return Math.toRadians(this.getParameterValue(scope, 0));
   }
 }

@@ -33,13 +33,13 @@ public class ResourceLocationType extends Type<ResourceLocation> {
   @Property(name = "namespace")
   @Doc("Returns the namespace of this resource.")
   public String getNamespace(final ResourceLocation self) {
-    return self.getNamespace();
+    return self.getResourceDomain();
   }
 
   @Property(name = "path")
   @Doc("Returns the path of this resource.")
   public String getPath(final ResourceLocation self) {
-    return self.getPath();
+    return self.getResourcePath();
   }
 
   @Override

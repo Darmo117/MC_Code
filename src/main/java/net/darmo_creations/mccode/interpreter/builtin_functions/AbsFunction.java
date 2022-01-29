@@ -20,6 +20,6 @@ public class AbsFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.abs(this.<Double>getParameter(scope, 0));
+    return Math.abs(this.<Double>getParameterValue(scope, 0));
   }
 }

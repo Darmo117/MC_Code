@@ -33,4 +33,9 @@ public class Parameter {
   public Type<?> getType() {
     return this.type;
   }
+
+  @Override
+  public String toString() {
+    return String.format("Parameter{name=%s,type=%s}", this.name, this.type);
+  }
 }

@@ -46,8 +46,13 @@ public class MethodCallNode extends OperationNode {
   @Override
   public Object evaluate(final Scope scope) throws EvaluationException, ArithmeticException {
     Object self = this.instance.evaluate(scope);
-    MemberFunction method = ProgramManager.getTypeForValue(self).getMethod(this.methodName);
+    MemberFunction method = ProgramManager.getTypeForValue(self).getMethod(scope, this.methodName);
     Scope functionScope = new Scope(method.getName(), scope);
+
+    if (this.arguments.size() != method.getParameters().size()) {
+      throw new EvaluationException(scope, "mccode.interpreter.error.invalid_method_arguments_number",
+          method.getHostType(), method.getName(), method.getParameters().size(), this.arguments.size());
+    }
 
     functionScope.declareVariable(new Variable(MemberFunction.SELF_PARAM_NAME, false, false, true, false, self));
     for (int i = 0; i < this.arguments.size(); i++) {

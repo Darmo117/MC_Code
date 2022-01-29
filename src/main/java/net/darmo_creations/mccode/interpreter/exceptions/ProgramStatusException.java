@@ -1,17 +1,18 @@
 package net.darmo_creations.mccode.interpreter.exceptions;
 
 /**
- * Base exception for program loading related errors.
+ * Base exception for program status related errors.
  */
-public class ProgramLoadException extends MCCodeException {
+public class ProgramStatusException extends MCCodeException {
   private final String programName;
 
   /**
    * Create an exception.
    *
-   * @param programName Program’s name.
+   * @param translationKey The unlocalized key.
+   * @param programName    Program’s name.
    */
-  public ProgramLoadException(final String translationKey, final String programName) {
+  public ProgramStatusException(final String translationKey, final String programName) {
     super(translationKey);
     this.programName = programName;
   }

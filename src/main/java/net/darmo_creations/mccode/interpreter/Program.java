@@ -97,7 +97,7 @@ public class Program {
    */
   private void setup() {
     this.scope.declareVariable(new Variable(WORLD_VAR_NAME, false, false, true,
-        false, new WorldProxy(this.programManager.getWorld(), -1)));
+        false, new WorldProxy(this.programManager.getWorld())));
   }
 
   /**
@@ -121,7 +121,7 @@ public class Program {
    * Return this program’s schedule delay.
    */
   public Optional<Integer> getScheduleDelay() {
-    return Optional.of(this.scheduleDelay);
+    return Optional.ofNullable(this.scheduleDelay);
   }
 
   /**
@@ -146,18 +146,22 @@ public class Program {
   }
 
   /**
+   * Return the manager this program is loaded in.
+   */
+  public ProgramManager getProgramManager() {
+    return this.programManager;
+  }
+
+  /**
    * Execute this program.
    *
-   * @param worldTick Current world tick.
    * @throws MCCodeRuntimeException If any error occurs.
    * @throws ArithmeticException    If any math error occurs.
    */
-  public void execute(final int worldTick) throws MCCodeRuntimeException, ArithmeticException {
+  public void execute() throws MCCodeRuntimeException, ArithmeticException {
     if (this.timeToWait > 0) {
       this.timeToWait--;
     } else if (this.ip < this.statements.size()) {
-      WorldProxy world = (WorldProxy) this.scope.getVariable(WORLD_VAR_NAME, false);
-      world.setWorldTick(worldTick);
       while (this.ip < this.statements.size()) {
         StatementAction action = this.statements.get(this.ip).execute(this.scope);
         this.ip++;

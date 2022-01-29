@@ -5,6 +5,7 @@ import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeBaseVisitor;
 import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeParser;
 import net.darmo_creations.mccode.interpreter.statements.*;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,12 +22,12 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
 
   @Override
   public Statement visitStmt(MCCodeParser.StmtContext ctx) {
-    return super.visit(ctx);
+    return super.visit(ctx.statement());
   }
 
   @Override
   public Statement visitStatement_(MCCodeParser.Statement_Context ctx) {
-    return super.visit(ctx);
+    return super.visit(ctx.statement());
   }
 
   @Override
@@ -95,16 +96,24 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
   public Statement visitIfStatement(MCCodeParser.IfStatementContext ctx) {
     List<Node> conditions = new LinkedList<>();
     conditions.add(this.nodeVisitor.visit(ctx.if_cond));
-    ctx.elif_cond.children.stream().map(this.nodeVisitor::visit).forEach(conditions::add);
+    if (ctx.elif_cond != null) {
+      ctx.elif_cond.children.stream().map(this.nodeVisitor::visit).forEach(conditions::add);
+    }
 
     List<List<Statement>> branches = new LinkedList<>();
     branches.add(ctx.if_stmts.children.stream().map(super::visit).collect(Collectors.toList()));
-    // TODO how to extract elseif statements?
-    ctx.elif_stmts.children.stream()
-        .map(super::visit)
-        .collect(Collectors.toList());
-
-    List<Statement> elseStatements = ctx.else_stmts.children.stream().map(super::visit).collect(Collectors.toList());
+    if (ctx.elif_stmts != null) {
+      // TODO how to extract elseif statements?
+      ctx.elif_stmts.children.stream()
+          .map(super::visit)
+          .collect(Collectors.toList());
+    }
+    List<Statement> elseStatements;
+    if (ctx.else_stmts != null) {
+      elseStatements = ctx.else_stmts.children.stream().map(super::visit).collect(Collectors.toList());
+    } else {
+      elseStatements = new ArrayList<>();
+    }
 
     return new IfStatement(
         conditions,

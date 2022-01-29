@@ -22,7 +22,7 @@ public class SortedFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    MCList list = ProgramManager.getTypeInstance(ListType.class).explicitCast(scope, this.getParameter(scope, 0));
+    MCList list = ProgramManager.getTypeInstance(ListType.class).explicitCast(scope, this.getParameterValue(scope, 0));
     list.sort(ListType.comparator(scope, false));
     return list;
   }

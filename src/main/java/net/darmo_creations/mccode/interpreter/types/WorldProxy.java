@@ -7,17 +7,14 @@ import net.minecraft.world.World;
  */
 public class WorldProxy {
   private final World world;
-  private int worldTick;
 
   /**
    * Create a world wrapper.
    *
-   * @param world     The world object to wrap.
-   * @param worldTick The world’s current tick.
+   * @param world The world object to wrap.
    */
-  public WorldProxy(World world, int worldTick) {
+  public WorldProxy(World world) {
     this.world = world;
-    this.worldTick = worldTick;
   }
 
   /**
@@ -31,15 +28,6 @@ public class WorldProxy {
    * Return the wrapped world’s current tick.
    */
   public int getWorldTick() {
-    return this.worldTick;
-  }
-
-  /**
-   * Set wrapped world’s current tick.
-   *
-   * @param worldTick Current world tick.
-   */
-  public void setWorldTick(int worldTick) {
-    this.worldTick = worldTick;
+    return (int) this.world.getTotalWorldTime();
   }
 }

@@ -20,6 +20,6 @@ public class AcosFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.acos(this.getParameter(scope, 0));
+    return Math.acos(this.getParameterValue(scope, 0));
   }
 }

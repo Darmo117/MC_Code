@@ -20,6 +20,6 @@ public class ToDegreesFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.toDegrees(this.getParameter(scope, 0));
+    return Math.toDegrees(this.getParameterValue(scope, 0));
   }
 }

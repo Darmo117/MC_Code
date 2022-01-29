@@ -82,6 +82,7 @@
       <item>range</item>
       <item>sorted</item>
       <item>reversed</item>
+      <item>print</item>
     </list>
     <contexts>
       <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text">

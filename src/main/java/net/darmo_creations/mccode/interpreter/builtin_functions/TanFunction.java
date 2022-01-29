@@ -20,6 +20,6 @@ public class TanFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.tan(this.getParameter(scope, 0));
+    return Math.tan(this.getParameterValue(scope, 0));
   }
 }

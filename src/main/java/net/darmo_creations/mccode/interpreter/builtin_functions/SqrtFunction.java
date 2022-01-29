@@ -20,6 +20,6 @@ public class SqrtFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.sqrt(this.getParameter(scope, 0));
+    return Math.sqrt(this.getParameterValue(scope, 0));
   }
 }

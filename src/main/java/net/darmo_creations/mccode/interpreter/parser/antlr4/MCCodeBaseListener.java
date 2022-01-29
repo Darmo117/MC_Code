@@ -28,18 +28,6 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStmt(MCCodeParser.StmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStmt(MCCodeParser.StmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterDeclareGlobalVariable(MCCodeParser.DeclareGlobalVariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -64,6 +52,18 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStmt(MCCodeParser.StmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStmt(MCCodeParser.StmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDeclareVariableStatement(MCCodeParser.DeclareVariableStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -71,42 +71,6 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDeclareVariableStatement(MCCodeParser.DeclareVariableStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSetItemStatement(MCCodeParser.SetItemStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSetItemStatement(MCCodeParser.SetItemStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -131,18 +95,6 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDeleteItemStatement(MCCodeParser.DeleteItemStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterExpressionStatement(MCCodeParser.ExpressionStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitExpressionStatement(MCCodeParser.ExpressionStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -208,13 +160,49 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatement_(MCCodeParser.Statement_Context ctx) { }
+	@Override public void enterVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatement_(MCCodeParser.Statement_Context ctx) { }
+	@Override public void exitVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSetItemStatement(MCCodeParser.SetItemStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSetItemStatement(MCCodeParser.SetItemStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExpressionStatement(MCCodeParser.ExpressionStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpressionStatement(MCCodeParser.ExpressionStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -239,6 +227,18 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitContinueStatement(MCCodeParser.ContinueStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatement_(MCCodeParser.Statement_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatement_(MCCodeParser.Statement_Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -3,7 +3,7 @@ package net.darmo_creations.mccode.interpreter.exceptions;
 /**
  * Exception thrown when loading a program but no script file was found.
  */
-public class ProgramFileNotFoundException extends ProgramLoadException {
+public class ProgramFileNotFoundException extends ProgramStatusException {
   /**
    * Create an exception.
    *

@@ -16,6 +16,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public class WorldType extends Type<WorldProxy> {
 
   @Property(name = "tick")
   @Doc("The current tick for this world.")
-  public Integer getWorldTick(final Scope scope, final WorldProxy self) {
+  public Integer getWorldTick(final WorldProxy self) {
     return self.getWorldTick();
   }
 
@@ -52,7 +53,7 @@ public class WorldType extends Type<WorldProxy> {
 
   @Method(name = "set_block_meta")
   @Doc("Sets the block at the given position in this world with the given block and metadata.")
-  public Boolean setBlock(final Scope scope, WorldProxy self, final BlockPos pos, final Block block, final int meta, final String mode, final MCMap dataTags) {
+  public Boolean setBlock(final Scope scope, WorldProxy self, final BlockPos pos, final Block block, final Integer meta, final String mode, final MCMap dataTags) {
     World world = self.getWorld();
     MinecraftServer server = world.getMinecraftServer();
     if (server != null) {
@@ -96,7 +97,7 @@ public class WorldType extends Type<WorldProxy> {
 
   @Method(name = "fill_meta")
   @Doc("Fills the region between the given positions in this world with the specified block and metadata.")
-  public Boolean fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final Block block, final int meta, final String mode, final MCMap dataTags) {
+  public Boolean fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final Block block, final Integer meta, final String mode, final MCMap dataTags) {
     World world = self.getWorld();
     MinecraftServer server = world.getMinecraftServer();
     if (server != null) {

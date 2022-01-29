@@ -78,8 +78,6 @@ public abstract class Type<T> {
    * @throws MCCodeRuntimeException If the instance object does not have a property with the given name.
    */
   public Object getProperty(final Scope scope, final Object self, final String propertyName) {
-    this.ensureType(self,
-        String.format("attempt to get property from type \"%s\" for object of type \"%s\"", this, self));
     if (this.properties.containsKey(propertyName)) {
       return this.properties.get(propertyName).get(self);
     }
@@ -97,16 +95,24 @@ public abstract class Type<T> {
    * @throws MCCodeRuntimeException If the instance object does not have a property with the given name.
    */
   public void setProperty(final Scope scope, final Object self, final String propertyName, final Object value) {
-    this.ensureType(self,
-        String.format("attempt to get property from type \"%s\" for object of type \"%s\"", this, self));
     if (this.properties.containsKey(propertyName)) {
       this.properties.get(propertyName).set(scope, self, value);
     }
     throw new EvaluationException(scope, "mccode.interpreter.error.no_property_for_type", this, propertyName);
   }
 
-  public MemberFunction getMethod(final String name) {
-    return this.methods.get(name);
+  /**
+   * Return the method with the given name.
+   *
+   * @param scope The scope this method is queried from.
+   * @param name  Method’s name.
+   * @return The method.
+   */
+  public MemberFunction getMethod(Scope scope, final String name) {
+    if (this.methods.containsKey(name)) {
+      return this.methods.get(name);
+    }
+    throw new EvaluationException(scope, "mccode.interpreter.error.no_method_for_type", this, name);
   }
 
   /**
@@ -161,21 +167,21 @@ public abstract class Type<T> {
   }
 
   /**
-   * Returns a deep copy of the given object.
+   * Return a deep copy of the given object.
    *
    * @param scope Scope the operation is performed from.
    * @param self  Instance of this type to apply the operator to.
    * @return A deep copy of the argument.
    */
   public T copy(final Scope scope, final Object self) {
-    this.ensureType(self,
-        String.format("attempt to clone object of type \"%s\" from type \"%s\"", self, this));
+    this.ensureType(self, String.format("attempt to clone object of type \"%s\" from type \"%s\"",
+        ProgramManager.getTypeForValue(self), this));
     //noinspection unchecked
     return this.__copy__(scope, (T) self);
   }
 
   /**
-   * Applies the an operator on the given values.
+   * Applie an operator on the given values.
    *
    * @param scope    Scope the operator is applied from.
    * @param operator Operator to apply.
@@ -420,7 +426,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __neq__(Scope scope, T self, Object o) {
-    return !this.toBoolean(this.__eq__(scope, self, o));
+    return !(Boolean) this.__eq__(scope, self, o);
   }
 
   /**
@@ -444,7 +450,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __ge__(Scope scope, T self, Object o) {
-    return this.toBoolean(this.__gt__(scope, self, o)) || this.toBoolean(this.__eq__(scope, self, o));
+    return ((Boolean) this.__gt__(scope, self, o)) || ((Boolean) this.__eq__(scope, self, o));
   }
 
   /**
@@ -456,7 +462,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __lt__(Scope scope, T self, Object o) {
-    return !this.toBoolean(this.__ge__(scope, self, o));
+    return !(Boolean) this.__ge__(scope, self, o);
   }
 
   /**
@@ -468,7 +474,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __le__(Scope scope, T self, Object o) {
-    return !this.toBoolean(this.__gt__(scope, self, o));
+    return !(Boolean) this.__gt__(scope, self, o);
   }
 
   /**

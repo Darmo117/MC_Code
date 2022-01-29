@@ -23,6 +23,6 @@ public class RangeFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return new Range(this.getParameter(scope, 0), this.getParameter(scope, 1), this.getParameter(scope, 2));
+    return new Range(this.getParameterValue(scope, 0), this.getParameterValue(scope, 1), this.getParameterValue(scope, 2));
   }
 }

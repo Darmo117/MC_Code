@@ -2,8 +2,10 @@ package net.darmo_creations.mccode.interpreter;
 
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.annotations.PropertySetter;
+import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
+import net.darmo_creations.mccode.interpreter.exceptions.TypeException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,6 +20,7 @@ import java.util.Optional;
  * a class extending {@link Type}.
  */
 public class ObjectProperty {
+  private final Type<?> hostType;
   private final String name;
   private final Type<?> type;
   private final Method getter;
@@ -27,13 +30,15 @@ public class ObjectProperty {
   /**
    * Create a type property.
    *
-   * @param name   Property’s name.
-   * @param type   Property’s type.
-   * @param getter Java method to get this property’s value.
-   * @param setter Java method to set this property’s value.
-   * @param doc    Property’s documentation. May be null.
+   * @param hostType Type of property’s host.
+   * @param name     Property’s name.
+   * @param type     Property’s type.
+   * @param getter   Java method to get this property’s value.
+   * @param setter   Java method to set this property’s value.
+   * @param doc      Property’s documentation. May be null.
    */
-  public ObjectProperty(final String name, Type<?> type, final Method getter, final Method setter, final String doc) {
+  public ObjectProperty(Type<?> hostType, final String name, Type<?> type, final Method getter, final Method setter, final String doc) {
+    this.hostType = Objects.requireNonNull(hostType);
     this.name = Objects.requireNonNull(name);
     this.type = Objects.requireNonNull(type);
     this.getter = Objects.requireNonNull(getter);
@@ -60,11 +65,15 @@ public class ObjectProperty {
    *
    * @param self The instance to get the value from.
    * @return The property’s value.
-   * @apiNote Type checks should be performed prior to calling this method.
+   * @throws TypeException If the MCCode type of the instance differs from this property’s type.
    */
   public Object get(final Object self) {
+    if (this.hostType != ProgramManager.getTypeForValue(self)) {
+      throw new TypeException(String.format("property %s expected instance of type %s, got %s",
+          this.getName(), this.hostType.getWrappedType(), self != null ? self.getClass() : null));
+    }
     try {
-      return this.getter.invoke(self);
+      return this.getter.invoke(this.hostType, self);
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new MCCodeException(e);
     }
@@ -73,20 +82,28 @@ public class ObjectProperty {
   /**
    * Set the value of this property for the given instance.
    *
-   * @param self  The instance to get set value on.
+   * @param self  The instance to set value on.
    * @param value The new value.
+   * @throws TypeException       If the MCCode type of the instance differs from this property’s type.
    * @throws EvaluationException If this property cannot be set.
-   * @apiNote Type checks should be performed prior to calling this method.
    */
   public void set(final Scope scope, Object self, final Object value) throws EvaluationException {
     if (this.setter != null) {
+      if (this.hostType != ProgramManager.getTypeForValue(self)) {
+        throw new TypeException(String.format("property %s expected instance of type %s, got %s",
+            this.getName(), this.hostType.getWrappedType(), self != null ? self.getClass() : null));
+      }
+      if (value != null && !this.type.getWrappedType().isAssignableFrom(value.getClass())) {
+        throw new CastException(scope, this.type, ProgramManager.getTypeForValue(value));
+      }
       try {
-        this.setter.invoke(self, this.type.implicitCast(scope, value));
+        this.setter.invoke(this.hostType, self, this.type.implicitCast(scope, value));
       } catch (IllegalAccessException | InvocationTargetException e) {
         throw new MCCodeException(e);
       }
     } else {
-      throw new EvaluationException(scope, "mccode.interpreter.error.set_property", ProgramManager.getTypeForValue(self), this.name);
+      throw new EvaluationException(scope, "mccode.interpreter.error.set_property",
+          ProgramManager.getTypeForValue(self), this.name);
     }
   }
 }

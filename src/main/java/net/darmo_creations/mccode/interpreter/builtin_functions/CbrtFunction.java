@@ -20,6 +20,6 @@ public class CbrtFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.cbrt(this.getParameter(scope, 0));
+    return Math.cbrt(this.getParameterValue(scope, 0));
   }
 }

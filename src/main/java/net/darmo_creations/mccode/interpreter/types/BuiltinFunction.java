@@ -31,7 +31,7 @@ public abstract class BuiltinFunction extends Function {
    * @param <T>   Parameter’s wrapped type.
    * @return Parameter’s value.
    */
-  protected <T> T getParameter(final Scope scope, final int index) {
+  protected <T> T getParameterValue(final Scope scope, final int index) {
     //noinspection unchecked
     return (T) this.parameters.get(index).getType()
         .implicitCast(scope, scope.getVariable(getAutoParameterNameForIndex(index), false));

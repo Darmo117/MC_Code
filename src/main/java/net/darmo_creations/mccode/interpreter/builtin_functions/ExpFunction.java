@@ -20,6 +20,6 @@ public class ExpFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.exp(this.getParameter(scope, 0));
+    return Math.exp(this.getParameterValue(scope, 0));
   }
 }

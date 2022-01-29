@@ -17,13 +17,6 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModule(MCCodeParser.ModuleContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code Stmt}
-	 * labeled alternative in {@link MCCodeParser#global_statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStmt(MCCodeParser.StmtContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code DeclareGlobalVariable}
 	 * labeled alternative in {@link MCCodeParser#global_statement}.
 	 * @param ctx the parse tree
@@ -38,33 +31,19 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclareGlobalConstant(MCCodeParser.DeclareGlobalConstantContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code Stmt}
+	 * labeled alternative in {@link MCCodeParser#global_statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmt(MCCodeParser.StmtContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code DeclareVariableStatement}
 	 * labeled alternative in {@link MCCodeParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitDeclareVariableStatement(MCCodeParser.DeclareVariableStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code VariableAssignmentStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SetItemStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSetItemStatement(MCCodeParser.SetItemStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SetPropertyStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code DeleteStatement}
 	 * labeled alternative in {@link MCCodeParser#statement}.
@@ -79,13 +58,6 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDeleteItemStatement(MCCodeParser.DeleteItemStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ExpressionStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpressionStatement(MCCodeParser.ExpressionStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code IfStatement}
 	 * labeled alternative in {@link MCCodeParser#statement}.
@@ -122,12 +94,33 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReturnStatement(MCCodeParser.ReturnStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code Statement_}
-	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
+	 * Visit a parse tree produced by the {@code VariableAssignmentStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatement_(MCCodeParser.Statement_Context ctx);
+	T visitVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SetItemStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetItemStatement(MCCodeParser.SetItemStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SetPropertyStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ExpressionStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionStatement(MCCodeParser.ExpressionStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code BreakStatement}
 	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
@@ -142,6 +135,13 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitContinueStatement(MCCodeParser.ContinueStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Statement_}
+	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatement_(MCCodeParser.Statement_Context ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Variable}
 	 * labeled alternative in {@link MCCodeParser#expr}.

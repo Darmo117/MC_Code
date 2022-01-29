@@ -64,6 +64,11 @@ public class FunctionCallNode extends OperationNode {
       functionScope = new Scope(function.getName(), scope);
     }
 
+    if (this.arguments.size() != function.getParameters().size()) {
+      throw new EvaluationException(scope, "mccode.interpreter.error.invalid_function_arguments_number",
+          function.getName(), function.getParameters().size(), this.arguments.size());
+    }
+
     for (int i = 0; i < this.arguments.size(); i++) {
       Parameter parameter = function.getParameter(i);
       functionScope.declareVariable(new Variable(parameter.getName(), false, false, false, true, this.arguments.get(i).evaluate(scope)));

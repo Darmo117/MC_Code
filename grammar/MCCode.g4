@@ -11,9 +11,17 @@ LCURL : '{';
 RCURL : '}';
 COMMA : ',';
 COLON : ':';
-ASSIGN: ':=';
 SEMIC : ';';
 DOT   : '.';
+
+ASSIGN: ':=';
+PLUSA : '+=';
+MINUSA: '-=';
+MULA  : '*=';
+DIVA  : '/=';
+INTDIVA: '//=';
+MODA  : '%=';
+POWERA: '^=';
 
 PLUS  : '+';
 MINUS : '-';
@@ -22,14 +30,6 @@ DIV   : '/';
 INTDIV: '//';
 MOD   : '%';
 POWER : '^';
-
-PLUSA : '+=';
-MINUSA: '-=';
-MULA  : '*=';
-DIVA  : '/=';
-INTDIVA: '//=';
-MODA  : '%=';
-POWERA: '^=';
 
 EQUAL : '=';
 NEQUAL: '!=';
@@ -42,14 +42,6 @@ IN    : 'in';
 NOT   : 'not';
 AND   : 'and';
 OR    : 'or';
-
-NULL  : 'null';
-TRUE  : 'true';
-FALSE : 'false';
-INT   : [0-9]+;
-FLOAT : ([0-9]+'.'[0-9]*|'.'?[0-9]+)([eE]'-'?[0-9]+)?;
-STRING: '"'([^"\n\r]|'\\'[n"\\])*'"';
-IDENT : [a-zA-Z_][a-zA-Z0-9_]*;
 
 IMPORT : 'import';
 AS     : 'as';
@@ -75,37 +67,45 @@ WAIT   : 'wait';
 REPEAT : 'repeat';
 FOREVER: 'forever';
 
+NULL  : 'null';
+TRUE  : 'true';
+FALSE : 'false';
+INT   : [0-9]+;
+FLOAT : ([0-9]+'.'[0-9]*|'.'?[0-9]+)([eE]'-'?[0-9]+)?;
+STRING: '"'(~["\n\r]|'\\'[n"\\])*'"'; // FIXME \ not very well handled
+IDENT : [a-zA-Z_][a-zA-Z0-9_]*;
+
 module:
   (SCHED ticks=INT (REPEAT times=(INT | FOREVER))? SEMIC)?
 //  (IMPORT IDENT (DOT IDENT)* AS alias=IDENT SEMIC)* // ID: 0 TODO deactivated for now
   global_statement* EOF;
 
 global_statement:
-    statement # Stmt
-  | PUBLIC EDITABLE? VAR name=IDENT ASSIGN value=expr SEMIC # DeclareGlobalVariable // ID: 10
+    PUBLIC EDITABLE? VAR name=IDENT ASSIGN value=expr SEMIC # DeclareGlobalVariable // ID: 10
   | PUBLIC CONST name=IDENT ASSIGN value=expr SEMIC         # DeclareGlobalConstant // ID: 10
 //  | FUNC name=IDENT LPAREN (IDENT (COMMA IDENT)* COMMA?)? RPAREN statement* END # DefineFunctionStatement // ID: 11 TODO deactivated for now
+  | statement # Stmt
 ;
 
 statement:
     (VAR | CONST) name=IDENT ASSIGN value=expr SEMIC # DeclareVariableStatement // ID: 10
-  | name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC                         # VariableAssignmentStatement // ID: 12
-  | target=expr LBRACK key=expr RBRACK operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC # SetItemStatement // ID: 13
-  | target=expr DOT name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC         # SetPropertyStatement // ID: 14
-  | DELETE name=IDENT SEMIC                         # DeleteStatement // ID: 20
-  | DELETE target=expr LBRACK key=expr RBRACK SEMIC # DeleteItemStatement // ID: 21
-  | expr SEMIC # ExpressionStatement // ID: 30
+  | DELETE name=IDENT SEMIC                          # DeleteStatement // ID: 20
+  | DELETE target=expr LBRACK key=expr RBRACK SEMIC  # DeleteItemStatement // ID: 21
   | IF if_cond=expr THEN if_stmts=statement* (ELIF elif_cond=expr THEN elif_stmts=statement*)* (ELSE else_stmts=statement*)? END # IfStatement // ID: 40
   | WHILE cond=expr DO loop_stmt* END                  # WhileLoopStatement // ID: 41
   | FOR variable=IDENT IN range=expr DO loop_stmt* END # ForLoopStatement // ID: 42
   | WAIT expr SEMIC               # WaitStatement // ID: 50 Raises an error if present in a function
   | RETURN (returned=expr)? SEMIC # ReturnStatement // ID: 62 Raises an error if outside of a function
+  | name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC                         # VariableAssignmentStatement // ID: 12
+  | target=expr LBRACK key=expr RBRACK operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC # SetItemStatement // ID: 13
+  | target=expr DOT name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC         # SetPropertyStatement // ID: 14
+  | expr SEMIC # ExpressionStatement // ID: 30
 ;
 
 loop_stmt:
-    statement      # Statement_
-  | BREAK SEMIC    # BreakStatement // ID: 60
+    BREAK SEMIC    # BreakStatement // ID: 60
   | CONTINUE SEMIC # ContinueStatement // ID: 61
+  | statement      # Statement_
 ;
 
 expr:
@@ -119,9 +119,8 @@ expr:
   | LBRACK (expr (COMMA expr)* COMMA?)? RBRACK                       # ListLiteral // ID: 5
   | LCURL (IDENT COLON expr (COMMA IDENT COLON expr)* COMMA?)? RCURL # MapLiteral // ID: 6
   | LCURL expr (COMMA expr)* COMMA? RCURL                            # SetLiteral // ID: 7
-  | IDENT  # Variable // ID: 100
-  | object=expr DOT property=IDENT                  # GetProperty // ID: 101
   | object=expr DOT property=IDENT LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # MethodCall // ID: 102
+  | object=expr DOT property=IDENT                  # GetProperty // ID: 101
   | expr LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # FunctionCall // ID: 103
   | operator=(MINUS | NOT) operand=expr             # UnaryOperator // IDs: 200
   | source=expr LBRACK key=expr RBRACK              # GetItem // ID: 201
@@ -132,4 +131,5 @@ expr:
   | left=expr operator=(EQUAL | NEQUAL | GT | GE | LT | LE) right=expr # BinaryOperator // ID: 201
   | left=expr operator=AND right=expr               # BinaryOperator // ID: 201
   | left=expr operator=OR right=expr                # BinaryOperator // ID: 201
+  | IDENT  # Variable // ID: 100
 ;

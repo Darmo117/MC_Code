@@ -22,6 +22,6 @@ public class FloorFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return (int) Math.floor(this.getParameter(scope, 0));
+    return (int) Math.floor(this.getParameterValue(scope, 0));
   }
 }

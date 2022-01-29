@@ -83,7 +83,7 @@ public class IfStatement extends Statement {
       for (int i = 0; i < this.conditions.size(); i++) { // Check every branch until a condition evaluates to true
         Object value = this.conditions.get(i).evaluate(scope);
         Type<?> valueType = ProgramManager.getTypeForValue(value);
-        if (valueType.toBoolean(valueType)) {
+        if (valueType.toBoolean(value)) {
           this.branchIndex = i;
         }
       }

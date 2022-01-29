@@ -23,7 +23,7 @@ public class LenFunction extends BuiltinFunction {
 
   @Override
   public Object apply(Scope scope) {
-    Object parameter = this.getParameter(scope, 0);
+    Object parameter = this.getParameterValue(scope, 0);
     return ProgramManager.getTypeForValue(parameter).applyOperator(scope, Operator.LENGTH, parameter, null, null, false);
   }
 }

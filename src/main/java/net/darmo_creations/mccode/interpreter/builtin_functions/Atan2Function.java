@@ -25,6 +25,6 @@ public class Atan2Function extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.atan2(this.getParameter(scope, 0), this.getParameter(scope, 1));
+    return Math.atan2(this.getParameterValue(scope, 0), this.getParameterValue(scope, 1));
   }
 }

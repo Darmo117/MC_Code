@@ -202,7 +202,7 @@ public class Scope implements NBTDeserializable {
    * Declare builtin functions and cast operators of declared types.
    */
   private void defineBuiltinFunctions() {
-    List<Function> functions = Arrays.asList(
+    List<Function> functions = new LinkedList<>(Arrays.asList(
         new FloorFunction(),
         new CeilFunction(),
         new LenFunction(),
@@ -227,14 +227,15 @@ public class Scope implements NBTDeserializable {
         new SortedFunction(),
         new ReversedFunction(),
         new MinFunction(),
-        new MaxFunction()
-    );
+        new MaxFunction(),
+        new PrintFunction()
+    ));
     for (Type<?> type : ProgramManager.getTypes()) {
       if (type.generateCastOperator()) {
         functions.add(new BuiltinFunction("to_" + type.getName(), type, ProgramManager.getTypeInstance(AnyType.class)) {
           @Override
           public Object apply(final Scope scope) {
-            return type.explicitCast(scope, this.getParameter(0));
+            return type.explicitCast(scope, this.getParameterValue(scope, 0));
           }
         });
       }

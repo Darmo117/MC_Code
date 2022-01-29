@@ -18,18 +18,6 @@ public interface MCCodeListener extends ParseTreeListener {
 	 */
 	void exitModule(MCCodeParser.ModuleContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code Stmt}
-	 * labeled alternative in {@link MCCodeParser#global_statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterStmt(MCCodeParser.StmtContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Stmt}
-	 * labeled alternative in {@link MCCodeParser#global_statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitStmt(MCCodeParser.StmtContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code DeclareGlobalVariable}
 	 * labeled alternative in {@link MCCodeParser#global_statement}.
 	 * @param ctx the parse tree
@@ -54,6 +42,18 @@ public interface MCCodeListener extends ParseTreeListener {
 	 */
 	void exitDeclareGlobalConstant(MCCodeParser.DeclareGlobalConstantContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code Stmt}
+	 * labeled alternative in {@link MCCodeParser#global_statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmt(MCCodeParser.StmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Stmt}
+	 * labeled alternative in {@link MCCodeParser#global_statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmt(MCCodeParser.StmtContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code DeclareVariableStatement}
 	 * labeled alternative in {@link MCCodeParser#statement}.
 	 * @param ctx the parse tree
@@ -65,42 +65,6 @@ public interface MCCodeListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDeclareVariableStatement(MCCodeParser.DeclareVariableStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code VariableAssignmentStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code VariableAssignmentStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code SetItemStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterSetItemStatement(MCCodeParser.SetItemStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code SetItemStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitSetItemStatement(MCCodeParser.SetItemStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code SetPropertyStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code SetPropertyStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code DeleteStatement}
 	 * labeled alternative in {@link MCCodeParser#statement}.
@@ -125,18 +89,6 @@ public interface MCCodeListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDeleteItemStatement(MCCodeParser.DeleteItemStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ExpressionStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpressionStatement(MCCodeParser.ExpressionStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ExpressionStatement}
-	 * labeled alternative in {@link MCCodeParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpressionStatement(MCCodeParser.ExpressionStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code IfStatement}
 	 * labeled alternative in {@link MCCodeParser#statement}.
@@ -198,17 +150,53 @@ public interface MCCodeListener extends ParseTreeListener {
 	 */
 	void exitReturnStatement(MCCodeParser.ReturnStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code Statement_}
-	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
+	 * Enter a parse tree produced by the {@code VariableAssignmentStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatement_(MCCodeParser.Statement_Context ctx);
+	void enterVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code Statement_}
-	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
+	 * Exit a parse tree produced by the {@code VariableAssignmentStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatement_(MCCodeParser.Statement_Context ctx);
+	void exitVariableAssignmentStatement(MCCodeParser.VariableAssignmentStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code SetItemStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSetItemStatement(MCCodeParser.SetItemStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code SetItemStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSetItemStatement(MCCodeParser.SetItemStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code SetPropertyStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code SetPropertyStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSetPropertyStatement(MCCodeParser.SetPropertyStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ExpressionStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionStatement(MCCodeParser.ExpressionStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ExpressionStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionStatement(MCCodeParser.ExpressionStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code BreakStatement}
 	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
@@ -233,6 +221,18 @@ public interface MCCodeListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitContinueStatement(MCCodeParser.ContinueStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Statement_}
+	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStatement_(MCCodeParser.Statement_Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Statement_}
+	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStatement_(MCCodeParser.Statement_Context ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Variable}
 	 * labeled alternative in {@link MCCodeParser#expr}.

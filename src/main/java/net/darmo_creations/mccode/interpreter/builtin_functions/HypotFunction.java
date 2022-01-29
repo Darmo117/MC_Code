@@ -21,6 +21,6 @@ public class HypotFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.hypot(this.getParameter(scope, 0), this.getParameter(scope, 1));
+    return Math.hypot(this.getParameterValue(scope, 0), this.getParameterValue(scope, 1));
   }
 }

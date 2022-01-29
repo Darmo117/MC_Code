@@ -20,6 +20,6 @@ public class AsinFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.asin(this.getParameter(scope, 0));
+    return Math.asin(this.getParameterValue(scope, 0));
   }
 }

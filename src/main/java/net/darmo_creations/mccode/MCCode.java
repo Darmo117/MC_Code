@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode;
 
 import net.darmo_creations.mccode.commands.CommandProgram;
+import net.darmo_creations.mccode.interpreter.ProgramErrorReport;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
@@ -9,8 +10,11 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,6 +64,15 @@ public class MCCode {
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
       INSTANCE.PROGRAM_MANAGERS.put(event.getWorld(), ProgramManager.attachToGlobalStorage(event.getWorld()));
+    }
+
+    @SubscribeEvent
+    public static void onTick(TickEvent.WorldTickEvent event) {
+      // TODO log errors
+      for (ProgramManager programManager : INSTANCE.PROGRAM_MANAGERS.values()) {
+        List<ProgramErrorReport> errorReports = programManager.executePrograms();
+        errorReports.forEach(e -> System.out.println(e.getTranslationKey() + " " + Arrays.toString(e.getArgs())));
+      }
     }
   }
 }

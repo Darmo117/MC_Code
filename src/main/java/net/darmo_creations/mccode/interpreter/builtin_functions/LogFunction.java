@@ -20,6 +20,6 @@ public class LogFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.log(this.getParameter(scope, 0));
+    return Math.log(this.getParameterValue(scope, 0));
   }
 }

@@ -20,6 +20,6 @@ public class CosFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return Math.cos(this.getParameter(scope, 0));
+    return Math.cos(this.getParameterValue(scope, 0));
   }
 }
