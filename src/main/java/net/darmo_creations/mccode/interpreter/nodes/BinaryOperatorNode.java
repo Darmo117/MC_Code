@@ -2,12 +2,13 @@ package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
+import net.darmo_creations.mccode.interpreter.type_wrappers.BinaryOperator;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A node that represents an operator with two operands.
@@ -15,7 +16,7 @@ import java.util.List;
 public class BinaryOperatorNode extends OperatorNode {
   public static final int ID = 201;
 
-  private final Operator operator;
+  private final BinaryOperator operator;
 
   /**
    * Create a binary operator node with two operands.
@@ -24,8 +25,8 @@ public class BinaryOperatorNode extends OperatorNode {
    * @param left     Left operand.
    * @param right    Right operand.
    */
-  public BinaryOperatorNode(final Operator operator, final Node left, final Node right) {
-    super(operator.getSymbol(), 2, Arrays.asList(left, right));
+  public BinaryOperatorNode(final BinaryOperator operator, final Node left, final Node right) {
+    super(operator.getSymbol(), 2, Arrays.asList(Objects.requireNonNull(left), Objects.requireNonNull(right)));
     this.operator = operator;
   }
 
@@ -36,7 +37,7 @@ public class BinaryOperatorNode extends OperatorNode {
    */
   public BinaryOperatorNode(final NBTTagCompound tag) {
     super(tag);
-    this.operator = Operator.fromString(this.getSymbol());
+    this.operator = BinaryOperator.fromString(this.getSymbol());
   }
 
   @Override

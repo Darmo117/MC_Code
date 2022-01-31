@@ -42,6 +42,10 @@ public final class Utils {
     return ((a % b) + b) % b;
   }
 
+  public static String escapeString(final String s) {
+    return String.format("\"%s\"", s.replaceAll("([\"\\\\])", "\\\\$1").replace("\n", "\\n"));
+  }
+
   private Utils() {
   }
 }

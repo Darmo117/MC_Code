@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 public class MethodCallNode extends OperationNode {
   public static final int ID = 102;
 
-  private static final String INSTANCE_KEY = "Instance";
-  private static final String METHOD_NAME_KEY = "MethodName";
+  public static final String INSTANCE_KEY = "Instance";
+  public static final String METHOD_NAME_KEY = "MethodName";
 
   protected final Node instance;
   private final String methodName;
@@ -29,7 +29,7 @@ public class MethodCallNode extends OperationNode {
   public MethodCallNode(final Node instance, final String methodName, final List<Node> arguments) {
     super(arguments);
     this.instance = Objects.requireNonNull(instance);
-    this.methodName = methodName;
+    this.methodName = Objects.requireNonNull(methodName);
   }
 
   /**

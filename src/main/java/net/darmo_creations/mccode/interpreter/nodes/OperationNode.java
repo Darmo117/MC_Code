@@ -9,7 +9,7 @@ import java.util.List;
  * A node that represents the call to a function or operator.
  */
 public abstract class OperationNode extends Node {
-  private static final String ARGUMENTS_KEY = "Arguments";
+  public static final String ARGUMENTS_KEY = "Arguments";
 
   protected final List<Node> arguments;
 
@@ -29,6 +29,13 @@ public abstract class OperationNode extends Node {
    */
   public OperationNode(final NBTTagCompound tag) {
     this(NodeNBTHelper.deserializeNodesList(tag, ARGUMENTS_KEY));
+  }
+
+  /**
+   * Return the list of arguments.
+   */
+  public List<Node> getArguments() {
+    return new ArrayList<>(this.arguments);
   }
 
   @Override

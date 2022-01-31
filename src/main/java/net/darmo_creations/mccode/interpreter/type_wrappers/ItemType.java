@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 public class ItemType extends Type<Item> {
   public static final String NAME = "item";
 
-  private static final String ID_KEY = "ID";
+  public static final String ID_KEY = "ID";
 
   @Override
   public String getName() {

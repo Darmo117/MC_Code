@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class ListLiteralNode extends Node {
   public static final int ID = 5;
 
-  private static final String VALUES_KEY = "Values";
+  public static final String VALUES_KEY = "Values";
 
   private final List<Node> values;
 

@@ -42,13 +42,11 @@ operators:
     boolean + number -> number
     boolean + boolean -> number
     string + any -> string
-    number + string -> string
-    boolean + string -> string
+    any + string -> string
     pos + pos -> pos
     list + list -> list
     map + map -> map
     set + set -> set
-    set + list -> set
 
   "-" (shortcut: "-="):
     -number -> number
@@ -62,21 +60,24 @@ operators:
     list - list -> list
     map - map -> map
     set - set -> set
-    set - list -> set
 
   "*" (shortcut: "*="):
     number * number -> number
     number * boolean -> number
     boolean * number -> number
     boolean * boolean -> number
-    string * number -> string
+    string * integer -> string
     string * boolean -> string
+    integer * string -> string
+    boolean * string -> string
     pos * number -> pos
     number * pos -> pos
     pos * boolean -> pos
     boolean * pos -> pos
-    list * number -> list
+    list * integer -> list
     list * boolean -> list
+    integer * list -> list
+    boolean * list -> list
 
   "/" (shortcut: "/="):
     number / number -> number
@@ -113,6 +114,10 @@ operators:
     resource_location <op> resource_location -> boolean
     pos <op> pos -> boolean
     list <op> list -> boolean
+    set > set -> set
+    set >= set -> set
+    set < set -> set
+    set <= set -> set
 
   logical ("or", "and"):
     any <op> any -> boolean

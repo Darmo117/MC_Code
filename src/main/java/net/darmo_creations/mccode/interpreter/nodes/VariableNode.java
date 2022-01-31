@@ -15,7 +15,7 @@ import java.util.Objects;
 public class VariableNode extends Node {
   public static final int ID = 100;
 
-  private static final String NAME_KEY = "Name";
+  public static final String NAME_KEY = "Name";
 
   private final String name;
 

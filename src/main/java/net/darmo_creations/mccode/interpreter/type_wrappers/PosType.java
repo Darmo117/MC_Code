@@ -3,8 +3,10 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
+import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
+import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
@@ -18,8 +20,13 @@ import java.util.stream.Collectors;
  * <p>
  * New instances can be created by casting {@link List}s or {@link Map}s.
  */
+@Doc("Type representing a block position.")
 public class PosType extends Type<BlockPos> {
   public static final String NAME = "pos";
+
+  public static final String X_KEY = "X";
+  public static final String Y_KEY = "Y";
+  public static final String Z_KEY = "Z";
 
   @Override
   public String getName() {
@@ -83,48 +90,74 @@ public class PosType extends Type<BlockPos> {
 
   @Override
   protected Object __add__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    return self.add(ProgramManager.getTypeInstance(PosType.class).implicitCast(scope, o));
+    if (o instanceof BlockPos) {
+      return self.add(ProgramManager.getTypeInstance(PosType.class).implicitCast(scope, o));
+    } else if (o instanceof String) {
+      return self.toString() + o;
+    }
+    return super.__add__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __sub__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    return self.subtract(ProgramManager.getTypeInstance(PosType.class).implicitCast(scope, o));
+    if (o instanceof BlockPos) {
+      return self.subtract(ProgramManager.getTypeInstance(PosType.class).implicitCast(scope, o));
+    }
+    return super.__sub__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __mul__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
-    return new BlockPos(self.getX() * n, self.getY() * n, self.getZ() * n);
+    if (o instanceof Number || o instanceof Boolean) {
+      double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
+      return new BlockPos(self.getX() * n, self.getY() * n, self.getZ() * n);
+    }
+    return super.__mul__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __div__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
-    if (n == 0) {
-      throw new ArithmeticException("/ by 0");
+    if (o instanceof Number || o instanceof Boolean) {
+      double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
+      if (n == 0) {
+        throw new ArithmeticException("/ by 0");
+      }
+      return new BlockPos(self.getX() / n, self.getY() / n, self.getZ() / n);
     }
-    return new BlockPos(self.getX() / n, self.getY() / n, self.getZ() / n);
+    return super.__div__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __intdiv__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
-    if (n == 0) {
-      throw new ArithmeticException("/ by 0");
+    if (o instanceof Number || o instanceof Boolean) {
+      double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
+      if (n == 0) {
+        throw new ArithmeticException("/ by 0");
+      }
+      return new BlockPos((int) (self.getX() / n), (int) (self.getY() / n), (int) (self.getZ() / n));
     }
-    return new BlockPos((int) (self.getX() / n), (int) (self.getY() / n), (int) (self.getZ() / n));
+    return super.__intdiv__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __mod__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
-    return new BlockPos(Utils.trueModulo(self.getX(), n), Utils.trueModulo(self.getY(), n), Utils.trueModulo(self.getZ(), n));
+    if (o instanceof Number || o instanceof Boolean) {
+      double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
+      if (n == 0) {
+        throw new ArithmeticException("/ by 0");
+      }
+      return new BlockPos(Utils.trueModulo(self.getX(), n), Utils.trueModulo(self.getY(), n), Utils.trueModulo(self.getZ(), n));
+    }
+    return super.__mod__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __pow__(final Scope scope, final BlockPos self, final Object o, final boolean inPlace) {
-    double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
-    return new BlockPos(Math.pow(self.getX(), n), Math.pow(self.getY(), n), Math.pow(self.getZ(), n));
+    if (o instanceof Number || o instanceof Boolean) {
+      double n = ProgramManager.getTypeInstance(FloatType.class).implicitCast(scope, o);
+      return new BlockPos(Math.pow(self.getX(), n), Math.pow(self.getY(), n), Math.pow(self.getZ(), n));
+    }
+    return super.__pow__(scope, self, o, inPlace);
   }
 
   @Override
@@ -148,15 +181,19 @@ public class PosType extends Type<BlockPos> {
     if (o instanceof List) {
       //noinspection unchecked
       List<Object> list = (List<Object>) o;
-      if (list.size() == 3) {
-        IntType intType = ProgramManager.getTypeInstance(IntType.class);
-        List<Integer> values = list.stream().map(o1 -> intType.implicitCast(scope, o1)).collect(Collectors.toList());
-        return new BlockPos(values.get(0), values.get(1), values.get(2));
+      if (list.size() != 3) {
+        throw new EvaluationException(scope, "mccode.interpreter.error.pos_list_format", list);
       }
-    } else if (o instanceof Map) {
       IntType intType = ProgramManager.getTypeInstance(IntType.class);
-      Map<?, ?> m = (Map<?, ?>) o;
-      return new BlockPos(intType.implicitCast(scope, m.get("x")), intType.implicitCast(scope, m.get("y")), intType.implicitCast(scope, m.get("z")));
+      List<Integer> values = list.stream().map(o1 -> intType.implicitCast(scope, o1)).collect(Collectors.toList());
+      return new BlockPos(values.get(0), values.get(1), values.get(2));
+    } else if (o instanceof Map) {
+      Map<?, ?> map = (Map<?, ?>) o;
+      if (map.size() != 3 || !map.containsKey("x") || !map.containsKey("y") || !map.containsKey("z")) {
+        throw new EvaluationException(scope, "mccode.interpreter.error.pos_map_format", map);
+      }
+      IntType intType = ProgramManager.getTypeInstance(IntType.class);
+      return new BlockPos(intType.implicitCast(scope, map.get("x")), intType.implicitCast(scope, map.get("y")), intType.implicitCast(scope, map.get("z")));
     }
     return super.explicitCast(scope, o);
   }
@@ -164,9 +201,9 @@ public class PosType extends Type<BlockPos> {
   @Override
   protected NBTTagCompound _writeToNBT(final BlockPos self) {
     NBTTagCompound tag = super._writeToNBT(self);
-    tag.setInteger("X", self.getX());
-    tag.setInteger("Y", self.getY());
-    tag.setInteger("Z", self.getZ());
+    tag.setInteger(X_KEY, self.getX());
+    tag.setInteger(Y_KEY, self.getY());
+    tag.setInteger(Z_KEY, self.getZ());
     return tag;
   }
 

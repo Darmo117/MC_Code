@@ -62,7 +62,6 @@ public abstract class Type<T> {
    */
   public List<String> getPropertiesNames() {
     ArrayList<String> list = new ArrayList<>(this.properties.keySet());
-    list.addAll(this.methods.keySet());
     list.sort(Comparator.comparing(String::toLowerCase));
     return list;
   }
@@ -126,10 +125,7 @@ public abstract class Type<T> {
    * @throws CastException If the object cannot be cast into this type’s wrapped type.
    */
   public T implicitCast(final Scope scope, final Object o) throws CastException {
-    if (o == null) {
-      return null;
-    }
-    if (this.getWrappedType().isAssignableFrom(o.getClass())) {
+    if (o != null && this.getWrappedType().isAssignableFrom(o.getClass())) {
       //noinspection unchecked
       return (T) o;
     }
@@ -202,58 +198,69 @@ public abstract class Type<T> {
     //noinspection unchecked
     T $this = (T) self;
 
-    switch (operator) {
-      case MINUS:
-        return this.__minus__(scope, $this);
-      case NOT:
-        return this.__not__(scope, $this);
-      case PLUS:
-        return this.__add__(scope, $this, o1, inPlace);
-      case SUB:
-        return this.__sub__(scope, $this, o1, inPlace);
-      case MUL:
-        return this.__mul__(scope, $this, o1, inPlace);
-      case DIV:
-        return this.__div__(scope, $this, o1, inPlace);
-      case INT_DIV:
-        return this.__intdiv__(scope, $this, o1, inPlace);
-      case MOD:
-        return this.__mod__(scope, $this, o1, inPlace);
-      case POW:
-        return this.__pow__(scope, $this, o1, inPlace);
-      case EQUAL:
-        return this.__eq__(scope, $this, o1);
-      case NOT_EQUAL:
-        return this.__neq__(scope, $this, o1);
-      case GT:
-        return this.__gt__(scope, $this, o1);
-      case GE:
-        return this.__ge__(scope, $this, o1);
-      case LT:
-        return this.__lt__(scope, $this, o1);
-      case LE:
-        return this.__le__(scope, $this, o1);
-      case IN:
-        return this.__in__(scope, $this, o1);
-      case NOT_IN:
-        return !this.toBoolean(this.__in__(scope, $this, o1));
-      case AND:
-        return this.__and__(scope, $this, o1);
-      case OR:
-        return this.__or__(scope, $this, o1);
-      case GET_ITEM:
-        return this.__get_item__(scope, $this, o1);
-      case SET_ITEM:
-        this.__set_item__(scope, $this, o1, o2);
-        return null;
-      case DEL_ITEM:
-        this.__del_item__(scope, $this, o1);
-        return null;
-      case ITERATE:
-        return this.__iter__(scope, $this);
-      case LENGTH:
-        return this.__len__(scope, $this);
+    if (operator instanceof UnaryOperator) {
+      switch ((UnaryOperator) operator) {
+        case MINUS:
+          return this.__minus__(scope, $this);
+        case NOT:
+          return this.__not__(scope, $this);
+        case ITERATE:
+          return this.__iter__(scope, $this);
+        case LENGTH:
+          return this.__len__(scope, $this);
+      }
+    } else if (operator instanceof BinaryOperator) {
+      switch ((BinaryOperator) operator) {
+        case PLUS:
+          return this.__add__(scope, $this, o1, inPlace);
+        case SUB:
+          return this.__sub__(scope, $this, o1, inPlace);
+        case MUL:
+          return this.__mul__(scope, $this, o1, inPlace);
+        case DIV:
+          return this.__div__(scope, $this, o1, inPlace);
+        case INT_DIV:
+          return this.__intdiv__(scope, $this, o1, inPlace);
+        case MOD:
+          return this.__mod__(scope, $this, o1, inPlace);
+        case POW:
+          return this.__pow__(scope, $this, o1, inPlace);
+        case EQUAL:
+          return this.__eq__(scope, $this, o1);
+        case NOT_EQUAL:
+          return this.__neq__(scope, $this, o1);
+        case GT:
+          return this.__gt__(scope, $this, o1);
+        case GE:
+          return this.__ge__(scope, $this, o1);
+        case LT:
+          return this.__lt__(scope, $this, o1);
+        case LE:
+          return this.__le__(scope, $this, o1);
+        case IN:
+          return this.__in__(scope, $this, o1);
+        case NOT_IN:
+          Object res = this.__in__(scope, $this, o1);
+          return !ProgramManager.getTypeForValue(res).toBoolean(res);
+        case AND:
+          return this.__and__(scope, $this, o1);
+        case OR:
+          return this.__or__(scope, $this, o1);
+        case GET_ITEM:
+          return this.__get_item__(scope, $this, o1);
+        case DEL_ITEM:
+          this.__del_item__(scope, $this, o1);
+          return null;
+      }
+    } else if (operator instanceof TernaryOperator) {
+      //noinspection SwitchStatementWithTooFewBranches
+      switch ((TernaryOperator) operator) {
+        case SET_ITEM:
+          this.__set_item__(scope, $this, o1, o2);
+          return null;
+      }
     }
+
     throw new MCCodeException("invalid operator " + operator);
   }
 
@@ -266,7 +273,7 @@ public abstract class Type<T> {
    * @return The value for the key.
    */
   protected Object __get_item__(Scope scope, T self, Object key) {
-    throw new UnsupportedOperatorException(scope, Operator.GET_ITEM, this, ProgramManager.getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.GET_ITEM, this, ProgramManager.getTypeForValue(key));
   }
 
   /**
@@ -278,7 +285,7 @@ public abstract class Type<T> {
    * @param value The value to set.
    */
   protected void __set_item__(Scope scope, T self, Object key, Object value) {
-    throw new UnsupportedOperatorException(scope, Operator.SET_ITEM, this, ProgramManager.getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, TernaryOperator.SET_ITEM, this, ProgramManager.getTypeForValue(key), ProgramManager.getTypeForValue(value));
   }
 
   /**
@@ -289,7 +296,7 @@ public abstract class Type<T> {
    * @param key   Key to delete.
    */
   protected void __del_item__(Scope scope, T self, Object key) {
-    throw new UnsupportedOperatorException(scope, Operator.DEL_ITEM, this, ProgramManager.getTypeForValue(key));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.DEL_ITEM, this, ProgramManager.getTypeForValue(key));
   }
 
   /**
@@ -300,7 +307,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __minus__(Scope scope, T self) {
-    throw new UnsupportedOperatorException(scope, Operator.MINUS, this);
+    throw new UnsupportedOperatorException(scope, UnaryOperator.MINUS, this);
   }
 
   /**
@@ -324,7 +331,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __add__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.PLUS, this, ProgramManager.getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.PLUS, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -337,7 +344,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __sub__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.SUB, this, ProgramManager.getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.SUB, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -350,7 +357,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __mul__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.MUL, this, ProgramManager.getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.MUL, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -363,7 +370,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __div__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.DIV, this, ProgramManager.getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.DIV, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -389,7 +396,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __mod__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.MOD, this, ProgramManager.getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.MOD, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -402,7 +409,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __pow__(Scope scope, T self, Object o, final boolean inPlace) {
-    throw new UnsupportedOperatorException(scope, Operator.POW, this, ProgramManager.getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.POW, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -438,7 +445,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __gt__(Scope scope, T self, Object o) {
-    throw new UnsupportedOperatorException(scope, Operator.GT, this, ProgramManager.getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.GT, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -486,7 +493,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __in__(Scope scope, T self, Object o) {
-    throw new UnsupportedOperatorException(scope, Operator.IN, this, ProgramManager.getTypeForValue(o));
+    throw new UnsupportedOperatorException(scope, BinaryOperator.IN, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -498,7 +505,7 @@ public abstract class Type<T> {
    * @return The length of the object.
    */
   protected int __len__(Scope scope, T self) {
-    throw new UnsupportedOperatorException(scope, Operator.LENGTH, this);
+    throw new UnsupportedOperatorException(scope, UnaryOperator.LENGTH, this);
   }
 
   /**
@@ -554,7 +561,7 @@ public abstract class Type<T> {
    * @return An iterator over the values of the object..
    */
   protected Iterator<?> __iter__(Scope scope, T self) {
-    throw new UnsupportedOperatorException(scope, Operator.ITERATE, this);
+    throw new UnsupportedOperatorException(scope, UnaryOperator.ITERATE, this);
   }
 
   /**

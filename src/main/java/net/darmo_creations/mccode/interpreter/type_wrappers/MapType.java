@@ -3,8 +3,10 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
+import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
+import net.darmo_creations.mccode.interpreter.exceptions.NoSuchKeyException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.darmo_creations.mccode.interpreter.types.MCMap;
 import net.darmo_creations.mccode.interpreter.types.MCSet;
@@ -22,10 +24,11 @@ import java.util.stream.Collectors;
  * Maps are iterable and support the __get_item__, __set_item__ and __del_item__ operators.
  * Maps iterate over their keys.
  */
+@Doc("Maps are datastructures that associate a unique key to some arbitrary data.")
 public class MapType extends Type<MCMap> {
   public static final String NAME = "map";
 
-  private static final String ENTRIES_KEY = "Entries";
+  public static final String ENTRIES_KEY = "Entries";
 
   @Override
   public String getName() {
@@ -44,44 +47,51 @@ public class MapType extends Type<MCMap> {
   }
 
   @Property(name = "values")
-  @Doc("Returns the set of all values of this map.")
-  public MCSet getValues(final MCMap self) {
-    return new MCSet(self.values());
+  @Doc("Returns a list of all values of this map. Order of values in the returned list is not guaranteed.")
+  public MCList getValues(final MCMap self) {
+    return new MCList(self.values());
   }
 
-  @Property(name = "clear")
+  @Method(name = "clear")
   @Doc("Removes all entries from this map. Modifies this map.")
-  public Void clear(final MCMap self) {
+  public Void clear(final Scope scope, final MCMap self) {
     self.clear();
     return null;
   }
 
   @Override
   protected Object __get_item__(final Scope scope, final MCMap self, final Object key) {
-    if (!(key instanceof String)) {
-      throw new CastException(scope, ProgramManager.getTypeInstance(StringType.class),
-          ProgramManager.getTypeForValue(self));
+    if (key instanceof String) {
+      String k = (String) key;
+      if (!self.containsKey(k)) {
+        throw new NoSuchKeyException(scope, k);
+      }
+      return self.get(k);
     }
-    return self.get((String) key);
+    return super.__get_item__(scope, self, key);
   }
 
   @Override
   protected void __set_item__(final Scope scope, MCMap self, final Object key, final Object value) {
-    if (!(key instanceof String)) {
-      throw new CastException(scope, ProgramManager.getTypeInstance(StringType.class),
-          ProgramManager.getTypeForValue(self));
+    if (key instanceof String) {
+      // Deep copy value
+      self.put((String) key, ProgramManager.getTypeForValue(value).copy(scope, value));
+    } else {
+      super.__set_item__(scope, self, key, value);
     }
-    // Deep copy value
-    self.put((String) key, ProgramManager.getTypeForValue(value).copy(scope, value));
   }
 
   @Override
   protected void __del_item__(final Scope scope, MCMap self, final Object key) {
-    if (!(key instanceof String)) {
-      throw new CastException(scope, ProgramManager.getTypeInstance(StringType.class),
-          ProgramManager.getTypeForValue(self));
+    if (key instanceof String) {
+      String k = (String) key;
+      if (!self.containsKey(k)) {
+        throw new NoSuchKeyException(scope, k);
+      }
+      self.remove(k);
+    } else {
+      super.__del_item__(scope, self, key);
     }
-    self.remove(key);
   }
 
   /**
@@ -89,35 +99,47 @@ public class MapType extends Type<MCMap> {
    */
   @Override
   protected Object __add__(final Scope scope, MCMap self, final Object o, final boolean inPlace) {
-    MCMap other = this.implicitCast(scope, o);
-    if (inPlace) {
-      return this.add(scope, self, other);
+    if (o instanceof MCMap) {
+      MCMap other = this.implicitCast(scope, o);
+      if (inPlace) {
+        return this.add(scope, self, other, true);
+      }
+      return this.add(scope, new MCMap(self), other, false);
+    } else if (o instanceof String) {
+      return self.toString() + o;
     }
-    return this.add(scope, new MCMap(self), other);
+    return super.__add__(scope, self, o, inPlace);
   }
 
-  private Object add(final Scope scope, MCMap map1, final MCMap map2) {
+  private MCMap add(final Scope scope, MCMap map1, final MCMap map2, final boolean inPlace) {
     // Deep copy all elements to add
+    if (!inPlace) {
+      MCMap temp = this.__copy__(scope, map1);
+      map1.clear();
+      map1.putAll(temp);
+    }
     map1.putAll(map2.entrySet().stream()
-        .collect(Collectors.toMap(Map.Entry::getKey, e -> ProgramManager.getTypeForValue(e).copy(scope, e))));
+        .collect(Collectors.toMap(Map.Entry::getKey, e -> ProgramManager.getTypeForValue(e.getValue()).copy(scope, e.getValue()))));
     return map1;
   }
 
   /**
-   * Remove all entries from self whose key matches value of o.
+   * Remove all entries from self whose key matches a key of o.
    */
   @Override
   protected Object __sub__(final Scope scope, MCMap self, final Object o, final boolean inPlace) {
-    MCList keys = ProgramManager.getTypeInstance(ListType.class).implicitCast(scope, o);
-    if (inPlace) {
-      return this.sub(scope, self, keys);
+    if (o instanceof MCMap) {
+      MCMap other = ProgramManager.getTypeInstance(MapType.class).implicitCast(scope, o);
+      if (inPlace) {
+        return this.sub(self, other);
+      }
+      return this.sub(new MCMap(self), other);
     }
-    return this.sub(scope, new MCMap(self), keys);
+    return super.__sub__(scope, self, o, inPlace);
   }
 
-  private Object sub(final Scope scope, MCMap map, final MCList keys) {
-    StringType stringType = ProgramManager.getTypeInstance(StringType.class);
-    keys.stream().map(k -> stringType.implicitCast(scope, k)).forEach(map::remove);
+  private MCMap sub(MCMap map, final MCMap other) {
+    other.keySet().forEach(map::remove);
     return map;
   }
 
@@ -131,10 +153,10 @@ public class MapType extends Type<MCMap> {
 
   @Override
   protected Object __in__(final Scope scope, final MCMap self, final Object o) {
-    if (!(o instanceof String)) {
-      return false;
+    if (o instanceof String) {
+      return self.containsKey(o);
     }
-    return self.containsKey(o);
+    return super.__in__(scope, self, o);
   }
 
   @Override
@@ -156,6 +178,12 @@ public class MapType extends Type<MCMap> {
   }
 
   @Override
+  protected MCMap __copy__(final Scope scope, final MCMap self) {
+    return new MCMap(self.entrySet().stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, e -> ProgramManager.getTypeForValue(e.getValue()).copy(scope, e.getValue()))));
+  }
+
+  @Override
   public MCMap explicitCast(final Scope scope, final Object o) {
     if (o instanceof Map) {
       try {
@@ -170,7 +198,8 @@ public class MapType extends Type<MCMap> {
       MCMap map = new MCMap();
       if (!properties.isEmpty()) {
         for (String s : properties) {
-          map.put(s, type.getProperty(scope, o, s));
+          Object value = type.getProperty(scope, o, s);
+          map.put(s, ProgramManager.getTypeForValue(value).copy(scope, value));
         }
       }
       return map;

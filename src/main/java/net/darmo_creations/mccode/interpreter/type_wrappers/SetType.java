@@ -4,7 +4,7 @@ import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
-import net.darmo_creations.mccode.interpreter.annotations.Property;
+import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
 import net.darmo_creations.mccode.interpreter.types.MCSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,10 +19,11 @@ import java.util.stream.Collectors;
  * <p>
  * Sets are iterable.
  */
+@Doc("Sets are data structures that store unique values. Values in a set are not ordered.")
 public class SetType extends Type<MCSet> {
   public static final String NAME = "set";
 
-  private static final String VALUES_KEY = "Values";
+  public static final String VALUES_KEY = "Values";
 
   @Override
   public String getName() {
@@ -34,18 +35,18 @@ public class SetType extends Type<MCSet> {
     return MCSet.class;
   }
 
-  @Property(name = "clear")
+  @Method(name = "clear")
   @Doc("Removes all values from this set. Modifies this set.")
-  public Void clear(final MCSet self) {
+  public Void clear(final Scope scope, final MCSet self) {
     self.clear();
     return null;
   }
 
   @Method(name = "add")
   @Doc("Adds a value to this set. Modifies this set.")
-  public MCSet add(final Scope scope, final MCSet self, final Object value) {
+  public Void add(final Scope scope, final MCSet self, final Object value) {
     self.add(ProgramManager.getTypeForValue(value).copy(scope, value));
-    return self;
+    return null;
   }
 
   @Method(name = "union")
@@ -67,15 +68,25 @@ public class SetType extends Type<MCSet> {
    */
   @Override
   protected Object __add__(final Scope scope, MCSet self, final Object o, final boolean inPlace) {
-    MCSet other = this.implicitCast(scope, o);
-    if (inPlace) {
-      return this.add(scope, self, other);
+    if (o instanceof MCSet) {
+      MCSet other = this.implicitCast(scope, o);
+      if (inPlace) {
+        return this.add(scope, self, other, true);
+      }
+      return this.add(scope, new MCSet(self), other, false);
+    } else if (o instanceof String) {
+      return self.toString() + o;
     }
-    return this.add(scope, new MCSet(self), other);
+    return super.__add__(scope, self, o, inPlace);
   }
 
-  private Object add(final Scope scope, MCSet set1, final MCSet set2) {
+  private MCSet add(final Scope scope, MCSet set1, final MCSet set2, final boolean inPlace) {
     // Deep copy all elements to add
+    if (!inPlace) {
+      MCSet temp = this.__copy__(scope, set1);
+      set1.clear();
+      set1.addAll(temp);
+    }
     set1.addAll(this.__copy__(scope, set2));
     return set1;
   }
@@ -85,14 +96,17 @@ public class SetType extends Type<MCSet> {
    */
   @Override
   protected Object __sub__(final Scope scope, MCSet self, final Object o, final boolean inPlace) {
-    MCSet other = this.implicitCast(scope, o);
-    if (inPlace) {
-      return this.sub(self, other);
+    if (o instanceof MCSet) {
+      MCSet other = this.implicitCast(scope, o);
+      if (inPlace) {
+        return this.sub(self, other);
+      }
+      return this.sub(new MCSet(self), other);
     }
-    return this.sub(new MCSet(self), other);
+    return super.__sub__(scope, self, o, inPlace);
   }
 
-  private Object sub(MCSet set1, final MCSet set2) {
+  private MCSet sub(MCSet set1, final MCSet set2) {
     set1.removeAll(set2);
     return set1;
   }
@@ -112,7 +126,7 @@ public class SetType extends Type<MCSet> {
    */
   @Override
   protected Object __gt__(final Scope scope, final MCSet self, final Object o) {
-    return this.toBoolean(this.__ge__(scope, self, o)) && !this.toBoolean(this.__eq__(scope, self, o));
+    return (Boolean) this.__ge__(scope, self, o) && !(Boolean) this.__eq__(scope, self, o);
   }
 
   /**
@@ -125,7 +139,7 @@ public class SetType extends Type<MCSet> {
     if (o instanceof MCSet) {
       return self.containsAll((MCSet) o);
     }
-    return super.__ge__(scope, self, o);
+    throw new UnsupportedOperatorException(scope, BinaryOperator.GE, this, ProgramManager.getTypeForValue(o));
   }
 
   /**
@@ -135,7 +149,7 @@ public class SetType extends Type<MCSet> {
    */
   @Override
   protected Object __lt__(final Scope scope, final MCSet self, final Object o) {
-    return this.toBoolean(this.__le__(scope, self, o)) && !this.toBoolean(this.__eq__(scope, self, o));
+    return (Boolean) this.__le__(scope, self, o) && !(Boolean) this.__eq__(scope, self, o);
   }
 
   /**
@@ -148,7 +162,7 @@ public class SetType extends Type<MCSet> {
     if (o instanceof MCSet) {
       return ((MCSet) o).containsAll(self);
     }
-    return super.__le__(scope, self, o);
+    throw new UnsupportedOperatorException(scope, BinaryOperator.LE, this, ProgramManager.getTypeForValue(o));
   }
 
   @Override

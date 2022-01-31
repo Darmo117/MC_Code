@@ -3,6 +3,8 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
+import net.darmo_creations.mccode.interpreter.annotations.Doc;
+import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -10,10 +12,11 @@ import net.minecraft.util.math.BlockPos;
 /**
  * Wrapper type for {@link Double}.
  */
+@Doc("Type representing real numbers.")
 public class FloatType extends Type<Double> {
   public static final String NAME = "float";
 
-  private static final String VALUE_KEY = "Value";
+  public static final String VALUE_KEY = "Value";
 
   @Override
   public String getName() {
@@ -27,7 +30,7 @@ public class FloatType extends Type<Double> {
 
   @Override
   protected Object __minus__(final Scope scope, final Double self) {
-    return -self;
+    return self == 0 ? 0.0 : -self; // Avoid -0.0
   }
 
   @Override
@@ -99,7 +102,7 @@ public class FloatType extends Type<Double> {
       return Utils.trueModulo(self, (Double) o);
     } else if (o instanceof Boolean) {
       if ((Boolean) o) {
-        return 0;
+        return 0.0;
       }
       throw new ArithmeticException("/ by 0");
     }
@@ -130,7 +133,10 @@ public class FloatType extends Type<Double> {
 
   @Override
   protected Object __gt__(final Scope scope, final Double self, final Object o) {
-    return self > this.implicitCast(scope, o);
+    if (o instanceof Number || o instanceof Boolean) {
+      return self > this.implicitCast(scope, o);
+    }
+    return super.__gt__(scope, self, o);
   }
 
   @Override
@@ -151,7 +157,11 @@ public class FloatType extends Type<Double> {
   @Override
   public Double explicitCast(Scope scope, Object o) throws MCCodeRuntimeException {
     if (o instanceof String) {
-      return Double.parseDouble((String) o);
+      try {
+        return Double.parseDouble((String) o);
+      } catch (NumberFormatException e) {
+        throw new EvaluationException(scope, "mccode.interpreter.error.float_format", Utils.escapeString((String) o));
+      }
     }
     return super.explicitCast(scope, o);
   }

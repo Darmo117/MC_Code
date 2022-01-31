@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class FunctionCallNode extends OperationNode {
   public static final int ID = 103;
 
-  private static final String FUNCTION_OBJ_KEY = "FunctionObject";
+  public static final String FUNCTION_OBJ_KEY = "FunctionObject";
 
   protected final Node functionObject;
 

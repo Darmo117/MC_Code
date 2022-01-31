@@ -12,9 +12,9 @@ import java.util.function.Function;
  * @param <T> Type of the literal’s value.
  */
 public abstract class LiteralNode<T> extends Node {
-  private static final String VALUE_KEY = "Value";
+  public static final String VALUE_KEY = "Value";
 
-  private final T value;
+  protected final T value;
 
   /**
    * Create a literal node.

@@ -27,11 +27,6 @@ public class NullLiteralNode extends LiteralNode<Void> {
   }
 
   @Override
-  public NBTTagCompound writeToNBT() {
-    return new NBTTagCompound(); // Return empty placeholder tag
-  }
-
-  @Override
   protected BiConsumer<String, Void> getValueSerializer(final NBTTagCompound tag) {
     return null; // No value to serialize
   }

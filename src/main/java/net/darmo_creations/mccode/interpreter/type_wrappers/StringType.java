@@ -4,10 +4,10 @@ import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
-import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.IndexOutOfBoundsException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -18,10 +18,11 @@ import java.util.stream.Collectors;
  * <p>
  * Strings are iterable and support the __get_item__ operator.
  */
+@Doc("Type representing strings.")
 public class StringType extends Type<String> {
   public static final String NAME = "string";
 
-  private static final String VALUE_KEY = "Value";
+  public static final String VALUE_KEY = "Value";
 
   @Override
   public String getName() {
@@ -48,7 +49,7 @@ public class StringType extends Type<String> {
   @Method(name = "title")
   @Doc("Returns this string as title case.")
   public String toTitleCase(final Scope scope, final String self) {
-    // Code from https://stackoverflow.com/a/1086134/3779986
+    // Based on https://stackoverflow.com/a/1086134/3779986
     StringBuilder titleCase = new StringBuilder(self.length());
     boolean nextTitleCase = true;
 
@@ -56,11 +57,11 @@ public class StringType extends Type<String> {
       if (Character.isSpaceChar(c)) {
         nextTitleCase = true;
       } else if (nextTitleCase) {
-        char oldC = c;
         c = Character.toTitleCase(c);
-        nextTitleCase = oldC == c;
+        nextTitleCase = false;
+      } else {
+        c = Character.toLowerCase(c);
       }
-
       titleCase.append(c);
     }
 
@@ -82,6 +83,9 @@ public class StringType extends Type<String> {
   @Method(name = "count")
   @Doc("Returns the number of times the given string is present in this string.")
   public Integer count(final Scope scope, final String self, final String needle) {
+    if ("".equals(needle)) {
+      return self.length() + 1;
+    }
     return self.length() - self.replace(needle, "").length();
   }
 
@@ -115,10 +119,16 @@ public class StringType extends Type<String> {
     return self.replace(target, replacement);
   }
 
+  @Method(name = "replace_regex")
+  @Doc("Replaces each substring of this string that matches the regex string with the specified literal replacement sequence.")
+  public String replaceRegex(final Scope scope, final String self, final String target, final String replacement) {
+    return self.replaceAll(target, replacement);
+  }
+
   @Method(name = "split")
   @Doc("Splits this string around matches of the given regular expression.")
   public MCList split(final Scope scope, final String self, final String separator) {
-    return new MCList(Arrays.asList(self.split(separator)));
+    return new MCList(Arrays.asList(self.split(separator, -1)));
   }
 
   @Method(name = "join")
@@ -130,15 +140,14 @@ public class StringType extends Type<String> {
 
   @Override
   protected Object __get_item__(final Scope scope, final String self, final Object key) {
-    if (!(key instanceof Integer)) {
-      throw new CastException(scope, ProgramManager.getTypeInstance(IntType.class),
-          ProgramManager.getTypeForValue(key));
+    if (key instanceof Integer || key instanceof Boolean) {
+      int index = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, key);
+      if (index < 0 || index >= self.length()) {
+        throw new IndexOutOfBoundsException(scope, index);
+      }
+      return String.valueOf(self.charAt(index));
     }
-    int index = (Integer) key;
-    if (index < 0 || index > self.length()) {
-      throw new IndexOutOfBoundsException(scope, index);
-    }
-    return String.valueOf(self.charAt(index));
+    return super.__get_item__(scope, self, key);
   }
 
   @Override
@@ -148,40 +157,34 @@ public class StringType extends Type<String> {
 
   @Override
   protected Object __mul__(final Scope scope, final String self, final Object o, final boolean inPlace) {
-    int nb = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, o);
-    if (nb <= 0) {
-      return "";
+    if (o instanceof Integer || o instanceof Boolean) {
+      int nb = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, o);
+      if (nb <= 0) {
+        return "";
+      }
+      StringBuilder s = new StringBuilder(self);
+      for (int i = 0; i < nb - 1; i++) {
+        s.append(self);
+      }
+      return s.toString();
     }
-    StringBuilder s = new StringBuilder(self);
-    for (int i = 0; i < nb - 1; i++) {
-      s.append(self);
-    }
-    return s.toString();
+    return super.__mul__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __eq__(final Scope scope, final String self, final Object o) {
-    if (!(o instanceof String)) {
-      return false;
+    if (o instanceof String) {
+      return self.equals(o);
+    } else if (o instanceof ResourceLocation) {
+      return self.equals(o.toString());
     }
-    return self.equals(o);
+    return false;
   }
 
   @Override
   protected Object __gt__(final Scope scope, final String self, final Object o) {
     if (o instanceof String) {
-      String other = (String) o;
-      if (self.length() > other.length()) {
-        return true;
-      } else if (self.length() == other.length()) {
-        for (int i = 0; i < self.length(); i++) {
-          if (self.charAt(i) != other.charAt(i)) {
-            return false;
-          }
-        }
-        return true;
-      }
-      return false;
+      return self.compareTo((String) o) > 0;
     }
     return super.__gt__(scope, self, o);
   }

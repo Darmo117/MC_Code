@@ -14,8 +14,8 @@ import java.util.Objects;
 public class PropertyCallNode extends Node {
   public static final int ID = 101;
 
-  private static final String OBJECT_KEY = "Object";
-  private static final String PROPERTY_NAME_KEY = "PropertyName";
+  public static final String INSTANCE_KEY = "Instance";
+  public static final String PROPERTY_NAME_KEY = "PropertyName";
 
   private final Node object;
   private final String propertyName;
@@ -38,7 +38,7 @@ public class PropertyCallNode extends Node {
    */
   public PropertyCallNode(final NBTTagCompound tag) {
     this(
-        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(OBJECT_KEY)),
+        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(INSTANCE_KEY)),
         tag.getString(PROPERTY_NAME_KEY)
     );
   }
@@ -58,7 +58,7 @@ public class PropertyCallNode extends Node {
   @Override
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = super.writeToNBT();
-    tag.setTag(OBJECT_KEY, this.object.writeToNBT());
+    tag.setTag(INSTANCE_KEY, this.object.writeToNBT());
     tag.setString(PROPERTY_NAME_KEY, this.propertyName);
     return tag;
   }

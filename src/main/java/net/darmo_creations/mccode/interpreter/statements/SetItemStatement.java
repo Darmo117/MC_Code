@@ -5,7 +5,8 @@ import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
-import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
+import net.darmo_creations.mccode.interpreter.type_wrappers.BinaryOperator;
+import net.darmo_creations.mccode.interpreter.type_wrappers.TernaryOperator;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -46,11 +47,11 @@ public class SetItemStatement extends Statement {
     Type<?> targetObjectType = ProgramManager.getTypeForValue(targetObject);
     Object keyValue = this.key.evaluate(scope);
     Object newValue = this.value.evaluate(scope);
-    Object oldValue = targetObjectType.applyOperator(scope, Operator.GET_ITEM, targetObject, keyValue, null, false);
+    Object oldValue = targetObjectType.applyOperator(scope, BinaryOperator.GET_ITEM, targetObject, keyValue, null, false);
     Object resultValue = this.operator.getBaseOperator()
         .map(op -> targetObjectType.applyOperator(scope, op, oldValue, newValue, null, true))
         .orElse(targetObject);
-    targetObjectType.applyOperator(scope, Operator.SET_ITEM, targetObject, keyValue, resultValue, true);
+    targetObjectType.applyOperator(scope, TernaryOperator.SET_ITEM, targetObject, keyValue, resultValue, true);
 
     return StatementAction.PROCEED;
   }

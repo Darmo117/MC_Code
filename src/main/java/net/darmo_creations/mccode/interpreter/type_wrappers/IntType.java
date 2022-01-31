@@ -2,6 +2,9 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.Utils;
+import net.darmo_creations.mccode.interpreter.annotations.Doc;
+import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,10 +13,11 @@ import net.minecraft.util.math.BlockPos;
 /**
  * Wrapper type for {@link Integer}.
  */
+@Doc("Type representing integers.")
 public class IntType extends Type<Integer> {
   public static final String NAME = "int";
 
-  private static final String VALUE_KEY = "Value";
+  public static final String VALUE_KEY = "Value";
 
   @Override
   public String getName() {
@@ -78,16 +82,44 @@ public class IntType extends Type<Integer> {
 
   @Override
   protected Object __div__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    FloatType floatType = ProgramManager.getTypeInstance(FloatType.class);
-    double d = floatType.implicitCast(scope, self);
-    return floatType.__div__(scope, d, o, inPlace);
+    if (o instanceof Integer) {
+      if ((Integer) o == 0) {
+        throw new ArithmeticException("/ by 0");
+      }
+      return self.doubleValue() / (Integer) o;
+    } else if (o instanceof Double) {
+      if ((Double) o == 0) {
+        throw new ArithmeticException("/ by 0");
+      }
+      return self / (Double) o;
+    } else if (o instanceof Boolean) {
+      if (!(Boolean) o) {
+        throw new ArithmeticException("/ by 0");
+      }
+      return (double) self;
+    }
+    return super.__div__(scope, self, o, inPlace);
   }
 
   @Override
   protected Object __mod__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    FloatType floatType = ProgramManager.getTypeInstance(FloatType.class);
-    double d = floatType.implicitCast(scope, self);
-    return floatType.__mod__(scope, d, o, inPlace);
+    if (o instanceof Integer) {
+      if ((Integer) o == 0) {
+        throw new ArithmeticException("/ by 0");
+      }
+      return (int) Utils.trueModulo(self, (Integer) o);
+    } else if (o instanceof Double) {
+      if ((Double) o == 0) {
+        throw new ArithmeticException("/ by 0");
+      }
+      return Utils.trueModulo(self, (Double) o);
+    } else if (o instanceof Boolean) {
+      if ((Boolean) o) {
+        return 0;
+      }
+      throw new ArithmeticException("/ by 0");
+    }
+    return super.__mod__(scope, self, o, inPlace);
   }
 
   @Override
@@ -134,7 +166,11 @@ public class IntType extends Type<Integer> {
     if (o instanceof Number) {
       return ((Number) o).intValue();
     } else if (o instanceof String) {
-      return Integer.parseInt((String) o);
+      try {
+        return Integer.parseInt((String) o);
+      } catch (NumberFormatException e) {
+        throw new EvaluationException(scope, "mccode.interpreter.error.int_format", Utils.escapeString((String) o));
+      }
     }
     return super.explicitCast(scope, o);
   }

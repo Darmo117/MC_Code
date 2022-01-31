@@ -2,12 +2,13 @@ package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
+import net.darmo_creations.mccode.interpreter.type_wrappers.UnaryOperator;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A node that represents an operator with a single operand.
@@ -15,7 +16,7 @@ import java.util.List;
 public class UnaryOperatorNode extends OperatorNode {
   public static final int ID = 200;
 
-  private final Operator operator;
+  private final UnaryOperator operator;
 
   /**
    * Create a unary operator node.
@@ -23,8 +24,8 @@ public class UnaryOperatorNode extends OperatorNode {
    * @param operator Operator’s symbol.
    * @param operand  Operator’s operand.
    */
-  public UnaryOperatorNode(final Operator operator, final Node operand) {
-    super(operator.getSymbol(), 1, Collections.singletonList(operand));
+  public UnaryOperatorNode(final UnaryOperator operator, final Node operand) {
+    super(operator.getSymbol(), 1, Collections.singletonList(Objects.requireNonNull(operand)));
     this.operator = operator;
   }
 
@@ -35,7 +36,7 @@ public class UnaryOperatorNode extends OperatorNode {
    */
   public UnaryOperatorNode(final NBTTagCompound tag) {
     super(tag);
-    this.operator = Operator.fromString(this.getSymbol());
+    this.operator = UnaryOperator.fromString(this.getSymbol());
   }
 
   @Override
@@ -53,10 +54,11 @@ public class UnaryOperatorNode extends OperatorNode {
   @Override
   public String toString() {
     Node operand = this.arguments.get(0);
+    String symbol = this.getSymbol() + (this.operator == UnaryOperator.NOT ? " " : "");
     if (operand instanceof OperatorNode) {
-      return String.format("%s(%s)", this.getSymbol(), operand);
+      return String.format("%s(%s)", symbol, operand);
     } else {
-      return this.getSymbol() + this.arguments.get(0);
+      return symbol + this.arguments.get(0);
     }
   }
 }

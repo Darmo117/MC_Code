@@ -5,7 +5,7 @@ import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
-import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
+import net.darmo_creations.mccode.interpreter.type_wrappers.BinaryOperator;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -50,7 +50,7 @@ public class DeleteItemStatement extends Statement {
   public StatementAction execute(final Scope scope) throws EvaluationException, ArithmeticException {
     Object targetValue = this.target.evaluate(scope);
     Type<?> targetType = ProgramManager.getTypeForValue(targetValue);
-    targetType.applyOperator(scope, Operator.DEL_ITEM, targetValue, this.key.evaluate(scope), null, true);
+    targetType.applyOperator(scope, BinaryOperator.DEL_ITEM, targetValue, this.key.evaluate(scope), null, true);
     return StatementAction.PROCEED;
   }
 

@@ -2,6 +2,7 @@ package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.MCMap;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class MapLiteralNode extends Node {
   public static final int ID = 6;
 
-  private static final String VALUES_KEY = "Values";
+  public static final String VALUES_KEY = "Values";
 
   private final Map<String, Node> values;
 
@@ -66,6 +67,8 @@ public class MapLiteralNode extends Node {
 
   @Override
   public String toString() {
-    return this.values.toString();
+    return this.values.entrySet().stream()
+        .map(e -> String.format("%s: %s", Utils.escapeString(e.getKey()), e.getValue().toString()))
+        .collect(Collectors.joining(", ", "{", "}"));
   }
 }

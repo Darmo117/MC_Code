@@ -49,9 +49,8 @@ public class ProgramManager extends WorldSavedData {
 
   /**
    * Create a program manager with the given name.
-   * Required by {@link MapStorage#getOrLoadData(Class, String)}.
    */
-  private ProgramManager(final String name) {
+  public ProgramManager(final String name) {
     super(name);
     this.programs = new HashMap<>();
     this.programsSchedules = new HashMap<>();

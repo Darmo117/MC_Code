@@ -7,8 +7,8 @@ import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
-import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
+import net.darmo_creations.mccode.interpreter.type_wrappers.UnaryOperator;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Iterator;
@@ -82,7 +82,7 @@ public class ForLoopStatement extends Statement {
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     Object valuesObject = this.values.evaluate(scope);
     Type<?> type = ProgramManager.getTypeForValue(valuesObject);
-    Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, Operator.ITERATE, valuesObject, null, null, false);
+    Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, UnaryOperator.ITERATE, valuesObject, null, null, false);
     boolean declareVariable = true;
 
     if (this.resumeAfterLoad) {

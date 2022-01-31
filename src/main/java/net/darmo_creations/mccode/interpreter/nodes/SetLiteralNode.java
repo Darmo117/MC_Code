@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class SetLiteralNode extends Node {
   public static final int ID = 7;
 
-  private static final String VALUES_KEY = "Values";
+  public static final String VALUES_KEY = "Values";
 
   private final List<Node> values;
 
@@ -67,6 +67,6 @@ public class SetLiteralNode extends Node {
 
   @Override
   public String toString() {
-    return this.values.toString();
+    return this.values.stream().map(Node::toString).collect(Collectors.joining(", ", "{", "}"));
   }
 }

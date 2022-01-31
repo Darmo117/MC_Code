@@ -89,4 +89,9 @@ public class Range implements Iterable<Integer>, Cloneable {
       throw new AssertionError(e);
     }
   }
+
+  @Override
+  public String toString() {
+    return String.format("Range{start=%d, end=%d, step=%d}", this.start, this.end, this.step);
+  }
 }

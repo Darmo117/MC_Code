@@ -1,6 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
-import net.darmo_creations.mccode.interpreter.type_wrappers.Operator;
+import net.darmo_creations.mccode.interpreter.type_wrappers.BinaryOperator;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -10,19 +10,19 @@ import java.util.Optional;
  */
 public enum AssigmentOperator {
   ASSIGN(":=", null),
-  PLUS("+=", Operator.PLUS),
-  SUB("-=", Operator.SUB),
-  MUL("*=", Operator.MUL),
-  DIV("/=", Operator.DIV),
-  INT_DIV("//=", Operator.INT_DIV),
-  MOD("%=", Operator.MOD),
-  POW("^=", Operator.POW),
+  PLUS("+=", BinaryOperator.PLUS),
+  SUB("-=", BinaryOperator.SUB),
+  MUL("*=", BinaryOperator.MUL),
+  DIV("/=", BinaryOperator.DIV),
+  INT_DIV("//=", BinaryOperator.INT_DIV),
+  MOD("%=", BinaryOperator.MOD),
+  POW("^=", BinaryOperator.POW),
   ;
 
   private final String symbol;
-  private final Operator baseOperator;
+  private final BinaryOperator baseOperator;
 
-  AssigmentOperator(final String symbol, final Operator baseOperator) {
+  AssigmentOperator(final String symbol, final BinaryOperator baseOperator) {
     this.symbol = Objects.requireNonNull(symbol);
     this.baseOperator = baseOperator;
   }
@@ -35,9 +35,9 @@ public enum AssigmentOperator {
   }
 
   /**
-   * Return the {@link Operator} to apply before assigning the value.
+   * Return the {@link BinaryOperator} to apply before assigning the value.
    */
-  public Optional<Operator> getBaseOperator() {
+  public Optional<BinaryOperator> getBaseOperator() {
     return Optional.ofNullable(this.baseOperator);
   }
 
