@@ -13,7 +13,8 @@ public class SetupProgramManager implements BeforeAllCallback {
     if (value == null) {
       System.out.println("Program manager setup");
       context.getRoot().getStore(GLOBAL).put(uniqueKey, this);
-      ProgramManager.declareBuiltinTypes();
+      ProgramManager.declareDefaultBuiltinTypes();
+      ProgramManager.declareDefaultBuiltinFunctions();
       ProgramManager.initialize();
     }
   }

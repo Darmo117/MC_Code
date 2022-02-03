@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Statement that represents a for-loop.
@@ -20,12 +21,12 @@ import java.util.List;
 public class ForLoopStatement extends Statement {
   public static final int ID = 42;
 
-  private static final String VARIABLE_NAME_KEY = "VariableName";
-  private static final String VALUES_KEY = "Values";
-  private static final String STATEMENTS_KEY = "Statements";
-  private static final String IP_KEY = "IP";
-  private static final String ITERATOR_INDEX_KEY = "IteratorIndex";
-  private static final String PAUSED_KEY = "Paused";
+  public static final String VARIABLE_NAME_KEY = "VariableName";
+  public static final String VALUES_KEY = "Values";
+  public static final String STATEMENTS_KEY = "Statements";
+  public static final String IP_KEY = "IP";
+  public static final String ITERATOR_INDEX_KEY = "IteratorIndex";
+  public static final String PAUSED_KEY = "Paused";
 
   private final String variableName;
   private final Node values;
@@ -83,25 +84,24 @@ public class ForLoopStatement extends Statement {
     Object valuesObject = this.values.evaluate(scope);
     Type<?> type = ProgramManager.getTypeForValue(valuesObject);
     Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, UnaryOperator.ITERATE, valuesObject, null, null, false);
-    boolean declareVariable = true;
+    boolean declareVariable = !this.paused && !this.resumeAfterLoad;
 
-    if (this.resumeAfterLoad) {
-      // Skip elements already iterated over
-      for (int i = 0; i <= this.iteratorIndex; i++) {
-        iterator.next();
-      }
+    // Skip elements already iterated over
+    for (int i = 0; i < this.iteratorIndex; i++) {
+      iterator.next();
     }
 
     exit:
     // Do not test again if loop was paused by a "wait" statement
     while (this.paused || this.resumeAfterLoad || iterator.hasNext()) {
       // Do not re-declare or re-set variable if loop was paused by a "wait" statement
-      if (!this.paused && !this.resumeAfterLoad) {
+      if (this.ip == 0) {
         if (declareVariable) {
           scope.declareVariable(new Variable(this.variableName, false, false, false, true, iterator.next()));
           declareVariable = false;
         } else {
-          scope.setVariable(this.variableName, iterator.next(), false);
+          Object next = iterator.next();
+          scope.setVariable(this.variableName, next, false);
         }
       } else {
         this.paused = false;
@@ -112,9 +112,9 @@ public class ForLoopStatement extends Statement {
       while (this.ip < this.statements.size()) {
         StatementAction action = this.statements.get(this.ip).execute(scope);
         if (action == StatementAction.EXIT_LOOP) {
+          this.ip = 0;
           break exit;
         } else if (action == StatementAction.CONTINUE_LOOP) {
-          this.ip = 0;
           break;
         } else if (action == StatementAction.EXIT_FUNCTION || action == StatementAction.WAIT) {
           if (action == StatementAction.WAIT) {
@@ -128,8 +128,9 @@ public class ForLoopStatement extends Statement {
           this.ip++;
         }
       }
+      this.ip = 0;
     }
-    this.ip = 0;
+    scope.deleteVariable(this.variableName, false);
 
     return StatementAction.PROCEED;
   }
@@ -158,5 +159,24 @@ public class ForLoopStatement extends Statement {
       s = Utils.indentStatements(this.statements);
     }
     return String.format("for %s in %s do%send", this.variableName, this.values, s);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    ForLoopStatement that = (ForLoopStatement) o;
+    return this.ip == that.ip && this.iteratorIndex == that.iteratorIndex && this.resumeAfterLoad == that.resumeAfterLoad
+        && this.paused == that.paused && this.variableName.equals(that.variableName) && this.values.equals(that.values)
+        && this.statements.equals(that.statements);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.variableName, this.values, this.statements, this.ip, this.iteratorIndex, this.resumeAfterLoad, this.paused);
   }
 }

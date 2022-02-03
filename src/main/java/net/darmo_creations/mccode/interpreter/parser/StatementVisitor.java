@@ -4,6 +4,7 @@ import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeBaseVisitor;
 import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeParser;
 import net.darmo_creations.mccode.interpreter.statements.*;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,6 +41,14 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
   public Statement visitDeclareGlobalConstant(MCCodeParser.DeclareGlobalConstantContext ctx) {
     return new DeclareVariableStatement(true, false, true,
         ctx.name.getText(), this.nodeVisitor.visit(ctx.value));
+  }
+
+  @Override
+  public Statement visitDefineFunctionStatement(MCCodeParser.DefineFunctionStatementContext ctx) {
+    String name = ctx.name.getText();
+    List<String> params = ctx.IDENT().stream().skip(1).map(TerminalNode::getText).collect(Collectors.toList());
+    List<Statement> statements = ctx.statement().stream().map(super::visit).collect(Collectors.toList());
+    return new DefineFunctionStatement(name, params, statements);
   }
 
   @Override

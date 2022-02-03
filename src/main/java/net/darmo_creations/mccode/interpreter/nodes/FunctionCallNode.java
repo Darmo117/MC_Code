@@ -6,7 +6,6 @@ import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.Function;
-import net.darmo_creations.mccode.interpreter.types.UserFunction;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.List;
@@ -56,13 +55,11 @@ public class FunctionCallNode extends OperationNode {
           ProgramManager.getTypeForValue(o));
     }
 
-    Scope functionScope;
-    if (function instanceof UserFunction) {
-      // User-defined functions use global scope as closure as they can only be declared in the global scope
-      functionScope = new Scope(function.getName(), scope.getProgram().getScope());
-    } else {
-      functionScope = new Scope(function.getName(), scope);
-    }
+    int callStackSize = scope.getProgram().getScope().getCallStackSize();
+    scope.getProgram().getScope().setCallStackSize(callStackSize + 1);
+    // Use global scope as user functions can only be defined in global scope
+    // and it should not matter for builtin function.
+    Scope functionScope = new Scope(function.getName(), scope.getProgram().getScope());
 
     if (this.arguments.size() != function.getParameters().size()) {
       throw new EvaluationException(scope, "mccode.interpreter.error.invalid_function_arguments_number",
@@ -74,7 +71,9 @@ public class FunctionCallNode extends OperationNode {
       functionScope.declareVariable(new Variable(parameter.getName(), false, false, false, true, this.arguments.get(i).evaluate(scope)));
     }
 
-    return function.apply(functionScope);
+    Object result = function.apply(functionScope);
+    scope.getProgram().getScope().setCallStackSize(callStackSize);
+    return result;
   }
 
   @Override
@@ -92,5 +91,22 @@ public class FunctionCallNode extends OperationNode {
   @Override
   public String toString() {
     return String.format("%s(%s)", this.functionObject, this.arguments.stream().map(Node::toString).collect(Collectors.joining(", ")));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    FunctionCallNode that = (FunctionCallNode) o;
+    return this.functionObject.equals(that.functionObject) && this.arguments.equals(that.arguments);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.functionObject, this.arguments);
   }
 }

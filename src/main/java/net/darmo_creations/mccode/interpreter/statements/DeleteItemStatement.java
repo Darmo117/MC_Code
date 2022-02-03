@@ -17,8 +17,8 @@ import java.util.Objects;
 public class DeleteItemStatement extends Statement {
   public static final int ID = 21;
 
-  private static final String TARGET_KEY = "Target";
-  private static final String KEY_KEY = "Key";
+  public static final String TARGET_KEY = "Target";
+  public static final String KEY_KEY = "Key";
 
   private final Node target;
   private final Node key;
@@ -70,5 +70,22 @@ public class DeleteItemStatement extends Statement {
   @Override
   public String toString() {
     return String.format("del %s[%s];", this.target, this.key);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    DeleteItemStatement that = (DeleteItemStatement) o;
+    return this.target.equals(that.target) && this.key.equals(that.key);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.target, this.key);
   }
 }

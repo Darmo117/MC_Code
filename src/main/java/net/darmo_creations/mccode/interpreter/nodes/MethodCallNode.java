@@ -81,4 +81,21 @@ public class MethodCallNode extends OperationNode {
     String parameters = this.arguments.stream().map(Node::toString).collect(Collectors.joining(", "));
     return String.format("%s.%s(%s)", this.instance, this.methodName, parameters);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    MethodCallNode that = (MethodCallNode) o;
+    return this.instance.equals(that.instance) && this.methodName.equals(that.methodName) && this.arguments.equals(that.arguments);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.instance, this.methodName, this.arguments);
+  }
 }

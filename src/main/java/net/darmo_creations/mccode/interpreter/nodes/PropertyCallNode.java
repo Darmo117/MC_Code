@@ -67,4 +67,21 @@ public class PropertyCallNode extends Node {
   public String toString() {
     return String.format("%s.%s", this.object, this.propertyName);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    PropertyCallNode that = (PropertyCallNode) o;
+    return this.object.equals(that.object) && this.propertyName.equals(that.propertyName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.object, this.propertyName);
+  }
 }

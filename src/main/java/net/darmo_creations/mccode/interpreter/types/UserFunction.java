@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 public class UserFunction extends Function {
   public static final int MAX_CALL_DEPTH = 100;
 
-  private static final String NAME_KEY = "Name";
-  private static final String PARAMETERS_KEY = "Parameters";
-  private static final String STATEMENTS_KEY = "Statements";
-  private static final String IP_KEY = "IP";
+  public static final String NAME_KEY = "Name";
+  public static final String PARAMETERS_KEY = "Parameters";
+  public static final String STATEMENTS_KEY = "Statements";
+  public static final String IP_KEY = "IP";
 
   private final List<Statement> statements;
   /**
@@ -65,7 +65,7 @@ public class UserFunction extends Function {
   @Override
   public Object apply(Scope scope) {
     List<StackTraceElement> callStack = scope.getStackTrace();
-    if (callStack.size() == MAX_CALL_DEPTH) {
+    if (callStack.size() == MAX_CALL_DEPTH || scope.getCallStackSize() == MAX_CALL_DEPTH) {
       throw new EvaluationException(scope, "mccode.interpreter.error.stack_overflow");
     }
 
@@ -95,6 +95,7 @@ public class UserFunction extends Function {
    */
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
+    tag.setString(NAME_KEY, this.getName());
     NBTTagList parametersList = new NBTTagList();
     this.parameters.stream()
         .map(Parameter::getName)
@@ -138,5 +139,22 @@ public class UserFunction extends Function {
    */
   private static List<Parameter> extractParameters(final List<String> parameterNames) {
     return parameterNames.stream().map(n -> new Parameter(n, ProgramManager.getTypeInstance(AnyType.class))).collect(Collectors.toList());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    UserFunction that = (UserFunction) o;
+    return this.getName().equals(that.getName()) && this.ip == that.ip && this.parameters.equals(that.parameters) && this.statements.equals(that.statements);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.statements, this.parameters, this.getName(), this.ip);
   }
 }

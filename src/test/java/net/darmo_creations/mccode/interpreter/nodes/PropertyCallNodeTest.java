@@ -18,7 +18,7 @@ class PropertyCallNodeTest extends NodeTest {
 
   @Override
   @BeforeEach
-  void setUp() {
+  public void setUp() {
     super.setUp();
     this.instance = new FunctionCallNode(
         new VariableNode("to_pos"),
@@ -59,5 +59,11 @@ class PropertyCallNodeTest extends NodeTest {
   @Test
   void testToString() {
     assertEquals("to_pos([1, 2, 3]).x", new PropertyCallNode(this.instance, "x").toString());
+  }
+
+  @Test
+  void testEquals() {
+    assertEquals(new PropertyCallNode(new VariableNode("floor"), "a"),
+        new PropertyCallNode(new VariableNode("floor"), "a"));
   }
 }

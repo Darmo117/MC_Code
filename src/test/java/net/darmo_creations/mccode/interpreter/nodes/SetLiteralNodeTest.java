@@ -8,8 +8,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,5 +61,18 @@ class SetLiteralNodeTest extends NodeTest {
     assertEquals("{[\"a\\n\"]}", new SetLiteralNode(Collections.singleton(new ListLiteralNode(Collections.singleton(new StringLiteralNode("a\n"))))).toString());
     assertEquals("{{\"a\\n\"}}", new SetLiteralNode(Collections.singleton(new SetLiteralNode(Collections.singleton(new StringLiteralNode("a\n"))))).toString());
     assertEquals("{{\"a\\n\": \"b\\n\"}}", new SetLiteralNode(Collections.singleton(new MapLiteralNode(Collections.singletonMap("a\n", new StringLiteralNode("b\n"))))).toString());
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideArgsForEquals")
+  void testEquals(List<Node> list) {
+    assertEquals(new SetLiteralNode(list), new SetLiteralNode(list));
+  }
+
+  static Stream<Arguments> provideArgsForEquals() {
+    return Stream.of(
+        Arguments.of(Collections.emptyList()),
+        Arguments.of(Collections.singletonList(new IntLiteralNode(1)))
+    );
   }
 }

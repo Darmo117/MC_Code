@@ -3,6 +3,7 @@ package net.darmo_creations.mccode.interpreter.statements;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,11 +16,11 @@ import java.util.Objects;
 public class DeclareVariableStatement extends Statement {
   public static final int ID = 10;
 
-  private static final String CONSTANT_KEY = "Constant";
-  private static final String PUBLIC_KEY = "Public";
-  private static final String EDITABLE_KEY = "Editable";
-  private static final String VAR_NAME_KEY = "VariableName";
-  private static final String VALUE_KEY = "Value";
+  public static final String CONSTANT_KEY = "Constant";
+  public static final String PUBLIC_KEY = "Public";
+  public static final String EDITABLE_KEY = "Editable";
+  public static final String VAR_NAME_KEY = "VariableName";
+  public static final String VALUE_KEY = "Value";
 
   private final boolean publiclyVisible;
   private final boolean editableByCommands;
@@ -38,6 +39,12 @@ public class DeclareVariableStatement extends Statement {
    */
   public DeclareVariableStatement(final boolean publiclyVisible, final boolean editableByCommands, final boolean constant,
                                   final String variableName, final Node value) {
+    if (constant && editableByCommands) {
+      throw new MCCodeException("constant cannot be editable through commands");
+    }
+    if (!publiclyVisible && editableByCommands) {
+      throw new MCCodeException("private variable cannot be editable through commands");
+    }
     this.publiclyVisible = publiclyVisible;
     this.editableByCommands = editableByCommands;
     this.constant = constant;
@@ -99,5 +106,23 @@ public class DeclareVariableStatement extends Statement {
       s = "public " + s;
     }
     return s;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    DeclareVariableStatement that = (DeclareVariableStatement) o;
+    return this.publiclyVisible == that.publiclyVisible && this.editableByCommands == that.editableByCommands
+        && this.constant == that.constant && this.variableName.equals(that.variableName) && this.value.equals(that.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.publiclyVisible, this.editableByCommands, this.constant, this.variableName, this.value);
   }
 }

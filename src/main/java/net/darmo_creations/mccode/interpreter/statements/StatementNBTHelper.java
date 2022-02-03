@@ -77,7 +77,7 @@ public final class StatementNBTHelper {
    * @param statements The statements to serialize.
    * @return The tag list.
    */
-  public static NBTTagList serializeStatementsList(final List<Statement> statements) {
+  public static NBTTagList serializeStatementsList(final List<? extends Statement> statements) {
     NBTTagList statementsList = new NBTTagList();
     statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
     return statementsList;

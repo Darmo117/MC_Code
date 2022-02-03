@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -68,5 +69,22 @@ public class SetLiteralNode extends Node {
   @Override
   public String toString() {
     return this.values.stream().map(Node::toString).collect(Collectors.joining(", ", "{", "}"));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    SetLiteralNode that = (SetLiteralNode) o;
+    return this.values.equals(that.values);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.values);
   }
 }

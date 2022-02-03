@@ -103,4 +103,10 @@ class UnaryOperatorNodeTest extends NodeTest {
     assertEquals("-a", new UnaryOperatorNode(UnaryOperator.MINUS, new VariableNode("a")).toString());
     assertEquals("not a", new UnaryOperatorNode(UnaryOperator.NOT, new VariableNode("a")).toString());
   }
+
+  @Test
+  void testEquals() {
+    assertEquals(new UnaryOperatorNode(UnaryOperator.MINUS, new IntLiteralNode(1)),
+        new UnaryOperatorNode(UnaryOperator.MINUS, new IntLiteralNode(1)));
+  }
 }

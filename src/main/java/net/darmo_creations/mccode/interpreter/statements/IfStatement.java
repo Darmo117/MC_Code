@@ -24,7 +24,7 @@ public class IfStatement extends Statement {
 
   public static final String CONDITIONS_KEY = "Conditions";
   public static final String BRANCHES_KEY = "Branches";
-  public static final String BRANCH_INDEX = "BranchIndex";
+  public static final String BRANCH_INDEX_KEY = "BranchIndex";
   public static final String IP_KEY = "IP";
 
   private final List<Node> conditions;
@@ -51,8 +51,8 @@ public class IfStatement extends Statement {
     if (conditions.size() != branchesStatements.size()) {
       throw new MCCodeException("\"if\" statement should have the same number of branches and conditions");
     }
-    branchesStatements.add(elseStatements);
-    this.branchesStatements = branchesStatements;
+    this.branchesStatements = new ArrayList<>(branchesStatements);
+    this.branchesStatements.add(elseStatements);
     this.branchIndex = -1;
     this.ip = 0;
   }
@@ -65,7 +65,7 @@ public class IfStatement extends Statement {
   public IfStatement(final NBTTagCompound tag) {
     this.conditions = NodeNBTHelper.deserializeNodesList(tag, CONDITIONS_KEY);
     this.branchesStatements = new ArrayList<>();
-    NBTTagList list = tag.getTagList(BRANCHES_KEY, new NBTTagCompound().getId());
+    NBTTagList list = tag.getTagList(BRANCHES_KEY, new NBTTagList().getId());
     for (NBTBase subList : list) {
       List<Statement> statements = new ArrayList<>();
       for (NBTBase t : (NBTTagList) subList) {
@@ -73,7 +73,10 @@ public class IfStatement extends Statement {
       }
       this.branchesStatements.add(statements);
     }
-    this.branchIndex = tag.getInteger(BRANCH_INDEX);
+    if (this.conditions.size() != this.branchesStatements.size() - 1) {
+      throw new MCCodeException("\"if\" statement should have the same number of branches and conditions");
+    }
+    this.branchIndex = tag.getInteger(BRANCH_INDEX_KEY);
     this.ip = tag.getInteger(IP_KEY);
   }
 
@@ -85,10 +88,11 @@ public class IfStatement extends Statement {
         Type<?> valueType = ProgramManager.getTypeForValue(value);
         if (valueType.toBoolean(value)) {
           this.branchIndex = i;
+          break;
         }
       }
       if (this.branchIndex == -1) { // Else branch
-        this.branchIndex = this.branchesStatements.size();
+        this.branchIndex = this.branchesStatements.size() - 1;
       }
     }
 
@@ -125,7 +129,7 @@ public class IfStatement extends Statement {
     NBTTagList branchesList = new NBTTagList();
     this.branchesStatements.forEach(l -> branchesList.appendTag(StatementNBTHelper.serializeStatementsList(l)));
     tag.setTag(BRANCHES_KEY, branchesList);
-    tag.setInteger(BRANCH_INDEX, this.branchIndex);
+    tag.setInteger(BRANCH_INDEX_KEY, this.branchIndex);
     tag.setInteger(IP_KEY, this.ip);
     return tag;
   }
@@ -146,5 +150,23 @@ public class IfStatement extends Statement {
     }
     s.append("end");
     return s.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    IfStatement that = (IfStatement) o;
+    return this.branchIndex == that.branchIndex && this.ip == that.ip && this.conditions.equals(that.conditions)
+        && this.branchesStatements.equals(that.branchesStatements);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.conditions, this.branchesStatements, this.branchIndex, this.ip);
   }
 }

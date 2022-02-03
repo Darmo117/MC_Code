@@ -4,6 +4,7 @@ import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.type_wrappers.FloatType;
+import net.darmo_creations.mccode.interpreter.type_wrappers.IntType;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 
 /**
@@ -15,7 +16,7 @@ public class RoundFunction extends BuiltinFunction {
    * Create a function that returns the integer closest to its parameter.
    */
   public RoundFunction() {
-    super("round", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
+    super("round", ProgramManager.getTypeInstance(IntType.class), ProgramManager.getTypeInstance(FloatType.class));
   }
 
   @Override

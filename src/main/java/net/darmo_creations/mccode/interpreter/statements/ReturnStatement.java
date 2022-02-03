@@ -6,6 +6,8 @@ import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Objects;
+
 /**
  * Statement that exits the function it is in.
  */
@@ -13,7 +15,7 @@ public class ReturnStatement extends Statement {
   public static final int ID = 62;
   public static final String RETURN_SPECIAL_VAR_NAME = "$return";
 
-  private static final String EXPR_KEY = "Expression";
+  public static final String EXPR_KEY = "Expression";
 
   private final Node node;
 
@@ -23,7 +25,7 @@ public class ReturnStatement extends Statement {
    * @param node Expression to return. May be null.
    */
   public ReturnStatement(final Node node) {
-    this.node = node;
+    this.node = Objects.requireNonNull(node);
   }
 
   /**
@@ -44,7 +46,7 @@ public class ReturnStatement extends Statement {
 
   @Override
   public NBTTagCompound writeToNBT() {
-    NBTTagCompound tag = new NBTTagCompound();
+    NBTTagCompound tag = super.writeToNBT();
     tag.setTag(EXPR_KEY, this.node.writeToNBT());
     return tag;
   }
@@ -57,5 +59,22 @@ public class ReturnStatement extends Statement {
   @Override
   public String toString() {
     return String.format("return %s;", this.node);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    ReturnStatement that = (ReturnStatement) o;
+    return this.node.equals(that.node);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.node);
   }
 }

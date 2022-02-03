@@ -83,7 +83,7 @@ module:
 global_statement:
     PUBLIC EDITABLE? VAR name=IDENT ASSIGN value=expr SEMIC # DeclareGlobalVariable // ID: 10
   | PUBLIC CONST name=IDENT ASSIGN value=expr SEMIC         # DeclareGlobalConstant // ID: 10
-//  | FUNC name=IDENT LPAREN (IDENT (COMMA IDENT)* COMMA?)? RPAREN statement* END # DefineFunctionStatement // ID: 11 TODO deactivated for now
+  | FUNC name=IDENT LPAREN (IDENT (COMMA IDENT)* COMMA?)? RPAREN statement* END # DefineFunctionStatement // ID: 11
   | statement # Stmt
 ;
 

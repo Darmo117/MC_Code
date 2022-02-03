@@ -16,7 +16,7 @@ import java.util.Objects;
 public class WaitStatement extends Statement {
   public static final int ID = 50;
 
-  private static final String TICKS_KEY = "Ticks";
+  public static final String TICKS_KEY = "Ticks";
 
   private final Node value;
 
@@ -61,5 +61,22 @@ public class WaitStatement extends Statement {
   @Override
   public String toString() {
     return String.format("wait %s;", this.value);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    WaitStatement that = (WaitStatement) o;
+    return this.value.equals(that.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.value);
   }
 }

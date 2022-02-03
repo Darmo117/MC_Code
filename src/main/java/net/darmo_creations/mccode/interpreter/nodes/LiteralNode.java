@@ -3,6 +3,7 @@ package net.darmo_creations.mccode.interpreter.nodes;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -60,5 +61,22 @@ public abstract class LiteralNode<T> extends Node {
   @Override
   public String toString() {
     return String.valueOf(this.value);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    LiteralNode<?> that = (LiteralNode<?>) o;
+    return Objects.equals(this.value, that.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.value);
   }
 }

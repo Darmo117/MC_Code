@@ -48,8 +48,9 @@ public class SetItemStatement extends Statement {
     Object keyValue = this.key.evaluate(scope);
     Object newValue = this.value.evaluate(scope);
     Object oldValue = targetObjectType.applyOperator(scope, BinaryOperator.GET_ITEM, targetObject, keyValue, null, false);
+    Type<?> oldValueType = ProgramManager.getTypeForValue(oldValue);
     Object resultValue = this.operator.getBaseOperator()
-        .map(op -> targetObjectType.applyOperator(scope, op, oldValue, newValue, null, true))
+        .map(op -> oldValueType.applyOperator(scope, op, oldValue, newValue, null, false))
         .orElse(targetObject);
     targetObjectType.applyOperator(scope, TernaryOperator.SET_ITEM, targetObject, keyValue, resultValue, true);
 
@@ -74,5 +75,22 @@ public class SetItemStatement extends Statement {
   @Override
   public String toString() {
     return String.format("%s[%s] %s %s;", this.target, this.key, this.operator.getSymbol(), this.value);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    SetItemStatement that = (SetItemStatement) o;
+    return this.target.equals(that.target) && this.key.equals(that.key) && this.operator == that.operator && this.value.equals(that.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.target, this.key, this.operator, this.value);
   }
 }

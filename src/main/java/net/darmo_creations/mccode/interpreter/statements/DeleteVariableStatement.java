@@ -12,7 +12,7 @@ import java.util.Objects;
 public class DeleteVariableStatement extends Statement {
   public static final int ID = 20;
 
-  private static final String NAME_KEY = "VariableName";
+  public static final String VAR_NAME_KEY = "VariableName";
 
   private final String variableName;
 
@@ -31,7 +31,7 @@ public class DeleteVariableStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public DeleteVariableStatement(final NBTTagCompound tag) {
-    this(tag.getString(NAME_KEY));
+    this(tag.getString(VAR_NAME_KEY));
   }
 
   @Override
@@ -48,12 +48,29 @@ public class DeleteVariableStatement extends Statement {
   @Override
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = super.writeToNBT();
-    tag.setString(NAME_KEY, this.variableName);
+    tag.setString(VAR_NAME_KEY, this.variableName);
     return tag;
   }
 
   @Override
   public String toString() {
     return String.format("del %s;", this.variableName);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    DeleteVariableStatement that = (DeleteVariableStatement) o;
+    return this.variableName.equals(that.variableName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.variableName);
   }
 }

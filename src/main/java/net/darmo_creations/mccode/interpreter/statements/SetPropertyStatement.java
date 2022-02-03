@@ -71,4 +71,22 @@ public class SetPropertyStatement extends Statement {
   public String toString() {
     return String.format("%s.%s %s %s;", this.target, this.propertyName, this.operator, this.value);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    SetPropertyStatement that = (SetPropertyStatement) o;
+    return this.target.equals(that.target) && this.propertyName.equals(that.propertyName)
+        && this.operator == that.operator && this.value.equals(that.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.target, this.propertyName, this.operator, this.value);
+  }
 }

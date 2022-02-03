@@ -37,4 +37,9 @@ class IntLiteralNodeTest extends NodeTest {
   void testToString() {
     assertEquals("1", new IntLiteralNode(1).toString());
   }
+
+  @Test
+  void testEquals() {
+    assertEquals(new IntLiteralNode(1), new IntLiteralNode(1));
+  }
 }

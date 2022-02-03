@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class VariableNodeTest extends NodeTest {
   @Override
   @BeforeEach
-  void setUp() {
+  public void setUp() {
     super.setUp();
     this.p.getScope().declareVariable(new Variable("variable", false, false, true, true, 1));
   }
@@ -61,5 +61,10 @@ class VariableNodeTest extends NodeTest {
   @Test
   void testToString() {
     assertEquals("variable", new VariableNode("variable").toString());
+  }
+
+  @Test
+  void testEquals() {
+    assertEquals(new VariableNode("a"), new VariableNode("a"));
   }
 }

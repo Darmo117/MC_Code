@@ -339,4 +339,10 @@ class BinaryOperatorNodeTest extends NodeTest {
     assertEquals(String.format("a %s b", operator.getSymbol()),
         new BinaryOperatorNode(operator, new VariableNode("a"), new VariableNode("b")).toString());
   }
+
+  @Test
+  void testEquals() {
+    assertEquals(new BinaryOperatorNode(BinaryOperator.PLUS, new IntLiteralNode(1), new FloatLiteralNode(1.0)),
+        new BinaryOperatorNode(BinaryOperator.PLUS, new IntLiteralNode(1), new FloatLiteralNode(1.0)));
+  }
 }

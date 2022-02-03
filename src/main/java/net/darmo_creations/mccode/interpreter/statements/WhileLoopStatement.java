@@ -10,6 +10,7 @@ import net.darmo_creations.mccode.interpreter.type_wrappers.BooleanType;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Statement that represents a while-loop.
@@ -17,10 +18,10 @@ import java.util.List;
 public class WhileLoopStatement extends Statement {
   public static final int ID = 41;
 
-  private static final String CONDITION_KEY = "Condition";
-  private static final String STATEMENTS_KEY = "Statements";
-  private static final String IP_KEY = "IP";
-  private static final String PAUSED_KEY = "Paused";
+  public static final String CONDITION_KEY = "Condition";
+  public static final String STATEMENTS_KEY = "Statements";
+  public static final String IP_KEY = "IP";
+  public static final String PAUSED_KEY = "Paused";
 
   private final Node condition;
   private final List<Statement> statements;
@@ -70,9 +71,9 @@ public class WhileLoopStatement extends Statement {
       while (this.ip < this.statements.size()) {
         StatementAction action = this.statements.get(this.ip).execute(scope);
         if (action == StatementAction.EXIT_LOOP) {
+          this.ip = 0;
           break exit;
         } else if (action == StatementAction.CONTINUE_LOOP) {
-          this.ip = 0;
           break;
         } else if (action == StatementAction.EXIT_FUNCTION || action == StatementAction.WAIT) {
           if (action == StatementAction.WAIT) {
@@ -86,8 +87,8 @@ public class WhileLoopStatement extends Statement {
           this.ip++;
         }
       }
+      this.ip = 0;
     }
-    this.ip = 0;
 
     return StatementAction.PROCEED;
   }
@@ -114,5 +115,22 @@ public class WhileLoopStatement extends Statement {
       s = Utils.indentStatements(this.statements);
     }
     return String.format("while %s do%send", this.condition, s);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    WhileLoopStatement that = (WhileLoopStatement) o;
+    return this.ip == that.ip && this.paused == that.paused && this.condition.equals(that.condition) && this.statements.equals(that.statements);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.condition, this.statements, this.ip, this.paused);
   }
 }

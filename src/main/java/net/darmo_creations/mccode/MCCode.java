@@ -43,7 +43,8 @@ public class MCCode {
    */
   @Mod.EventHandler
   public void preinit(FMLPreInitializationEvent event) {
-    ProgramManager.declareBuiltinTypes();
+    ProgramManager.declareDefaultBuiltinTypes();
+    ProgramManager.declareDefaultBuiltinFunctions();
   }
 
   /**

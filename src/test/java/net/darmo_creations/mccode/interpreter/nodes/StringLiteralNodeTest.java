@@ -5,6 +5,8 @@ import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,5 +66,11 @@ class StringLiteralNodeTest extends NodeTest {
   @Test
   void testToStringQuote() {
     assertEquals("\"te\\\"st\"", new StringLiteralNode("te\"st").toString());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"", "a"})
+  void testEquals(String s) {
+    assertEquals(new StringLiteralNode(s), new StringLiteralNode(s));
   }
 }

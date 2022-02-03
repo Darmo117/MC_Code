@@ -6,8 +6,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,5 +62,18 @@ class ListLiteralNodeTest extends NodeTest {
         new MapLiteralNode(map),
         new SetLiteralNode(Collections.singleton(new IntLiteralNode(3)))
     )).toString());
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideArgsForEquals")
+  void testEquals(List<Node> list) {
+    assertEquals(new ListLiteralNode(list), new ListLiteralNode(list));
+  }
+
+  static Stream<Arguments> provideArgsForEquals() {
+    return Stream.of(
+        Arguments.of(Collections.emptyList()),
+        Arguments.of(Collections.singletonList(new IntLiteralNode(1)))
+    );
   }
 }

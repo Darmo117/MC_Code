@@ -6,6 +6,8 @@ import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Objects;
+
 /**
  * Statement that contains a single expression.
  */
@@ -55,5 +57,22 @@ public class ExpressionStatement extends Statement {
   @Override
   public String toString() {
     return this.expression + ";";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    ExpressionStatement that = (ExpressionStatement) o;
+    return this.expression.equals(that.expression);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.expression);
   }
 }

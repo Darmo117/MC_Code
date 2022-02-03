@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * <p>
  * It does not have a cast operator.
  */
-@Doc("Base type.")
+@Doc("Base type. Placeholder for functions parameters.")
 public class AnyType extends Type<Object> {
   public static final String NAME = "any";
 

@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Statement that imports another module.
@@ -72,5 +73,22 @@ public class ImportStatement extends Statement {
   public String toString() {
     return String.format("import %s%s;",
         String.join(".", this.moduleNamePath), this.alias != null ? (" as " + this.alias) : "");
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    ImportStatement that = (ImportStatement) o;
+    return this.moduleNamePath.equals(that.moduleNamePath) && this.alias.equals(that.alias);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.moduleNamePath, this.alias);
   }
 }

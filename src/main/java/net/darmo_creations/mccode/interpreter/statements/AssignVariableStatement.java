@@ -16,9 +16,9 @@ import java.util.Objects;
 public class AssignVariableStatement extends Statement {
   public static final int ID = 12;
 
-  private static final String VAR_NAME_KEY = "VariableName";
-  private static final String OPERATOR_KEY = "Operator";
-  private static final String VALUE_KEY = "Value";
+  public static final String VAR_NAME_KEY = "VariableName";
+  public static final String OPERATOR_KEY = "Operator";
+  public static final String VALUE_KEY = "Value";
 
   private final String variableName;
   private final AssigmentOperator operator;
@@ -80,5 +80,22 @@ public class AssignVariableStatement extends Statement {
   @Override
   public String toString() {
     return String.format("%s %s %s;", this.variableName, this.operator.getSymbol(), this.value);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    AssignVariableStatement that = (AssignVariableStatement) o;
+    return this.variableName.equals(that.variableName) && this.operator == that.operator && this.value.equals(that.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.variableName, this.operator, this.value);
   }
 }

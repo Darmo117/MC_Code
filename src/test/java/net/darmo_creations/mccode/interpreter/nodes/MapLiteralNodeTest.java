@@ -6,10 +6,14 @@ import net.darmo_creations.mccode.interpreter.types.MCMap;
 import net.minecraft.nbt.NBTTagCompound;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,5 +77,18 @@ class MapLiteralNodeTest extends NodeTest {
     assertEquals("{\"a\\n\": [\"b\\n\"]}", new MapLiteralNode(Collections.singletonMap("a\n", new ListLiteralNode(Collections.singleton(new StringLiteralNode("b\n"))))).toString());
     assertEquals("{\"a\\n\": {\"b\\n\"}}", new MapLiteralNode(Collections.singletonMap("a\n", new SetLiteralNode(Collections.singleton(new StringLiteralNode("b\n"))))).toString());
     assertEquals("{\"a\\n\": {\"c\\n\": \"b\\n\"}}", new MapLiteralNode(Collections.singletonMap("a\n", (new MapLiteralNode(Collections.singletonMap("c\n", new StringLiteralNode("b\n")))))).toString());
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideArgsForEquals")
+  void testEquals(Map<String, Node> list) {
+    assertEquals(new MapLiteralNode(list), new MapLiteralNode(list));
+  }
+
+  static Stream<Arguments> provideArgsForEquals() {
+    return Stream.of(
+        Arguments.of(Collections.emptyMap()),
+        Arguments.of(Collections.singletonMap("a", new IntLiteralNode(1)))
+    );
   }
 }

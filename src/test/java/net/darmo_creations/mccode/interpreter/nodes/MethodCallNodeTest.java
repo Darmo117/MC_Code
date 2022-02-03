@@ -22,7 +22,7 @@ class MethodCallNodeTest extends NodeTest {
 
   @Override
   @BeforeEach
-  void setUp() {
+  public void setUp() {
     super.setUp();
     this.instance = TestUtils.blockPosNode(1, 1, 1);
   }
@@ -128,5 +128,11 @@ class MethodCallNodeTest extends NodeTest {
         "up",
         Collections.singletonList(new IntLiteralNode(1))
     ).toString());
+  }
+
+  @Test
+  void testEquals() {
+    assertEquals(new MethodCallNode(new VariableNode("floor"), "a", Collections.singletonList(new FloatLiteralNode(1.0))),
+        new MethodCallNode(new VariableNode("floor"), "a", Collections.singletonList(new FloatLiteralNode(1.0))));
   }
 }

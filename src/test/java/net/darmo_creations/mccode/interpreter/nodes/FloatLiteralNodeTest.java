@@ -37,4 +37,9 @@ class FloatLiteralNodeTest extends NodeTest {
   void testToString() {
     assertEquals("1.0", new FloatLiteralNode(1.0).toString());
   }
+
+  @Test
+  void testEquals() {
+    assertEquals(new FloatLiteralNode(1.0), new FloatLiteralNode(1.0));
+  }
 }

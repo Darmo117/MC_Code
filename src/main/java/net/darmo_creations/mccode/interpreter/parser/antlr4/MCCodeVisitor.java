@@ -31,6 +31,13 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclareGlobalConstant(MCCodeParser.DeclareGlobalConstantContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code DefineFunctionStatement}
+	 * labeled alternative in {@link MCCodeParser#global_statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDefineFunctionStatement(MCCodeParser.DefineFunctionStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code Stmt}
 	 * labeled alternative in {@link MCCodeParser#global_statement}.
 	 * @param ctx the parse tree

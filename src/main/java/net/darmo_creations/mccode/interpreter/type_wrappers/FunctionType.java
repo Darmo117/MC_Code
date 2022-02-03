@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 import net.darmo_creations.mccode.interpreter.types.Function;
@@ -12,11 +13,12 @@ import net.minecraft.nbt.NBTTagCompound;
  * <p>
  * It does not have a cast operator.
  */
+@Doc("Functions are objects that can be called and return a value based on the values of its parameters.")
 public class FunctionType extends Type<Function> {
   public static final String NAME = "function";
 
-  private static final String FUNCTION_TYPE_KEY = "Type";
-  private static final String FUNCTION_KEY = "Function";
+  public static final String FUNCTION_TYPE_KEY = "Type";
+  public static final String FUNCTION_KEY = "Function";
 
   private static final String FUNCTION_TYPE_BUILTIN = "builtin";
   private static final String FUNCTION_TYPE_USER = "user";

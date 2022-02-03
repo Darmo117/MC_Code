@@ -175,6 +175,13 @@ public class Program {
   }
 
   /**
+   * Return the remaining time to wait for this program.
+   */
+  public int getWaitTime() {
+    return this.timeToWait;
+  }
+
+  /**
    * Set the wait time of this program.
    *
    * @param scope Scope this instruction is called from.

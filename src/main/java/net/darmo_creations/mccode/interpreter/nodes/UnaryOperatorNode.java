@@ -61,4 +61,21 @@ public class UnaryOperatorNode extends OperatorNode {
       return symbol + this.arguments.get(0);
     }
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    UnaryOperatorNode that = (UnaryOperatorNode) o;
+    return this.operator == that.operator && this.getSymbol().equals(that.getSymbol()) && this.arguments.equals(that.arguments);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.operator, this.getSymbol(), this.arguments);
+  }
 }

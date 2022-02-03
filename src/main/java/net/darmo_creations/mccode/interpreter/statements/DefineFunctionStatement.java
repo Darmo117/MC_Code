@@ -20,9 +20,9 @@ import java.util.Objects;
 public class DefineFunctionStatement extends Statement {
   public static final int ID = 11;
 
-  private static final String NAME_KEY = "Name";
-  private static final String PARAMS_LIST_KEY = "Parameters";
-  private static final String STATEMENTS_LIST_KEY = "Statements";
+  public static final String NAME_KEY = "Name";
+  public static final String PARAMS_LIST_KEY = "Parameters";
+  public static final String STATEMENTS_LIST_KEY = "Statements";
 
   private final String name;
   private final List<String> parametersNames;
@@ -93,5 +93,22 @@ public class DefineFunctionStatement extends Statement {
       s = Utils.indentStatements(this.statements);
     }
     return String.format("function %s(%s)%send", this.name, params, s);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    DefineFunctionStatement that = (DefineFunctionStatement) o;
+    return this.name.equals(that.name) && this.parametersNames.equals(that.parametersNames) && this.statements.equals(that.statements);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.name, this.parametersNames, this.statements);
   }
 }

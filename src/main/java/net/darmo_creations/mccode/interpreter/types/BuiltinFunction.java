@@ -5,12 +5,17 @@ import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * Base class for builtin functions.
  */
 public abstract class BuiltinFunction extends Function {
+  // Set by ProgramManager.processFunctionsAnnotations() method
+  @SuppressWarnings("unused")
+  private String doc;
+
   /**
    * Create a builtin function.
    *
@@ -44,5 +49,12 @@ public abstract class BuiltinFunction extends Function {
         .map(p -> p.getType().getName() + " " + p.getName())
         .collect(Collectors.joining(", "));
     return String.format("builtin function %s(%s) -> %s", this.getName(), params, this.getReturnType());
+  }
+
+  /**
+   * Return the documentation string for this function.
+   */
+  public Optional<String> getDoc() {
+    return Optional.ofNullable(this.doc);
   }
 }

@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -70,5 +71,22 @@ public class MapLiteralNode extends Node {
     return this.values.entrySet().stream()
         .map(e -> String.format("%s: %s", Utils.escapeString(e.getKey()), e.getValue().toString()))
         .collect(Collectors.joining(", ", "{", "}"));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    MapLiteralNode that = (MapLiteralNode) o;
+    return this.values.equals(that.values);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.values);
   }
 }

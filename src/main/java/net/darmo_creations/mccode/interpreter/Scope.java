@@ -1,12 +1,8 @@
 package net.darmo_creations.mccode.interpreter;
 
-import net.darmo_creations.mccode.interpreter.builtin_functions.*;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
-import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
-import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
-import net.darmo_creations.mccode.interpreter.types.Function;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -29,6 +25,7 @@ public class Scope implements NBTDeserializable {
   private final Scope parentScope;
   private final Program program;
   private Map<String, Variable> variables = new HashMap<>();
+  private int callStackSize;
 
   /**
    * Create a global scope for the given program.
@@ -39,6 +36,7 @@ public class Scope implements NBTDeserializable {
     this.name = MAIN_SCOPE_NAME;
     this.parentScope = null;
     this.program = program;
+    this.callStackSize = 0;
     this.defineBuiltinConstants();
     this.defineBuiltinFunctions();
   }
@@ -53,6 +51,7 @@ public class Scope implements NBTDeserializable {
     this.name = name;
     this.parentScope = parentScope;
     this.program = parentScope.program;
+    this.callStackSize = parentScope.callStackSize;
   }
 
   /**
@@ -74,6 +73,14 @@ public class Scope implements NBTDeserializable {
    */
   public Program getProgram() {
     return this.program;
+  }
+
+  public int getCallStackSize() {
+    return this.callStackSize;
+  }
+
+  public void setCallStackSize(int callStackSize) {
+    this.callStackSize = callStackSize;
   }
 
   /**
@@ -202,47 +209,7 @@ public class Scope implements NBTDeserializable {
    * Declare builtin functions and cast operators of declared types.
    */
   private void defineBuiltinFunctions() {
-    List<Function> functions = new LinkedList<>(Arrays.asList(
-        new FloorFunction(),
-        new CeilFunction(),
-        new LenFunction(),
-        new HypotFunction(),
-        new SqrtFunction(),
-        new CbrtFunction(),
-        new ExpFunction(),
-        new CosFunction(),
-        new SinFunction(),
-        new TanFunction(),
-        new AcosFunction(),
-        new AsinFunction(),
-        new AtanFunction(),
-        new Atan2Function(),
-        new LogFunction(),
-        new Log10Function(),
-        new AbsFunction(),
-        new RoundFunction(),
-        new ToDegreesFunction(),
-        new ToRadiansFunction(),
-        new RangeFunction(),
-        new SortedFunction(),
-        new ReversedFunction(),
-        new MinFunction(),
-        new MaxFunction(),
-        new PrintFunction()
-    ));
-    for (Type<?> type : ProgramManager.getTypes()) {
-      if (type.generateCastOperator()) {
-        functions.add(new BuiltinFunction("to_" + type.getName(), type, ProgramManager.getTypeInstance(AnyType.class)) {
-          @Override
-          public Object apply(final Scope scope) {
-            return type.explicitCast(scope, this.getParameterValue(scope, 0));
-          }
-        });
-      }
-    }
-
-    for (Function function : functions) {
-      // TODO generate doc
+    for (BuiltinFunction function : ProgramManager.getBuiltinFunctions()) {
       this.declareVariable(new Variable(function.getName(), true, false, true, false, function));
     }
   }

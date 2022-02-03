@@ -58,4 +58,21 @@ public class BinaryOperatorNode extends OperatorNode {
   public String toString() {
     return String.format("%s %s %s", this.arguments.get(0), this.getSymbol(), this.arguments.get(1));
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    BinaryOperatorNode that = (BinaryOperatorNode) o;
+    return this.operator == that.operator && this.getSymbol().equals(that.getSymbol()) && this.arguments.equals(that.arguments);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.operator, this.getSymbol(), this.arguments);
+  }
 }

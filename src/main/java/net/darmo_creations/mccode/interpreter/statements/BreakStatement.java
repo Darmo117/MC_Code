@@ -3,6 +3,8 @@ package net.darmo_creations.mccode.interpreter.statements;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Objects;
+
 /**
  * Statement that is used to exit from a loop.
  */
@@ -34,5 +36,15 @@ public class BreakStatement extends Statement {
   @Override
   public String toString() {
     return "break;";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return o instanceof BreakStatement;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash();
   }
 }

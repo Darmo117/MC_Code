@@ -42,6 +42,18 @@ public interface MCCodeListener extends ParseTreeListener {
 	 */
 	void exitDeclareGlobalConstant(MCCodeParser.DeclareGlobalConstantContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code DefineFunctionStatement}
+	 * labeled alternative in {@link MCCodeParser#global_statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDefineFunctionStatement(MCCodeParser.DefineFunctionStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code DefineFunctionStatement}
+	 * labeled alternative in {@link MCCodeParser#global_statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDefineFunctionStatement(MCCodeParser.DefineFunctionStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code Stmt}
 	 * labeled alternative in {@link MCCodeParser#global_statement}.
 	 * @param ctx the parse tree

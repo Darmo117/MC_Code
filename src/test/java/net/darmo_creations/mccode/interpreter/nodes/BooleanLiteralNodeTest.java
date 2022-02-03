@@ -4,6 +4,8 @@ import net.darmo_creations.mccode.interpreter.SetupProgramManager;
 import net.minecraft.nbt.NBTTagCompound;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -40,9 +42,15 @@ class BooleanLiteralNodeTest extends NodeTest {
     assertEquals(true, new BooleanLiteralNode(tag).evaluate(this.p.getScope()));
   }
 
-  @Test
-  void testToString() {
-    assertEquals("true", new BooleanLiteralNode(true).toString());
-    assertEquals("false", new BooleanLiteralNode(false).toString());
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void testToString(boolean b) {
+    assertEquals("" + b, new BooleanLiteralNode(b).toString());
+  }
+
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void testEquals(boolean b) {
+    assertEquals(new BooleanLiteralNode(b), new BooleanLiteralNode(b));
   }
 }

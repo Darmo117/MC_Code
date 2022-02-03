@@ -3,9 +3,11 @@ package net.darmo_creations.mccode.interpreter;
 import net.darmo_creations.mccode.MCCode;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
+import net.darmo_creations.mccode.interpreter.builtin_functions.*;
 import net.darmo_creations.mccode.interpreter.exceptions.*;
 import net.darmo_creations.mccode.interpreter.parser.ProgramParser;
 import net.darmo_creations.mccode.interpreter.type_wrappers.*;
+import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -32,6 +34,7 @@ public class ProgramManager extends WorldSavedData {
 
   private static final Map<String, Type<?>> TYPES = new HashMap<>();
   private static final Map<Class<?>, Type<?>> WRAPPED_TYPES = new HashMap<>();
+  private static final Map<String, BuiltinFunction> FUNCTIONS = new HashMap<>();
   private static boolean initialized;
 
   private static final String PROGRAMS_KEY = "Programs";
@@ -315,6 +318,7 @@ public class ProgramManager extends WorldSavedData {
    */
   public static void initialize() {
     processTypeAnnotations();
+    processFunctionsAnnotations();
     initialized = true;
   }
 
@@ -429,9 +433,9 @@ public class ProgramManager extends WorldSavedData {
   }
 
   /**
-   * Declare all builtin types.
+   * Declare all default builtin types.
    */
-  public static void declareBuiltinTypes() {
+  public static void declareDefaultBuiltinTypes() {
     declareType(AnyType.class);
     declareType(NullType.class);
     declareType(BooleanType.class);
@@ -622,6 +626,125 @@ public class ProgramManager extends WorldSavedData {
       nameField.set(type, methods);
     } catch (NoSuchFieldException | IllegalAccessException e) {
       throw new TypeException("missing field 'methods' for class " + c);
+    }
+  }
+
+  /**
+   * Return all declared builtin functions.
+   */
+  public static List<BuiltinFunction> getBuiltinFunctions() {
+    return new LinkedList<>(FUNCTIONS.values());
+  }
+
+  /**
+   * Return the function with the given name.
+   *
+   * @param name Function’s name.
+   * @return The function or null if none matched.
+   */
+  public static BuiltinFunction getBuiltinFunction(final String name) {
+    return FUNCTIONS.get(name);
+  }
+
+  /**
+   * Declare a new builtin function.
+   *
+   * @param functionClass Function’s class.
+   */
+  public static void declareBuiltinFunction(Class<? extends BuiltinFunction> functionClass) {
+    ensureNotInitialized();
+
+    BuiltinFunction function;
+    try {
+      function = functionClass.newInstance();
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw new TypeException("missing empty constructor for class %s" + functionClass);
+    }
+    String name = function.getName();
+
+    if (FUNCTIONS.containsKey(name)) {
+      throw new MCCodeException(String.format("a function with the name \"%s\" already exists", name));
+    }
+
+    FUNCTIONS.put(name, function);
+  }
+
+  /**
+   * Declare all default builtin functions.
+   */
+  public static void declareDefaultBuiltinFunctions() {
+    declareBuiltinFunction(AbsFunction.class);
+    declareBuiltinFunction(AcosFunction.class);
+    declareBuiltinFunction(AsinFunction.class);
+    declareBuiltinFunction(AtanFunction.class);
+    declareBuiltinFunction(Atan2Function.class);
+    declareBuiltinFunction(CbrtFunction.class);
+    declareBuiltinFunction(CeilFunction.class);
+    declareBuiltinFunction(CosFunction.class);
+    declareBuiltinFunction(ExpFunction.class);
+    declareBuiltinFunction(FloorFunction.class);
+    declareBuiltinFunction(HypotFunction.class);
+    declareBuiltinFunction(LenFunction.class);
+    declareBuiltinFunction(Log10Function.class);
+    declareBuiltinFunction(LogFunction.class);
+    declareBuiltinFunction(MaxFunction.class);
+    declareBuiltinFunction(MinFunction.class);
+    declareBuiltinFunction(PrintFunction.class);
+    declareBuiltinFunction(RangeFunction.class);
+    declareBuiltinFunction(ReversedFunction.class);
+    declareBuiltinFunction(RoundFunction.class);
+    declareBuiltinFunction(SinFunction.class);
+    declareBuiltinFunction(SortedFunction.class);
+    declareBuiltinFunction(SqrtFunction.class);
+    declareBuiltinFunction(TanFunction.class);
+    declareBuiltinFunction(ToDegreesFunction.class);
+    declareBuiltinFunction(ToRadiansFunction.class);
+
+    for (Type<?> type : TYPES.values()) {
+      if (type.generateCastOperator()) {
+        String name = "to_" + type.getName();
+        FUNCTIONS.put(name, new BuiltinFunction(name, type, ProgramManager.getTypeInstance(AnyType.class)) {
+          @Override
+          public Object apply(final Scope scope) {
+            return type.explicitCast(scope, this.getParameterValue(scope, 0));
+          }
+        });
+      }
+    }
+  }
+
+  /**
+   * Process annotations of all declared functions.
+   */
+  private static void processFunctionsAnnotations() {
+    for (BuiltinFunction function : FUNCTIONS.values()) {
+      setFunctionDoc(function);
+    }
+  }
+
+  /**
+   * Set private "doc" field of the given funtion.
+   */
+  private static void setFunctionDoc(BuiltinFunction function) {
+    Class<? extends BuiltinFunction> functionClass = function.getClass();
+
+    if (functionClass.isAnnotationPresent(Doc.class)) {
+      Doc docAnnotation = functionClass.getAnnotation(Doc.class);
+      String doc = docAnnotation.value();
+
+      // Retrieve Type class
+      Class<?> c = functionClass;
+      while (c != BuiltinFunction.class) {
+        c = c.getSuperclass();
+      }
+
+      try {
+        Field nameField = c.getDeclaredField("doc");
+        nameField.setAccessible(true);
+        nameField.set(function, doc);
+      } catch (NoSuchFieldException | IllegalAccessException e) {
+        throw new TypeException("missing field 'doc' for builtin function " + c);
+      }
     }
   }
 

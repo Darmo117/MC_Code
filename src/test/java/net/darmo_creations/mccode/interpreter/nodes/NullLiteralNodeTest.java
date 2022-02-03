@@ -33,4 +33,9 @@ class NullLiteralNodeTest extends NodeTest {
   void testToString() {
     assertEquals("null", new NullLiteralNode().toString());
   }
+
+  @Test
+  void testEquals() {
+    assertEquals(new NullLiteralNode(), new NullLiteralNode());
+  }
 }

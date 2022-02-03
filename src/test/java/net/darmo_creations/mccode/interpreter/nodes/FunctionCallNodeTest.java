@@ -92,4 +92,10 @@ class FunctionCallNodeTest extends NodeTest {
     assertEquals("hypot(1.0, 1)", new FunctionCallNode(new VariableNode("hypot"),
         Arrays.asList(new FloatLiteralNode(1.0), new IntLiteralNode(1))).toString());
   }
+
+  @Test
+  void testEquals() {
+    assertEquals(new FunctionCallNode(new VariableNode("floor"), Collections.singletonList(new FloatLiteralNode(1.0))),
+        new FunctionCallNode(new VariableNode("floor"), Collections.singletonList(new FloatLiteralNode(1.0))));
+  }
 }
