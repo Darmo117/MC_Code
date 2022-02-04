@@ -48,7 +48,7 @@ class MapTypeTest extends TypeTest<MapType> {
 
   @Test
   void getPropertiesNames() {
-    assertFalse(this.typeInstance.getPropertiesNames().isEmpty());
+    assertEquals(Arrays.asList("keys", "values"), this.typeInstance.getPropertiesNames(new MCMap()));
   }
 
   @Test

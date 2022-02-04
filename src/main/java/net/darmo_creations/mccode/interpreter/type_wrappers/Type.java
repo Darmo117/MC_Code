@@ -59,8 +59,15 @@ public abstract class Type<T> {
 
   /**
    * Return the name of all properties.
+   *
+   * @param self Instance object to get the properties of.
+   * @throws TypeException If the MCCode type of the instance differs from this type.
    */
-  public List<String> getPropertiesNames() {
+  public List<String> getPropertiesNames(final Object self) {
+    if (this != ProgramManager.getTypeForValue(self)) {
+      throw new TypeException(String.format("property %s expected instance of type %s, got %s",
+          this.getName(), this.getWrappedType(), self != null ? self.getClass() : null));
+    }
     ArrayList<String> list = new ArrayList<>(this.properties.keySet());
     list.sort(Comparator.comparing(String::toLowerCase));
     return list;
@@ -73,14 +80,20 @@ public abstract class Type<T> {
    * @param self         Instance object to query. Must match this type’s wrapped type.
    * @param propertyName Name of the property.
    * @return Value of the property.
-   * @throws TypeException          If the MCCode type of the instance differs from this type.
-   * @throws MCCodeRuntimeException If the instance object does not have a property with the given name.
+   * @throws TypeException       If the MCCode type of the instance differs from this type.
+   * @throws EvaluationException If the instance object does not have a property with the given name.
    */
   public Object getProperty(final Scope scope, final Object self, final String propertyName) {
     if (this.properties.containsKey(propertyName)) {
       return this.properties.get(propertyName).get(self);
+    } else {
+      if (this != ProgramManager.getTypeForValue(self)) {
+        throw new TypeException(String.format("property %s expected instance of type %s, got %s",
+            this.getName(), this.getWrappedType(), self != null ? self.getClass() : null));
+      }
+      //noinspection unchecked
+      return this.__get_property__(scope, (T) self, propertyName);
     }
-    throw new EvaluationException(scope, "mccode.interpreter.error.no_property_for_type", this, propertyName);
   }
 
   /**
@@ -90,14 +103,20 @@ public abstract class Type<T> {
    * @param self         Instance object to use. Must match this type’s wrapped type.
    * @param propertyName Name of the property.
    * @param value        Value to assign to the property.
-   * @throws TypeException          If the MCCode type of the instance differs from this type.
-   * @throws MCCodeRuntimeException If the instance object does not have a property with the given name.
+   * @throws TypeException       If the MCCode type of the instance differs from this type.
+   * @throws EvaluationException If the instance object does not have a property with the given name.
    */
   public void setProperty(final Scope scope, final Object self, final String propertyName, final Object value) {
     if (this.properties.containsKey(propertyName)) {
       this.properties.get(propertyName).set(scope, self, value);
+    } else {
+      if (this != ProgramManager.getTypeForValue(self)) {
+        throw new TypeException(String.format("property %s expected instance of type %s, got %s",
+            this.getName(), this.getWrappedType(), self != null ? self.getClass() : null));
+      }
+      //noinspection unchecked
+      this.__set_property__(scope, (T) self, propertyName, value);
     }
-    throw new EvaluationException(scope, "mccode.interpreter.error.no_property_for_type", this, propertyName);
   }
 
   /**
@@ -297,6 +316,37 @@ public abstract class Type<T> {
    */
   protected void __del_item__(Scope scope, T self, Object key) {
     throw new UnsupportedOperatorException(scope, BinaryOperator.DEL_ITEM, this, ProgramManager.getTypeForValue(key));
+  }
+
+  /**
+   * Method that returns the value of the given property.
+   * <p>
+   * Called when no property defined through the {@link Property} annotation was found
+   * by {@link #getProperty(Scope, Object, String)}.
+   *
+   * @param scope        Scope the operation is performed from.
+   * @param self         Instance of this type to apply the operator to.
+   * @param propertyName Name of the property.
+   * @throws EvaluationException If the instance object does not have a property with the given name.
+   */
+  protected Object __get_property__(Scope scope, T self, final String propertyName) {
+    throw new EvaluationException(scope, "mccode.interpreter.error.no_property_for_type", this, propertyName);
+  }
+
+  /**
+   * Method that returns the value of the given property.
+   * <p>
+   * Called when no property defined through the {@link PropertySetter} annotation was found
+   * by {@link #setProperty(Scope, Object, String, Object)}.
+   *
+   * @param scope        Scope the operation is performed from.
+   * @param self         Instance of this type to apply the operator to.
+   * @param propertyName Name of the property.
+   * @param value        Property’s new value.
+   * @throws EvaluationException If the instance object does not have a property with the given name.
+   */
+  protected void __set_property__(Scope scope, T self, final String propertyName, Object value) {
+    throw new EvaluationException(scope, "mccode.interpreter.error.no_property_for_type", this, propertyName);
   }
 
   /**

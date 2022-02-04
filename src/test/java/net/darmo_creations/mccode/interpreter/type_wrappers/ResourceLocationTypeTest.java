@@ -19,6 +19,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
 
@@ -43,7 +44,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
 
   @Test
   void getPropertiesNames() {
-    assertFalse(this.typeInstance.getPropertiesNames().isEmpty());
+    assertEquals(Arrays.asList("namespace", "path"), this.typeInstance.getPropertiesNames(new ResourceLocation("minecraft:stone")));
   }
 
   @Test

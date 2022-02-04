@@ -47,13 +47,13 @@ class ScopeTest {
   }
 
   @Test
-  void getVariableFromCommand() {
+  void getVariableFromOutside() {
     this.s.declareVariable(new Variable("a", true, false, false, true, 1));
     assertEquals(1, this.s.getVariable("a", true));
   }
 
   @Test
-  void getVariableFromCommandError() {
+  void getVariableFromOutsideError() {
     assertThrows(EvaluationException.class, () -> this.s.getVariable("var", true));
   }
 
@@ -70,20 +70,20 @@ class ScopeTest {
   }
 
   @Test
-  void setVariableFromCommand() {
+  void setVariableFromOutside() {
     this.s.declareVariable(new Variable("a", true, true, false, true, 1));
     this.s.setVariable("a", 2, true);
     assertEquals(2, this.s.getVariable("a", true));
   }
 
   @Test
-  void setVariableFromCommandError1() {
+  void setVariableFromOutsideError1() {
     this.s.declareVariable(new Variable("a", true, false, false, true, 1));
     assertThrows(EvaluationException.class, () -> this.s.setVariable("a", 2, true));
   }
 
   @Test
-  void setVariableFromCommandError2() {
+  void setVariableFromOutsideError2() {
     assertThrows(EvaluationException.class, () -> this.s.setVariable("var", 2, true));
   }
 
@@ -108,7 +108,7 @@ class ScopeTest {
   }
 
   @Test
-  void deleteVariableFromCommand() {
+  void deleteVariableFromOutside() {
     this.s.declareVariable(new Variable("a", true, true, false, true, 1));
     assertEquals(1, this.s.getVariable("a", true));
     this.s.deleteVariable("a", true);
@@ -116,13 +116,13 @@ class ScopeTest {
   }
 
   @Test
-  void deleteVariableFromCommandError1() {
+  void deleteVariableFromOutsideError1() {
     this.s.declareVariable(new Variable("a", true, true, false, false, 1));
     assertThrows(EvaluationException.class, () -> this.s.deleteVariable("a", true));
   }
 
   @Test
-  void deleteVariableFromCommandError2() {
+  void deleteVariableFromOutsideError2() {
     this.s.declareVariable(new Variable("a", true, false, false, true, 1));
     assertThrows(EvaluationException.class, () -> this.s.deleteVariable("a", true));
   }
@@ -151,13 +151,13 @@ class ScopeTest {
   }
 
   @Test
-  void getVariableFromCommandFromSubScope() {
+  void getVariableFromOutsideFromSubScope() {
     this.s.declareVariable(new Variable("a", true, false, false, true, 1));
     assertEquals(1, this.sub.getVariable("a", true));
   }
 
   @Test
-  void getVariableFromCommandErrorFromSubScope() {
+  void getVariableFromOutsideErrorFromSubScope() {
     // Declare variable in parent scope
     this.s.declareVariable(new Variable("a", false, false, false, true, 1));
     assertThrows(EvaluationException.class, () -> this.sub.getVariable("a", true));
@@ -177,7 +177,7 @@ class ScopeTest {
   }
 
   @Test
-  void setVariableFromCommandFromSubScope() {
+  void setVariableFromOutsideFromSubScope() {
     // Declare variable in parent scope
     this.s.declareVariable(new Variable("a", true, true, false, true, 1));
     this.sub.setVariable("a", 2, true);
@@ -185,14 +185,14 @@ class ScopeTest {
   }
 
   @Test
-  void setVariableFromCommandError1FromSubScope() {
+  void setVariableFromOutsideError1FromSubScope() {
     // Declare variable in parent scope
     this.s.declareVariable(new Variable("a", true, false, false, true, 1));
     assertThrows(EvaluationException.class, () -> this.sub.setVariable("a", 2, true));
   }
 
   @Test
-  void setVariableFromCommandError2FromSubScope() {
+  void setVariableFromOutsideError2FromSubScope() {
     assertThrows(EvaluationException.class, () -> this.sub.setVariable("var", 2, true));
   }
 
@@ -218,7 +218,7 @@ class ScopeTest {
   }
 
   @Test
-  void deleteVariableFromCommandFromSubScope() {
+  void deleteVariableFromOutsideFromSubScope() {
     // Declare variable in parent scope
     this.s.declareVariable(new Variable("a", true, true, false, true, 1));
     assertEquals(1, this.sub.getVariable("a", true));
@@ -227,14 +227,14 @@ class ScopeTest {
   }
 
   @Test
-  void deleteVariableFromCommandError1FromSubScope() {
+  void deleteVariableFromOutsideError1FromSubScope() {
     // Declare variable in parent scope
     this.s.declareVariable(new Variable("a", true, true, false, false, 1));
     assertThrows(EvaluationException.class, () -> this.sub.deleteVariable("a", true));
   }
 
   @Test
-  void deleteVariableFromCommandError2FromSubScope() {
+  void deleteVariableFromOutsideError2FromSubScope() {
     // Declare variable in parent scope
     this.s.declareVariable(new Variable("a", true, false, false, true, 1));
     assertThrows(EvaluationException.class, () -> this.sub.deleteVariable("a", true));

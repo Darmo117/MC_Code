@@ -77,8 +77,10 @@ IDENT : [a-zA-Z_][a-zA-Z0-9_]*;
 
 module:
   (SCHED ticks=INT (REPEAT times=(INT | FOREVER))? SEMIC)?
-//  (IMPORT IDENT (DOT IDENT)* AS alias=IDENT SEMIC)* // ID: 0 TODO deactivated for now
+  (import_statement)*
   global_statement* EOF;
+
+import_statement: IMPORT IDENT (DOT IDENT)* (AS alias=IDENT)? SEMIC; // ID: 0
 
 global_statement:
     PUBLIC EDITABLE? VAR name=IDENT ASSIGN value=expr SEMIC # DeclareGlobalVariable // ID: 10

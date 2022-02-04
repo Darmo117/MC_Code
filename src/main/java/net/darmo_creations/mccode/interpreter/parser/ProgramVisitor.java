@@ -2,11 +2,15 @@ package net.darmo_creations.mccode.interpreter.parser;
 
 import net.darmo_creations.mccode.interpreter.Program;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
+import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeBaseVisitor;
 import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeParser;
+import net.darmo_creations.mccode.interpreter.statements.ImportStatement;
 import net.darmo_creations.mccode.interpreter.statements.Statement;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +48,19 @@ public class ProgramVisitor extends MCCodeBaseVisitor<Program> {
     }
 
     StatementVisitor statementVisitor = new StatementVisitor();
-    List<Statement> statements = ctx.global_statement().stream().map(statementVisitor::visit).collect(Collectors.toList());
+
+    Set<String> modules = new HashSet<>();
+    List<Statement> statements = ctx.import_statement().stream().map(tree -> {
+      ImportStatement stmt = (ImportStatement) statementVisitor.visit(tree);
+      String modulePath = stmt.getModulePath();
+      if (modules.contains(modulePath)) {
+        throw new SyntaxErrorException(String.format("module %s imported twice", modulePath));
+      }
+      modules.add(modulePath);
+      return stmt;
+    }).collect(Collectors.toList());
+
+    ctx.global_statement().stream().map(statementVisitor::visit).forEach(statements::add);
 
     return new Program(this.programName, statements, scheduleDelay, repeatAmount, this.programManager);
   }

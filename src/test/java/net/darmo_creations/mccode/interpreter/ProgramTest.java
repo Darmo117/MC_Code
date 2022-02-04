@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter;
 
+import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.darmo_creations.mccode.interpreter.nodes.IntLiteralNode;
 import net.darmo_creations.mccode.interpreter.nodes.NullLiteralNode;
@@ -109,6 +110,13 @@ class ProgramTest {
   }
 
   @Test
+  void waitInModuleError() {
+    Program p = new Program("p", Collections.singletonList(new WaitStatement(new IntLiteralNode(1))),
+        new ProgramManager("pm"));
+    assertThrows(EvaluationException.class, p::execute);
+  }
+
+  @Test
   void reset() {
     this.p.execute();
     assertEquals(2, this.p.getScope().getVariable("a", false));
@@ -130,7 +138,21 @@ class ProgramTest {
     tag.setInteger(Program.REPEAT_AMOUNT_KEY, 1);
     tag.setInteger(Program.WAIT_TIME_KEY, 0);
     tag.setInteger(Program.IP_KEY, 0);
+    tag.setBoolean(Program.IS_MODULE_KEY, false);
     assertEquals(tag, this.p.writeToNBT());
+  }
+
+  @Test
+  void writeModuleToNBT() {
+    Program p = new Program("p", Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))),
+        new ProgramManager("pm"));
+    NBTTagCompound tag = new NBTTagCompound();
+    tag.setString(Program.NAME_KEY, "p");
+    tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1)))));
+    tag.setTag(Program.SCOPE_KEY, p.getScope().writeToNBT());
+    tag.setInteger(Program.IP_KEY, 0);
+    tag.setBoolean(Program.IS_MODULE_KEY, true);
+    assertEquals(tag, p.writeToNBT());
   }
 
   @Test
@@ -147,7 +169,21 @@ class ProgramTest {
     tag.setInteger(Program.REPEAT_AMOUNT_KEY, 1);
     tag.setInteger(Program.WAIT_TIME_KEY, 0);
     tag.setInteger(Program.IP_KEY, 0);
+    tag.setBoolean(Program.IS_MODULE_KEY, false);
     assertEquals(new Program("p", statements, 1, 1, new ProgramManager("pm")),
+        new Program(tag, new ProgramManager("pm")));
+  }
+
+  @Test
+  void constructModuleFromNBT() {
+    NBTTagCompound tag = new NBTTagCompound();
+    tag.setString(Program.NAME_KEY, "p");
+    tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1)))));
+    tag.setTag(Program.SCOPE_KEY, this.p.getScope().writeToNBT());
+    tag.setInteger(Program.IP_KEY, 0);
+    tag.setBoolean(Program.IS_MODULE_KEY, true);
+    assertEquals(new Program("p", Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))),
+            new ProgramManager("pm")),
         new Program(tag, new ProgramManager("pm")));
   }
 }

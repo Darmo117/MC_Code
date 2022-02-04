@@ -28,6 +28,18 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterImport_statement(MCCodeParser.Import_statementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitImport_statement(MCCodeParser.Import_statementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDeclareGlobalVariable(MCCodeParser.DeclareGlobalVariableContext ctx) { }
 	/**
 	 * {@inheritDoc}

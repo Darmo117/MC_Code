@@ -45,7 +45,7 @@ class IntTypeTest extends TypeTest<IntType> {
 
   @Test
   void getPropertiesNames() {
-    assertTrue(this.typeInstance.getPropertiesNames().isEmpty());
+    assertTrue(this.typeInstance.getPropertiesNames(0).isEmpty());
   }
 
   @Test

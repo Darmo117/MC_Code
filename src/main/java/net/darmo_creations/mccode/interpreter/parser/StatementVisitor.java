@@ -35,6 +35,18 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
   }
 
   @Override
+  public Statement visitImport_statement(MCCodeParser.Import_statementContext ctx) {
+    String alias = null;
+    List<String> path = ctx.IDENT().stream().map(TerminalNode::getText).collect(Collectors.toList());
+    if (ctx.alias != null) {
+      alias = ctx.alias.getText();
+      // Last IDENT token is the alias
+      path.remove(path.size() - 1);
+    }
+    return new ImportStatement(path, alias);
+  }
+
+  @Override
   public Statement visitDeclareGlobalVariable(MCCodeParser.DeclareGlobalVariableContext ctx) {
     return new DeclareVariableStatement(true, ctx.EDITABLE() != null, false,
         ctx.name.getText(), this.nodeVisitor.visit(ctx.value));

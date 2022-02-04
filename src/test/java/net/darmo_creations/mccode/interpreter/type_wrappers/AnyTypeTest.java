@@ -41,27 +41,22 @@ class AnyTypeTest extends TypeTest<AnyType> {
 
   @Test
   void getPropertiesNames() {
-    assertTrue(this.typeInstance.getPropertiesNames().isEmpty());
+    assertTrue(this.typeInstance.getPropertiesNames(new Object()).isEmpty());
   }
 
   @Test
   void getPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), true, "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), new Object(), "a"));
   }
 
   @Test
   void setPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), true, "a", true));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), new Object(), "a", true));
   }
 
   @Test
   void getMethodError() {
     assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
-  }
-
-  @Test
-  void implicitCast() {
-    assertNull(this.typeInstance.implicitCast(this.p.getScope(), null));
   }
 
   @ParameterizedTest

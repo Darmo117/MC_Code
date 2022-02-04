@@ -44,7 +44,7 @@ class StringTypeTest extends TypeTest<StringType> {
 
   @Test
   void getPropertiesNames() {
-    assertTrue(this.typeInstance.getPropertiesNames().isEmpty());
+    assertTrue(this.typeInstance.getPropertiesNames("").isEmpty());
   }
 
   @Test

@@ -104,19 +104,20 @@ public class Scope implements NBTDeserializable {
    * Return the value of the given variable.
    *
    * @param name        Variable’s name.
-   * @param fromCommand Whether this action is performed from a command.
+   * @param fromOutside Whether this action is performed from outside the program.
    * @return The variable’s value.
-   * @throws EvaluationException If the variable doesn’t exist or cannot be accessed from command but fromCommand is true.
+   * @throws EvaluationException If the variable doesn’t exist or cannot be accessed
+   *                             from outside the program but fromOutside is true.
    */
-  public Object getVariable(final String name, final boolean fromCommand) throws EvaluationException {
+  public Object getVariable(final String name, final boolean fromOutside) throws EvaluationException {
     if (!this.variables.containsKey(name)) {
       if (this.parentScope != null) {
-        return this.parentScope.getVariable(name, fromCommand);
+        return this.parentScope.getVariable(name, fromOutside);
       } else {
         throw new EvaluationException(this, "mccode.interpreter.error.undefined_variable", name);
       }
     } else {
-      return this.variables.get(name).getValue(this, fromCommand);
+      return this.variables.get(name).getValue(this, fromOutside);
     }
   }
 
@@ -125,19 +126,19 @@ public class Scope implements NBTDeserializable {
    *
    * @param name        Variable’s name.
    * @param value       Variable’s new value.
-   * @param fromCommand Whether this action is performed from a command.
+   * @param fromOutside Whether this action is performed from outside the program.
    * @throws EvaluationException If the variable doesn’t exist, is constant or cannot
-   *                             be set from commands and fromCommand is true.
+   *                             be set from outside the program and fromOutside is true.
    */
-  public void setVariable(final String name, Object value, final boolean fromCommand) throws EvaluationException {
+  public void setVariable(final String name, Object value, final boolean fromOutside) throws EvaluationException {
     if (!this.variables.containsKey(name)) {
       if (this.parentScope != null) {
-        this.parentScope.setVariable(name, value, fromCommand);
+        this.parentScope.setVariable(name, value, fromOutside);
       } else {
         throw new EvaluationException(this, "mccode.interpreter.error.undefined_variable", name);
       }
     } else {
-      this.variables.get(name).setValue(this, value, fromCommand);
+      this.variables.get(name).setValue(this, value, fromOutside);
     }
   }
 
@@ -158,19 +159,19 @@ public class Scope implements NBTDeserializable {
    * Delete the given variable.
    *
    * @param name        Variable’s name.
-   * @param fromCommand Whether this action is performed from a command.
+   * @param fromOutside Whether this action is performed from outside the program.
    * @throws EvaluationException If the variable doesn’t exist or is not deletable.
    */
-  public void deleteVariable(final String name, final boolean fromCommand) throws EvaluationException {
+  public void deleteVariable(final String name, final boolean fromOutside) throws EvaluationException {
     if (!this.variables.containsKey(name)) {
       if (this.parentScope != null) {
-        this.parentScope.deleteVariable(name, fromCommand);
+        this.parentScope.deleteVariable(name, fromOutside);
       } else {
         throw new EvaluationException(this, "mccode.interpreter.error.undefined_variable", name);
       }
     } else {
       Variable variable = this.variables.get(name);
-      if (!variable.isDeletable() || fromCommand && !variable.isEditableThroughCommands()) {
+      if (!variable.isDeletable() || fromOutside && !variable.isEditableFromOutside()) {
         throw new EvaluationException(this, "mccode.interpreter.error.cannot_delete_variable", name);
       }
       this.variables.remove(name);

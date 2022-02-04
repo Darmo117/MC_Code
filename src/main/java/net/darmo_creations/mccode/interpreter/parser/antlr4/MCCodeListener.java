@@ -18,6 +18,16 @@ public interface MCCodeListener extends ParseTreeListener {
 	 */
 	void exitModule(MCCodeParser.ModuleContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MCCodeParser#import_statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterImport_statement(MCCodeParser.Import_statementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MCCodeParser#import_statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitImport_statement(MCCodeParser.Import_statementContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code DeclareGlobalVariable}
 	 * labeled alternative in {@link MCCodeParser#global_statement}.
 	 * @param ctx the parse tree

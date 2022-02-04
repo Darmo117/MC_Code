@@ -48,7 +48,7 @@ class SetTypeTest extends TypeTest<SetType> {
 
   @Test
   void getPropertiesNames() {
-    assertTrue(this.typeInstance.getPropertiesNames().isEmpty());
+    assertTrue(this.typeInstance.getPropertiesNames(new MCSet()).isEmpty());
   }
 
   @Test

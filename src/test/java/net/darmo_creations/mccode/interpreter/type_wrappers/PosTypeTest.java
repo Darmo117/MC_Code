@@ -44,7 +44,7 @@ class PosTypeTest extends TypeTest<PosType> {
 
   @Test
   void getPropertiesNames() {
-    assertFalse(this.typeInstance.getPropertiesNames().isEmpty());
+    assertEquals(Arrays.asList("x", "y", "z"), this.typeInstance.getPropertiesNames(new BlockPos(0, 0, 0)));
   }
 
   @Test

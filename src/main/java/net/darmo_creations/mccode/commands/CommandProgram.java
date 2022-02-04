@@ -85,7 +85,7 @@ public class CommandProgram extends CommandBase {
     ProgramManager pm = MCCode.INSTANCE.PROGRAM_MANAGERS.get(sender.getEntityWorld());
     String programName = args[0];
     try {
-      pm.loadProgram(programName);
+      pm.loadProgram(programName, false);
     } catch (SyntaxErrorException e) {
       throw new CommandException("mccode.interpreter.error.syntax_error", programName);
     } catch (ProgramStatusException e) {

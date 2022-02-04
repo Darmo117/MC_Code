@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
 
@@ -44,7 +45,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
 
   @Test
   void getPropertiesNames() {
-    assertFalse(this.typeInstance.getPropertiesNames().isEmpty());
+    assertEquals(Arrays.asList("id", "max_stack_size"), this.typeInstance.getPropertiesNames(new Item()));
   }
 
   @Test

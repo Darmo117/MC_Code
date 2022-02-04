@@ -194,7 +194,7 @@ public class MapType extends Type<MCMap> {
       }
     } else {
       Type<?> type = ProgramManager.getTypeForValue(o);
-      List<String> properties = type.getPropertiesNames();
+      List<String> properties = type.getPropertiesNames(o);
       MCMap map = new MCMap();
       if (!properties.isEmpty()) {
         for (String s : properties) {

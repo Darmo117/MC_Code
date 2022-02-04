@@ -58,6 +58,48 @@ class ProgramParserTest {
     assertThrows(SyntaxErrorException.class, () -> ProgramParser.parse(this.pm, "p", "schedule 1 repeat -1;"));
   }
 
+  @Test
+  void parseSimpleImportStatement() {
+    Program p = new Program("p", Collections.singletonList(
+        new ImportStatement(Collections.singletonList("a"), null)
+    ), null, null, this.pm);
+    assertEquals(p, ProgramParser.parse(this.pm, "p", "import a;"));
+  }
+
+  @Test
+  void parsePathImportStatement() {
+    Program p = new Program("p", Collections.singletonList(
+        new ImportStatement(Arrays.asList("a", "b"), null)
+    ), null, null, this.pm);
+    assertEquals(p, ProgramParser.parse(this.pm, "p", "import a.b;"));
+  }
+
+  @Test
+  void parseSimpleImportStatementWithAlias() {
+    Program p = new Program("p", Collections.singletonList(
+        new ImportStatement(Collections.singletonList("a"), "b")
+    ), null, null, this.pm);
+    assertEquals(p, ProgramParser.parse(this.pm, "p", "import a as b;"));
+  }
+
+  @Test
+  void parsePathImportStatementWithAlias() {
+    Program p = new Program("p", Collections.singletonList(
+        new ImportStatement(Arrays.asList("a", "b"), "b")
+    ), null, null, this.pm);
+    assertEquals(p, ProgramParser.parse(this.pm, "p", "import a.b as b;"));
+  }
+
+  @Test
+  void parseDuplicateSimpleImportsError() {
+    assertThrows(SyntaxErrorException.class, () -> ProgramParser.parse(this.pm, "p", "import a as b; import a as c;"));
+  }
+
+  @Test
+  void parseDuplicatePathImportsError() {
+    assertThrows(SyntaxErrorException.class, () -> ProgramParser.parse(this.pm, "p", "import a.b as b; import a.b as c;"));
+  }
+
   @ParameterizedTest
   @EnumSource(AssigmentOperator.class)
   void parseAssignVariableStatement(AssigmentOperator op) {
@@ -154,8 +196,6 @@ class ProgramParserTest {
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "for i in range(1, 3, 1) do print(i); end"));
   }
-
-  // TODO Test If
 
   @Test
   void parseIfStatement() {

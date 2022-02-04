@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public class Program {
   public static final String WORLD_VAR_NAME = "WORLD";
+  public static final String NAME_SPECIAL_VARIABLE = "__name__";
 
   public static final String NAME_KEY = "Name";
   public static final String STATEMENTS_KEY = "Statements";
@@ -29,10 +30,12 @@ public class Program {
   public static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
   public static final String WAIT_TIME_KEY = "WaitTime";
   public static final String IP_KEY = "IP";
+  public static final String IS_MODULE_KEY = "IsModule";
 
   private final String name;
   private final List<Statement> statements;
   private final ProgramManager programManager;
+  private final boolean isModule;
   private final Scope scope;
   private final Integer scheduleDelay;
   private final Integer repeatAmount;
@@ -71,6 +74,28 @@ public class Program {
     this.repeatAmount = repeatAmount;
     this.timeToWait = 0;
     this.ip = 0;
+    this.isModule = false;
+    this.setup();
+  }
+
+  /**
+   * Create a program as a sub-module.
+   * Wait statements are not allowed in sub-modules.
+   *
+   * @param name           Module’s name.
+   * @param statements     Module’s statements.
+   * @param programManager Module’s manager.
+   */
+  public Program(final String name, final List<Statement> statements, ProgramManager programManager) {
+    this.programManager = Objects.requireNonNull(programManager);
+    this.name = Objects.requireNonNull(name);
+    this.statements = Objects.requireNonNull(statements);
+    this.scope = new Scope(this);
+    this.scheduleDelay = null;
+    this.repeatAmount = null;
+    this.timeToWait = 0;
+    this.ip = 0;
+    this.isModule = true;
     this.setup();
   }
 
@@ -87,9 +112,16 @@ public class Program {
     this.scope = new Scope(this);
     this.setup();
     this.scope.readFromNBT(tag.getCompoundTag(SCOPE_KEY));
-    this.scheduleDelay = tag.getInteger(SCHEDULE_DELAY_KEY);
-    this.repeatAmount = tag.getInteger(REPEAT_AMOUNT_KEY);
-    this.timeToWait = tag.getInteger(WAIT_TIME_KEY);
+    this.isModule = tag.getBoolean(IS_MODULE_KEY);
+    if (!this.isModule) {
+      this.scheduleDelay = tag.getInteger(SCHEDULE_DELAY_KEY);
+      this.repeatAmount = tag.getInteger(REPEAT_AMOUNT_KEY);
+      this.timeToWait = tag.getInteger(WAIT_TIME_KEY);
+    } else {
+      this.scheduleDelay = null;
+      this.repeatAmount = null;
+      this.timeToWait = 0;
+    }
     this.ip = tag.getInteger(IP_KEY);
   }
 
@@ -99,6 +131,8 @@ public class Program {
   private void setup() {
     this.scope.declareVariable(new Variable(WORLD_VAR_NAME, false, false, true,
         false, new WorldProxy(this.programManager.getWorld())));
+    this.scope.declareVariable(new Variable(NAME_SPECIAL_VARIABLE, true, false, false,
+        false, this.getName()));
   }
 
   /**
@@ -115,6 +149,9 @@ public class Program {
    * Return this program’s name.
    */
   public String getName() {
+    if (this.getScope().isVariableDefined(NAME_SPECIAL_VARIABLE)) {
+      return String.valueOf(this.getScope().getVariable(NAME_SPECIAL_VARIABLE, false));
+    }
     return this.name;
   }
 
@@ -175,6 +212,9 @@ public class Program {
         } else if (action == StatementAction.CONTINUE_LOOP) {
           throw new SyntaxErrorException("mccode.interpreter.error.continue_outside_loop");
         } else if (action == StatementAction.WAIT) {
+          if (this.isModule) {
+            throw new EvaluationException(this.scope, "mccode.interpreter.error.wait_in_module", this.getName());
+          }
           break;
         }
       }
@@ -210,10 +250,17 @@ public class Program {
     tag.setString(NAME_KEY, this.name);
     tag.setTag(STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(this.statements));
     tag.setTag(SCOPE_KEY, this.scope.writeToNBT());
-    tag.setInteger(SCHEDULE_DELAY_KEY, this.scheduleDelay);
-    tag.setInteger(REPEAT_AMOUNT_KEY, this.repeatAmount);
-    tag.setInteger(WAIT_TIME_KEY, this.timeToWait);
+    if (!this.isModule) {
+      if (this.scheduleDelay != null) {
+        tag.setInteger(SCHEDULE_DELAY_KEY, this.scheduleDelay);
+        if (this.repeatAmount != null) {
+          tag.setInteger(REPEAT_AMOUNT_KEY, this.repeatAmount);
+        }
+      }
+      tag.setInteger(WAIT_TIME_KEY, this.timeToWait);
+    }
     tag.setInteger(IP_KEY, this.ip);
+    tag.setBoolean(IS_MODULE_KEY, this.isModule);
     return tag;
   }
 

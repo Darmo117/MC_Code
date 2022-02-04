@@ -23,7 +23,7 @@ public class Variable implements NBTSerializable {
 
   private final String name;
   private final boolean publiclyVisible;
-  private final boolean editableThroughCommands;
+  private final boolean editableFromOutside;
   private final boolean constant;
   private final boolean deletable;
   private Object value;
@@ -31,25 +31,25 @@ public class Variable implements NBTSerializable {
   /**
    * Create a new variable.
    *
-   * @param name                    Variable’s name.
-   * @param publiclyVisible         Whether this variable’s value should be accessible from commands.
-   * @param editableThroughCommands Whether this variable’s value should be editable through commands.
-   * @param constant                Whether this variable’s value is constant or not.
-   * @param deletable               Whether deletion of this variable should be prevented.
-   * @param value                   Variable’s value.
+   * @param name                Variable’s name.
+   * @param publiclyVisible     Whether this variable’s value should be accessible from outside the program.
+   * @param editableFromOutside Whether this variable’s value should be editable from outside the program.
+   * @param constant            Whether this variable’s value is constant or not.
+   * @param deletable           Whether deletion of this variable should be prevented.
+   * @param value               Variable’s value.
    */
-  public Variable(final String name, boolean publiclyVisible, final boolean editableThroughCommands, final boolean constant, final boolean deletable, Object value) {
-    if (constant && editableThroughCommands) {
-      throw new MCCodeException("constant cannot be editable through commands");
+  public Variable(final String name, boolean publiclyVisible, final boolean editableFromOutside, final boolean constant, final boolean deletable, Object value) {
+    if (constant && editableFromOutside) {
+      throw new MCCodeException("constant cannot be editable from outside the program");
     }
-    if (!publiclyVisible && editableThroughCommands) {
-      throw new MCCodeException("private variable cannot be editable through commands");
+    if (!publiclyVisible && editableFromOutside) {
+      throw new MCCodeException("private variable cannot be editable from outside the program");
     }
     this.name = name;
     this.value = value;
     this.constant = constant;
     this.publiclyVisible = publiclyVisible;
-    this.editableThroughCommands = editableThroughCommands;
+    this.editableFromOutside = editableFromOutside;
     this.deletable = deletable;
   }
 
@@ -62,7 +62,7 @@ public class Variable implements NBTSerializable {
   public Variable(final NBTTagCompound tag, final Scope scope) {
     this.name = tag.getString(NAME_KEY);
     this.publiclyVisible = tag.getBoolean(PUBLIC_KEY);
-    this.editableThroughCommands = tag.getBoolean(EDITABLE_KEY);
+    this.editableFromOutside = tag.getBoolean(EDITABLE_KEY);
     this.constant = tag.getBoolean(CONSTANT_KEY);
     this.deletable = tag.getBoolean(DELETABLE_KEY);
     this.value = ProgramManager.getTypeForName(tag.getString(TYPE_KEY)).readFromNBT(scope, tag.getCompoundTag(VALUE_KEY));
@@ -79,12 +79,12 @@ public class Variable implements NBTSerializable {
    * Return this variable’s value.
    *
    * @param scope       The scope this variable is declared in.
-   * @param fromCommand Whether this operation is performed from a command.
-   * @throws EvaluationException If the variable is queried through a command but not publicly visible.
+   * @param fromOutside Whether this operation is performed from outside the program.
+   * @throws EvaluationException If the variable is queried from outside the program but is not publicly visible.
    */
-  public Object getValue(final Scope scope, final boolean fromCommand) {
-    if (!this.publiclyVisible && fromCommand) {
-      throw new EvaluationException(scope, "mccode.interpreter.error.getting_from_command", this.name);
+  public Object getValue(final Scope scope, final boolean fromOutside) {
+    if (!this.publiclyVisible && fromOutside) {
+      throw new EvaluationException(scope, "mccode.interpreter.error.getting_from_outside", this.name);
     }
     return this.value;
   }
@@ -94,15 +94,16 @@ public class Variable implements NBTSerializable {
    *
    * @param scope       The scope this variable is declared in.
    * @param value       New variable value.
-   * @param fromCommand Whether this operation is performed from a command.
-   * @throws EvaluationException If the variable is constant or is edited through a command but editable flag is false.
+   * @param fromOutside Whether this operation is performed from outside the program.
+   * @throws EvaluationException If the variable is constant or is edited from outside the program
+   *                             but editable flag is false.
    */
-  public void setValue(final Scope scope, final Object value, final boolean fromCommand) {
+  public void setValue(final Scope scope, final Object value, final boolean fromOutside) {
     if (this.isConstant()) {
       throw new EvaluationException(scope, "mccode.interpreter.error.setting_constant_variable", this.name);
     }
-    if (!this.isEditableThroughCommands() && fromCommand) {
-      throw new EvaluationException(scope, "mccode.interpreter.error.setting_from_command", this.name);
+    if (!this.isEditableFromOutside() && fromOutside) {
+      throw new EvaluationException(scope, "mccode.interpreter.error.setting_from_outside", this.name);
     }
     this.value = value;
   }
@@ -115,17 +116,17 @@ public class Variable implements NBTSerializable {
   }
 
   /**
-   * Return whether this variable should be visible from in-game commands.
+   * Return whether this variable should be visible from outside the program.
    */
   public boolean isPubliclyVisible() {
     return this.publiclyVisible;
   }
 
   /**
-   * Return whether this variable should be editable through in-game commands.
+   * Return whether this variable should be editable from outside the program.
    */
-  public boolean isEditableThroughCommands() {
-    return this.editableThroughCommands;
+  public boolean isEditableFromOutside() {
+    return this.editableFromOutside;
   }
 
   /**
@@ -145,7 +146,7 @@ public class Variable implements NBTSerializable {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(NAME_KEY, this.name);
     tag.setBoolean(PUBLIC_KEY, this.publiclyVisible);
-    tag.setBoolean(EDITABLE_KEY, this.editableThroughCommands);
+    tag.setBoolean(EDITABLE_KEY, this.editableFromOutside);
     tag.setBoolean(CONSTANT_KEY, this.constant);
     tag.setBoolean(DELETABLE_KEY, this.deletable);
     Type<?> type = ProgramManager.getTypeForValue(this.value);
@@ -164,7 +165,7 @@ public class Variable implements NBTSerializable {
     }
     Variable variable = (Variable) o;
     return this.publiclyVisible == variable.publiclyVisible
-        && this.editableThroughCommands == variable.editableThroughCommands
+        && this.editableFromOutside == variable.editableFromOutside
         && this.constant == variable.constant
         && this.deletable == variable.deletable
         && this.name.equals(variable.name)
@@ -173,6 +174,6 @@ public class Variable implements NBTSerializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.name, this.publiclyVisible, this.editableThroughCommands, this.constant, this.deletable, this.value);
+    return Objects.hash(this.name, this.publiclyVisible, this.editableFromOutside, this.constant, this.deletable, this.value);
   }
 }

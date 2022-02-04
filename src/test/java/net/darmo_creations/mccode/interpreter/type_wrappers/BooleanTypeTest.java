@@ -43,7 +43,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
 
   @Test
   void getPropertiesNames() {
-    assertTrue(this.typeInstance.getPropertiesNames().isEmpty());
+    assertTrue(this.typeInstance.getPropertiesNames(true).isEmpty());
   }
 
   @Test

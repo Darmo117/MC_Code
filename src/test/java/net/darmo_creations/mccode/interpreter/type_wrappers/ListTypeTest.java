@@ -49,7 +49,7 @@ class ListTypeTest extends TypeTest<ListType> {
 
   @Test
   void getPropertiesNames() {
-    assertTrue(this.typeInstance.getPropertiesNames().isEmpty());
+    assertTrue(this.typeInstance.getPropertiesNames(new MCList()).isEmpty());
   }
 
   @Test

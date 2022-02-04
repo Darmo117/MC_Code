@@ -44,7 +44,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
 
   @Test
   void getPropertiesNames() {
-    assertTrue(this.typeInstance.getPropertiesNames().isEmpty());
+    assertTrue(this.typeInstance.getPropertiesNames(0.0).isEmpty());
   }
 
   @Test

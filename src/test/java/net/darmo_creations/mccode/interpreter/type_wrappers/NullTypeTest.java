@@ -43,17 +43,17 @@ class NullTypeTest extends TypeTest<NullType> {
 
   @Test
   void getPropertiesNames() {
-    assertTrue(this.typeInstance.getPropertiesNames().isEmpty());
+    assertTrue(this.typeInstance.getPropertiesNames(null).isEmpty());
   }
 
   @Test
   void getPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), true, "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), null, "a"));
   }
 
   @Test
   void setPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), true, "a", true));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), null, "a", true));
   }
 
   @Test

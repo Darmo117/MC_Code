@@ -1,6 +1,8 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
+import net.darmo_creations.mccode.interpreter.Program;
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,7 +19,7 @@ import java.util.Objects;
 public class ImportStatement extends Statement {
   public static final int ID = 0;
 
-  private static final String NAME_KEY = "ModuleName";
+  public static final String NAME_KEY = "ModuleName";
   public static final String ALIAS_KEY = "Alias";
 
   private final List<String> moduleNamePath;
@@ -40,7 +42,7 @@ public class ImportStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public ImportStatement(final NBTTagCompound tag) {
-    NBTTagList list = tag.getTagList(NAME_KEY, new NBTTagCompound().getId());
+    NBTTagList list = tag.getTagList(NAME_KEY, new NBTTagString().getId());
     this.moduleNamePath = new ArrayList<>();
     for (NBTBase t : list) {
       this.moduleNamePath.add(((NBTTagString) t).getString());
@@ -50,8 +52,12 @@ public class ImportStatement extends Statement {
 
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
-    // TODO
-    throw new UnsupportedOperationException("import statements are not yet available");
+    String name = this.getModulePath();
+    Program module = scope.getProgram().getProgramManager().loadProgram(name, true);
+    module.execute();
+    scope.declareVariable(new Variable(this.alias != null ? this.alias : name.replace('.', '_'),
+        false, false, false, true, module));
+    return StatementAction.PROCEED;
   }
 
   @Override
@@ -84,11 +90,18 @@ public class ImportStatement extends Statement {
       return false;
     }
     ImportStatement that = (ImportStatement) o;
-    return this.moduleNamePath.equals(that.moduleNamePath) && this.alias.equals(that.alias);
+    return this.moduleNamePath.equals(that.moduleNamePath) && Objects.equals(this.alias, that.alias);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(this.moduleNamePath, this.alias);
+  }
+
+  /**
+   * Return the formatted path of the imported module.
+   */
+  public String getModulePath() {
+    return String.join(".", this.moduleNamePath);
   }
 }

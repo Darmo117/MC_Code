@@ -47,19 +47,19 @@ class VariableTest extends TestBase {
   }
 
   @Test
-  void setValueFromCommand() {
+  void setValueFromOutside() {
     this.v.setValue(this.p.getScope(), 2, true);
     assertEquals(2, this.v.getValue(this.p.getScope(), true));
   }
 
   @Test
-  void setValueNotVisibleFromCommandError() {
+  void setValueNotVisibleFromOutsideError() {
     Variable v = new Variable("v", false, false, false, true, 1);
     assertThrows(EvaluationException.class, () -> v.setValue(this.p.getScope(), 2, true));
   }
 
   @Test
-  void setValueNotEditableFromCommandError() {
+  void setValueNotEditableFromOutsideError() {
     Variable v = new Variable("v", true, false, false, true, 1);
     assertThrows(EvaluationException.class, () -> v.setValue(this.p.getScope(), 2, true));
   }
@@ -75,8 +75,8 @@ class VariableTest extends TestBase {
   }
 
   @Test
-  void isEditableThroughCommands() {
-    assertTrue(new Variable("v", true, true, false, true, 1).isEditableThroughCommands());
+  void isEditableFromOutside() {
+    assertTrue(new Variable("v", true, true, false, true, 1).isEditableFromOutside());
   }
 
   @Test

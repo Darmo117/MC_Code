@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,7 +74,7 @@ public class ProgramManager extends WorldSavedData {
    */
   public void setWorld(World world) {
     this.world = world;
-    this.programsDir = new File(new File(this.world.getSaveHandler().getWorldDirectory(), "data"), "mccode_programs");
+    this.programsDir = Paths.get(this.world.getSaveHandler().getWorldDirectory().getAbsolutePath(), "data", "mccode_programs").toFile();
   }
 
   /**
@@ -139,16 +140,20 @@ public class ProgramManager extends WorldSavedData {
   /**
    * Load a program.
    *
-   * @param name Program’s name.
+   * @param name     Program’s name.
+   * @param asModule If true, the program instance is returned instead of being loaded in this manager.
+   * @return The program.
    * @throws SyntaxErrorException         If a syntax error is present in the program’s source file.
    * @throws ProgramFileNotFoundException If no .mccode file was found for the given name.
    */
-  public void loadProgram(final String name)
+  public Program loadProgram(final String name, final boolean asModule)
       throws SyntaxErrorException, ProgramFileNotFoundException {
-    if (this.programs.containsKey(name)) {
+    if (!asModule && this.programs.containsKey(name)) {
       throw new ProgramAlreadyLoadedException(name);
     }
-    File programFile = new File(this.programsDir, name + ".mccode");
+    String[] splitPath = name.split("\\.");
+    splitPath[splitPath.length - 1] += ".mccode";
+    File programFile = Paths.get(this.programsDir.getAbsolutePath(), splitPath).toFile();
     if (!programFile.exists()) {
       throw new ProgramFileNotFoundException(programFile.getName());
     }
@@ -162,7 +167,11 @@ public class ProgramManager extends WorldSavedData {
       throw new ProgramFileNotFoundException(programFile.getName());
     }
 
-    this.loadProgram(ProgramParser.parse(this, name, code.toString()));
+    Program program = ProgramParser.parse(this, name, code.toString());
+    if (!asModule) {
+      this.loadProgram(program);
+    }
+    return program;
   }
 
   /**
@@ -470,6 +479,7 @@ public class ProgramManager extends WorldSavedData {
     declareType(WorldType.class);
     declareType(FunctionType.class);
     declareType(RangeType.class);
+    declareType(ModuleType.class);
   }
 
   /**
