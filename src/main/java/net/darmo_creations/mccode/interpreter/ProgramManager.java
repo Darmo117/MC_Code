@@ -3,6 +3,7 @@ package net.darmo_creations.mccode.interpreter;
 import net.darmo_creations.mccode.MCCode;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
+import net.darmo_creations.mccode.interpreter.annotations.PropertySetter;
 import net.darmo_creations.mccode.interpreter.builtin_functions.*;
 import net.darmo_creations.mccode.interpreter.exceptions.*;
 import net.darmo_creations.mccode.interpreter.parser.ProgramParser;
@@ -528,46 +529,73 @@ public class ProgramManager extends WorldSavedData {
     Class<? extends Type<?>> typeClass = (Class<? extends Type<?>>) type.getClass();
     String typeName = type.getName();
     Map<String, ObjectProperty> properties = new HashMap<>();
+    Map<String, Method> getterMethods = new HashMap<>();
+    Map<String, Method> setterMethods = new HashMap<>();
 
-    for (Method getterMethod : typeClass.getMethods()) {
-      if (getterMethod.isAnnotationPresent(Property.class)) {
-        // TODO look for setter property
-        Property propertyAnnotation = getterMethod.getAnnotation(Property.class);
+    for (Method method : typeClass.getMethods()) {
+      String methodName = method.getName();
+      boolean isGetter = false;
+
+      if (method.isAnnotationPresent(Property.class)) {
+        Property propertyAnnotation = method.getAnnotation(Property.class);
         String propertyName = propertyAnnotation.name();
-        Class<?>[] parameterTypes = getterMethod.getParameterTypes();
+        Class<?>[] parameterTypes = method.getParameterTypes();
 
-        if (properties.containsKey(propertyName)) {
-          throw new MCCodeException(String.format("property %s already defined for type %s",
-              propertyName, typeName));
+        if (getterMethods.containsKey(propertyName)) {
+          throw new MCCodeException(String.format("property %s already defined for type %s", propertyName, typeClass));
         }
-
         if (parameterTypes.length != 1) {
           throw new MCCodeException(String.format("invalid number of arguments for property %s.%s: expected 1, got %s",
-              typeName, propertyName, parameterTypes.length));
+              typeClass, methodName, parameterTypes.length));
         }
-
         if (parameterTypes[0] != type.getWrappedType()) {
           throw new TypeException(String.format("method argument type does not match any wrapped type in %s.%s",
-              typeName, propertyName));
+              typeClass, methodName));
         }
 
-        Type<?> returnType = getTypeForWrappedClass(getterMethod.getReturnType());
-        if (returnType == null) {
-          throw new TypeException(String.format("method return type does not match declared Property annotation type: %s.%s",
-              typeName, propertyName));
+        getterMethods.put(propertyName, method);
+        isGetter = true;
+      }
+
+      if (method.isAnnotationPresent(PropertySetter.class)) {
+        PropertySetter propertyAnnotation = method.getAnnotation(PropertySetter.class);
+        String targetPropertyName = propertyAnnotation.forProperty();
+
+        if (isGetter) {
+          throw new TypeException(String.format("annotations Property and PropertySetter both present on method %s.%s", typeClass, methodName));
         }
 
-        String doc = String.format("%s.%s -> %s", typeName, propertyName, returnType.getName());
-        if (getterMethod.isAnnotationPresent(Doc.class)) {
-          doc = getterMethod.getAnnotation(Doc.class).value();
-        }
-
-        ObjectProperty property = new ObjectProperty(type, propertyName, returnType, getterMethod, null, doc);
-        properties.put(property.getName(), property);
+        setterMethods.put(targetPropertyName, method);
       }
     }
 
-    // Retrieve Type class
+    // Check that every setter has a corresponding getter
+    for (Map.Entry<String, Method> entry : setterMethods.entrySet()) {
+      if (!getterMethods.containsKey(entry.getKey())) {
+        throw new TypeException(String.format("no getter method for setter method %s.%s", typeClass, entry.getValue().getName()));
+      }
+    }
+
+    for (Map.Entry<String, Method> entry : getterMethods.entrySet()) {
+      String propertyName = entry.getKey();
+      Method getterMethod = entry.getValue();
+
+      Type<?> returnType = getTypeForWrappedClass(getterMethod.getReturnType());
+      if (returnType == null) {
+        throw new TypeException(String.format("method return type does not match declared Property annotation type: %s.%s",
+            typeName, propertyName));
+      }
+
+      String doc = String.format("%s.%s -> %s", typeName, propertyName, returnType.getName());
+      if (getterMethod.isAnnotationPresent(Doc.class)) {
+        doc = getterMethod.getAnnotation(Doc.class).value();
+      }
+
+      ObjectProperty property = new ObjectProperty(type, propertyName, returnType, getterMethod, setterMethods.get(propertyName), doc);
+      properties.put(property.getName(), property);
+    }
+
+    // Retrieve Type class to get properties field
     Class<?> c = typeClass;
     while (c != Type.class) {
       c = c.getSuperclass();

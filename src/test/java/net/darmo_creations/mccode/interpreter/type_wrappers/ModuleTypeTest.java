@@ -90,9 +90,11 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
 
   @Test
   void setPropertyVariable() {
-    assertEquals(1, this.typeInstance.getProperty(this.p.getScope(), this.m, "a"));
-    this.typeInstance.setProperty(this.p.getScope(), this.m, "a", 2);
-    assertEquals(2, this.typeInstance.getProperty(this.p.getScope(), this.m, "a"));
+    MCList list = new MCList();
+    this.typeInstance.setProperty(this.p.getScope(), this.m, "a", list);
+    Object value = this.typeInstance.getProperty(this.p.getScope(), this.m, "a");
+    assertEquals(list, value);
+    assertNotSame(list, value);
   }
 
   @Test

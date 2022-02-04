@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 import net.darmo_creations.mccode.interpreter.Program;
+import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
@@ -51,7 +52,7 @@ public class ModuleType extends Type<Program> {
       throw new EvaluationException(scope, "mccode.interpreter.error.cannot_set_module_name");
     }
     if (self.getScope().isVariableDefined(propertyName)) {
-      self.getScope().setVariable(propertyName, value, true);
+      self.getScope().setVariable(propertyName, ProgramManager.getTypeForValue(value).copy(scope, value), true);
     } else {
       super.__set_property__(scope, self, propertyName, value);
     }

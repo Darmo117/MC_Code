@@ -61,6 +61,13 @@ public class ObjectProperty {
   }
 
   /**
+   * Return the type of this property.
+   */
+  public Type<?> getType() {
+    return this.type;
+  }
+
+  /**
    * Return the value of this property for the given instance.
    *
    * @param self The instance to get the value from.
@@ -97,7 +104,7 @@ public class ObjectProperty {
         throw new CastException(scope, this.type, ProgramManager.getTypeForValue(value));
       }
       try {
-        this.setter.invoke(this.hostType, self, this.type.implicitCast(scope, value));
+        this.setter.invoke(this.hostType, self, this.type.copy(scope, value));
       } catch (IllegalAccessException | InvocationTargetException e) {
         throw new MCCodeException(e);
       }

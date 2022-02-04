@@ -13,10 +13,10 @@ import java.util.Objects;
 public class SetPropertyStatement extends Statement {
   public static final int ID = 14;
 
-  private static final String TARGET_KEY = "Target";
-  private static final String PROPERTY_NAME_KEY = "PropertyName";
-  private static final String OPERATOR_KEY = "Operator";
-  private static final String VALUE_KEY = "Value";
+  public static final String TARGET_KEY = "Target";
+  public static final String PROPERTY_NAME_KEY = "PropertyName";
+  public static final String OPERATOR_KEY = "Operator";
+  public static final String VALUE_KEY = "Value";
 
   private final Node target;
   private final String propertyName;
@@ -34,7 +34,7 @@ public class SetPropertyStatement extends Statement {
     this(
         NodeNBTHelper.getNodeForTag(tag.getCompoundTag(TARGET_KEY)),
         tag.getString(PROPERTY_NAME_KEY),
-        AssigmentOperator.fromString(OPERATOR_KEY),
+        AssigmentOperator.fromString(tag.getString(OPERATOR_KEY)),
         NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUE_KEY))
     );
   }
@@ -43,10 +43,12 @@ public class SetPropertyStatement extends Statement {
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     Object targetObject = this.target.evaluate(scope);
     Type<?> targetType = ProgramManager.getTypeForValue(targetObject);
-    Object valueObject = this.value.evaluate(scope);
+    Type<?> propertyType = targetType.getPropertyType(scope, targetObject, this.propertyName);
+    Object propertyValue = targetType.getProperty(scope, targetObject, this.propertyName);
+    Object newPropertyValue = this.value.evaluate(scope);
     Object result = this.operator.getBaseOperator()
-        .map(op -> targetType.applyOperator(scope, op, targetObject, valueObject, null, true))
-        .orElse(valueObject);
+        .map(op -> propertyType.applyOperator(scope, op, propertyValue, newPropertyValue, null, true))
+        .orElse(newPropertyValue);
     targetType.setProperty(scope, targetObject, this.propertyName, result);
 
     return StatementAction.PROCEED;

@@ -15,6 +15,7 @@ public class SetupProgramManager implements BeforeAllCallback {
       context.getRoot().getStore(GLOBAL).put(uniqueKey, this);
       ProgramManager.declareDefaultBuiltinTypes();
       ProgramManager.declareDefaultBuiltinFunctions();
+      ProgramManager.declareType(DummyType.class);
       ProgramManager.initialize();
     }
   }

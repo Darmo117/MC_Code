@@ -73,6 +73,19 @@ public abstract class Type<T> {
     return list;
   }
 
+  public Type<?> getPropertyType(final Scope scope, final Object self, final String propertyName) {
+    if (this.properties.containsKey(propertyName)) {
+      return this.properties.get(propertyName).getType();
+    } else {
+      if (this != ProgramManager.getTypeForValue(self)) {
+        throw new TypeException(String.format("property %s expected instance of type %s, got %s",
+            this.getName(), this.getWrappedType(), self != null ? self.getClass() : null));
+      }
+      //noinspection unchecked
+      return ProgramManager.getTypeForValue(this.__get_property__(scope, (T) self, propertyName));
+    }
+  }
+
   /**
    * Return the value of a property for the given instance object.
    *
