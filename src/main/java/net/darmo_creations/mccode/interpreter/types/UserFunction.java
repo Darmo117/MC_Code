@@ -3,7 +3,7 @@ package net.darmo_creations.mccode.interpreter.types;
 import net.darmo_creations.mccode.interpreter.StackTraceElement;
 import net.darmo_creations.mccode.interpreter.*;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
-import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
+import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.darmo_creations.mccode.interpreter.statements.ReturnStatement;
 import net.darmo_creations.mccode.interpreter.statements.Statement;
 import net.darmo_creations.mccode.interpreter.statements.StatementAction;
@@ -77,7 +77,7 @@ public class UserFunction extends Function {
         break;
       }
       if (action == StatementAction.WAIT) {
-        throw new MCCodeRuntimeException(scope, "mccode.interpreter.error.wait_in_function");
+        throw new SyntaxErrorException("mccode.interpreter.error.wait_in_function");
       }
       this.ip++;
     }

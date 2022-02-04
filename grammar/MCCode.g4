@@ -72,7 +72,7 @@ TRUE  : 'true';
 FALSE : 'false';
 INT   : [0-9]+;
 FLOAT : ([0-9]+'.'[0-9]*|'.'?[0-9]+)([eE]'-'?[0-9]+)?;
-STRING: '"'(~["\n\r]|'\\'[n"\\])*'"'; // FIXME \ not very well handled
+STRING: '"'('\\'["\\n]|~["\\\n\r])*?'"';
 IDENT : [a-zA-Z_][a-zA-Z0-9_]*;
 
 module:
@@ -91,7 +91,7 @@ statement:
     (VAR | CONST) name=IDENT ASSIGN value=expr SEMIC # DeclareVariableStatement // ID: 10
   | DELETE name=IDENT SEMIC                          # DeleteStatement // ID: 20
   | DELETE target=expr LBRACK key=expr RBRACK SEMIC  # DeleteItemStatement // ID: 21
-  | IF if_cond=expr THEN if_stmts=statement* (ELIF elif_cond=expr THEN elif_stmts=statement*)* (ELSE else_stmts=statement*)? END # IfStatement // ID: 40
+  | IF cond=expr THEN statement* (elseif)* (else_)? END # IfStatement // ID: 40
   | WHILE cond=expr DO loop_stmt* END                  # WhileLoopStatement // ID: 41
   | FOR variable=IDENT IN range=expr DO loop_stmt* END # ForLoopStatement // ID: 42
   | WAIT expr SEMIC               # WaitStatement // ID: 50 Raises an error if present in a function
@@ -101,6 +101,10 @@ statement:
   | target=expr DOT name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC         # SetPropertyStatement // ID: 14
   | expr SEMIC # ExpressionStatement // ID: 30
 ;
+
+// Split if-statement for easier parsing
+elseif: ELIF cond=expr THEN statement*;
+else_: ELSE statement*;
 
 loop_stmt:
     BREAK SEMIC    # BreakStatement // ID: 60

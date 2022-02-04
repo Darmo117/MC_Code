@@ -129,6 +129,18 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpressionStatement(MCCodeParser.ExpressionStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MCCodeParser#elseif}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseif(MCCodeParser.ElseifContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MCCodeParser#else_}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElse_(MCCodeParser.Else_Context ctx);
+	/**
 	 * Visit a parse tree produced by the {@code BreakStatement}
 	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
 	 * @param ctx the parse tree

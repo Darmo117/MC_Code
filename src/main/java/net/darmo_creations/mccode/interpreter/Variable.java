@@ -5,18 +5,21 @@ import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Objects;
+
 /**
  * Variables can hold values of any type. They may be visible and editable from in-game commands.
  * A constant variable cannot have its value changed. If the deletable flag is set to false,
  * any attempt to delete through {@link Scope#declareVariable(Variable)} will throw an error.
  */
 public class Variable implements NBTSerializable {
-  private static final String NAME_KEY = "Name";
-  private static final String PUBLIC_KEY = "Public";
-  private static final String EDITABLE_KEY = "Editable";
-  private static final String CONSTANT_KEY = "Constant";
-  private static final String VALUE_KEY = "Value";
-  private static final String TYPE_KEY = "Type";
+  public static final String NAME_KEY = "Name";
+  public static final String PUBLIC_KEY = "Public";
+  public static final String EDITABLE_KEY = "Editable";
+  public static final String CONSTANT_KEY = "Constant";
+  public static final String VALUE_KEY = "Value";
+  public static final String TYPE_KEY = "Type";
+  public static final String DELETABLE_KEY = "Deletable";
 
   private final String name;
   private final boolean publiclyVisible;
@@ -61,8 +64,8 @@ public class Variable implements NBTSerializable {
     this.publiclyVisible = tag.getBoolean(PUBLIC_KEY);
     this.editableThroughCommands = tag.getBoolean(EDITABLE_KEY);
     this.constant = tag.getBoolean(CONSTANT_KEY);
+    this.deletable = tag.getBoolean(DELETABLE_KEY);
     this.value = ProgramManager.getTypeForName(tag.getString(TYPE_KEY)).readFromNBT(scope, tag.getCompoundTag(VALUE_KEY));
-    this.deletable = false;
   }
 
   /**
@@ -74,8 +77,15 @@ public class Variable implements NBTSerializable {
 
   /**
    * Return this variable’s value.
+   *
+   * @param scope       The scope this variable is declared in.
+   * @param fromCommand Whether this operation is performed from a command.
+   * @throws EvaluationException If the variable is queried through a command but not publicly visible.
    */
-  public Object getValue() {
+  public Object getValue(final Scope scope, final boolean fromCommand) {
+    if (!this.publiclyVisible && fromCommand) {
+      throw new EvaluationException(scope, "mccode.interpreter.error.getting_from_command", this.name);
+    }
     return this.value;
   }
 
@@ -137,9 +147,32 @@ public class Variable implements NBTSerializable {
     tag.setBoolean(PUBLIC_KEY, this.publiclyVisible);
     tag.setBoolean(EDITABLE_KEY, this.editableThroughCommands);
     tag.setBoolean(CONSTANT_KEY, this.constant);
+    tag.setBoolean(DELETABLE_KEY, this.deletable);
     Type<?> type = ProgramManager.getTypeForValue(this.value);
     tag.setString(TYPE_KEY, type.getName());
     tag.setTag(VALUE_KEY, type.writeToNBT(this.value));
     return tag;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    Variable variable = (Variable) o;
+    return this.publiclyVisible == variable.publiclyVisible
+        && this.editableThroughCommands == variable.editableThroughCommands
+        && this.constant == variable.constant
+        && this.deletable == variable.deletable
+        && this.name.equals(variable.name)
+        && Objects.equals(this.value, variable.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.name, this.publiclyVisible, this.editableThroughCommands, this.constant, this.deletable, this.value);
   }
 }

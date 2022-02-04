@@ -37,11 +37,11 @@ public class ProgramManager extends WorldSavedData {
   private static final Map<String, BuiltinFunction> FUNCTIONS = new HashMap<>();
   private static boolean initialized;
 
-  private static final String PROGRAMS_KEY = "Programs";
-  private static final String PROGRAM_KEY = "Program";
-  private static final String SCHEDULE_KEY = "ScheduleDelay";
-  private static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
-  private static final String RUNNING_KEY = "Running";
+  public static final String PROGRAMS_KEY = "Programs";
+  public static final String PROGRAM_KEY = "Program";
+  public static final String SCHEDULE_KEY = "ScheduleDelay";
+  public static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
+  public static final String RUNNING_KEY = "Running";
 
   private File programsDir;
   private World world;
@@ -91,11 +91,21 @@ public class ProgramManager extends WorldSavedData {
       if (this.runningPrograms.get(program.getName())) {
         try {
           program.execute();
+        } catch (SyntaxErrorException e) {
+          errorReports.add(new ProgramErrorReport(program.getScope(), e.getMessage()));
+          toRemove.add(program);
+          continue;
         } catch (MCCodeRuntimeException e) {
           errorReports.add(new ProgramErrorReport(e.getScope(), e.getTranslationKey(), e.getArgs()));
           toRemove.add(program);
+          continue;
         } catch (ArithmeticException e) {
           errorReports.add(new ProgramErrorReport(program.getScope(), "mccode.interpreter.error.math_error", e.getMessage()));
+          toRemove.add(program);
+          continue;
+        }
+        // Unload programs that have terminated
+        if (program.hasTerminated() && (!this.programsSchedules.containsKey(program.getName()) || this.programsRepeats.get(program.getName()) == 0)) {
           toRemove.add(program);
         }
       }
@@ -110,22 +120,13 @@ public class ProgramManager extends WorldSavedData {
 
       if (program.hasTerminated()) {
         if (delay <= 0) {
-          if (this.programsRepeats.containsKey(programName)) {
-            int repeatAmount = this.programsRepeats.get(programName);
-            //noinspection OptionalGetWithoutIsPresent
-            this.programsSchedules.put(programName, program.getScheduleDelay().get());
-            if (repeatAmount > 1) {
-              this.programsRepeats.put(programName, repeatAmount - 1);
-            } else {
-              this.unloadProgram(programName);
-            }
-          } else {
-            this.unloadProgram(programName);
+          int repeatAmount = this.programsRepeats.get(programName);
+          if (repeatAmount != Integer.MAX_VALUE) {
+            this.programsRepeats.put(programName, repeatAmount - 1);
           }
-          if (this.programs.containsKey(programName)) {
-            program.reset();
-          }
-
+          //noinspection OptionalGetWithoutIsPresent
+          this.programsSchedules.put(programName, program.getScheduleDelay().get());
+          program.reset();
         } else {
           this.programsSchedules.put(programName, delay - 1);
         }
@@ -161,10 +162,25 @@ public class ProgramManager extends WorldSavedData {
       throw new ProgramFileNotFoundException(programFile.getName());
     }
 
-    Program program = ProgramParser.parse(this, name, code.toString());
-    program.getScheduleDelay().ifPresent(t -> this.programsSchedules.put(program.getName(), t));
-    program.getRepeatAmount().ifPresent(t -> this.programsRepeats.put(program.getName(), t));
+    this.loadProgram(ProgramParser.parse(this, name, code.toString()));
+  }
+
+  /**
+   * Load a program.
+   *
+   * @param program The program to load.
+   * @apiNote Package access level for tests.
+   */
+  void loadProgram(Program program) {
+    String name = program.getName();
+    if (this.programs.containsKey(name)) {
+      throw new ProgramAlreadyLoadedException(name);
+    }
     this.programs.put(name, program);
+    program.getScheduleDelay().ifPresent(t -> {
+      this.programsSchedules.put(program.getName(), t);
+      this.programsRepeats.put(program.getName(), program.getRepeatAmount().orElse(1));
+    });
     this.runningPrograms.put(name, false);
   }
 
@@ -260,9 +276,7 @@ public class ProgramManager extends WorldSavedData {
       String programName = p.getName();
       if (this.programsSchedules.containsKey(programName)) {
         programTag.setInteger(SCHEDULE_KEY, this.programsSchedules.get(programName));
-        if (this.programsRepeats.containsKey(programName)) {
-          programTag.setInteger(REPEAT_AMOUNT_KEY, this.programsRepeats.get(programName));
-        }
+        programTag.setInteger(REPEAT_AMOUNT_KEY, this.programsRepeats.get(programName));
       }
       programTag.setBoolean(RUNNING_KEY, this.runningPrograms.get(programName));
       programs.appendTag(programTag);
@@ -291,6 +305,10 @@ public class ProgramManager extends WorldSavedData {
       this.runningPrograms.put(program.getName(), programTag.getBoolean(RUNNING_KEY));
     }
   }
+
+  /*
+   * Static methods
+   */
 
   /**
    * Attaches a manager to the global storage through a world instance.

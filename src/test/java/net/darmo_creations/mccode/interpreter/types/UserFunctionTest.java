@@ -5,10 +5,13 @@ import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.TestBase;
 import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.darmo_creations.mccode.interpreter.nodes.FunctionCallNode;
+import net.darmo_creations.mccode.interpreter.nodes.IntLiteralNode;
 import net.darmo_creations.mccode.interpreter.nodes.VariableNode;
 import net.darmo_creations.mccode.interpreter.statements.ExpressionStatement;
 import net.darmo_creations.mccode.interpreter.statements.ReturnStatement;
+import net.darmo_creations.mccode.interpreter.statements.WaitStatement;
 import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -50,6 +53,13 @@ class UserFunctionTest extends TestBase {
   void apply() {
     this.p.getScope().declareVariable(new Variable("p", false, false, false, true, 1));
     assertEquals(1, this.f.apply(this.p.getScope()));
+  }
+
+  @Test
+  void waitStatementError() {
+    UserFunction f = new UserFunction("f", Collections.emptyList(),
+        Collections.singletonList(new WaitStatement(new IntLiteralNode(1))));
+    assertThrows(SyntaxErrorException.class, () -> f.apply(this.p.getScope()));
   }
 
   @Test

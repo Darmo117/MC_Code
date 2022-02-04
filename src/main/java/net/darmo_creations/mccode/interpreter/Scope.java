@@ -19,7 +19,7 @@ public class Scope implements NBTDeserializable {
    */
   public static final String MAIN_SCOPE_NAME = "$main";
 
-  private static final String VARIABLES_KEY = "Variables";
+  public static final String VARIABLES_KEY = "Variables";
 
   private final String name;
   private final Scope parentScope;
@@ -97,7 +97,7 @@ public class Scope implements NBTDeserializable {
    * @return True if a variable with this name exists, false otherwise.
    */
   public boolean isVariableDefined(final String name) {
-    return this.variables.containsKey(name);
+    return this.variables.containsKey(name) || (this.parentScope != null && this.parentScope.isVariableDefined(name));
   }
 
   /**
@@ -109,14 +109,15 @@ public class Scope implements NBTDeserializable {
    * @throws EvaluationException If the variable doesn’t exist or cannot be accessed from command but fromCommand is true.
    */
   public Object getVariable(final String name, final boolean fromCommand) throws EvaluationException {
-    if (!this.variables.containsKey(name) || fromCommand && this.parentScope != null) {
-      if (this.parentScope != null && !fromCommand) {
-        return this.parentScope.getVariable(name, false);
+    if (!this.variables.containsKey(name)) {
+      if (this.parentScope != null) {
+        return this.parentScope.getVariable(name, fromCommand);
       } else {
         throw new EvaluationException(this, "mccode.interpreter.error.undefined_variable", name);
       }
+    } else {
+      return this.variables.get(name).getValue(this, fromCommand);
     }
-    return this.variables.get(name).getValue();
   }
 
   /**
@@ -129,14 +130,15 @@ public class Scope implements NBTDeserializable {
    *                             be set from commands and fromCommand is true.
    */
   public void setVariable(final String name, Object value, final boolean fromCommand) throws EvaluationException {
-    if (!this.variables.containsKey(name) || fromCommand && this.parentScope != null) {
-      if (this.parentScope != null && !fromCommand) {
-        this.parentScope.setVariable(name, value, false);
+    if (!this.variables.containsKey(name)) {
+      if (this.parentScope != null) {
+        this.parentScope.setVariable(name, value, fromCommand);
       } else {
         throw new EvaluationException(this, "mccode.interpreter.error.undefined_variable", name);
       }
+    } else {
+      this.variables.get(name).setValue(this, value, fromCommand);
     }
-    this.variables.get(name).setValue(this, value, fromCommand);
   }
 
   /**
@@ -160,17 +162,19 @@ public class Scope implements NBTDeserializable {
    * @throws EvaluationException If the variable doesn’t exist or is not deletable.
    */
   public void deleteVariable(final String name, final boolean fromCommand) throws EvaluationException {
-    if (!this.variables.containsKey(name) || fromCommand && this.parentScope != null) {
-      if (this.parentScope != null && !fromCommand) {
-        this.parentScope.deleteVariable(name, false);
+    if (!this.variables.containsKey(name)) {
+      if (this.parentScope != null) {
+        this.parentScope.deleteVariable(name, fromCommand);
       } else {
         throw new EvaluationException(this, "mccode.interpreter.error.undefined_variable", name);
       }
+    } else {
+      Variable variable = this.variables.get(name);
+      if (!variable.isDeletable() || fromCommand && !variable.isEditableThroughCommands()) {
+        throw new EvaluationException(this, "mccode.interpreter.error.cannot_delete_variable", name);
+      }
+      this.variables.remove(name);
     }
-    if (!this.variables.get(name).isDeletable()) {
-      throw new EvaluationException(this, "mccode.interpreter.error.cannot_delete_variable", name);
-    }
-    this.variables.remove(name);
   }
 
   /**
@@ -222,7 +226,7 @@ public class Scope implements NBTDeserializable {
     NBTTagCompound tag = new NBTTagCompound();
     NBTTagList variablesList = new NBTTagList();
     this.variables.values().stream()
-        .filter(Variable::isDeletable)
+        .filter(Variable::isDeletable) // Don’t serialize builtin functions and variables
         .forEach(v -> variablesList.appendTag(v.writeToNBT()));
     tag.setTag(VARIABLES_KEY, variablesList);
     return tag;
@@ -233,8 +237,8 @@ public class Scope implements NBTDeserializable {
     if (this.parentScope != null) {
       throw new MCCodeException("cannot load non-global scope");
     }
+    this.reset();
     NBTTagList list = tag.getTagList(VARIABLES_KEY, new NBTTagCompound().getId());
-    this.variables = new HashMap<>();
     for (NBTBase t : list) {
       Variable variable = new Variable((NBTTagCompound) t, this);
       this.variables.put(variable.getName(), variable);

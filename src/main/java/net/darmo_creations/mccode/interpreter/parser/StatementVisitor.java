@@ -5,6 +5,7 @@ import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeBaseVisitor;
 import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeParser;
 import net.darmo_creations.mccode.interpreter.statements.*;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
  */
 public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
   private final NodeVisitor nodeVisitor;
+  private final IfVisitor ifVisitor;
 
   public StatementVisitor() {
     this.nodeVisitor = new NodeVisitor();
+    this.ifVisitor = new IfVisitor(this, this.nodeVisitor);
   }
 
   @Override
@@ -104,24 +107,20 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
   @Override
   public Statement visitIfStatement(MCCodeParser.IfStatementContext ctx) {
     List<Node> conditions = new LinkedList<>();
-    conditions.add(this.nodeVisitor.visit(ctx.if_cond));
-    if (ctx.elif_cond != null) {
-      ctx.elif_cond.children.stream().map(this.nodeVisitor::visit).forEach(conditions::add);
+    List<List<Statement>> branches = new LinkedList<>();
+
+    conditions.add(this.nodeVisitor.visit(ctx.cond));
+    branches.add(ctx.statement().stream().map(super::visit).collect(Collectors.toList()));
+
+    for (MCCodeParser.ElseifContext elseifContext : ctx.elseif()) {
+      Pair<Node, List<Statement>> branch = this.ifVisitor.visit(elseifContext);
+      conditions.add(branch.getLeft());
+      branches.add(branch.getRight());
     }
 
-    List<List<Statement>> branches = new LinkedList<>();
-    branches.add(ctx.if_stmts.children.stream().map(super::visit).collect(Collectors.toList()));
-    if (ctx.elif_stmts != null) {
-      // TODO how to extract elseif statements?
-      ctx.elif_stmts.children.stream()
-          .map(super::visit)
-          .collect(Collectors.toList());
-    }
-    List<Statement> elseStatements;
-    if (ctx.else_stmts != null) {
-      elseStatements = ctx.else_stmts.children.stream().map(super::visit).collect(Collectors.toList());
-    } else {
-      elseStatements = new ArrayList<>();
+    List<Statement> elseStatements = new ArrayList<>();
+    if (ctx.else_() != null) {
+      elseStatements = this.ifVisitor.visit(ctx.else_()).getRight();
     }
 
     return new IfStatement(

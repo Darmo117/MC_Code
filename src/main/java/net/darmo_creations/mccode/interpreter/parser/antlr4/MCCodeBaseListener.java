@@ -220,6 +220,30 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterElseif(MCCodeParser.ElseifContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitElseif(MCCodeParser.ElseifContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterElse_(MCCodeParser.Else_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitElse_(MCCodeParser.Else_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBreakStatement(MCCodeParser.BreakStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}

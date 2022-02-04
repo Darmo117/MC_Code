@@ -2,6 +2,7 @@ package net.darmo_creations.mccode.interpreter;
 
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
+import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.darmo_creations.mccode.interpreter.statements.Statement;
 import net.darmo_creations.mccode.interpreter.statements.StatementAction;
 import net.darmo_creations.mccode.interpreter.statements.StatementNBTHelper;
@@ -21,13 +22,13 @@ import java.util.stream.Collectors;
 public class Program {
   public static final String WORLD_VAR_NAME = "WORLD";
 
-  private static final String NAME_KEY = "Name";
-  private static final String STATEMENTS_KEY = "Statements";
-  private static final String SCOPE_KEY = "Scope";
-  private static final String SCHEDULE_DELAY_KEY = "ScheduleDelay";
-  private static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
-  private static final String WAIT_TIME_KEY = "WaitTime";
-  private static final String IP_KEY = "IP";
+  public static final String NAME_KEY = "Name";
+  public static final String STATEMENTS_KEY = "Statements";
+  public static final String SCOPE_KEY = "Scope";
+  public static final String SCHEDULE_DELAY_KEY = "ScheduleDelay";
+  public static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
+  public static final String WAIT_TIME_KEY = "WaitTime";
+  public static final String IP_KEY = "IP";
 
   private final String name;
   private final List<Statement> statements;
@@ -84,12 +85,12 @@ public class Program {
     this.name = tag.getString(NAME_KEY);
     this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);
     this.scope = new Scope(this);
+    this.setup();
     this.scope.readFromNBT(tag.getCompoundTag(SCOPE_KEY));
     this.scheduleDelay = tag.getInteger(SCHEDULE_DELAY_KEY);
     this.repeatAmount = tag.getInteger(REPEAT_AMOUNT_KEY);
     this.timeToWait = tag.getInteger(WAIT_TIME_KEY);
     this.ip = tag.getInteger(IP_KEY);
-    this.setup();
   }
 
   /**
@@ -157,8 +158,10 @@ public class Program {
    *
    * @throws MCCodeRuntimeException If any error occurs.
    * @throws ArithmeticException    If any math error occurs.
+   * @throws SyntaxErrorException   If any break/continue statement is found outside a loop,
+   *                                or a return statement is found outside a function.
    */
-  public void execute() throws MCCodeRuntimeException, ArithmeticException {
+  public void execute() throws MCCodeRuntimeException, ArithmeticException, SyntaxErrorException {
     if (this.timeToWait > 0) {
       this.timeToWait--;
     } else if (this.ip < this.statements.size()) {
@@ -166,7 +169,11 @@ public class Program {
         StatementAction action = this.statements.get(this.ip).execute(this.scope);
         this.ip++;
         if (action == StatementAction.EXIT_FUNCTION) {
-          throw new MCCodeRuntimeException(this.scope, "mccode.interpreter.error.return_outside_function");
+          throw new SyntaxErrorException("mccode.interpreter.error.return_outside_function");
+        } else if (action == StatementAction.EXIT_LOOP) {
+          throw new SyntaxErrorException("mccode.interpreter.error.break_outside_loop");
+        } else if (action == StatementAction.CONTINUE_LOOP) {
+          throw new SyntaxErrorException("mccode.interpreter.error.continue_outside_loop");
         } else if (action == StatementAction.WAIT) {
           break;
         }
@@ -213,5 +220,26 @@ public class Program {
   @Override
   public String toString() {
     return this.statements.stream().map(Statement::toString).collect(Collectors.joining("\n"));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+    Program that = (Program) o;
+    return this.timeToWait == that.timeToWait
+        && this.name.equals(that.name)
+        && this.statements.equals(that.statements)
+        && Objects.equals(this.scheduleDelay, that.scheduleDelay)
+        && Objects.equals(this.repeatAmount, that.repeatAmount);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.name, this.statements, this.scheduleDelay, this.repeatAmount, this.timeToWait);
   }
 }

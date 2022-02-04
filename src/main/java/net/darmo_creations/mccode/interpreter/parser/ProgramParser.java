@@ -14,7 +14,7 @@ import java.util.BitSet;
 /**
  * Parser that returns a {@link Program} instance for the given code.
  */
-public class ProgramParser {
+public final class ProgramParser {
   /**
    * Return a {@link Program} instance for the given code.
    *
@@ -53,5 +53,8 @@ public class ProgramParser {
     @Override
     public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
     }
+  }
+
+  private ProgramParser() {
   }
 }

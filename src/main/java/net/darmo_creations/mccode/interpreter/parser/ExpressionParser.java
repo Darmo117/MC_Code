@@ -13,7 +13,7 @@ import java.util.BitSet;
 /**
  * Parser that returns a {@link Node} instance for the given expression.
  */
-public class ExpressionParser {
+public final class ExpressionParser {
   /**
    * Return a {@link Node} instance for the given expression.
    *
@@ -49,5 +49,8 @@ public class ExpressionParser {
     @Override
     public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
     }
+  }
+
+  private ExpressionParser() {
   }
 }
