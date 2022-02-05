@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * The state of program managers can be saved and restored.
  */
 public class ProgramManager extends WorldSavedData {
-  public static final String DATA_NAME = MCCode.MOD_ID + ":program_manager";
+  public static final String DATA_NAME = MCCode.MOD_ID + "_program_manager";
 
   private static final Map<String, Type<?>> TYPES = new HashMap<>();
   private static final Map<Class<?>, Type<?>> WRAPPED_TYPES = new HashMap<>();
@@ -51,6 +51,14 @@ public class ProgramManager extends WorldSavedData {
   private final Map<String, Integer> programsSchedules;
   private final Map<String, Integer> programsRepeats;
   private final Map<String, Boolean> runningPrograms;
+  private long lastTick;
+
+  /**
+   * Create a program manager with the default name.
+   */
+  public ProgramManager() {
+    this(DATA_NAME);
+  }
 
   /**
    * Create a program manager with the given name.
@@ -61,6 +69,7 @@ public class ProgramManager extends WorldSavedData {
     this.programsSchedules = new HashMap<>();
     this.programsRepeats = new HashMap<>();
     this.runningPrograms = new HashMap<>();
+    this.lastTick = -1;
   }
 
   /**
@@ -76,6 +85,7 @@ public class ProgramManager extends WorldSavedData {
   public void setWorld(World world) {
     this.world = world;
     this.programsDir = Paths.get(this.world.getSaveHandler().getWorldDirectory().getAbsolutePath(), "data", "mccode_programs").toFile();
+    this.programs.values().forEach(Program::setup);
   }
 
   /**
@@ -85,6 +95,13 @@ public class ProgramManager extends WorldSavedData {
    * @return A list of program errors that have occured.
    */
   public List<ProgramErrorReport> executePrograms() {
+    long currentTick = this.world.getTotalWorldTime();
+    // Tick event still fired when unloading world but actual tick value stays the same
+    // -> Ignore them
+    if (currentTick == this.lastTick) {
+      return Collections.emptyList();
+    }
+    this.lastTick = currentTick;
     List<ProgramErrorReport> errorReports = new ArrayList<>();
 
     // Execute all programs
@@ -92,6 +109,7 @@ public class ProgramManager extends WorldSavedData {
     for (Program program : this.programs.values()) {
       if (this.runningPrograms.get(program.getName())) {
         try {
+          this.markDirty();
           program.execute();
         } catch (SyntaxErrorException e) {
           errorReports.add(new ProgramErrorReport(program.getScope(), e.getMessage()));
@@ -192,6 +210,7 @@ public class ProgramManager extends WorldSavedData {
       this.programsRepeats.put(program.getName(), program.getRepeatAmount().orElse(1));
     });
     this.runningPrograms.put(name, false);
+    this.markDirty();
   }
 
   /**
@@ -208,6 +227,7 @@ public class ProgramManager extends WorldSavedData {
     this.programsSchedules.remove(name);
     this.programsRepeats.remove(name);
     this.runningPrograms.remove(name);
+    this.markDirty();
   }
 
   /**
@@ -222,6 +242,7 @@ public class ProgramManager extends WorldSavedData {
     }
     this.programs.get(name).reset();
     this.runningPrograms.put(name, false);
+    this.markDirty();
   }
 
   /**
@@ -239,6 +260,7 @@ public class ProgramManager extends WorldSavedData {
       throw new ProgramAlreadyRunningException(name);
     }
     this.runningPrograms.put(name, true);
+    this.markDirty();
   }
 
   /**
@@ -256,6 +278,7 @@ public class ProgramManager extends WorldSavedData {
       throw new ProgramAlreadyPausedException(name);
     }
     this.runningPrograms.put(name, false);
+    this.markDirty();
   }
 
   /**
@@ -328,12 +351,11 @@ public class ProgramManager extends WorldSavedData {
    * @return The manager instance.
    */
   public static ProgramManager attachToGlobalStorage(World world) {
-    MapStorage storage = world.getMapStorage();
-    //noinspection ConstantConditions
+    MapStorage storage = world.getPerWorldStorage();
     ProgramManager instance = (ProgramManager) storage.getOrLoadData(ProgramManager.class, DATA_NAME);
 
     if (instance == null) {
-      instance = new ProgramManager(DATA_NAME);
+      instance = new ProgramManager();
       storage.setData(DATA_NAME, instance);
     }
     instance.setWorld(world);

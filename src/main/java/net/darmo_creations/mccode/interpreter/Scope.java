@@ -238,7 +238,6 @@ public class Scope implements NBTDeserializable {
     if (this.parentScope != null) {
       throw new MCCodeException("cannot load non-global scope");
     }
-    this.reset();
     NBTTagList list = tag.getTagList(VARIABLES_KEY, new NBTTagCompound().getId());
     for (NBTBase t : list) {
       Variable variable = new Variable((NBTTagCompound) t, this);

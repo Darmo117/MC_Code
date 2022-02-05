@@ -64,15 +64,27 @@ public class MCCode {
   static class EventsHandler {
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
-      INSTANCE.PROGRAM_MANAGERS.put(event.getWorld(), ProgramManager.attachToGlobalStorage(event.getWorld()));
+      if (!event.getWorld().isRemote) {
+        INSTANCE.PROGRAM_MANAGERS.put(event.getWorld(), ProgramManager.attachToGlobalStorage(event.getWorld()));
+      }
+    }
+
+    @SubscribeEvent
+    public static void onWorldUnload(WorldEvent.Unload event) {
+      if (!event.getWorld().isRemote) {
+        INSTANCE.PROGRAM_MANAGERS.remove(event.getWorld());
+      }
     }
 
     @SubscribeEvent
     public static void onTick(TickEvent.WorldTickEvent event) {
-      // TODO log errors
-      for (ProgramManager programManager : INSTANCE.PROGRAM_MANAGERS.values()) {
-        List<ProgramErrorReport> errorReports = programManager.executePrograms();
-        errorReports.forEach(e -> System.out.println(e.getTranslationKey() + " " + Arrays.toString(e.getArgs())));
+      if (!event.world.isRemote && event.phase == TickEvent.Phase.START) {
+        // TODO log errors to chat/console
+        for (ProgramManager programManager : INSTANCE.PROGRAM_MANAGERS.values()) {
+          List<ProgramErrorReport> errorReports = programManager.executePrograms();
+          // TEMP
+          errorReports.forEach(e -> System.out.println(e.getTranslationKey() + " " + Arrays.toString(e.getArgs())));
+        }
       }
     }
   }

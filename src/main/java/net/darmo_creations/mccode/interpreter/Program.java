@@ -110,7 +110,6 @@ public class Program {
     this.name = tag.getString(NAME_KEY);
     this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);
     this.scope = new Scope(this);
-    this.setup();
     this.scope.readFromNBT(tag.getCompoundTag(SCOPE_KEY));
     this.isModule = tag.getBoolean(IS_MODULE_KEY);
     if (!this.isModule) {
@@ -128,11 +127,13 @@ public class Program {
   /**
    * Declare global variables.
    */
-  private void setup() {
+  public void setup() {
     this.scope.declareVariable(new Variable(WORLD_VAR_NAME, false, false, true,
         false, new WorldProxy(this.programManager.getWorld())));
-    this.scope.declareVariable(new Variable(NAME_SPECIAL_VARIABLE, true, false, false,
-        false, this.getName()));
+    if (!this.scope.isVariableDefined(NAME_SPECIAL_VARIABLE)) { // May have been overriden by program
+      this.scope.declareVariable(new Variable(NAME_SPECIAL_VARIABLE, true, false, false,
+          false, this.getName()));
+    }
   }
 
   /**

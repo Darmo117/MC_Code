@@ -66,11 +66,14 @@ public class CommandProgram extends CommandBase {
           }
           this.listPrograms(sender);
           break;
-        case GET:
+        case GET_VARIABLE:
           this.getVariableValue(sender, args);
           break;
-        case SET:
+        case SET_VARIABLE:
           this.setVariableValue(sender, args);
+          break;
+        case DELETE_VARIABLE:
+          this.deleteVariable(sender, args);
           break;
       }
     } else {
@@ -181,10 +184,12 @@ public class CommandProgram extends CommandBase {
     if (args.length < 3) {
       throw new WrongUsageException(this.getUsage(sender));
     }
+
     ProgramManager pm = MCCode.INSTANCE.PROGRAM_MANAGERS.get(sender.getEntityWorld());
     String programName = args[0];
     Optional<Program> program = pm.getProgram(programName);
     if (program.isPresent()) {
+      String variableName = args[1];
       String expression = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
       Node node;
       try {
@@ -196,11 +201,29 @@ public class CommandProgram extends CommandBase {
       Object value;
       try {
         value = node.evaluate(program.get().getScope());
-        program.get().getScope().setVariable(args[1], value, true);
+        program.get().getScope().setVariable(variableName, value, true);
+        pm.markDirty();
       } catch (EvaluationException e) {
         throw new CommandException(e.getTranslationKey(), e.getArgs());
       }
-      notifyCommandListener(sender, this, "commands.program.feedback.set_variable_value", value);
+      notifyCommandListener(sender, this, "commands.program.feedback.set_variable_value", variableName, node);
+    } else {
+      throw new CommandException("mccode.interpreter.error.program_not_found", programName);
+    }
+  }
+
+  private void deleteVariable(ICommandSender sender, final String[] args) throws CommandException {
+    if (args.length != 2) {
+      throw new WrongUsageException(this.getUsage(sender));
+    }
+
+    ProgramManager pm = MCCode.INSTANCE.PROGRAM_MANAGERS.get(sender.getEntityWorld());
+    String programName = args[0];
+    Optional<Program> program = pm.getProgram(programName);
+    if (program.isPresent()) {
+      String variableName = args[1];
+      program.get().getScope().deleteVariable(variableName, true);
+      pm.markDirty();
     } else {
       throw new CommandException("mccode.interpreter.error.program_not_found", programName);
     }
@@ -212,7 +235,7 @@ public class CommandProgram extends CommandBase {
   }
 
   private enum Option {
-    LOAD, UNLOAD, RESET, RUN, PAUSE, LIST, GET, SET;
+    LOAD, UNLOAD, RESET, RUN, PAUSE, LIST, GET_VARIABLE, SET_VARIABLE, DELETE_VARIABLE;
 
     public static Optional<Option> fromString(final String s) {
       for (Option value : values()) {
