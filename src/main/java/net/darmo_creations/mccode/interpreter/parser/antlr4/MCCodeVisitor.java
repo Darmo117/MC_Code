@@ -17,6 +17,12 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModule(MCCodeParser.ModuleContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MCCodeParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpression(MCCodeParser.ExpressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MCCodeParser#import_statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

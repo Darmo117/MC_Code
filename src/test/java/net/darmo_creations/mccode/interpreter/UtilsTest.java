@@ -58,4 +58,20 @@ class UtilsTest {
         Arguments.of("\"\\\\\"", "\\")
     );
   }
+
+  @ParameterizedTest
+  @MethodSource("provideArgsForUnescapeString")
+  void unescapeString(String expected, String s) {
+    assertEquals(expected, Utils.unescapeString(s));
+  }
+
+  public static Stream<Arguments> provideArgsForUnescapeString() {
+    return Stream.of(
+        Arguments.of("", "\"\""),
+        Arguments.of("a", "\"a\""),
+        Arguments.of("\n", "\"\\n\""),
+        Arguments.of("\"", "\"\\\"\""),
+        Arguments.of("\\", "\"\\\\\"")
+    );
+  }
 }

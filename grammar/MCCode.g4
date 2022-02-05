@@ -80,6 +80,8 @@ module:
   (import_statement)*
   global_statement* EOF;
 
+expression: expr EOF;
+
 import_statement: IMPORT IDENT (DOT IDENT)* (AS alias=IDENT)? SEMIC; // ID: 0
 
 global_statement:
@@ -123,7 +125,7 @@ expr:
   | FLOAT  # FloatLiteral // ID: 3
   | STRING # StringLiteral // ID: 4
   | LBRACK (expr (COMMA expr)* COMMA?)? RBRACK                       # ListLiteral // ID: 5
-  | LCURL (IDENT COLON expr (COMMA IDENT COLON expr)* COMMA?)? RCURL # MapLiteral // ID: 6
+  | LCURL (STRING COLON expr (COMMA STRING COLON expr)* COMMA?)? RCURL # MapLiteral // ID: 6
   | LCURL expr (COMMA expr)* COMMA? RCURL                            # SetLiteral // ID: 7
   | object=expr DOT property=IDENT LPAREN (expr (COMMA expr)* COMMA?)? RPAREN # MethodCall // ID: 102
   | object=expr DOT property=IDENT                  # GetProperty // ID: 101

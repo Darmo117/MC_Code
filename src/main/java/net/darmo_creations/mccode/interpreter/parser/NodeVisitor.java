@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.parser;
 
+import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.nodes.*;
 import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeBaseVisitor;
 import net.darmo_creations.mccode.interpreter.parser.antlr4.MCCodeParser;
@@ -14,6 +15,11 @@ import java.util.stream.Collectors;
  * Visitor for {@link Node} class.
  */
 public class NodeVisitor extends MCCodeBaseVisitor<Node> {
+  @Override
+  public Node visitExpression(MCCodeParser.ExpressionContext ctx) {
+    return super.visit(ctx.expr());
+  }
+
   @Override
   public Node visitParentheses(MCCodeParser.ParenthesesContext ctx) {
     return super.visit(ctx.exp);
@@ -41,9 +47,7 @@ public class NodeVisitor extends MCCodeBaseVisitor<Node> {
 
   @Override
   public Node visitStringLiteral(MCCodeParser.StringLiteralContext ctx) {
-    String s = ctx.STRING().getText();
-    s = s.substring(1, s.length() - 1); // Remove quotes
-    return new StringLiteralNode(s);
+    return new StringLiteralNode(Utils.unescapeString(ctx.STRING().getText()));
   }
 
   @Override
@@ -54,8 +58,8 @@ public class NodeVisitor extends MCCodeBaseVisitor<Node> {
   @Override
   public Node visitMapLiteral(MCCodeParser.MapLiteralContext ctx) {
     Map<String, Node> values = new HashMap<>();
-    for (int i = 0; i < ctx.IDENT().size(); i++) {
-      values.put(ctx.IDENT(i).getText(), super.visit(ctx.expr(i)));
+    for (int i = 0; i < ctx.STRING().size(); i++) {
+      values.put(Utils.unescapeString(ctx.STRING(i).getText()), super.visit(ctx.expr(i)));
     }
     return new MapLiteralNode(values);
   }

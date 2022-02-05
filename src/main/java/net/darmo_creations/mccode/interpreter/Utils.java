@@ -42,8 +42,28 @@ public final class Utils {
     return ((a % b) + b) % b;
   }
 
+  /**
+   * Escape all special characters from the given string.
+   * <p>
+   * Adds double quotes, escapes '"', '\' and '\n' characters.
+   *
+   * @param s The string to escape.
+   * @return The escaped string.
+   */
   public static String escapeString(final String s) {
     return String.format("\"%s\"", s.replaceAll("([\"\\\\])", "\\\\$1").replace("\n", "\\n"));
+  }
+
+  /**
+   * Unescape all escaped special characters from the given string.
+   * <p>
+   * Removes trailing double quotes, unescapes '\"', '\\' and '\\n' sequences.
+   *
+   * @param s The string to unescape.
+   * @return The unescaped string.
+   */
+  public static String unescapeString(final String s) {
+    return s.substring(1, s.length() - 1).replaceAll("\\\\([\"\\\\])", "$1").replace("\\n", "\n");
   }
 
   private Utils() {

@@ -26,7 +26,7 @@ public final class ExpressionParser {
     MCCodeParser parser = new MCCodeParser(new CommonTokenStream(lexer));
     ErrorListener errorListener = new ErrorListener();
     parser.addErrorListener(errorListener);
-    return new NodeVisitor().visit(parser.expr());
+    return new NodeVisitor().visit(parser.expression());
   }
 
   /**
