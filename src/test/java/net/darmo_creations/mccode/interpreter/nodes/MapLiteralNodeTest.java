@@ -22,7 +22,7 @@ class MapLiteralNodeTest extends NodeTest {
   @Test
   void evaluate() {
     MCMap expectedMap = new MCMap();
-    expectedMap.put("a", 1);
+    expectedMap.put("a", 1L);
     expectedMap.put("b", "string");
     Map<String, Node> map = new HashMap<>();
     map.put("a", new IntLiteralNode(1));
@@ -59,7 +59,7 @@ class MapLiteralNodeTest extends NodeTest {
     values.setTag("b", new StringLiteralNode("string").writeToNBT());
     tag.setTag(MapLiteralNode.VALUES_KEY, values);
     MCMap expectedMap = new MCMap();
-    expectedMap.put("a", 1);
+    expectedMap.put("a", 1L);
     expectedMap.put("b", "string");
     assertEquals(expectedMap, new MapLiteralNode(tag).evaluate(this.p.getScope()));
   }

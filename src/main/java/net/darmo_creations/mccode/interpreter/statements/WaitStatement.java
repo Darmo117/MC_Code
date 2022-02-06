@@ -41,7 +41,7 @@ public class WaitStatement extends Statement {
 
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
-    int ticks = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, this.value.evaluate(scope));
+    long ticks = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, this.value.evaluate(scope));
     scope.getProgram().wait(scope, ticks);
     return StatementAction.WAIT;
   }

@@ -14,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
  * Wrapper type for {@link Integer}.
  */
 @Doc("Type representing integers.")
-public class IntType extends Type<Integer> {
+public class IntType extends Type<Long> {
   public static final String NAME = "int";
 
   public static final String VALUE_KEY = "Value";
@@ -25,19 +25,19 @@ public class IntType extends Type<Integer> {
   }
 
   @Override
-  public Class<Integer> getWrappedType() {
-    return Integer.class;
+  public Class<Long> getWrappedType() {
+    return Long.class;
   }
 
   @Override
-  protected Object __minus__(final Scope scope, final Integer self) {
+  protected Object __minus__(final Scope scope, final Long self) {
     return -self;
   }
 
   @Override
-  protected Object __add__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      return self + (Integer) o;
+  protected Object __add__(final Scope scope, final Long self, final Object o, boolean inPlace) {
+    if (o instanceof Long) {
+      return self + (Long) o;
     } else if (o instanceof Double) {
       return self + (Double) o;
     } else if (o instanceof Boolean) {
@@ -49,9 +49,9 @@ public class IntType extends Type<Integer> {
   }
 
   @Override
-  protected Object __sub__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      return self - (Integer) o;
+  protected Object __sub__(final Scope scope, final Long self, final Object o, boolean inPlace) {
+    if (o instanceof Long) {
+      return self - (Long) o;
     } else if (o instanceof Double) {
       return self - (Double) o;
     } else if (o instanceof Boolean) {
@@ -61,9 +61,9 @@ public class IntType extends Type<Integer> {
   }
 
   @Override
-  protected Object __mul__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      return self * (Integer) o;
+  protected Object __mul__(final Scope scope, final Long self, final Object o, boolean inPlace) {
+    if (o instanceof Long) {
+      return self * (Long) o;
     } else if (o instanceof Double) {
       return self * (Double) o;
     } else if (o instanceof Boolean) {
@@ -81,12 +81,12 @@ public class IntType extends Type<Integer> {
   }
 
   @Override
-  protected Object __div__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      if ((Integer) o == 0) {
+  protected Object __div__(final Scope scope, final Long self, final Object o, boolean inPlace) {
+    if (o instanceof Long) {
+      if ((Long) o == 0) {
         throw new ArithmeticException("/ by 0");
       }
-      return self.doubleValue() / (Integer) o;
+      return self.doubleValue() / (Long) o;
     } else if (o instanceof Double) {
       if ((Double) o == 0) {
         throw new ArithmeticException("/ by 0");
@@ -102,12 +102,12 @@ public class IntType extends Type<Integer> {
   }
 
   @Override
-  protected Object __mod__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      if ((Integer) o == 0) {
+  protected Object __mod__(final Scope scope, final Long self, final Object o, boolean inPlace) {
+    if (o instanceof Long) {
+      if ((Long) o == 0) {
         throw new ArithmeticException("/ by 0");
       }
-      return (int) Utils.trueModulo(self, (Integer) o);
+      return (long) Utils.trueModulo(self, (Long) o);
     } else if (o instanceof Double) {
       if ((Double) o == 0) {
         throw new ArithmeticException("/ by 0");
@@ -115,7 +115,7 @@ public class IntType extends Type<Integer> {
       return Utils.trueModulo(self, (Double) o);
     } else if (o instanceof Boolean) {
       if ((Boolean) o) {
-        return 0;
+        return 0L;
       }
       throw new ArithmeticException("/ by 0");
     }
@@ -123,9 +123,9 @@ public class IntType extends Type<Integer> {
   }
 
   @Override
-  protected Object __pow__(final Scope scope, final Integer self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      return (int) Math.pow(self, (Integer) o);
+  protected Object __pow__(final Scope scope, final Long self, final Object o, boolean inPlace) {
+    if (o instanceof Long) {
+      return (long) Math.pow(self, (Long) o);
     } else if (o instanceof Double) {
       return Math.pow(self, (Double) o);
     } else if (o instanceof Boolean) {
@@ -135,39 +135,39 @@ public class IntType extends Type<Integer> {
   }
 
   @Override
-  protected Object __eq__(final Scope scope, final Integer self, final Object o) {
+  protected Object __eq__(final Scope scope, final Long self, final Object o) {
     FloatType floatType = ProgramManager.getTypeInstance(FloatType.class);
     double d = floatType.implicitCast(scope, self);
     return floatType.__eq__(scope, d, o);
   }
 
   @Override
-  protected Object __gt__(final Scope scope, final Integer self, final Object o) {
+  protected Object __gt__(final Scope scope, final Long self, final Object o) {
     FloatType floatType = ProgramManager.getTypeInstance(FloatType.class);
     double d = floatType.implicitCast(scope, self);
     return floatType.__gt__(scope, d, o);
   }
 
   @Override
-  protected boolean __bool__(final Integer self) {
+  protected boolean __bool__(final Long self) {
     return self != 0;
   }
 
   @Override
-  public Integer implicitCast(final Scope scope, final Object o) {
+  public Long implicitCast(final Scope scope, final Object o) {
     if (o instanceof Boolean) {
-      return ((Boolean) o) ? 1 : 0;
+      return ((Boolean) o) ? 1L : 0;
     }
     return super.implicitCast(scope, o);
   }
 
   @Override
-  public Integer explicitCast(final Scope scope, final Object o) throws MCCodeRuntimeException {
+  public Long explicitCast(final Scope scope, final Object o) throws MCCodeRuntimeException {
     if (o instanceof Number) {
-      return ((Number) o).intValue();
+      return ((Number) o).longValue();
     } else if (o instanceof String) {
       try {
-        return Integer.parseInt((String) o);
+        return Long.parseLong((String) o);
       } catch (NumberFormatException e) {
         throw new EvaluationException(scope, "mccode.interpreter.error.int_format", Utils.escapeString((String) o));
       }
@@ -176,14 +176,14 @@ public class IntType extends Type<Integer> {
   }
 
   @Override
-  protected NBTTagCompound _writeToNBT(final Integer self) {
+  protected NBTTagCompound _writeToNBT(final Long self) {
     NBTTagCompound tag = super._writeToNBT(self);
-    tag.setInteger(VALUE_KEY, self);
+    tag.setLong(VALUE_KEY, self);
     return tag;
   }
 
   @Override
-  public Integer readFromNBT(final Scope scope, final NBTTagCompound tag) {
-    return tag.getInteger(VALUE_KEY);
+  public Long readFromNBT(final Scope scope, final NBTTagCompound tag) {
+    return tag.getLong(VALUE_KEY);
   }
 }

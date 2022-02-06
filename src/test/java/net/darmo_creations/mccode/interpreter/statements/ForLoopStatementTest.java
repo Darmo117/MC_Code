@@ -52,19 +52,19 @@ class ForLoopStatementTest extends StatementTest {
 
   @Test
   void execute() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     FunctionCallNode range = new FunctionCallNode(new VariableNode("range"),
         Arrays.asList(new IntLiteralNode(1), new IntLiteralNode(3), new IntLiteralNode(1)));
     List<Statement> statements = Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1)));
     ForLoopStatement stmt = new ForLoopStatement("i", range, statements);
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
     assertFalse(this.p.getScope().isVariableDefined("i"));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void executeWait() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     FunctionCallNode range = new FunctionCallNode(new VariableNode("range"),
         Arrays.asList(new IntLiteralNode(1), new IntLiteralNode(3), new IntLiteralNode(1)));
     List<Statement> statements = Arrays.asList(
@@ -73,18 +73,18 @@ class ForLoopStatementTest extends StatementTest {
     );
     ForLoopStatement stmt = new ForLoopStatement("i", range, statements);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(1, this.p.getScope().getVariable("a", false));
+    assertEquals(1L, this.p.getScope().getVariable("a", false));
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void executeWait2() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     FunctionCallNode range = new FunctionCallNode(new VariableNode("range"),
         Arrays.asList(new IntLiteralNode(1), new IntLiteralNode(3), new IntLiteralNode(1)));
     List<Statement> statements = Arrays.asList(
@@ -93,18 +93,18 @@ class ForLoopStatementTest extends StatementTest {
     );
     ForLoopStatement stmt = new ForLoopStatement("i", range, statements);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(0, this.p.getScope().getVariable("a", false));
+    assertEquals(0L, this.p.getScope().getVariable("a", false));
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(1, this.p.getScope().getVariable("a", false));
+    assertEquals(1L, this.p.getScope().getVariable("a", false));
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void resume() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     FunctionCallNode range = new FunctionCallNode(new VariableNode("range"),
         Arrays.asList(new IntLiteralNode(1), new IntLiteralNode(3), new IntLiteralNode(1)));
     List<Statement> statements = Arrays.asList(
@@ -113,19 +113,19 @@ class ForLoopStatementTest extends StatementTest {
     );
     ForLoopStatement stmt = new ForLoopStatement("i", range, statements);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(0, this.p.getScope().getVariable("a", false));
+    assertEquals(0L, this.p.getScope().getVariable("a", false));
     NBTTagCompound tag = stmt.writeToNBT();
     stmt = new ForLoopStatement(tag);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(1, this.p.getScope().getVariable("a", false));
+    assertEquals(1L, this.p.getScope().getVariable("a", false));
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void testBreak() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     FunctionCallNode range = new FunctionCallNode(new VariableNode("range"),
         Arrays.asList(new IntLiteralNode(1), new IntLiteralNode(3), new IntLiteralNode(1)));
     List<Statement> statements = Arrays.asList(
@@ -135,12 +135,12 @@ class ForLoopStatementTest extends StatementTest {
     ForLoopStatement stmt = new ForLoopStatement("i", range, statements);
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
     assertFalse(this.p.getScope().isVariableDefined("i"));
-    assertEquals(1, this.p.getScope().getVariable("a", false));
+    assertEquals(1L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void testContinue() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     FunctionCallNode range = new FunctionCallNode(new VariableNode("range"),
         Arrays.asList(new IntLiteralNode(1), new IntLiteralNode(3), new IntLiteralNode(1)));
     List<Statement> statements = Arrays.asList(
@@ -151,6 +151,6 @@ class ForLoopStatementTest extends StatementTest {
     ForLoopStatement stmt = new ForLoopStatement("i", range, statements);
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
     assertFalse(this.p.getScope().isVariableDefined("i"));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
   }
 }

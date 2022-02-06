@@ -31,7 +31,7 @@ class ProgramParserTest {
   void parseScheduleNoRepeat() {
     Program p = new Program("p", Collections.singletonList(
         new ExpressionStatement(new VariableNode("a"))
-    ), 1, null, this.pm);
+    ), 1L, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "schedule 1; a;"));
   }
 
@@ -39,7 +39,7 @@ class ProgramParserTest {
   void parseScheduleRepeatFixed() {
     Program p = new Program("p", Collections.singletonList(
         new ExpressionStatement(new VariableNode("a"))
-    ), 1, 2, this.pm);
+    ), 1L, 2L, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "schedule 1 repeat 2; a;"));
   }
 
@@ -47,7 +47,7 @@ class ProgramParserTest {
   void parseScheduleRepeatForever() {
     Program p = new Program("p", Collections.singletonList(
         new ExpressionStatement(new VariableNode("a"))
-    ), 1, Integer.MAX_VALUE, this.pm);
+    ), 1L, Long.MAX_VALUE, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "schedule 1 repeat forever; a;"));
   }
 

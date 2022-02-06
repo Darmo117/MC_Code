@@ -80,10 +80,10 @@ class SetTypeTest extends TypeTest<SetType> {
   static Stream<Arguments> provideArgsForUnion() {
     return Stream.of(
         Arguments.of(new MCSet(), new MCSet(), new MCSet()),
-        Arguments.of(new MCSet(Arrays.asList(2, 3)), new MCSet(), new MCSet(Arrays.asList(2, 3))),
-        Arguments.of(new MCSet(), new MCSet(Arrays.asList(2, 3)), new MCSet(Arrays.asList(2, 3))),
-        Arguments.of(new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(2, 3)), new MCSet(Arrays.asList(1, 2, 3))),
-        Arguments.of(new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(3, 4)), new MCSet(Arrays.asList(1, 2, 3, 4)))
+        Arguments.of(new MCSet(Arrays.asList(2L, 3L)), new MCSet(), new MCSet(Arrays.asList(2L, 3L))),
+        Arguments.of(new MCSet(), new MCSet(Arrays.asList(2L, 3L)), new MCSet(Arrays.asList(2L, 3L))),
+        Arguments.of(new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(2L, 3L)), new MCSet(Arrays.asList(1L, 2L, 3L))),
+        Arguments.of(new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(3L, 4L)), new MCSet(Arrays.asList(1L, 2L, 3L, 4L)))
     );
   }
 
@@ -98,10 +98,10 @@ class SetTypeTest extends TypeTest<SetType> {
   static Stream<Arguments> provideArgsForIntersection() {
     return Stream.of(
         Arguments.of(new MCSet(), new MCSet(), new MCSet()),
-        Arguments.of(new MCSet(Arrays.asList(2, 3)), new MCSet(), new MCSet()),
-        Arguments.of(new MCSet(), new MCSet(Arrays.asList(2, 3)), new MCSet()),
-        Arguments.of(new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(2, 3)), new MCSet(Collections.singletonList(2))),
-        Arguments.of(new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(3, 4)), new MCSet())
+        Arguments.of(new MCSet(Arrays.asList(2L, 3L)), new MCSet(), new MCSet()),
+        Arguments.of(new MCSet(), new MCSet(Arrays.asList(2L, 3L)), new MCSet()),
+        Arguments.of(new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(2L, 3L)), new MCSet(Collections.singletonList(2L))),
+        Arguments.of(new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(3L, 4L)), new MCSet())
     );
   }
 
@@ -122,7 +122,7 @@ class SetTypeTest extends TypeTest<SetType> {
 
   @Test
   void iteration() {
-    MCSet set = new MCSet(Arrays.asList(1, 2, "a", new BlockPos(1, 2, 3)));
+    MCSet set = new MCSet(Arrays.asList(1L, 2L, "a", new BlockPos(1, 2, 3)));
     Iterator<?> it = (Iterator<?>) this.typeInstance.applyOperator(this.p.getScope(), UnaryOperator.ITERATE, set, null, null, false);
     while (it.hasNext()) {
       assertTrue(set.contains(it.next()));
@@ -138,12 +138,12 @@ class SetTypeTest extends TypeTest<SetType> {
 
   public static Stream<Arguments> provideArgsForApplyUnaryOperator() {
     return Stream.of(
-        Arguments.of(UnaryOperator.NOT, new MCSet(Collections.singletonList(1)), false),
+        Arguments.of(UnaryOperator.NOT, new MCSet(Collections.singletonList(1L)), false),
         Arguments.of(UnaryOperator.NOT, new MCSet(), true),
 
-        Arguments.of(UnaryOperator.LENGTH, new MCSet(), 0),
-        Arguments.of(UnaryOperator.LENGTH, new MCSet(Collections.singletonList(1)), 1),
-        Arguments.of(UnaryOperator.LENGTH, new MCSet(Arrays.asList(1, 2)), 2)
+        Arguments.of(UnaryOperator.LENGTH, new MCSet(), 0L),
+        Arguments.of(UnaryOperator.LENGTH, new MCSet(Collections.singletonList(1L)), 1L),
+        Arguments.of(UnaryOperator.LENGTH, new MCSet(Arrays.asList(1L, 2L)), 2L)
     );
   }
 
@@ -179,7 +179,7 @@ class SetTypeTest extends TypeTest<SetType> {
   @Test
   void intersectionCopy() {
     Object o = new MCSet();
-    MCSet res = this.typeInstance.intersection(this.p.getScope(), new MCSet(Arrays.asList(1, 2, o)), new MCSet(Collections.singletonList(o)));
+    MCSet res = this.typeInstance.intersection(this.p.getScope(), new MCSet(Arrays.asList(1L, 2L, o)), new MCSet(Collections.singletonList(o)));
     assertNotSame(o, res.iterator().next());
   }
 
@@ -198,98 +198,98 @@ class SetTypeTest extends TypeTest<SetType> {
   public static Stream<Arguments> provideArgsForApplyBinaryOperator() {
     return Stream.of(
         Arguments.of(BinaryOperator.PLUS, new MCSet(), new MCSet(), new MCSet(), false),
-        Arguments.of(BinaryOperator.PLUS, new MCSet(Collections.singletonList(1)), new MCSet(), new MCSet(Collections.singletonList(1)), false),
-        Arguments.of(BinaryOperator.PLUS, new MCSet(Collections.singletonList(1)), new MCSet(Collections.singletonList(2)), new MCSet(Arrays.asList(1, 2)), false),
-        Arguments.of(BinaryOperator.PLUS, new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(2, 3)), new MCSet(Arrays.asList(1, 2, 3)), false),
+        Arguments.of(BinaryOperator.PLUS, new MCSet(Collections.singletonList(1L)), new MCSet(), new MCSet(Collections.singletonList(1L)), false),
+        Arguments.of(BinaryOperator.PLUS, new MCSet(Collections.singletonList(1L)), new MCSet(Collections.singletonList(2L)), new MCSet(Arrays.asList(1L, 2L)), false),
+        Arguments.of(BinaryOperator.PLUS, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(2L, 3L)), new MCSet(Arrays.asList(1L, 2L, 3L)), false),
         Arguments.of(BinaryOperator.PLUS, new MCSet(), new MCSet(), new MCSet(), true),
-        Arguments.of(BinaryOperator.PLUS, new MCSet(Collections.singletonList(1)), new MCSet(), new MCSet(Collections.singletonList(1)), true),
-        Arguments.of(BinaryOperator.PLUS, new MCSet(Collections.singletonList(1)), new MCSet(Collections.singletonList(2)), new MCSet(Arrays.asList(1, 2)), true),
-        Arguments.of(BinaryOperator.PLUS, new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(2, 3)), new MCSet(Arrays.asList(1, 2, 3)), true),
+        Arguments.of(BinaryOperator.PLUS, new MCSet(Collections.singletonList(1L)), new MCSet(), new MCSet(Collections.singletonList(1L)), true),
+        Arguments.of(BinaryOperator.PLUS, new MCSet(Collections.singletonList(1L)), new MCSet(Collections.singletonList(2L)), new MCSet(Arrays.asList(1L, 2L)), true),
+        Arguments.of(BinaryOperator.PLUS, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(2L, 3L)), new MCSet(Arrays.asList(1L, 2L, 3L)), true),
         Arguments.of(BinaryOperator.PLUS, new MCSet(), "a", "{}a", false),
         Arguments.of(BinaryOperator.PLUS, new MCSet(Collections.singletonList(1)), "a", "{1}a", false),
 
         Arguments.of(BinaryOperator.SUB, new MCSet(), new MCSet(), new MCSet(), false),
-        Arguments.of(BinaryOperator.SUB, new MCSet(Collections.singletonList(1)), new MCSet(), new MCSet(Collections.singletonList(1)), false),
-        Arguments.of(BinaryOperator.SUB, new MCSet(), new MCSet(Collections.singletonList(1)), new MCSet(), false),
-        Arguments.of(BinaryOperator.SUB, new MCSet(Collections.singletonList(1)), new MCSet(Collections.singletonList(1)), new MCSet(), false),
-        Arguments.of(BinaryOperator.SUB, new MCSet(Arrays.asList(1, 2)), new MCSet(Collections.singletonList(1)), new MCSet(Collections.singletonList(2)), false),
-        Arguments.of(BinaryOperator.SUB, new MCSet(Arrays.asList(1, 2)), new MCSet(Collections.singletonList(3)), new MCSet(Arrays.asList(1, 2)), false),
+        Arguments.of(BinaryOperator.SUB, new MCSet(Collections.singletonList(1L)), new MCSet(), new MCSet(Collections.singletonList(1L)), false),
+        Arguments.of(BinaryOperator.SUB, new MCSet(), new MCSet(Collections.singletonList(1L)), new MCSet(), false),
+        Arguments.of(BinaryOperator.SUB, new MCSet(Collections.singletonList(1L)), new MCSet(Collections.singletonList(1L)), new MCSet(), false),
+        Arguments.of(BinaryOperator.SUB, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Collections.singletonList(1L)), new MCSet(Collections.singletonList(2L)), false),
+        Arguments.of(BinaryOperator.SUB, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Collections.singletonList(3L)), new MCSet(Arrays.asList(1L, 2L)), false),
         Arguments.of(BinaryOperator.SUB, new MCSet(), new MCSet(), new MCSet(), true),
-        Arguments.of(BinaryOperator.SUB, new MCSet(Collections.singletonList(1)), new MCSet(), new MCSet(Collections.singletonList(1)), true),
-        Arguments.of(BinaryOperator.SUB, new MCSet(), new MCSet(Collections.singletonList(1)), new MCSet(), true),
-        Arguments.of(BinaryOperator.SUB, new MCSet(Collections.singletonList(1)), new MCSet(Collections.singletonList(1)), new MCSet(), true),
-        Arguments.of(BinaryOperator.SUB, new MCSet(Arrays.asList(1, 2)), new MCSet(Collections.singletonList(1)), new MCSet(Collections.singletonList(2)), true),
-        Arguments.of(BinaryOperator.SUB, new MCSet(Arrays.asList(1, 2)), new MCSet(Collections.singletonList(3)), new MCSet(Arrays.asList(1, 2)), true),
+        Arguments.of(BinaryOperator.SUB, new MCSet(Collections.singletonList(1L)), new MCSet(), new MCSet(Collections.singletonList(1L)), true),
+        Arguments.of(BinaryOperator.SUB, new MCSet(), new MCSet(Collections.singletonList(1L)), new MCSet(), true),
+        Arguments.of(BinaryOperator.SUB, new MCSet(Collections.singletonList(1L)), new MCSet(Collections.singletonList(1L)), new MCSet(), true),
+        Arguments.of(BinaryOperator.SUB, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Collections.singletonList(1L)), new MCSet(Collections.singletonList(2L)), true),
+        Arguments.of(BinaryOperator.SUB, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Collections.singletonList(3L)), new MCSet(Arrays.asList(1L, 2L)), true),
 
         Arguments.of(BinaryOperator.EQUAL, new MCSet(), "", false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1, 2)), "{1, 2}", false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1, 2)), true, false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1, 2)), false, false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(1)), 1, false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(0)), 0, false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(), 0, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1L, 2L)), "{1, 2}", false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1L, 2L)), true, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1L, 2L)), false, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(1L)), 1L, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(0L)), 0L, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(), 0L, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(1.0)), 1.0, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(0.0)), 0.0, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCSet(), 0.0, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCSet(), null, false, false),
-//        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1, 2)), Items.STICK, false, false), // FIXME not initialized
+//        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1L, 2L)), Items.STICK, false, false), // FIXME not initialized
         Arguments.of(BinaryOperator.EQUAL, new MCSet(), new MCSet(), true, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(1, 2)), true, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1, 2)), new MCSet(), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(), new MCSet(Arrays.asList(1, 2)), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), true, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1L, 2L)), new MCSet(), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(), new MCSet(Arrays.asList(1L, 2L)), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCSet(), new MCList(), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 2)), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 2L)), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCSet(), new MCMap(), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(0)), new BlockPos(0, 0, 0), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(1)), new Range(1, 1, 1), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1, 2)), new ResourceLocation("minecraft:stone"), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1, 2)), new ResourceLocation("minecraft:stone"), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(0L)), new BlockPos(0, 0, 0), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Collections.singletonList(1L)), new Range(1, 1, 1), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCSet(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), false, false),
 
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(), "", true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), "{1, 2}", true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), true, true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), false, true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(1)), 1, true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(0)), 0, true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(), 0, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1L, 2L)), "{1, 2}", true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1L, 2L)), true, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1L, 2L)), false, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(1L)), 1L, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(0L)), 0L, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(), 0L, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(1.0)), 1.0, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(0.0)), 0.0, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(), 0.0, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(), null, true, false),
-//        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), Items.STICK, true, false), // FIXME not initialized
+//        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1L, 2L)), Items.STICK, true, false), // FIXME not initialized
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(), new MCSet(), false, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(1, 2)), false, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), new MCSet(), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), false, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1L, 2L)), new MCSet(), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(), new MCSet(Arrays.asList(1, 2)), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(), new MCList(), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 2)), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), new MCList(Arrays.asList(1L, 2L)), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(), new MCMap(), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(0)), new BlockPos(0, 0, 0), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(1)), new Range(1, 1, 1), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), new ResourceLocation("minecraft:stone"), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1, 2)), new ResourceLocation("minecraft:stone"), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(0L)), new BlockPos(0, 0, 0), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Collections.singletonList(1L)), new Range(1, 1, 1), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCSet(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), true, false),
 
-        Arguments.of(BinaryOperator.GT, new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(1, 2)), false, false),
-        Arguments.of(BinaryOperator.GT, new MCSet(Arrays.asList(1, 2)), new MCSet(Collections.singletonList(1)), true, false),
-        Arguments.of(BinaryOperator.GT, new MCSet(Collections.singletonList(1)), new MCSet(Arrays.asList(1, 2)), false, false),
+        Arguments.of(BinaryOperator.GT, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), false, false),
+        Arguments.of(BinaryOperator.GT, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Collections.singletonList(1L)), true, false),
+        Arguments.of(BinaryOperator.GT, new MCSet(Collections.singletonList(1L)), new MCSet(Arrays.asList(1L, 2L)), false, false),
 
-        Arguments.of(BinaryOperator.GE, new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(1, 2)), true, false),
-        Arguments.of(BinaryOperator.GE, new MCSet(Arrays.asList(1, 2)), new MCSet(Collections.singletonList(1)), true, false),
-        Arguments.of(BinaryOperator.GE, new MCSet(Collections.singletonList(1)), new MCSet(Arrays.asList(1, 2)), false, false),
+        Arguments.of(BinaryOperator.GE, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), true, false),
+        Arguments.of(BinaryOperator.GE, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Collections.singletonList(1L)), true, false),
+        Arguments.of(BinaryOperator.GE, new MCSet(Collections.singletonList(1L)), new MCSet(Arrays.asList(1L, 2L)), false, false),
 
-        Arguments.of(BinaryOperator.LT, new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(1, 2)), false, false),
-        Arguments.of(BinaryOperator.LT, new MCSet(Arrays.asList(1, 2)), new MCSet(Collections.singletonList(1)), false, false),
-        Arguments.of(BinaryOperator.LT, new MCSet(Collections.singletonList(1)), new MCSet(Arrays.asList(1, 2)), true, false),
+        Arguments.of(BinaryOperator.LT, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), false, false),
+        Arguments.of(BinaryOperator.LT, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Collections.singletonList(1L)), false, false),
+        Arguments.of(BinaryOperator.LT, new MCSet(Collections.singletonList(1L)), new MCSet(Arrays.asList(1L, 2L)), true, false),
 
-        Arguments.of(BinaryOperator.LE, new MCSet(Arrays.asList(1, 2)), new MCSet(Arrays.asList(1, 2)), true, false),
-        Arguments.of(BinaryOperator.LE, new MCSet(Arrays.asList(1, 2)), new MCSet(Collections.singletonList(1)), false, false),
-        Arguments.of(BinaryOperator.LE, new MCSet(Collections.singletonList(1)), new MCSet(Arrays.asList(1, 2)), true, false),
+        Arguments.of(BinaryOperator.LE, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), true, false),
+        Arguments.of(BinaryOperator.LE, new MCSet(Arrays.asList(1L, 2L)), new MCSet(Collections.singletonList(1L)), false, false),
+        Arguments.of(BinaryOperator.LE, new MCSet(Collections.singletonList(1L)), new MCSet(Arrays.asList(1L, 2L)), true, false),
 
-        Arguments.of(BinaryOperator.IN, new MCSet(Arrays.asList(1, 2)), 1, true, false),
-        Arguments.of(BinaryOperator.IN, new MCSet(Arrays.asList(1, 2)), 2, true, false),
-        Arguments.of(BinaryOperator.IN, new MCSet(Arrays.asList(1, 2)), 3, false, false),
+        Arguments.of(BinaryOperator.IN, new MCSet(Arrays.asList(1L, 2L)), 1L, true, false),
+        Arguments.of(BinaryOperator.IN, new MCSet(Arrays.asList(1L, 2L)), 2L, true, false),
+        Arguments.of(BinaryOperator.IN, new MCSet(Arrays.asList(1L, 2L)), 3L, false, false),
         Arguments.of(BinaryOperator.IN, new MCSet(Collections.singletonList(true)), true, true, false),
-        Arguments.of(BinaryOperator.IN, new MCSet(Collections.singletonList(1)), 1, true, false),
+        Arguments.of(BinaryOperator.IN, new MCSet(Collections.singletonList(1L)), 1L, true, false),
         Arguments.of(BinaryOperator.IN, new MCSet(Collections.singletonList(1.0)), 1.0, true, false),
 //        Arguments.of(BinaryOperator.IN, new MCSet(Collections.singletonList(Items.STICK)), Items.STICK, true, false), // FIXME not initialized
 //        Arguments.of(BinaryOperator.IN, new MCSet(Collections.singletonList(Blocks.STONE)), Blocks.STONE, true, false), // FIXME not initialized
@@ -301,11 +301,11 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.IN, new MCSet(Collections.singletonList(new Range(1, 1, 1))), new Range(1, 1, 1), true, false),
         Arguments.of(BinaryOperator.IN, new MCSet(Collections.singletonList(new ResourceLocation("minecraft:stone"))), new ResourceLocation("minecraft:stone"), true, false),
 
-        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Arrays.asList(1, 2)), 1, false, false),
-        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Arrays.asList(1, 2)), 2, false, false),
-        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Arrays.asList(1, 2)), 3, true, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Arrays.asList(1L, 2L)), 1L, false, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Arrays.asList(1L, 2L)), 2L, false, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Arrays.asList(1L, 2L)), 3L, true, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCSet(Collections.singletonList(true)), true, false, false),
-        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Collections.singletonList(1)), 1, false, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Collections.singletonList(1L)), 1L, false, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCSet(Collections.singletonList(1.0)), 1.0, false, false),
 //        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Collections.singletonList(Items.STICK)), Items.STICK, false, false), // FIXME not initialized
 //        Arguments.of(BinaryOperator.NOT_IN, new MCSet(Collections.singletonList(Blocks.STONE)), Blocks.STONE, false, false), // FIXME not initialized
@@ -327,7 +327,7 @@ class SetTypeTest extends TypeTest<SetType> {
 
   public static Stream<Arguments> provideArgsForApplyBinaryOperatorError() {
     return Stream.of(
-        Arguments.of(BinaryOperator.PLUS, new MCSet(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new MCSet(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCSet(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCSet(), true, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCSet(), false, UnsupportedOperatorException.class),
@@ -341,7 +341,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.PLUS, new MCSet(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.SUB, new MCSet(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new MCSet(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCSet(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCSet(), true, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCSet(), false, UnsupportedOperatorException.class),
@@ -357,7 +357,7 @@ class SetTypeTest extends TypeTest<SetType> {
 
         Arguments.of(BinaryOperator.SUB, new MCSet(), true, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCSet(), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new MCSet(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new MCSet(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MUL, new MCSet(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MUL, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MUL, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -370,7 +370,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.MUL, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.DIV, new MCSet(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new MCSet(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new MCSet(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCSet(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -384,7 +384,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.DIV, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.INT_DIV, new MCSet(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new MCSet(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new MCSet(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCSet(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -398,7 +398,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.INT_DIV, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.MOD, new MCSet(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new MCSet(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new MCSet(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCSet(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -412,7 +412,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.MOD, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.POW, new MCSet(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new MCSet(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new MCSet(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCSet(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -426,7 +426,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.POW, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GT, new MCSet(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new MCSet(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new MCSet(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCSet(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -439,7 +439,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.GT, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GE, new MCSet(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new MCSet(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new MCSet(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCSet(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -452,7 +452,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.GE, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LT, new MCSet(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new MCSet(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new MCSet(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCSet(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCSet(), new Item(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCSet(), "", UnsupportedOperatorException.class),
@@ -465,7 +465,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.LT, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LE, new MCSet(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new MCSet(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new MCSet(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCSet(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -478,7 +478,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.LE, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GET_ITEM, new MCSet(), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new MCSet(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCSet(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCSet(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -492,7 +492,7 @@ class SetTypeTest extends TypeTest<SetType> {
         Arguments.of(BinaryOperator.GET_ITEM, new MCSet(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.DEL_ITEM, new MCSet(), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new MCSet(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new MCSet(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCSet(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCSet(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCSet(), new Item(), UnsupportedOperatorException.class),
@@ -532,18 +532,18 @@ class SetTypeTest extends TypeTest<SetType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(0.0),
         Arguments.of("a"),
         Arguments.of(""),
         Arguments.of(new Item()),
-        Arguments.of(new MCList(Collections.singletonList(1))),
+        Arguments.of(new MCList(Collections.singletonList(1L))),
         Arguments.of(new MCList()),
-        Arguments.of(new MCSet(Collections.singletonList(1))),
+        Arguments.of(new MCSet(Collections.singletonList(1L))),
         Arguments.of(new MCSet()),
-        Arguments.of(new MCMap(Collections.singletonMap("a", 1))),
+        Arguments.of(new MCMap(Collections.singletonMap("a", 1L))),
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
@@ -561,7 +561,7 @@ class SetTypeTest extends TypeTest<SetType> {
   static Stream<Arguments> provideArgsForApplyTernaryOperatorError() {
     return Stream.of(
         Arguments.of(TernaryOperator.SET_ITEM, new MCSet(), true, true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new MCSet(), 0, true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new MCSet(), 0L, true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCSet(), 1.0, true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCSet(), "", true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCSet(), new Item(), true, UnsupportedOperatorException.class),
@@ -577,7 +577,7 @@ class SetTypeTest extends TypeTest<SetType> {
 
   @Test
   void implicitCast() {
-    assertEquals(new MCSet(Collections.singletonList(1)), this.typeInstance.implicitCast(this.p.getScope(), new MCSet(Collections.singletonList(1))));
+    assertEquals(new MCSet(Collections.singletonList(1L)), this.typeInstance.implicitCast(this.p.getScope(), new MCSet(Collections.singletonList(1L))));
     assertEquals(new MCSet(), this.typeInstance.implicitCast(this.p.getScope(), new MCSet()));
   }
 
@@ -589,9 +589,9 @@ class SetTypeTest extends TypeTest<SetType> {
 
   private static Stream<Arguments> provideArgsForExplicitCast() {
     return Stream.of(
-        Arguments.of(new MCSet(Collections.singletonList(1)), new MCList(Collections.singletonList(1))),
+        Arguments.of(new MCSet(Collections.singletonList(1L)), new MCList(Collections.singletonList(1L))),
         Arguments.of(new MCSet(), new MCList()),
-        Arguments.of(new MCSet(Collections.singletonList(1)), new MCSet(Collections.singleton(1))),
+        Arguments.of(new MCSet(Collections.singletonList(1L)), new MCSet(Collections.singleton(1L))),
         Arguments.of(new MCSet(), new MCSet()),
         Arguments.of(new MCSet(Arrays.asList("a", "b")), "ab"),
         Arguments.of(new MCSet(Arrays.asList("a", "b")), "abb"),
@@ -610,9 +610,9 @@ class SetTypeTest extends TypeTest<SetType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(-1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(-1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(-1.0),
         Arguments.of(0.0),
@@ -642,9 +642,9 @@ class SetTypeTest extends TypeTest<SetType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(-1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(-1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(-1.0),
         Arguments.of(0.0),
@@ -663,14 +663,14 @@ class SetTypeTest extends TypeTest<SetType> {
 
   @Test
   void toBoolean() {
-    assertTrue(this.typeInstance.toBoolean(new MCSet(Arrays.asList(1, 2))));
-    assertTrue(this.typeInstance.toBoolean(new MCSet(Collections.singletonList(0))));
+    assertTrue(this.typeInstance.toBoolean(new MCSet(Arrays.asList(1L, 2L))));
+    assertTrue(this.typeInstance.toBoolean(new MCSet(Collections.singletonList(0L))));
     assertFalse(this.typeInstance.toBoolean(new MCSet()));
   }
 
   @Test
   void copy() {
-    MCSet set = new MCSet(Arrays.asList(1, 2));
+    MCSet set = new MCSet(Arrays.asList(1L, 2L));
     MCSet copy = this.typeInstance.copy(this.p.getScope(), set);
     assertNotSame(set, copy);
     assertEquals(set, copy);
@@ -679,7 +679,7 @@ class SetTypeTest extends TypeTest<SetType> {
   @Test
   void copyDeep() {
     MCSet innerSet = new MCSet();
-    MCSet set = new MCSet(Arrays.asList(1, 2, innerSet));
+    MCSet set = new MCSet(Arrays.asList(1L, 2L, innerSet));
     MCSet copy = this.typeInstance.copy(this.p.getScope(), set);
     Object value = copy.iterator().next();
     assertNotSame(innerSet, value);
@@ -691,9 +691,9 @@ class SetTypeTest extends TypeTest<SetType> {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(SetType.NAME_KEY, "set");
     NBTTagList list = new NBTTagList();
-    list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1));
+    list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
     tag.setTag(SetType.VALUES_KEY, list);
-    assertEquals(tag, this.typeInstance.writeToNBT(new MCSet(Collections.singletonList(1))));
+    assertEquals(tag, this.typeInstance.writeToNBT(new MCSet(Collections.singletonList(1L))));
   }
 
   @Test
@@ -701,9 +701,9 @@ class SetTypeTest extends TypeTest<SetType> {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(SetType.NAME_KEY, "set");
     NBTTagList list = new NBTTagList();
-    list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1));
+    list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
     tag.setTag(SetType.VALUES_KEY, list);
-    assertEquals(new MCSet(Collections.singletonList(1)), this.typeInstance.readFromNBT(this.p.getScope(), tag));
+    assertEquals(new MCSet(Collections.singletonList(1L)), this.typeInstance.readFromNBT(this.p.getScope(), tag));
   }
 
   @Override

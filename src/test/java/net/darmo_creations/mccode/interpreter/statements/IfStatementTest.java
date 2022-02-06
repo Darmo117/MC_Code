@@ -123,7 +123,7 @@ class IfStatementTest extends StatementTest {
 
   @Test
   void executeIf() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, true));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
     List<List<Statement>> branches = Arrays.asList(
@@ -133,12 +133,12 @@ class IfStatementTest extends StatementTest {
     List<Statement> elseBranch = Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.ASSIGN, new IntLiteralNode(3)));
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(1, this.p.getScope().getVariable("a", false));
+    assertEquals(1L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void executeElseif() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, false));
     this.p.getScope().declareVariable(new Variable("c", false, false, false, true, true));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
@@ -149,12 +149,12 @@ class IfStatementTest extends StatementTest {
     List<Statement> elseBranch = Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.ASSIGN, new IntLiteralNode(3)));
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void executeElse() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, false));
     this.p.getScope().declareVariable(new Variable("c", false, false, false, true, false));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
@@ -165,12 +165,12 @@ class IfStatementTest extends StatementTest {
     List<Statement> elseBranch = Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.ASSIGN, new IntLiteralNode(3)));
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(3, this.p.getScope().getVariable("a", false));
+    assertEquals(3L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void executeNothing() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, false));
     this.p.getScope().declareVariable(new Variable("c", false, false, false, true, false));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
@@ -181,12 +181,12 @@ class IfStatementTest extends StatementTest {
     List<Statement> elseBranch = Collections.emptyList();
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(0, this.p.getScope().getVariable("a", false));
+    assertEquals(0L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void executeWaitIf() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, true));
     this.p.getScope().declareVariable(new Variable("c", false, false, false, true, false));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
@@ -200,15 +200,15 @@ class IfStatementTest extends StatementTest {
     List<Statement> elseBranch = Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.ASSIGN, new IntLiteralNode(3)));
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(0, this.p.getScope().getVariable("a", false));
+    assertEquals(0L, this.p.getScope().getVariable("a", false));
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(1, this.p.getScope().getVariable("a", false));
+    assertEquals(1L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void executeWaitElseif() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, false));
     this.p.getScope().declareVariable(new Variable("c", false, false, false, true, true));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
@@ -222,15 +222,15 @@ class IfStatementTest extends StatementTest {
     List<Statement> elseBranch = Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.ASSIGN, new IntLiteralNode(3)));
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(0, this.p.getScope().getVariable("a", false));
+    assertEquals(0L, this.p.getScope().getVariable("a", false));
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void executeWaitElse() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, false));
     this.p.getScope().declareVariable(new Variable("c", false, false, false, true, false));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
@@ -244,15 +244,15 @@ class IfStatementTest extends StatementTest {
     );
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(0, this.p.getScope().getVariable("a", false));
+    assertEquals(0L, this.p.getScope().getVariable("a", false));
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(3, this.p.getScope().getVariable("a", false));
+    assertEquals(3L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void resumeIf() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, true));
     this.p.getScope().declareVariable(new Variable("c", false, false, false, true, false));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
@@ -266,17 +266,17 @@ class IfStatementTest extends StatementTest {
     List<Statement> elseBranch = Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.ASSIGN, new IntLiteralNode(3)));
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(0, this.p.getScope().getVariable("a", false));
+    assertEquals(0L, this.p.getScope().getVariable("a", false));
     NBTTagCompound tag = stmt.writeToNBT();
     stmt = new IfStatement(tag);
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(1, this.p.getScope().getVariable("a", false));
+    assertEquals(1L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void resumeElseif() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, false));
     this.p.getScope().declareVariable(new Variable("c", false, false, false, true, true));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
@@ -290,17 +290,17 @@ class IfStatementTest extends StatementTest {
     List<Statement> elseBranch = Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.ASSIGN, new IntLiteralNode(3)));
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(0, this.p.getScope().getVariable("a", false));
+    assertEquals(0L, this.p.getScope().getVariable("a", false));
     NBTTagCompound tag = stmt.writeToNBT();
     stmt = new IfStatement(tag);
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void resumeElse() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 0L));
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, false));
     this.p.getScope().declareVariable(new Variable("c", false, false, false, true, false));
     List<Node> conditions = Arrays.asList(new VariableNode("b"), new VariableNode("c"));
@@ -314,11 +314,11 @@ class IfStatementTest extends StatementTest {
     );
     IfStatement stmt = new IfStatement(conditions, branches, elseBranch);
     assertEquals(StatementAction.WAIT, stmt.execute(this.p.getScope()));
-    assertEquals(0, this.p.getScope().getVariable("a", false));
+    assertEquals(0L, this.p.getScope().getVariable("a", false));
     NBTTagCompound tag = stmt.writeToNBT();
     stmt = new IfStatement(tag);
     this.p.getScope().getProgram().execute();
     assertEquals(StatementAction.PROCEED, stmt.execute(this.p.getScope()));
-    assertEquals(3, this.p.getScope().getVariable("a", false));
+    assertEquals(3L, this.p.getScope().getVariable("a", false));
   }
 }

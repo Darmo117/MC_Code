@@ -31,7 +31,7 @@ class ReturnStatementTest extends StatementTest {
   @Test
   void execute() {
     assertEquals(StatementAction.EXIT_FUNCTION, new ReturnStatement(new IntLiteralNode(1)).execute(this.p.getScope()));
-    assertEquals(1, this.p.getScope().getVariable(ReturnStatement.RETURN_SPECIAL_VAR_NAME, false));
+    assertEquals(1L, this.p.getScope().getVariable(ReturnStatement.RETURN_SPECIAL_VAR_NAME, false));
   }
 
   @Test

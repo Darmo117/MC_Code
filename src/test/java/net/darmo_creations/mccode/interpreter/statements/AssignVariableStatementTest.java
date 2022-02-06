@@ -21,7 +21,7 @@ class AssignVariableStatementTest extends StatementTest {
   @BeforeEach
   public void setUp() {
     super.setUp();
-    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 1));
+    this.p.getScope().declareVariable(new Variable("a", false, false, false, true, 1L));
   }
 
   @Test
@@ -48,14 +48,14 @@ class AssignVariableStatementTest extends StatementTest {
   void execute() {
     assertEquals(StatementAction.PROCEED, new AssignVariableStatement("a", AssigmentOperator.PLUS,
         new IntLiteralNode(1)).execute(this.p.getScope()));
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
 
     MCList list = new MCList();
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, list));
     assertEquals(StatementAction.PROCEED, new AssignVariableStatement("b", AssigmentOperator.PLUS,
         new ListLiteralNode(Collections.singletonList(new IntLiteralNode(1)))).execute(this.p.getScope()));
     Object res = this.p.getScope().getVariable("b", false);
-    assertEquals(new MCList(Collections.singletonList(1)), res);
+    assertEquals(new MCList(Collections.singletonList(1L)), res);
     assertSame(list, res);
   }
 

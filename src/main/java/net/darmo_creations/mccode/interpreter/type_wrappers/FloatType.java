@@ -35,8 +35,8 @@ public class FloatType extends Type<Double> {
 
   @Override
   protected Object __add__(final Scope scope, final Double self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      return self + (Integer) o;
+    if (o instanceof Long) {
+      return self + (Long) o;
     } else if (o instanceof Double) {
       return self + (Double) o;
     } else if (o instanceof Boolean) {
@@ -49,8 +49,8 @@ public class FloatType extends Type<Double> {
 
   @Override
   protected Object __sub__(final Scope scope, final Double self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      return self - (Integer) o;
+    if (o instanceof Long) {
+      return self - (Long) o;
     } else if (o instanceof Double) {
       return self - (Double) o;
     } else if (o instanceof Boolean) {
@@ -61,8 +61,8 @@ public class FloatType extends Type<Double> {
 
   @Override
   protected Object __mul__(final Scope scope, final Double self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      return self * (Integer) o;
+    if (o instanceof Long) {
+      return self * (Long) o;
     } else if (o instanceof Double) {
       return self * (Double) o;
     } else if (o instanceof Boolean) {
@@ -75,11 +75,11 @@ public class FloatType extends Type<Double> {
 
   @Override
   protected Object __div__(final Scope scope, final Double self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      if ((Integer) o == 0) {
+    if (o instanceof Long) {
+      if ((Long) o == 0) {
         throw new ArithmeticException("/ by 0");
       }
-      return self / (Integer) o;
+      return self / (Long) o;
     } else if (o instanceof Double) {
       if ((Double) o == 0) {
         throw new ArithmeticException("/ by 0");
@@ -96,8 +96,8 @@ public class FloatType extends Type<Double> {
 
   @Override
   protected Object __mod__(final Scope scope, final Double self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      return Utils.trueModulo(self, (Integer) o);
+    if (o instanceof Long) {
+      return Utils.trueModulo(self, (Long) o);
     } else if (o instanceof Double) {
       return Utils.trueModulo(self, (Double) o);
     } else if (o instanceof Boolean) {
@@ -111,12 +111,12 @@ public class FloatType extends Type<Double> {
 
   @Override
   protected Object __pow__(final Scope scope, final Double self, final Object o, boolean inPlace) {
-    if (o instanceof Integer) {
-      return Math.pow(self, (Integer) o);
+    if (o instanceof Long) {
+      return Math.pow(self, (Long) o);
     } else if (o instanceof Double) {
       return Math.pow(self, (Double) o);
     } else if (o instanceof Boolean) {
-      return (!(Boolean) o) ? 1 : self;
+      return (!(Boolean) o) ? 1.0 : self;
     }
     return super.__pow__(scope, self, o, inPlace);
   }

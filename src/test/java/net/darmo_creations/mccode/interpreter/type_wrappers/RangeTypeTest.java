@@ -64,7 +64,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
 
   @Test
   void iteration() {
-    int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    long[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     Iterator<?> it = (Iterator<?>) this.typeInstance.applyOperator(this.p.getScope(), UnaryOperator.ITERATE, new Range(1, 10, 1), null, null, false);
     int i = 0;
     while (it.hasNext()) {
@@ -75,7 +75,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
 
   @Test
   void iterationSteps() {
-    int[] values = {1, 3, 5, 7, 9};
+    long[] values = {1, 3, 5, 7, 9};
     Iterator<?> it = (Iterator<?>) this.typeInstance.applyOperator(this.p.getScope(), UnaryOperator.ITERATE, new Range(1, 10, 2), null, null, false);
     int i = 0;
     while (it.hasNext()) {
@@ -507,9 +507,9 @@ class RangeTypeTest extends TypeTest<RangeType> {
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(RangeType.NAME_KEY, "range");
-    tag.setInteger(RangeType.START_KEY, 1);
-    tag.setInteger(RangeType.END_KEY, 2);
-    tag.setInteger(RangeType.STEP_KEY, 1);
+    tag.setLong(RangeType.START_KEY, 1);
+    tag.setLong(RangeType.END_KEY, 2);
+    tag.setLong(RangeType.STEP_KEY, 1);
     assertEquals(tag, this.typeInstance.writeToNBT(new Range(1, 2, 1)));
   }
 
@@ -517,9 +517,9 @@ class RangeTypeTest extends TypeTest<RangeType> {
   void readFromNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(RangeType.NAME_KEY, "range");
-    tag.setInteger(RangeType.START_KEY, 1);
-    tag.setInteger(RangeType.END_KEY, 2);
-    tag.setInteger(RangeType.STEP_KEY, 1);
+    tag.setLong(RangeType.START_KEY, 1);
+    tag.setLong(RangeType.END_KEY, 2);
+    tag.setLong(RangeType.STEP_KEY, 1);
     assertEquals(new Range(1, 2, 1), this.typeInstance.readFromNBT(this.p.getScope(), tag));
   }
 

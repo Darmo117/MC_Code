@@ -80,7 +80,7 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
 
   @Test
   void getPropertyVariable() {
-    assertEquals(1, this.typeInstance.getProperty(this.p.getScope(), this.m, "a"));
+    assertEquals(1L, this.typeInstance.getProperty(this.p.getScope(), this.m, "a"));
   }
 
   @Test

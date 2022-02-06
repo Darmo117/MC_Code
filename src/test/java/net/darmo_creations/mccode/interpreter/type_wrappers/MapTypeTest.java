@@ -115,11 +115,11 @@ class MapTypeTest extends TypeTest<MapType> {
 
   public static Stream<Arguments> provideArgsForApplyUnaryOperator() {
     return Stream.of(
-        Arguments.of(UnaryOperator.NOT, new MCMap(Collections.singletonMap("a", 1)), false),
+        Arguments.of(UnaryOperator.NOT, new MCMap(Collections.singletonMap("a", 1L)), false),
         Arguments.of(UnaryOperator.NOT, new MCMap(), true),
 
-        Arguments.of(UnaryOperator.LENGTH, new MCMap(), 0),
-        Arguments.of(UnaryOperator.LENGTH, new MCMap(Collections.singletonMap("a", 1)), 1)
+        Arguments.of(UnaryOperator.LENGTH, new MCMap(), 0L),
+        Arguments.of(UnaryOperator.LENGTH, new MCMap(Collections.singletonMap("a", 1L)), 1L)
     );
   }
 
@@ -179,72 +179,72 @@ class MapTypeTest extends TypeTest<MapType> {
 
   public static Stream<Arguments> provideArgsForApplyBinaryOperator() {
     MCMap map = new MCMap();
-    map.put("a", 1);
-    map.put("b", 2);
+    map.put("a", 1L);
+    map.put("b", 2L);
     return Stream.of(
         Arguments.of(BinaryOperator.PLUS, new MCMap(), new MCMap(), new MCMap(), false),
-        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1)), new MCMap(), new MCMap(Collections.singletonMap("a", 1)), false),
-        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("a", 2)), new MCMap(Collections.singletonMap("a", 2)), false),
-        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("b", 2)), new MCMap(map), false),
+        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(), new MCMap(Collections.singletonMap("a", 1L)), false),
+        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("a", 2L)), new MCMap(Collections.singletonMap("a", 2L)), false),
+        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("b", 2L)), new MCMap(map), false),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), new MCMap(), new MCMap(), true),
-        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1)), new MCMap(), new MCMap(Collections.singletonMap("a", 1)), true),
-        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("a", 2)), new MCMap(Collections.singletonMap("a", 2)), true),
-        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("b", 2)), new MCMap(map), true),
+        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(), new MCMap(Collections.singletonMap("a", 1L)), true),
+        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("a", 2L)), new MCMap(Collections.singletonMap("a", 2L)), true),
+        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("b", 2L)), new MCMap(map), true),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), "a", "{}a", false),
-        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1)), "b", "{a=1}b", false),
+        Arguments.of(BinaryOperator.PLUS, new MCMap(Collections.singletonMap("a", 1L)), "b", "{a=1}b", false),
 
         Arguments.of(BinaryOperator.SUB, new MCMap(), new MCMap(), new MCMap(), false),
-        Arguments.of(BinaryOperator.SUB, new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("a", 1)), new MCMap(), false),
-        Arguments.of(BinaryOperator.SUB, new MCMap(map), new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("b", 2)), false),
-        Arguments.of(BinaryOperator.SUB, new MCMap(map), new MCMap(Collections.singletonMap("c", 3)), new MCMap(map), false),
+        Arguments.of(BinaryOperator.SUB, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("a", 1L)), new MCMap(), false),
+        Arguments.of(BinaryOperator.SUB, new MCMap(map), new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("b", 2L)), false),
+        Arguments.of(BinaryOperator.SUB, new MCMap(map), new MCMap(Collections.singletonMap("c", 3L)), new MCMap(map), false),
         Arguments.of(BinaryOperator.SUB, new MCMap(), new MCMap(), new MCMap(), true),
-        Arguments.of(BinaryOperator.SUB, new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("a", 1)), new MCMap(), true),
-        Arguments.of(BinaryOperator.SUB, new MCMap(map), new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("b", 2)), true),
-        Arguments.of(BinaryOperator.SUB, new MCMap(map), new MCMap(Collections.singletonMap("c", 3)), new MCMap(map), true),
+        Arguments.of(BinaryOperator.SUB, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("a", 1L)), new MCMap(), true),
+        Arguments.of(BinaryOperator.SUB, new MCMap(map), new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("b", 2L)), true),
+        Arguments.of(BinaryOperator.SUB, new MCMap(map), new MCMap(Collections.singletonMap("c", 3L)), new MCMap(map), true),
 
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), "", false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), true, false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCMap(), 1, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCMap(), 1L, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), 1.0, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), null, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), new Item(), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), new MCList(), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), new MCSet(), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), new MCMap(), true, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("a", 1)), true, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("a", 2)), new MCMap(Collections.singletonMap("a", 1)), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("b", 1)), new MCMap(Collections.singletonMap("a", 1)), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("b", 2)), new MCMap(Collections.singletonMap("a", 1)), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("a", 1L)), true, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("a", 2L)), new MCMap(Collections.singletonMap("a", 1L)), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("b", 1L)), new MCMap(Collections.singletonMap("a", 1L)), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("b", 2L)), new MCMap(Collections.singletonMap("a", 1L)), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), new BlockPos(0, 0, 0), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), new Range(1, 1, 1), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), new ResourceLocation("minecraft:stone"), false, false),
 
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), "", true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), true, true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), 1, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), 1L, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), 1.0, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), null, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new Item(), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new MCList(), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new MCSet(), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new MCMap(), false, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("a", 1)), false, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("a", 2)), new MCMap(Collections.singletonMap("a", 1)), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("b", 1)), new MCMap(Collections.singletonMap("a", 1)), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("b", 2)), new MCMap(Collections.singletonMap("a", 1)), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("a", 1L)), false, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("a", 2L)), new MCMap(Collections.singletonMap("a", 1L)), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("b", 1L)), new MCMap(Collections.singletonMap("a", 1L)), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("b", 2L)), new MCMap(Collections.singletonMap("a", 1L)), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new BlockPos(0, 0, 0), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new Range(1, 1, 1), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new ResourceLocation("minecraft:stone"), true, false),
 
-        Arguments.of(BinaryOperator.IN, new MCMap(Collections.singletonMap("a", 1)), "a", true, false),
+        Arguments.of(BinaryOperator.IN, new MCMap(Collections.singletonMap("a", 1L)), "a", true, false),
         Arguments.of(BinaryOperator.IN, new MCMap(), "a", false, false),
         Arguments.of(BinaryOperator.IN, new MCMap(Collections.singletonMap("b", "a")), "a", false, false),
 
-        Arguments.of(BinaryOperator.NOT_IN, new MCMap(Collections.singletonMap("a", 1)), "a", false, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCMap(Collections.singletonMap("a", 1L)), "a", false, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(), "a", true, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(Collections.singletonMap("b", "a")), "a", true, false),
 
-        Arguments.of(BinaryOperator.GET_ITEM, new MCMap(Collections.singletonMap("a", 1)), "a", 1, false)
+        Arguments.of(BinaryOperator.GET_ITEM, new MCMap(Collections.singletonMap("a", 1L)), "a", 1L, false)
     );
   }
 
@@ -256,7 +256,7 @@ class MapTypeTest extends TypeTest<MapType> {
 
   public static Stream<Arguments> provideArgsForApplyBinaryOperatorError() {
     return Stream.of(
-        Arguments.of(BinaryOperator.PLUS, new MCMap(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new MCMap(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), true, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), false, UnsupportedOperatorException.class),
@@ -271,7 +271,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.PLUS, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.SUB, new MCMap(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new MCMap(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCMap(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCMap(), true, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCMap(), false, UnsupportedOperatorException.class),
@@ -286,7 +286,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.SUB, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.MUL, new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MUL, new MCMap(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new MCMap(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MUL, new MCMap(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MUL, new MCMap(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MUL, new MCMap(), new Item(), UnsupportedOperatorException.class),
@@ -299,7 +299,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.MUL, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.DIV, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new MCMap(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new MCMap(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCMap(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCMap(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCMap(), new Item(), UnsupportedOperatorException.class),
@@ -313,7 +313,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.DIV, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new MCMap(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new MCMap(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), new Item(), UnsupportedOperatorException.class),
@@ -327,7 +327,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.MOD, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new MCMap(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new MCMap(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCMap(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCMap(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCMap(), new Item(), UnsupportedOperatorException.class),
@@ -341,7 +341,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.MOD, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.POW, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new MCMap(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new MCMap(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCMap(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCMap(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCMap(), new Item(), UnsupportedOperatorException.class),
@@ -355,7 +355,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.POW, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GT, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new MCMap(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new MCMap(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCMap(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCMap(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCMap(), new Item(), UnsupportedOperatorException.class),
@@ -369,7 +369,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.GT, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GE, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new MCMap(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new MCMap(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCMap(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCMap(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCMap(), new Item(), UnsupportedOperatorException.class),
@@ -383,7 +383,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.GE, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LT, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new MCMap(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new MCMap(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCMap(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCMap(), new Item(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCMap(), "", UnsupportedOperatorException.class),
@@ -396,7 +396,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.LT, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LE, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new MCMap(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new MCMap(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCMap(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCMap(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCMap(), new Item(), UnsupportedOperatorException.class),
@@ -410,7 +410,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.LE, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.IN, new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new MCMap(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new MCMap(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new MCMap(), 1.0, UnsupportedOperatorException.class),
 //        Arguments.of(BinaryOperator.IN, new MCMap(Collections.singletonMap("a", Items.STICK)), Items.STICK, false, false), // FIXME not initialized
 //        Arguments.of(BinaryOperator.IN, new MCMap(Collections.singletonMap("a", Blocks.STONE)), Blocks.STONE, false, false), // FIXME not initialized
@@ -423,7 +423,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.IN, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new MCMap(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new MCMap(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(), 1.0, UnsupportedOperatorException.class),
 //        Arguments.of(BinaryOperator.NOT_IN, new MCMap(Collections.singletonMap("a", Items.STICK)), Items.STICK, false, false), // FIXME not initialized
 //        Arguments.of(BinaryOperator.NOT_IN, new MCMap(Collections.singletonMap("a", Blocks.STONE)), Blocks.STONE, false, false), // FIXME not initialized
@@ -436,7 +436,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), "a", NoSuchKeyException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(Collections.singletonMap("b", "a")), "a", NoSuchKeyException.class),
@@ -451,7 +451,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), "a", NoSuchKeyException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), new Item(), UnsupportedOperatorException.class),
@@ -491,8 +491,8 @@ class MapTypeTest extends TypeTest<MapType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(0.0),
         Arguments.of("a"),
@@ -520,7 +520,7 @@ class MapTypeTest extends TypeTest<MapType> {
   static Stream<Arguments> provideArgsForApplyTernaryOperatorError() {
     return Stream.of(
         Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), 1, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), 1L, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), new Item(), UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), null, UnsupportedOperatorException.class),
@@ -535,7 +535,7 @@ class MapTypeTest extends TypeTest<MapType> {
 
   @Test
   void implicitCast() {
-    assertEquals(new MCMap(Collections.singletonMap("a", 1)), this.typeInstance.implicitCast(this.p.getScope(), new MCMap(Collections.singletonMap("a", 1))));
+    assertEquals(new MCMap(Collections.singletonMap("a", 1L)), this.typeInstance.implicitCast(this.p.getScope(), new MCMap(Collections.singletonMap("a", 1L))));
     assertEquals(new MCMap(), this.typeInstance.implicitCast(this.p.getScope(), new MCMap()));
   }
 
@@ -547,14 +547,14 @@ class MapTypeTest extends TypeTest<MapType> {
 
   private static Stream<Arguments> provideArgsForExplicitCast() {
     MCMap posMap = new MCMap();
-    posMap.put("x", 1);
-    posMap.put("y", 2);
-    posMap.put("z", 3);
+    posMap.put("x", 1L);
+    posMap.put("y", 2L);
+    posMap.put("z", 3L);
     MCMap resourceMap = new MCMap();
     resourceMap.put("namespace", "minecraft");
     resourceMap.put("path", "stone");
     return Stream.of(
-        Arguments.of(new MCMap(Collections.singletonMap("a", 1)), new MCMap(Collections.singletonMap("a", 1))),
+        Arguments.of(new MCMap(Collections.singletonMap("a", 1L)), new MCMap(Collections.singletonMap("a", 1L))),
         Arguments.of(new MCMap(), new MCMap()),
 //        Arguments.of(new MCMap(Collections.singletonMap("id", "minecraft:stick")), Items.STICK), // FIXME raises error because of sound system not initialized
 //        Arguments.of(new MCMap(Collections.singletonMap("id", "minecraft:stone")), Blocks.STONE), // FIXME raises error because of sound system not initialized
@@ -574,9 +574,9 @@ class MapTypeTest extends TypeTest<MapType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(-1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(-1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(-1.0),
         Arguments.of(0.0),
@@ -606,9 +606,9 @@ class MapTypeTest extends TypeTest<MapType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(-1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(-1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(-1.0),
         Arguments.of(0.0),
@@ -632,7 +632,7 @@ class MapTypeTest extends TypeTest<MapType> {
   @Test
   void copy() {
     MCMap map = new MCMap();
-    map.put("a", 1);
+    map.put("a", 1L);
     MCMap copy = this.typeInstance.copy(this.p.getScope(), map);
     assertNotSame(map, copy);
     assertEquals(map, copy);
@@ -652,11 +652,11 @@ class MapTypeTest extends TypeTest<MapType> {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(MapType.NAME_KEY, "map");
     NBTTagCompound entries = new NBTTagCompound();
-    entries.setTag("a", ProgramManager.getTypeInstance(IntType.class).writeToNBT(1));
+    entries.setTag("a", ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
     entries.setTag("b", ProgramManager.getTypeInstance(PosType.class).writeToNBT(new BlockPos(1, 2, 3)));
     tag.setTag(MapType.ENTRIES_KEY, entries);
     MCMap map = new MCMap();
-    map.put("a", 1);
+    map.put("a", 1L);
     map.put("b", new BlockPos(1, 2, 3));
     assertEquals(tag, this.typeInstance.writeToNBT(map));
   }
@@ -666,11 +666,11 @@ class MapTypeTest extends TypeTest<MapType> {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(MapType.NAME_KEY, "map");
     NBTTagCompound entries = new NBTTagCompound();
-    entries.setTag("a", ProgramManager.getTypeInstance(IntType.class).writeToNBT(1));
+    entries.setTag("a", ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
     entries.setTag("b", ProgramManager.getTypeInstance(PosType.class).writeToNBT(new BlockPos(1, 2, 3)));
     tag.setTag(MapType.ENTRIES_KEY, entries);
     MCMap map = new MCMap();
-    map.put("a", 1);
+    map.put("a", 1L);
     map.put("b", new BlockPos(1, 2, 3));
     assertEquals(map, this.typeInstance.readFromNBT(this.p.getScope(), tag));
   }

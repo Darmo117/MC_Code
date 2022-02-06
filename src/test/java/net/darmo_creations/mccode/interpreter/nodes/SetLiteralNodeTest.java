@@ -23,7 +23,7 @@ class SetLiteralNodeTest extends NodeTest {
   void evaluate() {
     Object r = new SetLiteralNode(Arrays.asList(new IntLiteralNode(1), new StringLiteralNode("test"))).evaluate(this.p.getScope());
     assertSame(MCSet.class, r.getClass());
-    assertEquals(new MCSet(Arrays.asList(1, "test")), r);
+    assertEquals(new MCSet(Arrays.asList(1L, "test")), r);
   }
 
   @Test
@@ -45,7 +45,7 @@ class SetLiteralNodeTest extends NodeTest {
     list.appendTag(new IntLiteralNode(1).writeToNBT());
     list.appendTag(new StringLiteralNode("test").writeToNBT());
     tag.setTag(SetLiteralNode.VALUES_KEY, list);
-    assertEquals(new MCSet(Arrays.asList(1, "test")), new SetLiteralNode(tag).evaluate(this.p.getScope()));
+    assertEquals(new MCSet(Arrays.asList(1L, "test")), new SetLiteralNode(tag).evaluate(this.p.getScope()));
   }
 
   @Test

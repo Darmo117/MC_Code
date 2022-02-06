@@ -26,7 +26,7 @@ public class BooleanType extends Type<Boolean> {
 
   @Override
   protected Object __minus__(final Scope scope, final Boolean self) {
-    return self ? -1 : 0;
+    return self ? -1L : 0L;
   }
 
   @Override

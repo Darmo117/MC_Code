@@ -173,7 +173,7 @@ public class MapType extends Type<MCMap> {
   }
 
   @Override
-  protected int __len__(final Scope scope, final MCMap self) {
+  protected long __len__(final Scope scope, final MCMap self) {
     return self.size();
   }
 
@@ -199,6 +199,11 @@ public class MapType extends Type<MCMap> {
       if (!properties.isEmpty()) {
         for (String s : properties) {
           Object value = type.getProperty(scope, o, s);
+          if (value instanceof Byte || value instanceof Short || value instanceof Integer) {
+            value = ((Number) value).longValue();
+          } else if (value instanceof Float) {
+            value = ((Float) value).doubleValue();
+          }
           map.put(s, ProgramManager.getTypeForValue(value).copy(scope, value));
         }
       }

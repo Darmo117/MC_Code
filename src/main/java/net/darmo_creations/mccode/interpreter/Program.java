@@ -38,9 +38,9 @@ public class Program {
   private final ProgramManager programManager;
   private final boolean isModule;
   private final Scope scope;
-  private final Integer scheduleDelay;
-  private final Integer repeatAmount;
-  private int timeToWait;
+  private final Long scheduleDelay;
+  private final Long repeatAmount;
+  private long timeToWait;
   /**
    * Instruction pointer.
    */
@@ -57,7 +57,7 @@ public class Program {
    * @throws MCCodeRuntimeException If the schedule delay or repeat amount is negative,
    *                                or a repeat amount is defined without a schedule delay.
    */
-  public Program(final String name, final List<Statement> statements, final Integer scheduleDelay, final Integer repeatAmount, ProgramManager programManager) {
+  public Program(final String name, final List<Statement> statements, final Long scheduleDelay, final Long repeatAmount, ProgramManager programManager) {
     this.programManager = Objects.requireNonNull(programManager);
     this.name = Objects.requireNonNull(name);
     this.statements = Objects.requireNonNull(statements);
@@ -114,9 +114,9 @@ public class Program {
     this.scope.readFromNBT(tag.getCompoundTag(SCOPE_KEY));
     this.isModule = tag.getBoolean(IS_MODULE_KEY);
     if (!this.isModule) {
-      this.scheduleDelay = tag.getInteger(SCHEDULE_DELAY_KEY);
-      this.repeatAmount = tag.getInteger(REPEAT_AMOUNT_KEY);
-      this.timeToWait = tag.getInteger(WAIT_TIME_KEY);
+      this.scheduleDelay = tag.getLong(SCHEDULE_DELAY_KEY);
+      this.repeatAmount = tag.getLong(REPEAT_AMOUNT_KEY);
+      this.timeToWait = tag.getLong(WAIT_TIME_KEY);
     } else {
       this.scheduleDelay = null;
       this.repeatAmount = null;
@@ -157,14 +157,14 @@ public class Program {
   /**
    * Return this program’s schedule delay.
    */
-  public Optional<Integer> getScheduleDelay() {
+  public Optional<Long> getScheduleDelay() {
     return Optional.ofNullable(this.scheduleDelay);
   }
 
   /**
    * Return this program’s repeat amount.
    */
-  public Optional<Integer> getRepeatAmount() {
+  public Optional<Long> getRepeatAmount() {
     return Optional.ofNullable(this.repeatAmount);
   }
 
@@ -227,7 +227,7 @@ public class Program {
   /**
    * Return the remaining time to wait for this program.
    */
-  public int getWaitTime() {
+  public long getWaitTime() {
     return this.timeToWait;
   }
 
@@ -238,7 +238,7 @@ public class Program {
    * @param ticks Number of ticks to wait for.
    * @throws EvaluationException If ticks amount is negative.
    */
-  public void wait(final Scope scope, int ticks) throws EvaluationException {
+  public void wait(final Scope scope, long ticks) throws EvaluationException {
     if (ticks < 0) {
       throw new EvaluationException(scope, "mccode.interpreter.error.negative_wait_time");
     }
@@ -255,12 +255,12 @@ public class Program {
     tag.setTag(SCOPE_KEY, this.scope.writeToNBT());
     if (!this.isModule) {
       if (this.scheduleDelay != null) {
-        tag.setInteger(SCHEDULE_DELAY_KEY, this.scheduleDelay);
+        tag.setLong(SCHEDULE_DELAY_KEY, this.scheduleDelay);
         if (this.repeatAmount != null) {
-          tag.setInteger(REPEAT_AMOUNT_KEY, this.repeatAmount);
+          tag.setLong(REPEAT_AMOUNT_KEY, this.repeatAmount);
         }
       }
-      tag.setInteger(WAIT_TIME_KEY, this.timeToWait);
+      tag.setLong(WAIT_TIME_KEY, this.timeToWait);
     }
     tag.setInteger(IP_KEY, this.ip);
     tag.setBoolean(IS_MODULE_KEY, this.isModule);

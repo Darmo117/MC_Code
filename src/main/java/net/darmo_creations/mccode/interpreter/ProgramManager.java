@@ -48,8 +48,8 @@ public class ProgramManager extends WorldSavedData {
   private File programsDir;
   private World world;
   private final Map<String, Program> programs;
-  private final Map<String, Integer> programsSchedules;
-  private final Map<String, Integer> programsRepeats;
+  private final Map<String, Long> programsSchedules;
+  private final Map<String, Long> programsRepeats;
   private final Map<String, Boolean> runningPrograms;
   private long lastTick;
 
@@ -137,14 +137,14 @@ public class ProgramManager extends WorldSavedData {
     toRemove.forEach(p -> this.unloadProgram(p.getName()));
 
     // Update schedules and repeats of terminated programs
-    for (Map.Entry<String, Integer> e : this.programsSchedules.entrySet()) {
+    for (Map.Entry<String, Long> e : this.programsSchedules.entrySet()) {
       String programName = e.getKey();
-      int delay = e.getValue();
+      long delay = e.getValue();
       Program program = this.programs.get(programName);
 
       if (program.hasTerminated()) {
         if (delay <= 0) {
-          int repeatAmount = this.programsRepeats.get(programName);
+          long repeatAmount = this.programsRepeats.get(programName);
           if (repeatAmount != Integer.MAX_VALUE) {
             this.programsRepeats.put(programName, repeatAmount - 1);
           }
@@ -211,7 +211,7 @@ public class ProgramManager extends WorldSavedData {
     this.programs.put(name, program);
     program.getScheduleDelay().ifPresent(t -> {
       this.programsSchedules.put(program.getName(), t);
-      this.programsRepeats.put(program.getName(), program.getRepeatAmount().orElse(1));
+      this.programsRepeats.put(program.getName(), program.getRepeatAmount().orElse(1L));
     });
     this.runningPrograms.put(name, false);
     this.markDirty();
@@ -312,8 +312,8 @@ public class ProgramManager extends WorldSavedData {
       programTag.setTag(PROGRAM_KEY, p.writeToNBT());
       String programName = p.getName();
       if (this.programsSchedules.containsKey(programName)) {
-        programTag.setInteger(SCHEDULE_KEY, this.programsSchedules.get(programName));
-        programTag.setInteger(REPEAT_AMOUNT_KEY, this.programsRepeats.get(programName));
+        programTag.setLong(SCHEDULE_KEY, this.programsSchedules.get(programName));
+        programTag.setLong(REPEAT_AMOUNT_KEY, this.programsRepeats.get(programName));
       }
       programTag.setBoolean(RUNNING_KEY, this.runningPrograms.get(programName));
       programs.appendTag(programTag);
@@ -334,9 +334,9 @@ public class ProgramManager extends WorldSavedData {
       Program program = new Program(programTag.getCompoundTag(PROGRAM_KEY), this);
       this.programs.put(program.getName(), program);
       if (programTag.hasKey(SCHEDULE_KEY)) {
-        this.programsSchedules.put(program.getName(), programTag.getInteger(SCHEDULE_KEY));
+        this.programsSchedules.put(program.getName(), programTag.getLong(SCHEDULE_KEY));
         if (programTag.hasKey(REPEAT_AMOUNT_KEY)) {
-          this.programsRepeats.put(program.getName(), programTag.getInteger(REPEAT_AMOUNT_KEY));
+          this.programsRepeats.put(program.getName(), programTag.getLong(REPEAT_AMOUNT_KEY));
         }
       }
       this.runningPrograms.put(program.getName(), programTag.getBoolean(RUNNING_KEY));

@@ -186,7 +186,7 @@ public class SetType extends Type<MCSet> {
   }
 
   @Override
-  protected int __len__(final Scope scope, final MCSet self) {
+  protected long __len__(final Scope scope, final MCSet self) {
     return self.size();
   }
 

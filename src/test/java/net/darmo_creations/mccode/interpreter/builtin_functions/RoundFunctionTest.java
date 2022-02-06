@@ -37,7 +37,7 @@ class RoundFunctionTest extends BuiltinFunctionTest<RoundFunction> {
   @ValueSource(doubles = {1.1, 1.5, 1.7, 0.0, -1.1, -1.5, -1.7})
   void apply(double d) {
     this.p.getScope().declareVariable(new Variable("_x0_", false, false, true, false, d));
-    assertEquals((int) Math.round(d), this.function.apply(this.p.getScope()));
+    assertEquals(Math.round(d), this.function.apply(this.p.getScope()));
   }
 
   @Override

@@ -31,10 +31,10 @@ class UnaryOperatorNodeTest extends NodeTest {
 
   private static Stream<Arguments> provideArgsForEvaluateValidOperands() {
     return Stream.of(
-        Arguments.of(UnaryOperator.MINUS, new IntLiteralNode(1), -1),
+        Arguments.of(UnaryOperator.MINUS, new IntLiteralNode(1), -1L),
         Arguments.of(UnaryOperator.MINUS, new FloatLiteralNode(1.0), -1.0),
-        Arguments.of(UnaryOperator.MINUS, new BooleanLiteralNode(true), -1),
-        Arguments.of(UnaryOperator.MINUS, new BooleanLiteralNode(false), 0),
+        Arguments.of(UnaryOperator.MINUS, new BooleanLiteralNode(true), -1L),
+        Arguments.of(UnaryOperator.MINUS, new BooleanLiteralNode(false), 0L),
         Arguments.of(UnaryOperator.MINUS, TestUtils.blockPosNode(1, 2, 3), new BlockPos(-1, -2, -3)),
 
         Arguments.of(UnaryOperator.NOT, new IntLiteralNode(1), false),
@@ -53,14 +53,14 @@ class UnaryOperatorNodeTest extends NodeTest {
         Arguments.of(UnaryOperator.NOT, TestUtils.nodeMap("a", new IntLiteralNode(1)), false),
         Arguments.of(UnaryOperator.NOT, new MapLiteralNode(Collections.emptyMap()), true),
 
-        Arguments.of(UnaryOperator.LENGTH, new StringLiteralNode("a"), 1),
-        Arguments.of(UnaryOperator.LENGTH, new StringLiteralNode(""), 0),
-        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeList(new IntLiteralNode(1)), 1),
-        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeList(), 0),
-        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeSet(new IntLiteralNode(1)), 1),
-        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeSet(), 0),
-        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeMap("a", new IntLiteralNode(1)), 1),
-        Arguments.of(UnaryOperator.LENGTH, new MapLiteralNode(Collections.emptyMap()), 0)
+        Arguments.of(UnaryOperator.LENGTH, new StringLiteralNode("a"), 1L),
+        Arguments.of(UnaryOperator.LENGTH, new StringLiteralNode(""), 0L),
+        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeList(new IntLiteralNode(1)), 1L),
+        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeList(), 0L),
+        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeSet(new IntLiteralNode(1)), 1L),
+        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeSet(), 0L),
+        Arguments.of(UnaryOperator.LENGTH, TestUtils.nodeMap("a", new IntLiteralNode(1)), 1L),
+        Arguments.of(UnaryOperator.LENGTH, new MapLiteralNode(Collections.emptyMap()), 0L)
     );
   }
 
@@ -94,7 +94,7 @@ class UnaryOperatorNodeTest extends NodeTest {
     tag.setTag(UnaryOperatorNode.ARGUMENTS_KEY, args);
     UnaryOperatorNode node = new UnaryOperatorNode(tag);
     assertEquals(operator.getSymbol(), node.getSymbol());
-    assertEquals(Collections.singletonList(1),
+    assertEquals(Collections.singletonList(1L),
         node.getArguments().stream().map(n -> n.evaluate(this.p.getScope())).collect(Collectors.toList()));
   }
 

@@ -39,7 +39,7 @@ public class MaxFunction extends BuiltinFunction {
     } else if (p instanceof Range) {
       Range r = (Range) p;
       return StreamSupport.stream(Spliterators.spliteratorUnknownSize(r.iterator(), 0), false)
-          .max(Integer::compareTo).orElseThrow(() -> new EmptyCollectionException(scope));
+          .max(Long::compareTo).orElseThrow(() -> new EmptyCollectionException(scope));
     }
     throw new CastException(scope, ProgramManager.getTypeInstance(ListType.class), ProgramManager.getTypeForValue(p));
   }

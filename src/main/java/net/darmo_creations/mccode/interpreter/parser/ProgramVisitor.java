@@ -33,16 +33,16 @@ public class ProgramVisitor extends MCCodeBaseVisitor<Program> {
 
   @Override
   public Program visitModule(MCCodeParser.ModuleContext ctx) {
-    Integer scheduleDelay = null;
-    Integer repeatAmount = null;
+    Long scheduleDelay = null;
+    Long repeatAmount = null;
     if (ctx.SCHED() != null) {
-      scheduleDelay = Integer.parseInt(ctx.ticks.getText());
+      scheduleDelay = Long.parseLong(ctx.ticks.getText());
       if (ctx.REPEAT() != null) {
         String timesText = ctx.times.getText();
         if ("forever".equals(timesText)) {
-          repeatAmount = Integer.MAX_VALUE;
+          repeatAmount = Long.MAX_VALUE;
         } else {
-          repeatAmount = Integer.parseInt(timesText);
+          repeatAmount = Long.parseLong(timesText);
         }
       }
     }

@@ -14,7 +14,6 @@ import net.darmo_creations.mccode.interpreter.types.Range;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import org.codehaus.plexus.util.cli.Arg;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -54,13 +53,13 @@ class MaxFunctionTest extends BuiltinFunctionTest<MaxFunction> {
 
   public static Stream<Arguments> provideArgsForApply() {
     return Stream.of(
-        Arguments.of(new MCList(Collections.singletonList(1)), 1),
-        Arguments.of(new MCList(Arrays.asList(1, 3, 2)), 3),
-        Arguments.of(new MCSet(Collections.singletonList(1)), 1),
-        Arguments.of(new MCSet(Arrays.asList(1, 3, 2)), 3),
+        Arguments.of(new MCList(Collections.singletonList(1L)), 1L),
+        Arguments.of(new MCList(Arrays.asList(1L, 3L, 2L)), 3L),
+        Arguments.of(new MCSet(Collections.singletonList(1L)), 1L),
+        Arguments.of(new MCSet(Arrays.asList(1L, 3L, 2L)), 3L),
         Arguments.of("a", "a"),
         Arguments.of("aψb", "ψ"),
-        Arguments.of(new Range(1, 3, 1), 2)
+        Arguments.of(new Range(1, 3, 1), 2L)
     );
   }
 
@@ -79,7 +78,7 @@ class MaxFunctionTest extends BuiltinFunctionTest<MaxFunction> {
         Arguments.of(new Range(1, 1, 1), EmptyCollectionException.class),
 
         Arguments.of(true, CastException.class),
-        Arguments.of(1, CastException.class),
+        Arguments.of(1L, CastException.class),
         Arguments.of(1.0, CastException.class),
         Arguments.of(null, CastException.class),
         Arguments.of(new MCMap(), CastException.class),

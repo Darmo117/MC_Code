@@ -53,13 +53,13 @@ class MinFunctionTest extends BuiltinFunctionTest<MinFunction> {
 
   public static Stream<Arguments> provideArgsForApply() {
     return Stream.of(
-        Arguments.of(new MCList(Collections.singletonList(1)), 1),
-        Arguments.of(new MCList(Arrays.asList(1, 3, 2)), 1),
-        Arguments.of(new MCSet(Collections.singletonList(1)), 1),
-        Arguments.of(new MCSet(Arrays.asList(1, 3, 2)), 1),
+        Arguments.of(new MCList(Collections.singletonList(1L)), 1L),
+        Arguments.of(new MCList(Arrays.asList(1L, 3L, 2L)), 1L),
+        Arguments.of(new MCSet(Collections.singletonList(1L)), 1L),
+        Arguments.of(new MCSet(Arrays.asList(1L, 3L, 2L)), 1L),
         Arguments.of("a", "a"),
         Arguments.of("aψb", "a"),
-        Arguments.of(new Range(1, 3, 1), 1)
+        Arguments.of(new Range(1, 3, 1), 1L)
     );
   }
 
@@ -78,7 +78,7 @@ class MinFunctionTest extends BuiltinFunctionTest<MinFunction> {
         Arguments.of(new Range(1, 1, 1), EmptyCollectionException.class),
 
         Arguments.of(true, CastException.class),
-        Arguments.of(1, CastException.class),
+        Arguments.of(1L, CastException.class),
         Arguments.of(1.0, CastException.class),
         Arguments.of(null, CastException.class),
         Arguments.of(new MCMap(), CastException.class),

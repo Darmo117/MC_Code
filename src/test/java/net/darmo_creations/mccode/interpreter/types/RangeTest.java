@@ -40,7 +40,7 @@ class RangeTest extends TestBase {
   @Test
   void iterator() {
     int[] values = {1, 2};
-    Iterator<Integer> it = this.r.iterator();
+    Iterator<Long> it = this.r.iterator();
     int i = 0;
     while (it.hasNext()) {
       assertEquals(values[i], it.next());
@@ -51,7 +51,7 @@ class RangeTest extends TestBase {
   @Test
   void iteratorStep2() {
     int[] values = {1, 3};
-    Iterator<Integer> it = new Range(1, 4, 2).iterator();
+    Iterator<Long> it = new Range(1, 4, 2).iterator();
     int i = 0;
     while (it.hasNext()) {
       assertEquals(values[i], it.next());
@@ -62,7 +62,7 @@ class RangeTest extends TestBase {
   @Test
   void iteratorNegativeStep() {
     int[] values = {2, 1};
-    Iterator<Integer> it = new Range(2, 0, -1).iterator();
+    Iterator<Long> it = new Range(2, 0, -1).iterator();
     int i = 0;
     while (it.hasNext()) {
       assertEquals(values[i], it.next());
@@ -73,7 +73,7 @@ class RangeTest extends TestBase {
   @Test
   void iteratorNegativeStep2() {
     int[] values = {4, 2};
-    Iterator<Integer> it = new Range(4, 0, -2).iterator();
+    Iterator<Long> it = new Range(4, 0, -2).iterator();
     int i = 0;
     while (it.hasNext()) {
       assertEquals(values[i], it.next());

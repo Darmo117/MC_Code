@@ -7,7 +7,7 @@ import java.util.function.BiConsumer;
 /**
  * A node that represents an integer literal.
  */
-public class IntLiteralNode extends LiteralNode<Integer> {
+public class IntLiteralNode extends LiteralNode<Long> {
   public static final int ID = 2;
 
   /**
@@ -15,7 +15,7 @@ public class IntLiteralNode extends LiteralNode<Integer> {
    *
    * @param value Integer value.
    */
-  public IntLiteralNode(final int value) {
+  public IntLiteralNode(final long value) {
     super(value);
   }
 
@@ -25,12 +25,12 @@ public class IntLiteralNode extends LiteralNode<Integer> {
    * @param tag The tag to deserialize.
    */
   public IntLiteralNode(final NBTTagCompound tag) {
-    super(tag::getInteger);
+    super(tag::getLong);
   }
 
   @Override
-  protected BiConsumer<String, Integer> getValueSerializer(final NBTTagCompound tag) {
-    return tag::setInteger;
+  protected BiConsumer<String, Long> getValueSerializer(final NBTTagCompound tag) {
+    return tag::setLong;
   }
 
   @Override

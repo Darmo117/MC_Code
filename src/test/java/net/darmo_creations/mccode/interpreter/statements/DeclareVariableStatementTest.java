@@ -46,7 +46,7 @@ class DeclareVariableStatementTest extends StatementTest {
     assertEquals(StatementAction.PROCEED, new DeclareVariableStatement(true, true, false, "a",
         new IntLiteralNode(1)).execute(this.p.getScope()));
     assertTrue(this.p.getScope().isVariableDefined("a"));
-    assertEquals(1, this.p.getScope().getVariable("a", false));
+    assertEquals(1L, this.p.getScope().getVariable("a", false));
   }
 
   @ParameterizedTest

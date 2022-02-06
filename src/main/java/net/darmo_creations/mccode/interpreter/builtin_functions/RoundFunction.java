@@ -21,6 +21,6 @@ public class RoundFunction extends BuiltinFunction {
 
   @Override
   public Object apply(final Scope scope) {
-    return (int) Math.round(this.<Double>getParameterValue(scope, 0));
+    return (long) Math.round(this.<Double>getParameterValue(scope, 0));
   }
 }

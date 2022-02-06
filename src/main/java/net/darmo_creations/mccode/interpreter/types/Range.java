@@ -6,10 +6,10 @@ import java.util.Objects;
 /**
  * A range is an iterable object that generates integers between two bounds.
  */
-public class Range implements Iterable<Integer>, Cloneable {
-  private final int start; // Included
-  private final int end; // Excluded
-  private final int step;
+public class Range implements Iterable<Long>, Cloneable {
+  private final long start; // Included
+  private final long end; // Excluded
+  private final long step;
 
   /**
    * Create a range generator.
@@ -18,7 +18,7 @@ public class Range implements Iterable<Integer>, Cloneable {
    * @param end   Range’s end value (excluded).
    * @param step  Range’s step.
    */
-  public Range(final int start, final int end, final int step) {
+  public Range(final long start, final long end, final long step) {
     this.start = start;
     this.end = end;
     this.step = step;
@@ -27,28 +27,28 @@ public class Range implements Iterable<Integer>, Cloneable {
   /**
    * Return range’s start value.
    */
-  public int getStart() {
+  public long getStart() {
     return this.start;
   }
 
   /**
    * Return range’s end value.
    */
-  public int getEnd() {
+  public long getEnd() {
     return this.end;
   }
 
   /**
    * Return range’s step.
    */
-  public int getStep() {
+  public long getStep() {
     return this.step;
   }
 
   @Override
-  public Iterator<Integer> iterator() {
-    return new Iterator<Integer>() {
-      private int i = Range.this.start;
+  public Iterator<Long> iterator() {
+    return new Iterator<Long>() {
+      private long i = Range.this.start;
 
       @Override
       public boolean hasNext() {
@@ -56,8 +56,8 @@ public class Range implements Iterable<Integer>, Cloneable {
       }
 
       @Override
-      public Integer next() {
-        int i = this.i;
+      public Long next() {
+        long i = this.i;
         this.i += Range.this.step;
         return i;
       }

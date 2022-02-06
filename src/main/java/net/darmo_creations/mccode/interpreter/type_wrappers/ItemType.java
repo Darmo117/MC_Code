@@ -40,9 +40,9 @@ public class ItemType extends Type<Item> {
 
   @Property(name = "max_stack_size")
   @Doc("Return the max stack size of this item.")
-  public Integer getMaxStackSize(final Item self) {
+  public Long getMaxStackSize(final Item self) {
     //noinspection deprecation
-    return self.getItemStackLimit();
+    return (long) self.getItemStackLimit();
   }
 
   @Override

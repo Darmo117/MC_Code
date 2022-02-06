@@ -26,7 +26,7 @@ class ProgramTest {
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)),
         new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))
     );
-    this.p = new Program("p", statements, 1, 1, new ProgramManager("pm"));
+    this.p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
   }
 
   @Test
@@ -69,43 +69,43 @@ class ProgramTest {
         new WaitStatement(new IntLiteralNode(1)),
         new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))
     );
-    Program p = new Program("p", statements, 1, 1, new ProgramManager("pm"));
+    Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
     p.execute();
-    assertEquals(1, p.getWaitTime());
-    assertEquals(1, p.getScope().getVariable("a", false));
+    assertEquals(1L, p.getWaitTime());
+    assertEquals(1L, p.getScope().getVariable("a", false));
     p.execute();
-    assertEquals(0, p.getWaitTime());
-    assertEquals(1, p.getScope().getVariable("a", false));
+    assertEquals(0L, p.getWaitTime());
+    assertEquals(1L, p.getScope().getVariable("a", false));
     p.execute();
-    assertEquals(0, p.getWaitTime());
-    assertEquals(2, p.getScope().getVariable("a", false));
+    assertEquals(0L, p.getWaitTime());
+    assertEquals(2L, p.getScope().getVariable("a", false));
     assertTrue(p.hasTerminated());
   }
 
   @Test
   void execute() {
     this.p.execute();
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void breakOutsideLoopError() {
     List<Statement> statements = Collections.singletonList(new BreakStatement());
-    Program p = new Program("p", statements, 1, 1, new ProgramManager("pm"));
+    Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
     assertThrows(SyntaxErrorException.class, p::execute);
   }
 
   @Test
   void continueOutsideLoopError() {
     List<Statement> statements = Collections.singletonList(new ContinueStatement());
-    Program p = new Program("p", statements, 1, 1, new ProgramManager("pm"));
+    Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
     assertThrows(SyntaxErrorException.class, p::execute);
   }
 
   @Test
   void returnOutsideFunctionError() {
     List<Statement> statements = Collections.singletonList(new ReturnStatement(new NullLiteralNode()));
-    Program p = new Program("p", statements, 1, 1, new ProgramManager("pm"));
+    Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
     assertThrows(SyntaxErrorException.class, p::execute);
   }
 
@@ -119,7 +119,7 @@ class ProgramTest {
   @Test
   void reset() {
     this.p.execute();
-    assertEquals(2, this.p.getScope().getVariable("a", false));
+    assertEquals(2L, this.p.getScope().getVariable("a", false));
     this.p.reset();
     assertFalse(this.p.getScope().isVariableDefined("a"));
   }
@@ -134,9 +134,9 @@ class ProgramTest {
     );
     tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(statements));
     tag.setTag(Program.SCOPE_KEY, this.p.getScope().writeToNBT());
-    tag.setInteger(Program.SCHEDULE_DELAY_KEY, 1);
-    tag.setInteger(Program.REPEAT_AMOUNT_KEY, 1);
-    tag.setInteger(Program.WAIT_TIME_KEY, 0);
+    tag.setLong(Program.SCHEDULE_DELAY_KEY, 1);
+    tag.setLong(Program.REPEAT_AMOUNT_KEY, 1);
+    tag.setLong(Program.WAIT_TIME_KEY, 0);
     tag.setInteger(Program.IP_KEY, 0);
     tag.setBoolean(Program.IS_MODULE_KEY, false);
     assertEquals(tag, this.p.writeToNBT());
@@ -165,12 +165,12 @@ class ProgramTest {
     );
     tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(statements));
     tag.setTag(Program.SCOPE_KEY, this.p.getScope().writeToNBT());
-    tag.setInteger(Program.SCHEDULE_DELAY_KEY, 1);
-    tag.setInteger(Program.REPEAT_AMOUNT_KEY, 1);
-    tag.setInteger(Program.WAIT_TIME_KEY, 0);
+    tag.setLong(Program.SCHEDULE_DELAY_KEY, 1);
+    tag.setLong(Program.REPEAT_AMOUNT_KEY, 1);
+    tag.setLong(Program.WAIT_TIME_KEY, 0);
     tag.setInteger(Program.IP_KEY, 0);
     tag.setBoolean(Program.IS_MODULE_KEY, false);
-    assertEquals(new Program("p", statements, 1, 1, new ProgramManager("pm")),
+    assertEquals(new Program("p", statements, 1L, 1L, new ProgramManager("pm")),
         new Program(tag, new ProgramManager("pm")));
   }
 

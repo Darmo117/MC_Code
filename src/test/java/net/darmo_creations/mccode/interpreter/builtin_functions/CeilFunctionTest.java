@@ -37,7 +37,7 @@ class CeilFunctionTest extends BuiltinFunctionTest<CeilFunction> {
   @ValueSource(doubles = {1.5, 0.0, -1.5})
   void apply(double d) {
     this.p.getScope().declareVariable(new Variable("_x0_", false, false, true, false, d));
-    assertEquals((int) Math.ceil(d), this.function.apply(this.p.getScope()));
+    assertEquals((long) Math.ceil(d), this.function.apply(this.p.getScope()));
   }
 
   @Override

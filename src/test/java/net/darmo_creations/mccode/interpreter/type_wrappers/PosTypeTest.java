@@ -467,12 +467,12 @@ class PosTypeTest extends TypeTest<PosType> {
 
   private static Stream<Arguments> provideArgsForExplicitCast() {
     MCMap map = new MCMap();
-    map.put("x", 1);
-    map.put("y", 2);
-    map.put("z", 3);
+    map.put("x", 1L);
+    map.put("y", 2L);
+    map.put("z", 3L);
     return Stream.of(
         Arguments.of(new BlockPos(1, 2, 3), new BlockPos(1, 2, 3)),
-        Arguments.of(new BlockPos(1, 2, 3), new MCList(Arrays.asList(1, 2, 3))),
+        Arguments.of(new BlockPos(1, 2, 3), new MCList(Arrays.asList(1L, 2L, 3L))),
         Arguments.of(new BlockPos(1, 2, 3), map)
     );
   }

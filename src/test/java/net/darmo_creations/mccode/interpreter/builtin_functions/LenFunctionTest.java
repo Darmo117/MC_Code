@@ -45,7 +45,7 @@ class LenFunctionTest extends BuiltinFunctionTest<LenFunction> {
 
   @ParameterizedTest
   @MethodSource("provideArgsForApply")
-  void apply(Object o, int expectedSize) {
+  void apply(Object o, long expectedSize) {
     this.p.getScope().declareVariable(new Variable("_x0_", false, false, true, false, o));
     assertEquals(expectedSize, this.function.apply(this.p.getScope()));
   }

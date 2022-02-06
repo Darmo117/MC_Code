@@ -179,7 +179,7 @@ class StringTypeTest extends TypeTest<StringType> {
   void join() {
     assertEquals("a,b,c", this.typeInstance.join(this.p.getScope(), ",", new MCList(Arrays.asList("a", "b", "c"))));
     assertEquals("", this.typeInstance.join(this.p.getScope(), ",", new MCList()));
-    assertEquals("a,1,c,1.2", this.typeInstance.join(this.p.getScope(), ",", new MCList(Arrays.asList("a", 1, "c", 1.2))));
+    assertEquals("a,1,c,1.2", this.typeInstance.join(this.p.getScope(), ",", new MCList(Arrays.asList("a", 1L, "c", 1.2))));
   }
 
   @Test
@@ -210,9 +210,9 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(UnaryOperator.NOT, "a", false),
         Arguments.of(UnaryOperator.NOT, "", true),
 
-        Arguments.of(UnaryOperator.LENGTH, "", 0),
-        Arguments.of(UnaryOperator.LENGTH, "a", 1),
-        Arguments.of(UnaryOperator.LENGTH, "aa", 2)
+        Arguments.of(UnaryOperator.LENGTH, "", 0L),
+        Arguments.of(UnaryOperator.LENGTH, "a", 1L),
+        Arguments.of(UnaryOperator.LENGTH, "aa", 2L)
     );
   }
 
@@ -231,7 +231,7 @@ class StringTypeTest extends TypeTest<StringType> {
 
   public static Stream<Arguments> provideArgsForApplyBinaryOperator() {
     return Stream.of(
-        Arguments.of(BinaryOperator.PLUS, "a", 1, "a1"),
+        Arguments.of(BinaryOperator.PLUS, "a", 1L, "a1"),
         Arguments.of(BinaryOperator.PLUS, "a", 1.0, "a1.0"),
         Arguments.of(BinaryOperator.PLUS, "a", true, "atrue"),
         Arguments.of(BinaryOperator.PLUS, "a", false, "afalse"),
@@ -240,17 +240,17 @@ class StringTypeTest extends TypeTest<StringType> {
 //        Arguments.of(BinaryOperator.PLUS, "a", Blocks.STONE, "aminecraft:stone"), // FIXME not initialized
         Arguments.of(BinaryOperator.PLUS, "a", null, "anull"),
         Arguments.of(BinaryOperator.PLUS, "a", new MCList(), "a[]"),
-        Arguments.of(BinaryOperator.PLUS, "a", new MCList(Arrays.asList(1, 2, 3)), "a[1, 2, 3]"),
+        Arguments.of(BinaryOperator.PLUS, "a", new MCList(Arrays.asList(1L, 2L, 3L)), "a[1, 2, 3]"),
         Arguments.of(BinaryOperator.PLUS, "a", new MCSet(), "a{}"),
-        Arguments.of(BinaryOperator.PLUS, "a", new MCSet(Collections.singletonList(1)), "a{1}"),
+        Arguments.of(BinaryOperator.PLUS, "a", new MCSet(Collections.singletonList(1L)), "a{1}"),
         Arguments.of(BinaryOperator.PLUS, "a", new MCMap(), "a{}"),
         Arguments.of(BinaryOperator.PLUS, "a", new BlockPos(0, 0, 0), "aBlockPos{x=0, y=0, z=0}"),
         Arguments.of(BinaryOperator.PLUS, "a", new Range(1, 1, 1), "aRange{start=1, end=1, step=1}"),
         Arguments.of(BinaryOperator.PLUS, "a", new ResourceLocation("minecraft:stone"), "aminecraft:stone"),
 
-        Arguments.of(BinaryOperator.MUL, "ab", 0, ""),
-        Arguments.of(BinaryOperator.MUL, "ab", 1, "ab"),
-        Arguments.of(BinaryOperator.MUL, "ab", 2, "abab"),
+        Arguments.of(BinaryOperator.MUL, "ab", 0L, ""),
+        Arguments.of(BinaryOperator.MUL, "ab", 1L, "ab"),
+        Arguments.of(BinaryOperator.MUL, "ab", 2L, "abab"),
         Arguments.of(BinaryOperator.MUL, "ab", true, "ab"),
         Arguments.of(BinaryOperator.MUL, "ab", false, ""),
 
@@ -258,9 +258,9 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.EQUAL, "ab", "ab", true),
         Arguments.of(BinaryOperator.EQUAL, "ab", true, false),
         Arguments.of(BinaryOperator.EQUAL, "ab", false, false),
-        Arguments.of(BinaryOperator.EQUAL, "1", 1, false),
-        Arguments.of(BinaryOperator.EQUAL, "0", 0, false),
-        Arguments.of(BinaryOperator.EQUAL, "", 0, false),
+        Arguments.of(BinaryOperator.EQUAL, "1", 1L, false),
+        Arguments.of(BinaryOperator.EQUAL, "0", 0L, false),
+        Arguments.of(BinaryOperator.EQUAL, "", 0L, false),
         Arguments.of(BinaryOperator.EQUAL, "1.0", 1.0, false),
         Arguments.of(BinaryOperator.EQUAL, "0.0", 0.0, false),
         Arguments.of(BinaryOperator.EQUAL, "", 0.0, false),
@@ -279,9 +279,9 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.NOT_EQUAL, "ab", "ab", false),
         Arguments.of(BinaryOperator.NOT_EQUAL, "ab", true, true),
         Arguments.of(BinaryOperator.NOT_EQUAL, "ab", false, true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, "1", 1, true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, "0", 0, true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, "", 0, true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, "1", 1L, true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, "0", 0L, true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, "", 0L, true),
         Arguments.of(BinaryOperator.NOT_EQUAL, "1.0", 1.0, true),
         Arguments.of(BinaryOperator.NOT_EQUAL, "0.0", 0.0, true),
         Arguments.of(BinaryOperator.NOT_EQUAL, "", 0.0, true),
@@ -338,8 +338,8 @@ class StringTypeTest extends TypeTest<StringType> {
 
         Arguments.of(BinaryOperator.GET_ITEM, "ab", false, "a"),
         Arguments.of(BinaryOperator.GET_ITEM, "ab", true, "b"),
-        Arguments.of(BinaryOperator.GET_ITEM, "ab", 0, "a"),
-        Arguments.of(BinaryOperator.GET_ITEM, "ab", 1, "b")
+        Arguments.of(BinaryOperator.GET_ITEM, "ab", 0L, "a"),
+        Arguments.of(BinaryOperator.GET_ITEM, "ab", 1L, "b")
     );
   }
 
@@ -351,7 +351,7 @@ class StringTypeTest extends TypeTest<StringType> {
 
   public static Stream<Arguments> provideArgsForApplyBinaryOperatorError() {
     return Stream.of(
-        Arguments.of(BinaryOperator.SUB, "", 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, "", 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, "", 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, "", true, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, "", false, UnsupportedOperatorException.class),
@@ -378,7 +378,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.MUL, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.DIV, "", false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, "", 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, "", 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, "", 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, "", "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, "", new Item(), UnsupportedOperatorException.class),
@@ -392,7 +392,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.DIV, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.INT_DIV, "", false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, "", 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, "", 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, "", 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, "", "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, "", new Item(), UnsupportedOperatorException.class),
@@ -406,7 +406,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.INT_DIV, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.MOD, "", false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, "", 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, "", 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, "", 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, "", "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, "", new Item(), UnsupportedOperatorException.class),
@@ -420,7 +420,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.MOD, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.POW, "", false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, "", 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, "", 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, "", 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, "", "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, "", new Item(), UnsupportedOperatorException.class),
@@ -434,7 +434,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.POW, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GT, "", false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, "", 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, "", 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, "", 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, "", new Item(), UnsupportedOperatorException.class),
 //        Arguments.of(BinaryOperator.GT, "", new Block(Material.AIR), UnsupportedOperatorException.class), // FIXME not initialized
@@ -447,7 +447,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.GT, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GE, "", false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, "", 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, "", 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, "", 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, "", new Item(), UnsupportedOperatorException.class),
 //        Arguments.of(BinaryOperator.GE, "", new Block(Material.AIR), UnsupportedOperatorException.class), // FIXME not initialized
@@ -460,7 +460,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.GE, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LT, "", false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, "", 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, "", 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, "", 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, "", new Item(), UnsupportedOperatorException.class),
 //        Arguments.of(BinaryOperator.LT, "", new Block(Material.AIR), UnsupportedOperatorException.class), // FIXME not initialized
@@ -473,7 +473,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.LT, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LE, "", false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, "", 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, "", 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, "", 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, "", new Item(), UnsupportedOperatorException.class),
 //        Arguments.of(BinaryOperator.LE, "", new Block(Material.AIR), UnsupportedOperatorException.class), // FIXME not initialized
@@ -486,7 +486,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.LE, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.IN, "", true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, "", 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, "", 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, "", 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, "", new Item(), UnsupportedOperatorException.class),
 //        Arguments.of(BinaryOperator.IN, "", new Block(Material.AIR), UnsupportedOperatorException.class), // FIXME not initialized
@@ -499,7 +499,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.IN, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.NOT_IN, "", true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, "", 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, "", 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, "", 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, "", new Item(), UnsupportedOperatorException.class),
 //        Arguments.of(BinaryOperator.NOT_IN, "", new Block(Material.AIR), UnsupportedOperatorException.class), // FIXME not initialized
@@ -511,9 +511,9 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.NOT_IN, "", new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.GET_ITEM, "", 0, IndexOutOfBoundsException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, "a", 1, IndexOutOfBoundsException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, "", -1, IndexOutOfBoundsException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, "", 0L, IndexOutOfBoundsException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, "a", 1L, IndexOutOfBoundsException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, "", -1L, IndexOutOfBoundsException.class),
         Arguments.of(BinaryOperator.GET_ITEM, "", 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, "", "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, "", new Item(), UnsupportedOperatorException.class),
@@ -527,7 +527,7 @@ class StringTypeTest extends TypeTest<StringType> {
         Arguments.of(BinaryOperator.GET_ITEM, "", new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.DEL_ITEM, "", true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, "", 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, "", 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, "", 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, "", "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, "", new Item(), UnsupportedOperatorException.class),
@@ -562,18 +562,18 @@ class StringTypeTest extends TypeTest<StringType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(0.0),
         Arguments.of("a"),
         Arguments.of(""),
         Arguments.of(new Item()),
-        Arguments.of(new MCList(Collections.singletonList(1))),
+        Arguments.of(new MCList(Collections.singletonList(1L))),
         Arguments.of(new MCList()),
-        Arguments.of(new MCSet(Collections.singletonList(1))),
+        Arguments.of(new MCSet(Collections.singletonList(1L))),
         Arguments.of(new MCSet()),
-        Arguments.of(new MCMap(Collections.singletonMap("a", 1))),
+        Arguments.of(new MCMap(Collections.singletonMap("a", 1L))),
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
@@ -591,7 +591,7 @@ class StringTypeTest extends TypeTest<StringType> {
   static Stream<Arguments> provideArgsForApplyTernaryOperatorError() {
     return Stream.of(
         Arguments.of(TernaryOperator.SET_ITEM, "", true, true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, "", 1, true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, "", 1L, true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, "", 1.0, true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, "", "", true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, "", new Item(), true, UnsupportedOperatorException.class),
@@ -622,19 +622,19 @@ class StringTypeTest extends TypeTest<StringType> {
     return Stream.of(
         Arguments.of("true", true),
         Arguments.of("false", false),
-        Arguments.of("1", 1),
-        Arguments.of("-1", -1),
-        Arguments.of("0", 0),
+        Arguments.of("1", 1L),
+        Arguments.of("-1", -1L),
+        Arguments.of("0", 0L),
         Arguments.of("1.0", 1.0),
         Arguments.of("-1.0", -1.0),
         Arguments.of("0.0", 0.0),
         Arguments.of("a", "a"),
         Arguments.of("", ""),
-        Arguments.of("[1]", new MCList(Collections.singletonList(1))),
+        Arguments.of("[1]", new MCList(Collections.singletonList(1L))),
         Arguments.of("[]", new MCList()),
-        Arguments.of("{1}", new MCSet(Collections.singletonList(1))),
+        Arguments.of("{1}", new MCSet(Collections.singletonList(1L))),
         Arguments.of("{}", new MCSet()),
-        Arguments.of("{a=1}", new MCMap(Collections.singletonMap("a", 1))),
+        Arguments.of("{a=1}", new MCMap(Collections.singletonMap("a", 1L))),
         Arguments.of("{}", new MCMap()),
 //        Arguments.of("minecraft:stick", Items.STICK), // FIXME not initialized
 //        Arguments.of("minecraft:stone", Blocks.STONE), // FIXME raises error because of sound system not initialized

@@ -54,33 +54,33 @@ public class PosType extends Type<BlockPos> {
   }
 
   @Method(name = "up")
-  public BlockPos up(final Scope scope, final BlockPos self, final Integer offset) {
-    return self.up(offset);
+  public BlockPos up(final Scope scope, final BlockPos self, final Long offset) {
+    return self.up(offset.intValue());
   }
 
   @Method(name = "down")
-  public BlockPos down(final Scope scope, final BlockPos self, final Integer offset) {
-    return self.down(offset);
+  public BlockPos down(final Scope scope, final BlockPos self, final Long offset) {
+    return self.down(offset.intValue());
   }
 
   @Method(name = "north")
-  public BlockPos north(final Scope scope, final BlockPos self, final Integer offset) {
-    return self.north(offset);
+  public BlockPos north(final Scope scope, final BlockPos self, final Long offset) {
+    return self.north(offset.intValue());
   }
 
   @Method(name = "south")
-  public BlockPos south(final Scope scope, final BlockPos self, final Integer offset) {
-    return self.south(offset);
+  public BlockPos south(final Scope scope, final BlockPos self, final Long offset) {
+    return self.south(offset.intValue());
   }
 
   @Method(name = "west")
-  public BlockPos west(final Scope scope, final BlockPos self, final Integer offset) {
-    return self.west(offset);
+  public BlockPos west(final Scope scope, final BlockPos self, final Long offset) {
+    return self.west(offset.intValue());
   }
 
   @Method(name = "east")
-  public BlockPos east(final Scope scope, final BlockPos self, final Integer offset) {
-    return self.east(offset);
+  public BlockPos east(final Scope scope, final BlockPos self, final Long offset) {
+    return self.east(offset.intValue());
   }
 
   @Override
@@ -185,7 +185,7 @@ public class PosType extends Type<BlockPos> {
         throw new EvaluationException(scope, "mccode.interpreter.error.pos_list_format", list);
       }
       IntType intType = ProgramManager.getTypeInstance(IntType.class);
-      List<Integer> values = list.stream().map(o1 -> intType.implicitCast(scope, o1)).collect(Collectors.toList());
+      List<Long> values = list.stream().map(o1 -> intType.implicitCast(scope, o1)).collect(Collectors.toList());
       return new BlockPos(values.get(0), values.get(1), values.get(2));
     } else if (o instanceof Map) {
       Map<?, ?> map = (Map<?, ?>) o;

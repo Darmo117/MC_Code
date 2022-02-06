@@ -6,8 +6,11 @@ import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.exceptions.IndexOutOfBoundsException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -82,17 +85,17 @@ public class StringType extends Type<String> {
 
   @Method(name = "count")
   @Doc("Returns the number of times the given string is present in this string.")
-  public Integer count(final Scope scope, final String self, final String needle) {
+  public Long count(final Scope scope, final String self, final String needle) {
     if ("".equals(needle)) {
-      return self.length() + 1;
+      return (long) self.length() + 1;
     }
-    return self.length() - self.replace(needle, "").length();
+    return (long) self.length() - self.replace(needle, "").length();
   }
 
   @Method(name = "index")
   @Doc("Returns the index of the first occurence of the given string in this string.")
-  public Integer indexOf(final Scope scope, final String self, final String needle) {
-    return self.indexOf(needle);
+  public Long indexOf(final Scope scope, final String self, final String needle) {
+    return (long) self.indexOf(needle);
   }
 
   @Method(name = "strip")
@@ -146,12 +149,12 @@ public class StringType extends Type<String> {
 
   @Override
   protected Object __get_item__(final Scope scope, final String self, final Object key) {
-    if (key instanceof Integer || key instanceof Boolean) {
-      int index = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, key);
+    if (key instanceof Long || key instanceof Boolean) {
+      Long index = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, key);
       if (index < 0 || index >= self.length()) {
-        throw new IndexOutOfBoundsException(scope, index);
+        throw new IndexOutOfBoundsException(scope, index.intValue());
       }
-      return String.valueOf(self.charAt(index));
+      return String.valueOf(self.charAt(index.intValue()));
     }
     return super.__get_item__(scope, self, key);
   }
@@ -163,8 +166,8 @@ public class StringType extends Type<String> {
 
   @Override
   protected Object __mul__(final Scope scope, final String self, final Object o, final boolean inPlace) {
-    if (o instanceof Integer || o instanceof Boolean) {
-      int nb = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, o);
+    if (o instanceof Long || o instanceof Boolean) {
+      Long nb = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, o);
       if (nb <= 0) {
         return "";
       }
@@ -229,12 +232,25 @@ public class StringType extends Type<String> {
   }
 
   @Override
-  protected int __len__(final Scope scope, final String self) {
+  protected long __len__(final Scope scope, final String self) {
     return self.length();
   }
 
   @Override
   public String implicitCast(final Scope scope, final Object o) {
+    // “Override” toString() for some Minecraft classes
+    if (o instanceof BlockPos) {
+      BlockPos pos = (BlockPos) o;
+      return String.format("(%d, %d, %d)", pos.getX(), pos.getY(), pos.getZ());
+    }
+    if (o instanceof Block) {
+      //noinspection ConstantConditions
+      return ((Block) o).getRegistryName().toString();
+    }
+    if (o instanceof Item) {
+      //noinspection ConstantConditions
+      return ((Item) o).getRegistryName().toString();
+    }
     return String.valueOf(o);
   }
 

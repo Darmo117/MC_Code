@@ -41,7 +41,7 @@ class RangeFunctionTest extends BuiltinFunctionTest<RangeFunction> {
 
   @ParameterizedTest
   @MethodSource("provideArgsForApply")
-  void apply(int start, int end, int step) {
+  void apply(long start, long end, long step) {
     this.p.getScope().declareVariable(new Variable("_x0_", false, false, true, false, start));
     this.p.getScope().declareVariable(new Variable("_x1_", false, false, true, false, end));
     this.p.getScope().declareVariable(new Variable("_x2_", false, false, true, false, step));

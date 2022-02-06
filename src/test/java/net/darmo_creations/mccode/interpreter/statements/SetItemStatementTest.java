@@ -44,28 +44,28 @@ class SetItemStatementTest extends StatementTest {
 
   @Test
   void execute() {
-    MCList list = new MCList(Collections.singletonList(1));
+    MCList list = new MCList(Collections.singletonList(1L));
     this.p.getScope().declareVariable(new Variable("a", false, false, true, true, list));
     assertEquals(StatementAction.PROCEED, new SetItemStatement(new VariableNode("a"), new IntLiteralNode(0), AssigmentOperator.PLUS, new IntLiteralNode(1)).execute(this.p.getScope()));
-    assertEquals(new MCList(Collections.singletonList(2)), this.p.getScope().getVariable("a", false));
+    assertEquals(new MCList(Collections.singletonList(2L)), this.p.getScope().getVariable("a", false));
     assertSame(list, this.p.getScope().getVariable("a", false));
   }
 
   @Test
   void setUnsupportedError() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, true, false, 1));
+    this.p.getScope().declareVariable(new Variable("a", false, false, true, false, 1L));
     assertThrows(UnsupportedOperatorException.class, () -> new SetItemStatement(new VariableNode("a"), new IntLiteralNode(0), AssigmentOperator.PLUS, new IntLiteralNode(1)).execute(this.p.getScope()));
   }
 
   @Test
   void deleteUndefinedIndexError() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, true, true, new MCList(Collections.singletonList(1))));
+    this.p.getScope().declareVariable(new Variable("a", false, false, true, true, new MCList(Collections.singletonList(1L))));
     assertThrows(IndexOutOfBoundsException.class, () -> new SetItemStatement(new VariableNode("a"), new IntLiteralNode(1), AssigmentOperator.PLUS, new IntLiteralNode(1)).execute(this.p.getScope()));
   }
 
   @Test
   void deleteUndefinedKeyError() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, true, true, new MCMap(Collections.singletonMap("a", 1))));
+    this.p.getScope().declareVariable(new Variable("a", false, false, true, true, new MCMap(Collections.singletonMap("a", 1L))));
     assertThrows(NoSuchKeyException.class, () -> new SetItemStatement(new VariableNode("a"), new StringLiteralNode("b"), AssigmentOperator.PLUS, new IntLiteralNode(1)).execute(this.p.getScope()));
   }
 

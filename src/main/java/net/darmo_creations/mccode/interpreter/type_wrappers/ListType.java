@@ -70,25 +70,25 @@ public class ListType extends Type<MCList> {
 
   @Method(name = "insert")
   @Doc("Adds a value at the specified index of this list. Modifies this list.")
-  public Void insert(final Scope scope, final MCList self, final Integer index, final Object value) {
+  public Void insert(final Scope scope, final MCList self, final Long index, final Object value) {
     if (index < 0 || index > self.size()) {
-      throw new IndexOutOfBoundsException(scope, index);
+      throw new IndexOutOfBoundsException(scope, index.intValue());
     }
-    self.add(index, ProgramManager.getTypeForValue(value).copy(scope, value));
+    self.add(index.intValue(), ProgramManager.getTypeForValue(value).copy(scope, value));
     return null;
   }
 
   @Method(name = "count")
   @Doc("Counts the number of times the given value occurs in this list.")
-  public Integer count(final Scope scope, final MCList self, final Object value) {
-    return Math.toIntExact(self.stream().filter(e -> e.equals(value)).count());
+  public Long count(final Scope scope, final MCList self, final Object value) {
+    return self.stream().filter(e -> e.equals(value)).count();
   }
 
   @Method(name = "index")
   @Doc("Returns the index of the first occurence of the given value in this list." +
       " Returns -1 if the value is not present in this list.")
-  public Integer indexOf(final Scope scope, final MCList self, final Object value) {
-    return self.indexOf(value);
+  public Long indexOf(final Scope scope, final MCList self, final Object value) {
+    return (long) self.indexOf(value);
   }
 
   @Method(name = "sort")
@@ -100,25 +100,25 @@ public class ListType extends Type<MCList> {
 
   @Override
   protected Object __get_item__(final Scope scope, final MCList self, final Object key) {
-    if (key instanceof Integer || key instanceof Boolean) {
-      int index = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, key);
+    if (key instanceof Long || key instanceof Boolean) {
+      Long index = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, key);
       if (index < 0 || index >= self.size()) {
-        throw new IndexOutOfBoundsException(scope, index);
+        throw new IndexOutOfBoundsException(scope, index.intValue());
       }
-      return self.get(index);
+      return self.get(index.intValue());
     }
     return super.__get_item__(scope, self, key);
   }
 
   @Override
   protected void __set_item__(final Scope scope, MCList self, final Object key, final Object value) {
-    if (key instanceof Integer || key instanceof Boolean) {
-      int index = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, key);
+    if (key instanceof Long || key instanceof Boolean) {
+      Long index = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, key);
       if (index < 0 || index >= self.size()) {
-        throw new IndexOutOfBoundsException(scope, index);
+        throw new IndexOutOfBoundsException(scope, index.intValue());
       }
       // Deep copy value
-      self.set(index, ProgramManager.getTypeForValue(value).copy(scope, value));
+      self.set(index.intValue(), ProgramManager.getTypeForValue(value).copy(scope, value));
     } else {
       super.__set_item__(scope, self, key, value);
     }
@@ -126,12 +126,12 @@ public class ListType extends Type<MCList> {
 
   @Override
   protected void __del_item__(final Scope scope, MCList self, final Object key) {
-    if (key instanceof Integer || key instanceof Boolean) {
-      int index = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, key);
+    if (key instanceof Long || key instanceof Boolean) {
+      Long index = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, key);
       if (index < 0 || index >= self.size()) {
-        throw new IndexOutOfBoundsException(scope, index);
+        throw new IndexOutOfBoundsException(scope, index.intValue());
       }
-      self.remove(index);
+      self.remove(index.intValue());
     } else {
       super.__del_item__(scope, self, key);
     }
@@ -190,8 +190,8 @@ public class ListType extends Type<MCList> {
    */
   @Override
   protected Object __mul__(final Scope scope, MCList self, final Object o, final boolean inPlace) {
-    if (o instanceof Integer || o instanceof Boolean) {
-      int nb = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, o);
+    if (o instanceof Long || o instanceof Boolean) {
+      long nb = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, o);
       if (inPlace) {
         return this.mul(scope, self, nb);
       }
@@ -200,7 +200,7 @@ public class ListType extends Type<MCList> {
     return super.__mul__(scope, self, o, inPlace);
   }
 
-  private MCList mul(final Scope scope, MCList list, final int nb) {
+  private MCList mul(final Scope scope, MCList list, final long nb) {
     if (nb <= 0) {
       list.clear();
       return list;
@@ -266,7 +266,7 @@ public class ListType extends Type<MCList> {
   }
 
   @Override
-  protected int __len__(final Scope scope, final MCList self) {
+  protected long __len__(final Scope scope, final MCList self) {
     return self.size();
   }
 

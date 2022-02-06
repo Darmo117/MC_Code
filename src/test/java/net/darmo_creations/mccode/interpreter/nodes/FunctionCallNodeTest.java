@@ -25,8 +25,8 @@ class FunctionCallNodeTest extends NodeTest {
   @Test
   void evaluate() {
     Object r = new FunctionCallNode(new VariableNode("floor"), Collections.singletonList(new FloatLiteralNode(1.0))).evaluate(this.p.getScope());
-    assertSame(Integer.class, r.getClass());
-    assertEquals(1, r);
+    assertSame(Long.class, r.getClass());
+    assertEquals(1L, r);
   }
 
   @Test

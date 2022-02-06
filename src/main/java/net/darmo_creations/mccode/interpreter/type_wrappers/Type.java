@@ -446,7 +446,7 @@ public abstract class Type<T> {
    * @return The result of the operator.
    */
   protected Object __intdiv__(Scope scope, T self, Object o, final boolean inPlace) {
-    return (int) Math.floor(((Number) this.__div__(scope, self, o, inPlace)).doubleValue());
+    return (long) Math.floor(((Number) this.__div__(scope, self, o, inPlace)).doubleValue());
   }
 
   /**
@@ -567,7 +567,7 @@ public abstract class Type<T> {
    * @param self  Instance of this type to apply the operator to.
    * @return The length of the object.
    */
-  protected int __len__(Scope scope, T self) {
+  protected long __len__(Scope scope, T self) {
     throw new UnsupportedOperatorException(scope, UnaryOperator.LENGTH, this);
   }
 

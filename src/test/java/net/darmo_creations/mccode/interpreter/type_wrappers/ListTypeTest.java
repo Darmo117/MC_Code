@@ -54,7 +54,7 @@ class ListTypeTest extends TypeTest<ListType> {
 
   @Test
   void clearList() {
-    MCList list = new MCList(Arrays.asList(1, 2));
+    MCList list = new MCList(Arrays.asList(1L, 2L));
     assertNull(this.typeInstance.clear(this.p.getScope(), list));
     assertTrue(list.isEmpty());
   }
@@ -70,68 +70,68 @@ class ListTypeTest extends TypeTest<ListType> {
 
   @Test
   void insertItemStart() {
-    MCList list = new MCList(Arrays.asList(1, 2));
+    MCList list = new MCList(Arrays.asList(1L, 2L));
     Object o = new MCSet();
-    assertNull(this.typeInstance.insert(this.p.getScope(), list, 0, o));
+    assertNull(this.typeInstance.insert(this.p.getScope(), list, 0L, o));
     assertNotSame(o, list.get(0));
     assertEquals(o, list.get(0));
-    assertEquals(1, list.get(1));
-    assertEquals(2, list.get(2));
+    assertEquals(1L, list.get(1));
+    assertEquals(2L, list.get(2));
   }
 
   @Test
   void insertItemMiddle() {
-    MCList list = new MCList(Arrays.asList(1, 2));
+    MCList list = new MCList(Arrays.asList(1L, 2L));
     Object o = new MCSet();
-    assertNull(this.typeInstance.insert(this.p.getScope(), list, 1, o));
-    assertEquals(1, list.get(0));
+    assertNull(this.typeInstance.insert(this.p.getScope(), list, 1L, o));
+    assertEquals(1L, list.get(0));
     assertNotSame(o, list.get(1));
     assertEquals(o, list.get(1));
-    assertEquals(2, list.get(2));
+    assertEquals(2L, list.get(2));
   }
 
   @Test
   void insertItemEnd() {
-    MCList list = new MCList(Arrays.asList(1, 2));
+    MCList list = new MCList(Arrays.asList(1L, 2L));
     Object o = new MCSet();
-    assertNull(this.typeInstance.insert(this.p.getScope(), list, 2, o));
-    assertEquals(1, list.get(0));
-    assertEquals(2, list.get(1));
+    assertNull(this.typeInstance.insert(this.p.getScope(), list, 2L, o));
+    assertEquals(1L, list.get(0));
+    assertEquals(2L, list.get(1));
     assertNotSame(o, list.get(2));
     assertEquals(o, list.get(2));
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-1, 1})
-  void insertItemError(int index) {
+  @ValueSource(longs = {-1, 1})
+  void insertItemError(long index) {
     assertThrows(IndexOutOfBoundsException.class, () -> this.typeInstance.insert(this.p.getScope(), new MCList(), index, ""));
   }
 
   @ParameterizedTest
   @MethodSource("provideArgsForCountOccurences")
-  void countOccurences(int nb, Object value) {
-    assertEquals(nb, this.typeInstance.count(this.p.getScope(), new MCList(Arrays.asList(1, 2, 1)), value));
+  void countOccurences(long nb, Object value) {
+    assertEquals(nb, this.typeInstance.count(this.p.getScope(), new MCList(Arrays.asList(1L, 2L, 1L)), value));
   }
 
   static Stream<Arguments> provideArgsForCountOccurences() {
     return Stream.of(
-        Arguments.of(1, 2),
-        Arguments.of(2, 1),
-        Arguments.of(0, 3)
+        Arguments.of(1L, 2L),
+        Arguments.of(2L, 1L),
+        Arguments.of(0L, 3L)
     );
   }
 
   @ParameterizedTest
   @MethodSource("provideArgsForItemIndex")
-  void itemIndex(int index, Object value) {
-    assertEquals(index, this.typeInstance.indexOf(this.p.getScope(), new MCList(Arrays.asList(1, 2, 1)), value));
+  void itemIndex(long index, Object value) {
+    assertEquals(index, this.typeInstance.indexOf(this.p.getScope(), new MCList(Arrays.asList(1L, 2L, 1L)), value));
   }
 
   static Stream<Arguments> provideArgsForItemIndex() {
     return Stream.of(
-        Arguments.of(1, 2),
-        Arguments.of(0, 1),
-        Arguments.of(-1, 3)
+        Arguments.of(1L, 2L),
+        Arguments.of(0L, 1L),
+        Arguments.of(-1L, 3L)
     );
   }
 
@@ -145,7 +145,7 @@ class ListTypeTest extends TypeTest<ListType> {
   static Stream<Arguments> provideArgsForSortNatural() {
     return Stream.of(
         Arguments.of(new MCList(), new MCList()),
-        Arguments.of(new MCList(Arrays.asList(1, 2, 3)), new MCList(Arrays.asList(3, 2, 1)))
+        Arguments.of(new MCList(Arrays.asList(1L, 2L, 3L)), new MCList(Arrays.asList(3L, 2L, 1L)))
     );
   }
 
@@ -159,7 +159,7 @@ class ListTypeTest extends TypeTest<ListType> {
   static Stream<Arguments> provideArgsForSortReversed() {
     return Stream.of(
         Arguments.of(new MCList(), new MCList()),
-        Arguments.of(new MCList(Arrays.asList(3, 2, 1)), new MCList(Arrays.asList(1, 2, 3)))
+        Arguments.of(new MCList(Arrays.asList(3L, 2L, 1L)), new MCList(Arrays.asList(1L, 2L, 3L)))
     );
   }
 
@@ -186,7 +186,7 @@ class ListTypeTest extends TypeTest<ListType> {
 
   @Test
   void iteration() {
-    Object[] o = {1, 2, "a", new BlockPos(1, 2, 3)};
+    Object[] o = {1L, 2L, "a", new BlockPos(1, 2, 3)};
     Iterator<?> it = (Iterator<?>) this.typeInstance.applyOperator(this.p.getScope(), UnaryOperator.ITERATE, new MCList(Arrays.asList(o)), null, null, false);
     int i = 0;
     while (it.hasNext()) {
@@ -204,12 +204,12 @@ class ListTypeTest extends TypeTest<ListType> {
 
   public static Stream<Arguments> provideArgsForApplyUnaryOperator() {
     return Stream.of(
-        Arguments.of(UnaryOperator.NOT, new MCList(Collections.singletonList(1)), false),
+        Arguments.of(UnaryOperator.NOT, new MCList(Collections.singletonList(1L)), false),
         Arguments.of(UnaryOperator.NOT, new MCList(), true),
 
-        Arguments.of(UnaryOperator.LENGTH, new MCList(), 0),
-        Arguments.of(UnaryOperator.LENGTH, new MCList(Collections.singletonList(1)), 1),
-        Arguments.of(UnaryOperator.LENGTH, new MCList(Arrays.asList(1, 2)), 2)
+        Arguments.of(UnaryOperator.LENGTH, new MCList(), 0L),
+        Arguments.of(UnaryOperator.LENGTH, new MCList(Collections.singletonList(1L)), 1L),
+        Arguments.of(UnaryOperator.LENGTH, new MCList(Arrays.asList(1L, 2L)), 2L)
     );
   }
 
@@ -229,10 +229,10 @@ class ListTypeTest extends TypeTest<ListType> {
 
   public static Stream<Arguments> provideArgsForDeleteItem() {
     return Stream.of(
-        Arguments.of(new MCList(Arrays.asList(1, 2)), false, new MCList(Collections.singletonList(2))),
-        Arguments.of(new MCList(Arrays.asList(1, 2)), true, new MCList(Collections.singletonList(1))),
-        Arguments.of(new MCList(Arrays.asList(1, 2)), 0, new MCList(Collections.singletonList(2))),
-        Arguments.of(new MCList(Arrays.asList(1, 2)), 1, new MCList(Collections.singletonList(1)))
+        Arguments.of(new MCList(Arrays.asList(1L, 2L)), false, new MCList(Collections.singletonList(2L))),
+        Arguments.of(new MCList(Arrays.asList(1L, 2L)), true, new MCList(Collections.singletonList(1L))),
+        Arguments.of(new MCList(Arrays.asList(1L, 2L)), 0L, new MCList(Collections.singletonList(2L))),
+        Arguments.of(new MCList(Arrays.asList(1L, 2L)), 1L, new MCList(Collections.singletonList(1L)))
     );
   }
 
@@ -241,15 +241,15 @@ class ListTypeTest extends TypeTest<ListType> {
   void setItem(MCList self, Object key, Object value, MCList expected) {
     assertNull(this.typeInstance.applyOperator(this.p.getScope(), TernaryOperator.SET_ITEM, self, key, value, true));
     assertEquals(expected, self);
-    assertNotSame(value, self.get(key instanceof Boolean ? ((Boolean) key ? 1 : 0) : (Integer) key));
+    assertNotSame(value, self.get(key instanceof Boolean ? ((Boolean) key ? 1 : 0) : ((Long) key).intValue()));
   }
 
   public static Stream<Arguments> provideArgsForSetItem() {
     return Stream.of(
-        Arguments.of(new MCList(Arrays.asList(1, 2)), false, new MCList(), new MCList(Arrays.asList(new MCList(), 2))),
-        Arguments.of(new MCList(Arrays.asList(1, 2)), true, new MCList(), new MCList(Arrays.asList(1, new MCList()))),
-        Arguments.of(new MCList(Arrays.asList(1, 2)), 0, new MCList(), new MCList(Arrays.asList(new MCList(), 2))),
-        Arguments.of(new MCList(Arrays.asList(1, 2)), 1, new MCList(), new MCList(Arrays.asList(1, new MCList())))
+        Arguments.of(new MCList(Arrays.asList(1L, 2L)), false, new MCList(), new MCList(Arrays.asList(new MCList(), 2L))),
+        Arguments.of(new MCList(Arrays.asList(1L, 2L)), true, new MCList(), new MCList(Arrays.asList(1L, new MCList()))),
+        Arguments.of(new MCList(Arrays.asList(1L, 2L)), 0L, new MCList(), new MCList(Arrays.asList(new MCList(), 2L))),
+        Arguments.of(new MCList(Arrays.asList(1L, 2L)), 1L, new MCList(), new MCList(Arrays.asList(1L, new MCList())))
     );
   }
 
@@ -269,7 +269,7 @@ class ListTypeTest extends TypeTest<ListType> {
 
   @ParameterizedTest
   @MethodSource("provideArgsForMulCopy")
-  void mulCopy(int nb, boolean inPlace) {
+  void mulCopy(long nb, boolean inPlace) {
     Object o = new MCList();
     MCList res = (MCList) this.typeInstance.applyOperator(
         this.p.getScope(), BinaryOperator.MUL, new MCList(Collections.singletonList(o)), nb, null, inPlace);
@@ -280,10 +280,10 @@ class ListTypeTest extends TypeTest<ListType> {
 
   static Stream<Arguments> provideArgsForMulCopy() {
     return Stream.of(
-        Arguments.of(1, false),
-        Arguments.of(2, false),
-        Arguments.of(1, true),
-        Arguments.of(2, true)
+        Arguments.of(1L, false),
+        Arguments.of(2L, false),
+        Arguments.of(1L, true),
+        Arguments.of(2L, true)
     );
   }
 
@@ -302,116 +302,116 @@ class ListTypeTest extends TypeTest<ListType> {
   public static Stream<Arguments> provideArgsForApplyBinaryOperator() {
     return Stream.of(
         Arguments.of(BinaryOperator.PLUS, new MCList(), new MCList(), new MCList(), false),
-        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1)), new MCList(), new MCList(Collections.singletonList(1)), false),
-        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(2)), new MCList(Arrays.asList(1, 2)), false),
+        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1L)), new MCList(), new MCList(Collections.singletonList(1L)), false),
+        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1L)), new MCList(Collections.singletonList(2L)), new MCList(Arrays.asList(1L, 2L)), false),
         Arguments.of(BinaryOperator.PLUS, new MCList(), new MCList(), new MCList(), true),
-        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1)), new MCList(), new MCList(Collections.singletonList(1)), true),
-        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(2)), new MCList(Arrays.asList(1, 2)), true),
+        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1L)), new MCList(), new MCList(Collections.singletonList(1L)), true),
+        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1L)), new MCList(Collections.singletonList(2L)), new MCList(Arrays.asList(1L, 2L)), true),
         Arguments.of(BinaryOperator.PLUS, new MCList(), "a", "[]a", false),
-        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1)), "a", "[1]a", false),
-        Arguments.of(BinaryOperator.PLUS, new MCList(Arrays.asList(1, 2)), "a", "[1, 2]a", false),
+        Arguments.of(BinaryOperator.PLUS, new MCList(Collections.singletonList(1L)), "a", "[1]a", false),
+        Arguments.of(BinaryOperator.PLUS, new MCList(Arrays.asList(1L, 2L)), "a", "[1, 2]a", false),
 
         Arguments.of(BinaryOperator.SUB, new MCList(), new MCList(), new MCList(), false),
-        Arguments.of(BinaryOperator.SUB, new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(1)), new MCList(), false),
-        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1, 2)), new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(2)), false),
-        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1, 2)), new MCList(Collections.singletonList(3)), new MCList(Arrays.asList(1, 2)), false),
-        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1, 2, 1)), new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(2)), false),
+        Arguments.of(BinaryOperator.SUB, new MCList(Collections.singletonList(1L)), new MCList(Collections.singletonList(1L)), new MCList(), false),
+        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1L, 2L)), new MCList(Collections.singletonList(1L)), new MCList(Collections.singletonList(2L)), false),
+        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1L, 2L)), new MCList(Collections.singletonList(3L)), new MCList(Arrays.asList(1L, 2L)), false),
+        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1L, 2L, 1L)), new MCList(Collections.singletonList(1L)), new MCList(Collections.singletonList(2L)), false),
         Arguments.of(BinaryOperator.SUB, new MCList(), new MCList(), new MCList(), true),
-        Arguments.of(BinaryOperator.SUB, new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(1)), new MCList(), true),
-        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1, 2)), new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(2)), true),
-        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1, 2)), new MCList(Collections.singletonList(3)), new MCList(Arrays.asList(1, 2)), true),
-        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1, 2, 1)), new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(2)), true),
+        Arguments.of(BinaryOperator.SUB, new MCList(Collections.singletonList(1L)), new MCList(Collections.singletonList(1L)), new MCList(), true),
+        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1L, 2L)), new MCList(Collections.singletonList(1L)), new MCList(Collections.singletonList(2L)), true),
+        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1L, 2L)), new MCList(Collections.singletonList(3L)), new MCList(Arrays.asList(1L, 2L)), true),
+        Arguments.of(BinaryOperator.SUB, new MCList(Arrays.asList(1L, 2L, 1L)), new MCList(Collections.singletonList(1L)), new MCList(Collections.singletonList(2L)), true),
 
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), 0, new MCList(), false),
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), 1, new MCList(Arrays.asList(1, 2)), false),
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), 2, new MCList(Arrays.asList(1, 2, 1, 2)), false),
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), true, new MCList(Arrays.asList(1, 2)), false),
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), false, new MCList(), false),
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), 0, new MCList(), true),
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), 1, new MCList(Arrays.asList(1, 2)), true),
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), 2, new MCList(Arrays.asList(1, 2, 1, 2)), true),
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), true, new MCList(Arrays.asList(1, 2)), true),
-        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1, 2)), false, new MCList(), true),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), 0L, new MCList(), false),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), 1L, new MCList(Arrays.asList(1L, 2L)), false),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), 2L, new MCList(Arrays.asList(1L, 2L, 1L, 2L)), false),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), true, new MCList(Arrays.asList(1L, 2L)), false),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), false, new MCList(), false),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), 0L, new MCList(), true),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), 1L, new MCList(Arrays.asList(1L, 2L)), true),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), 2L, new MCList(Arrays.asList(1L, 2L, 1L, 2L)), true),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), true, new MCList(Arrays.asList(1L, 2L)), true),
+        Arguments.of(BinaryOperator.MUL, new MCList(Arrays.asList(1L, 2L)), false, new MCList(), true),
 
         Arguments.of(BinaryOperator.EQUAL, new MCList(), "", false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 2)), "[1, 2]", false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 2)), true, false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 2)), false, false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Collections.singletonList(1)), 1, false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Collections.singletonList(0)), 0, false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(), 0, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), "[1, 2]", false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), true, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), false, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Collections.singletonList(1L)), 1L, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Collections.singletonList(0L)), 0L, false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(), 0L, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(Collections.singletonList(1.0)), 1.0, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(Collections.singletonList(0.0)), 0.0, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(), 0.0, false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(), null, false, false),
-//        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 2)), Items.STICK, false, false), // FIXME not initialized
+//        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), Items.STICK, false, false), // FIXME not initialized
         Arguments.of(BinaryOperator.EQUAL, new MCList(), new MCList(), true, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 2)), true, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 2)), new MCList(), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 2L)), true, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), new MCList(), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(), new MCList(Arrays.asList(1, 2)), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(), new MCSet(), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 2)), new MCSet(Arrays.asList(1, 2)), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(), new MCMap(), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(0, 0, 0)), new BlockPos(0, 0, 0), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 1, 1)), new Range(1, 1, 1), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 2)), new ResourceLocation("minecraft:stone"), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1, 2)), new ResourceLocation("minecraft:stone"), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(0L, 0L, 0L)), new BlockPos(0, 0, 0), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 1L, 1L)), new Range(1, 1, 1), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), false, false),
 
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), "", true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 2)), "[1, 2]", true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 2)), true, true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 2)), false, true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Collections.singletonList(1)), 1, true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Collections.singletonList(0)), 0, true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), 0, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), "[1, 2]", true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), true, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), false, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Collections.singletonList(1L)), 1L, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Collections.singletonList(0L)), 0L, true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), 0L, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Collections.singletonList(1.0)), 1.0, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Collections.singletonList(0.0)), 0.0, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), 0.0, true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), null, true, false),
-//        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 2)), Items.STICK, false, false), // FIXME not initialized
+//        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), Items.STICK, false, false), // FIXME not initialized
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), new MCList(), false, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 2)), false, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 2)), new MCList(), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), new MCList(Arrays.asList(1, 2)), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 2L)), false, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), new MCList(), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), new MCList(Arrays.asList(1L, 2L)), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), new MCSet(), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 2)), new MCSet(Arrays.asList(1, 2)), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), new MCMap(), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(0, 0, 0)), new BlockPos(0, 0, 0), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 1, 1)), new Range(1, 1, 1), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 2)), new ResourceLocation("minecraft:stone"), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1, 2)), new ResourceLocation("minecraft:stone"), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(0L, 0L, 0L)), new BlockPos(0, 0, 0), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 1L, 1L)), new Range(1, 1, 1), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), true, false),
 
-        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 2)), false, false),
-        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(1, 1)), new MCList(Collections.singletonList(1)), true, false),
-        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 1)), true, false),
-        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(2, 1)), new MCList(Arrays.asList(1, 2)), true, false),
-        Arguments.of(BinaryOperator.GT, new MCList(Collections.singletonList(1)), new MCList(Arrays.asList(1, 1)), false, false),
-        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(1, 1)), new MCList(Arrays.asList(1, 2)), false, false),
+        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 2L)), false, false),
+        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(1L, 1L)), new MCList(Collections.singletonList(1L)), true, false),
+        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 1L)), true, false),
+        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(2L, 1L)), new MCList(Arrays.asList(1L, 2L)), true, false),
+        Arguments.of(BinaryOperator.GT, new MCList(Collections.singletonList(1L)), new MCList(Arrays.asList(1L, 1L)), false, false),
+        Arguments.of(BinaryOperator.GT, new MCList(Arrays.asList(1L, 1L)), new MCList(Arrays.asList(1L, 2L)), false, false),
 
-        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 2)), true, false),
-        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(1, 1)), new MCList(Collections.singletonList(1)), true, false),
-        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 1)), true, false),
-        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(2, 1)), new MCList(Arrays.asList(1, 2)), true, false),
-        Arguments.of(BinaryOperator.GE, new MCList(Collections.singletonList(1)), new MCList(Arrays.asList(1, 1)), false, false),
-        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(1, 1)), new MCList(Arrays.asList(1, 2)), false, false),
+        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 2L)), true, false),
+        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(1L, 1L)), new MCList(Collections.singletonList(1L)), true, false),
+        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 1L)), true, false),
+        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(2L, 1L)), new MCList(Arrays.asList(1L, 2L)), true, false),
+        Arguments.of(BinaryOperator.GE, new MCList(Collections.singletonList(1L)), new MCList(Arrays.asList(1L, 1L)), false, false),
+        Arguments.of(BinaryOperator.GE, new MCList(Arrays.asList(1L, 1L)), new MCList(Arrays.asList(1L, 2L)), false, false),
 
-        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 2)), false, false),
-        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(1, 1)), new MCList(Collections.singletonList(1)), false, false),
-        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 1)), false, false),
-        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(2, 1)), new MCList(Arrays.asList(1, 2)), false, false),
-        Arguments.of(BinaryOperator.LT, new MCList(Collections.singletonList(1)), new MCList(Arrays.asList(1, 1)), true, false),
-        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(1, 1)), new MCList(Arrays.asList(1, 2)), true, false),
+        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 2L)), false, false),
+        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(1L, 1L)), new MCList(Collections.singletonList(1L)), false, false),
+        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 1L)), false, false),
+        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(2L, 1L)), new MCList(Arrays.asList(1L, 2L)), false, false),
+        Arguments.of(BinaryOperator.LT, new MCList(Collections.singletonList(1L)), new MCList(Arrays.asList(1L, 1L)), true, false),
+        Arguments.of(BinaryOperator.LT, new MCList(Arrays.asList(1L, 1L)), new MCList(Arrays.asList(1L, 2L)), true, false),
 
-        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 2)), true, false),
-        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(1, 1)), new MCList(Collections.singletonList(1)), false, false),
-        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(1, 2)), new MCList(Arrays.asList(1, 1)), false, false),
-        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(2, 1)), new MCList(Arrays.asList(1, 2)), false, false),
-        Arguments.of(BinaryOperator.LE, new MCList(Collections.singletonList(1)), new MCList(Arrays.asList(1, 1)), true, false),
-        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(1, 1)), new MCList(Arrays.asList(1, 2)), true, false),
+        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 2L)), true, false),
+        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(1L, 1L)), new MCList(Collections.singletonList(1L)), false, false),
+        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(1L, 2L)), new MCList(Arrays.asList(1L, 1L)), false, false),
+        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(2L, 1L)), new MCList(Arrays.asList(1L, 2L)), false, false),
+        Arguments.of(BinaryOperator.LE, new MCList(Collections.singletonList(1L)), new MCList(Arrays.asList(1L, 1L)), true, false),
+        Arguments.of(BinaryOperator.LE, new MCList(Arrays.asList(1L, 1L)), new MCList(Arrays.asList(1L, 2L)), true, false),
 
-        Arguments.of(BinaryOperator.IN, new MCList(Arrays.asList(1, 2)), 1, true, false),
-        Arguments.of(BinaryOperator.IN, new MCList(Arrays.asList(1, 2)), 2, true, false),
-        Arguments.of(BinaryOperator.IN, new MCList(Arrays.asList(1, 2)), 3, false, false),
+        Arguments.of(BinaryOperator.IN, new MCList(Arrays.asList(1L, 2L)), 1L, true, false),
+        Arguments.of(BinaryOperator.IN, new MCList(Arrays.asList(1L, 2L)), 2L, true, false),
+        Arguments.of(BinaryOperator.IN, new MCList(Arrays.asList(1L, 2L)), 3L, false, false),
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(true)), true, true, false),
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(1)), 1, true, false),
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(1.0)), 1.0, true, false),
@@ -425,11 +425,11 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(new Range(1, 1, 1))), new Range(1, 1, 1), true, false),
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(new ResourceLocation("minecraft:stone"))), new ResourceLocation("minecraft:stone"), true, false),
 
-        Arguments.of(BinaryOperator.NOT_IN, new MCList(Arrays.asList(1, 2)), 1, false, false),
-        Arguments.of(BinaryOperator.NOT_IN, new MCList(Arrays.asList(1, 2)), 2, false, false),
-        Arguments.of(BinaryOperator.NOT_IN, new MCList(Arrays.asList(1, 2)), 3, true, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCList(Arrays.asList(1L, 2L)), 1L, false, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCList(Arrays.asList(1L, 2L)), 2L, false, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCList(Arrays.asList(1L, 2L)), 3L, true, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(true)), true, false, false),
-        Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(1)), 1, false, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(1L)), 1L, false, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(1.0)), 1.0, false, false),
 //        Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(Items.STICK)), Items.STICK, false, false), // FIXME not initialized
 //        Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(Blocks.STONE)), Blocks.STONE, false, false), // FIXME not initialized
@@ -441,10 +441,10 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(new Range(1, 1, 1))), new Range(1, 1, 1), false, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(new ResourceLocation("minecraft:stone"))), new ResourceLocation("minecraft:stone"), false, false),
 
-        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Arrays.asList(1, 2)), false, 1, false),
-        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Arrays.asList(1, 2)), true, 2, false),
-        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Arrays.asList(1, 2)), 0, 1, false),
-        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Arrays.asList(1, 2)), 1, 2, false)
+        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Arrays.asList(1L, 2L)), false, 1L, false),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Arrays.asList(1L, 2L)), true, 2L, false),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Arrays.asList(1L, 2L)), 0L, 1L, false),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Arrays.asList(1L, 2L)), 1L, 2L, false)
     );
   }
 
@@ -456,7 +456,7 @@ class ListTypeTest extends TypeTest<ListType> {
 
   public static Stream<Arguments> provideArgsForApplyBinaryOperatorError() {
     return Stream.of(
-        Arguments.of(BinaryOperator.PLUS, new MCList(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new MCList(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCList(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCList(), true, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCList(), false, UnsupportedOperatorException.class),
@@ -470,7 +470,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.PLUS, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.SUB, new MCList(), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new MCList(), 1L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCList(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCList(), true, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCList(), false, UnsupportedOperatorException.class),
@@ -496,7 +496,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.MUL, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.DIV, new MCList(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new MCList(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new MCList(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCList(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -510,7 +510,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.DIV, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new MCList(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new MCList(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -524,7 +524,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.MOD, new MCList(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new MCList(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new MCList(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCList(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -538,7 +538,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.MOD, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.POW, new MCList(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new MCList(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new MCList(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCList(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -552,7 +552,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.POW, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GT, new MCList(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new MCList(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new MCList(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCList(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -565,7 +565,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.GT, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GE, new MCList(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new MCList(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new MCList(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCList(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -578,7 +578,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.GE, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LT, new MCList(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new MCList(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new MCList(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCList(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCList(), new Item(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCList(), "", UnsupportedOperatorException.class),
@@ -591,7 +591,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.LT, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LE, new MCList(), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new MCList(), 0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new MCList(), 0L, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCList(), 0.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -603,9 +603,9 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.LE, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.GET_ITEM, new MCList(), 0, IndexOutOfBoundsException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Collections.singletonList(1)), 1, IndexOutOfBoundsException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new MCList(), -1, IndexOutOfBoundsException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCList(), 0L, IndexOutOfBoundsException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCList(Collections.singletonList(1L)), 1L, IndexOutOfBoundsException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCList(), -1L, IndexOutOfBoundsException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -618,9 +618,9 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), 0, IndexOutOfBoundsException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new MCList(Collections.singletonList(1)), 1, IndexOutOfBoundsException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), -1, IndexOutOfBoundsException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), 0L, IndexOutOfBoundsException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new MCList(Collections.singletonList(1L)), 1L, IndexOutOfBoundsException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), -1L, IndexOutOfBoundsException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -660,18 +660,18 @@ class ListTypeTest extends TypeTest<ListType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(0.0),
         Arguments.of("a"),
         Arguments.of(""),
         Arguments.of(new Item()),
-        Arguments.of(new MCList(Collections.singletonList(1))),
+        Arguments.of(new MCList(Collections.singletonList(1L))),
         Arguments.of(new MCList()),
-        Arguments.of(new MCSet(Collections.singletonList(1))),
+        Arguments.of(new MCSet(Collections.singletonList(1L))),
         Arguments.of(new MCSet()),
-        Arguments.of(new MCMap(Collections.singletonMap("a", 1))),
+        Arguments.of(new MCMap(Collections.singletonMap("a", 1L))),
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
@@ -683,13 +683,13 @@ class ListTypeTest extends TypeTest<ListType> {
   @ParameterizedTest
   @MethodSource("provideArgsForApplyTernaryOperatorError")
   void applyTernaryOperatorError(TernaryOperator operator, MCList self, Object o1, Class<? extends Throwable> exceptionClass) {
-    assertThrows(exceptionClass, () -> this.typeInstance.applyOperator(this.p.getScope(), operator, self, o1, 1, true));
+    assertThrows(exceptionClass, () -> this.typeInstance.applyOperator(this.p.getScope(), operator, self, o1, 1L, true));
   }
 
   static Stream<Arguments> provideArgsForApplyTernaryOperatorError() {
     return Stream.of(
-        Arguments.of(TernaryOperator.SET_ITEM, new MCList(), 0, IndexOutOfBoundsException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new MCList(), -1, IndexOutOfBoundsException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new MCList(), 0L, IndexOutOfBoundsException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new MCList(), -1L, IndexOutOfBoundsException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCList(), 1.0, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCList(), "", UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCList(), new Item(), UnsupportedOperatorException.class),
@@ -705,7 +705,7 @@ class ListTypeTest extends TypeTest<ListType> {
 
   @Test
   void implicitCast() {
-    assertEquals(new MCList(Collections.singletonList(1)), this.typeInstance.implicitCast(this.p.getScope(), new MCList(Collections.singletonList(1))));
+    assertEquals(new MCList(Collections.singletonList(1L)), this.typeInstance.implicitCast(this.p.getScope(), new MCList(Collections.singletonList(1L))));
     assertEquals(new MCList(), this.typeInstance.implicitCast(this.p.getScope(), new MCList()));
   }
 
@@ -717,9 +717,9 @@ class ListTypeTest extends TypeTest<ListType> {
 
   private static Stream<Arguments> provideArgsForExplicitCast() {
     return Stream.of(
-        Arguments.of(new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(1))),
+        Arguments.of(new MCList(Collections.singletonList(1L)), new MCList(Collections.singletonList(1L))),
         Arguments.of(new MCList(), new MCList()),
-        Arguments.of(new MCList(Collections.singletonList(1)), new MCSet(Collections.singleton(1))),
+        Arguments.of(new MCList(Collections.singletonList(1L)), new MCSet(Collections.singleton(1L))),
         Arguments.of(new MCList(), new MCSet()),
         Arguments.of(new MCList(Arrays.asList("a", "b")), "ab"),
         Arguments.of(new MCList(), "")
@@ -737,9 +737,9 @@ class ListTypeTest extends TypeTest<ListType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(-1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(-1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(-1.0),
         Arguments.of(0.0),
@@ -769,15 +769,15 @@ class ListTypeTest extends TypeTest<ListType> {
     return Stream.of(
         Arguments.of(true),
         Arguments.of(false),
-        Arguments.of(1),
-        Arguments.of(-1),
-        Arguments.of(0),
+        Arguments.of(1L),
+        Arguments.of(-1L),
+        Arguments.of(0L),
         Arguments.of(1.0),
         Arguments.of(-1.0),
         Arguments.of(0.0),
         Arguments.of("a"),
         Arguments.of(""),
-        Arguments.of(new MCMap(Collections.singletonMap("a", 1))),
+        Arguments.of(new MCMap(Collections.singletonMap("a", 1L))),
         Arguments.of(new MCMap()),
         Arguments.of(new Item()),
 //        Arguments.of(Blocks.STONE), // FIXME raises error because of sound system not initialized
@@ -790,14 +790,14 @@ class ListTypeTest extends TypeTest<ListType> {
 
   @Test
   void toBoolean() {
-    assertTrue(this.typeInstance.toBoolean(new MCList(Arrays.asList(1, 2))));
-    assertTrue(this.typeInstance.toBoolean(new MCList(Collections.singletonList(0))));
+    assertTrue(this.typeInstance.toBoolean(new MCList(Arrays.asList(1L, 2L))));
+    assertTrue(this.typeInstance.toBoolean(new MCList(Collections.singletonList(0L))));
     assertFalse(this.typeInstance.toBoolean(new MCList()));
   }
 
   @Test
   void copy() {
-    MCList list = new MCList(Arrays.asList(1, 2));
+    MCList list = new MCList(Arrays.asList(1L, 2L));
     MCList copy = this.typeInstance.copy(this.p.getScope(), list);
     assertNotSame(list, copy);
     assertEquals(list, copy);
@@ -806,7 +806,7 @@ class ListTypeTest extends TypeTest<ListType> {
   @Test
   void copyDeep() {
     MCList innerList = new MCList();
-    MCList list = new MCList(Arrays.asList(1, 2, innerList));
+    MCList list = new MCList(Arrays.asList(1L, 2L, innerList));
     MCList copy = this.typeInstance.copy(this.p.getScope(), list);
     assertNotSame(innerList, copy.get(2));
     assertEquals(innerList, copy.get(2));
@@ -817,11 +817,11 @@ class ListTypeTest extends TypeTest<ListType> {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(ListType.NAME_KEY, "list");
     NBTTagList list = new NBTTagList();
-    list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1));
+    list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
     list.appendTag(ProgramManager.getTypeInstance(StringType.class).writeToNBT("ab"));
     list.appendTag(ProgramManager.getTypeInstance(PosType.class).writeToNBT(new BlockPos(1, 2, 3)));
     tag.setTag(ListType.VALUES_KEY, list);
-    assertEquals(tag, this.typeInstance.writeToNBT(new MCList(Arrays.asList(1, "ab", new BlockPos(1, 2, 3)))));
+    assertEquals(tag, this.typeInstance.writeToNBT(new MCList(Arrays.asList(1L, "ab", new BlockPos(1, 2, 3)))));
   }
 
   @Test
@@ -829,11 +829,11 @@ class ListTypeTest extends TypeTest<ListType> {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(ListType.NAME_KEY, "list");
     NBTTagList list = new NBTTagList();
-    list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1));
+    list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
     list.appendTag(ProgramManager.getTypeInstance(StringType.class).writeToNBT("ab"));
     list.appendTag(ProgramManager.getTypeInstance(PosType.class).writeToNBT(new BlockPos(1, 2, 3)));
     tag.setTag(ListType.VALUES_KEY, list);
-    assertEquals(new MCList(Arrays.asList(1, "ab", new BlockPos(1, 2, 3))),
+    assertEquals(new MCList(Arrays.asList(1L, "ab", new BlockPos(1, 2, 3))),
         this.typeInstance.readFromNBT(this.p.getScope(), tag));
   }
 

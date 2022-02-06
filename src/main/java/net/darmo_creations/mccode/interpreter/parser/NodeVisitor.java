@@ -37,7 +37,7 @@ public class NodeVisitor extends MCCodeBaseVisitor<Node> {
 
   @Override
   public Node visitIntLiteral(MCCodeParser.IntLiteralContext ctx) {
-    return new IntLiteralNode(Integer.parseInt(ctx.INT().getText()));
+    return new IntLiteralNode(Long.parseLong(ctx.INT().getText()));
   }
 
   @Override

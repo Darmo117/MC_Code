@@ -13,15 +13,15 @@ class IntLiteralNodeTest extends NodeTest {
   @Test
   void evaluate() {
     Object r = new IntLiteralNode(1).evaluate(this.p.getScope());
-    assertSame(Integer.class, r.getClass());
-    assertEquals(1, r);
+    assertSame(Long.class, r.getClass());
+    assertEquals(1L, r);
   }
 
   @Test
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(IntLiteralNode.ID_KEY, IntLiteralNode.ID);
-    tag.setInteger(IntLiteralNode.VALUE_KEY, 1);
+    tag.setLong(IntLiteralNode.VALUE_KEY, 1);
     assertEquals(tag, new IntLiteralNode(1).writeToNBT());
   }
 
@@ -29,8 +29,8 @@ class IntLiteralNodeTest extends NodeTest {
   void deserializeNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(IntLiteralNode.ID_KEY, IntLiteralNode.ID);
-    tag.setInteger(IntLiteralNode.VALUE_KEY, 1);
-    assertEquals(1, new IntLiteralNode(tag).evaluate(this.p.getScope()));
+    tag.setLong(IntLiteralNode.VALUE_KEY, 1);
+    assertEquals(1L, new IntLiteralNode(tag).evaluate(this.p.getScope()));
   }
 
   @Test

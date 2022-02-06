@@ -36,7 +36,7 @@ public class RangeType extends Type<Range> {
   }
 
   @Override
-  protected Object __add__(Scope scope, Range self, Object o, boolean inPlace) {
+  protected Object __add__(final Scope scope, final Range self, final Object o, final boolean inPlace) {
     if (o instanceof String) {
       return self.toString() + o;
     }
@@ -44,7 +44,7 @@ public class RangeType extends Type<Range> {
   }
 
   @Override
-  protected Object __eq__(Scope scope, Range self, Object o) {
+  protected Object __eq__(final Scope scope, final Range self, final Object o) {
     if (o instanceof Range) {
       return self.equals(o);
     }
@@ -64,14 +64,14 @@ public class RangeType extends Type<Range> {
   @Override
   protected NBTTagCompound _writeToNBT(final Range self) {
     NBTTagCompound tag = super._writeToNBT(self);
-    tag.setInteger(START_KEY, self.getStart());
-    tag.setInteger(END_KEY, self.getEnd());
-    tag.setInteger(STEP_KEY, self.getStep());
+    tag.setLong(START_KEY, self.getStart());
+    tag.setLong(END_KEY, self.getEnd());
+    tag.setLong(STEP_KEY, self.getStep());
     return tag;
   }
 
   @Override
   public Range readFromNBT(final Scope scope, final NBTTagCompound tag) {
-    return new Range(tag.getInteger(START_KEY), tag.getInteger(END_KEY), tag.getInteger(STEP_KEY));
+    return new Range(tag.getLong(START_KEY), tag.getLong(END_KEY), tag.getLong(STEP_KEY));
   }
 }

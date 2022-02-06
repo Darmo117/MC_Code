@@ -60,15 +60,15 @@ class SortedFunctionTest extends BuiltinFunctionTest<SortedFunction> {
   public static Stream<Arguments> provideArgsForApply() {
     return Stream.of(
         Arguments.of(new MCList(), false, new MCList(), true),
-        Arguments.of(new MCList(Collections.singletonList(1)), false, new MCList(Collections.singletonList(1)), true),
-        Arguments.of(new MCList(Arrays.asList(1, 3, 2)), false, new MCList(Arrays.asList(1, 2, 3)), true),
+        Arguments.of(new MCList(Collections.singletonList(1L)), false, new MCList(Collections.singletonList(1L)), true),
+        Arguments.of(new MCList(Arrays.asList(1L, 3L, 2L)), false, new MCList(Arrays.asList(1L, 2L, 3L)), true),
         Arguments.of("", false, "", false),
         Arguments.of("a", false, "a", false),
         Arguments.of("aψb", false, "abψ", false),
 
         Arguments.of(new MCList(), true, new MCList(), true),
-        Arguments.of(new MCList(Collections.singletonList(1)), true, new MCList(Collections.singletonList(1)), true),
-        Arguments.of(new MCList(Arrays.asList(1, 3, 2)), true, new MCList(Arrays.asList(3, 2, 1)), true),
+        Arguments.of(new MCList(Collections.singletonList(1L)), true, new MCList(Collections.singletonList(1L)), true),
+        Arguments.of(new MCList(Arrays.asList(1L, 3L, 2L)), true, new MCList(Arrays.asList(3L, 2L, 1L)), true),
         Arguments.of("", true, "", false),
         Arguments.of("a", true, "a", false),
         Arguments.of("aψb", true, "ψba", false)
@@ -86,7 +86,7 @@ class SortedFunctionTest extends BuiltinFunctionTest<SortedFunction> {
   public static Stream<Arguments> provideArgsForApplyError() {
     return Stream.of(
         Arguments.of(true),
-        Arguments.of(1),
+        Arguments.of(1L),
         Arguments.of(1.0),
         Arguments.of((Object) null),
         Arguments.of(new MCSet()),

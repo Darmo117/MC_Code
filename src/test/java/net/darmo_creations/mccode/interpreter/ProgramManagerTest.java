@@ -106,7 +106,7 @@ class ProgramManagerTest {
   void scheduleOnceNoDelay() {
     List<Statement> statements = Collections.singletonList(
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
-    Program p = new Program("p", statements, 0, null, this.pm);
+    Program p = new Program("p", statements, 0L, null, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());
     this.pm.executePrograms();
@@ -119,7 +119,7 @@ class ProgramManagerTest {
   void scheduleOnceDelay() {
     List<Statement> statements = Collections.singletonList(
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
-    Program p = new Program("p", statements, 1, null, this.pm);
+    Program p = new Program("p", statements, 1L, null, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());
     this.pm.executePrograms();
@@ -138,7 +138,7 @@ class ProgramManagerTest {
   void repeatSeveralTimesNoDelay() {
     List<Statement> statements = Collections.singletonList(
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
-    Program p = new Program("p", statements, 0, 2, this.pm);
+    Program p = new Program("p", statements, 0L, 2L, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());
     this.pm.executePrograms();
@@ -152,7 +152,7 @@ class ProgramManagerTest {
   void repeatSeveralTimesDelay() {
     List<Statement> statements = Collections.singletonList(
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
-    Program p = new Program("p", statements, 1, 2, this.pm);
+    Program p = new Program("p", statements, 1L, 2L, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());
     this.pm.executePrograms();
@@ -175,13 +175,13 @@ class ProgramManagerTest {
 
   @Test
   void writeToNBT() {
-    Program p = new Program("p", Collections.emptyList(), 1, 2, this.pm);
+    Program p = new Program("p", Collections.emptyList(), 1L, 2L, this.pm);
     NBTTagCompound tag = new NBTTagCompound();
     NBTTagList programs = new NBTTagList();
     NBTTagCompound programTag = new NBTTagCompound();
     programTag.setTag(ProgramManager.PROGRAM_KEY, p.writeToNBT());
-    programTag.setInteger(ProgramManager.SCHEDULE_KEY, 1);
-    programTag.setInteger(ProgramManager.REPEAT_AMOUNT_KEY, 2);
+    programTag.setLong(ProgramManager.SCHEDULE_KEY, 1);
+    programTag.setLong(ProgramManager.REPEAT_AMOUNT_KEY, 2);
     programTag.setBoolean(ProgramManager.RUNNING_KEY, false);
     programs.appendTag(programTag);
     tag.setTag(ProgramManager.PROGRAMS_KEY, programs);
@@ -192,13 +192,13 @@ class ProgramManagerTest {
   @Test
   void readFromNBT() {
     ProgramManager pm = new ProgramManager("pm");
-    Program p = new Program("p", Collections.emptyList(), 1, 2, pm);
+    Program p = new Program("p", Collections.emptyList(), 1L, 2L, pm);
     NBTTagCompound tag = new NBTTagCompound();
     NBTTagList programs = new NBTTagList();
     NBTTagCompound programTag = new NBTTagCompound();
     programTag.setTag(ProgramManager.PROGRAM_KEY, p.writeToNBT());
-    programTag.setInteger(ProgramManager.SCHEDULE_KEY, 1);
-    programTag.setInteger(ProgramManager.REPEAT_AMOUNT_KEY, 2);
+    programTag.setLong(ProgramManager.SCHEDULE_KEY, 1);
+    programTag.setLong(ProgramManager.REPEAT_AMOUNT_KEY, 2);
     programTag.setBoolean(ProgramManager.RUNNING_KEY, false);
     programs.appendTag(programTag);
     tag.setTag(ProgramManager.PROGRAMS_KEY, programs);
