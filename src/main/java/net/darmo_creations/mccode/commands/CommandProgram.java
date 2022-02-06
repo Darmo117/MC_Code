@@ -66,13 +66,13 @@ public class CommandProgram extends CommandBase {
           }
           this.listPrograms(sender);
           break;
-        case GET_VARIABLE:
+        case GET_VAR:
           this.getVariableValue(sender, args);
           break;
-        case SET_VARIABLE:
+        case SET_VAR:
           this.setVariableValue(sender, args);
           break;
-        case DELETE_VARIABLE:
+        case DELETE_VAR:
           this.deleteVariable(sender, args);
           break;
       }
@@ -235,7 +235,7 @@ public class CommandProgram extends CommandBase {
   }
 
   private enum Option {
-    LOAD, UNLOAD, RESET, RUN, PAUSE, LIST, GET_VARIABLE, SET_VARIABLE, DELETE_VARIABLE;
+    LOAD, UNLOAD, RESET, RUN, PAUSE, LIST, GET_VAR, SET_VAR, DELETE_VAR;
 
     public static Optional<Option> fromString(final String s) {
       for (Option value : values()) {

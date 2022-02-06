@@ -111,6 +111,10 @@ public class ProgramManager extends WorldSavedData {
         try {
           this.markDirty();
           program.execute();
+        } catch (ProgramFileNotFoundException e) {
+          errorReports.add(new ProgramErrorReport(program.getScope(), e.getTranslationKey(), e.getProgramName()));
+          toRemove.add(program);
+          continue;
         } catch (SyntaxErrorException e) {
           errorReports.add(new ProgramErrorReport(program.getScope(), e.getMessage()));
           toRemove.add(program);

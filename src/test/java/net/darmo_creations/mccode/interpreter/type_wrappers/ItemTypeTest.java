@@ -49,7 +49,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
   }
 
   @Test
-  @Disabled
+  @Disabled("Requires running server")
   void getProperty() { // FIXME Minecraft classes not initialized
 //    assertEquals(new ResourceLocation("minecraft:stick"), this.typeInstance.getProperty(this.p.getScope(), Items.STICK, "id"));
 //    assertEquals(64, this.typeInstance.getProperty(this.p.getScope(), Items.STICK, "max_stack_size"));
@@ -411,7 +411,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
 
   @ParameterizedTest
   @MethodSource("provideArgsForExplicitCast")
-  @Disabled
+  @Disabled("Requires running server")
   void explicitCastError(Item expected, Object o) {
     assertEquals(expected, this.typeInstance.explicitCast(this.p.getScope(), o));
   }
@@ -425,7 +425,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
   }
 
   @Test
-  @Disabled
+  @Disabled("Requires running server")
   void explicitCastWrongStringError() {
 //    assertThrows(EvaluationException.class, () -> this.typeInstance.explicitCast(this.p.getScope(), "")); // FIXME Minecraft classes not initialized
   }
@@ -474,7 +474,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
   }
 
   @Test
-  @Disabled
+  @Disabled("Requires running server")
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(ItemType.NAME_KEY, "item");
@@ -483,7 +483,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
   }
 
   @Test
-  @Disabled
+  @Disabled("Requires running server")
   void readFromNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(ItemType.NAME_KEY, "item");

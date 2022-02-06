@@ -23,10 +23,12 @@ public class DefineFunctionStatement extends Statement {
   public static final String NAME_KEY = "Name";
   public static final String PARAMS_LIST_KEY = "Parameters";
   public static final String STATEMENTS_LIST_KEY = "Statements";
+  public static final String PUBLIC_KEY = "Public";
 
   private final String name;
   private final List<String> parametersNames;
   private final List<Statement> statements;
+  private final boolean publiclyVisible;
 
   /**
    * Create a statement that defines a function.
@@ -34,11 +36,13 @@ public class DefineFunctionStatement extends Statement {
    * @param name            Function’s name.
    * @param parametersNames Function’s parameter names.
    * @param statements      Function’s statements.
+   * @param publiclyVisible Whether the function should be visible from outside the program.
    */
-  public DefineFunctionStatement(final String name, final List<String> parametersNames, final List<Statement> statements) {
+  public DefineFunctionStatement(final String name, final List<String> parametersNames, final List<Statement> statements, final boolean publiclyVisible) {
     this.name = Objects.requireNonNull(name);
     this.parametersNames = parametersNames;
     this.statements = statements;
+    this.publiclyVisible = publiclyVisible;
   }
 
   /**
@@ -48,6 +52,7 @@ public class DefineFunctionStatement extends Statement {
    */
   public DefineFunctionStatement(final NBTTagCompound tag) {
     this.name = tag.getString(NAME_KEY);
+    this.publiclyVisible = tag.getBoolean(PUBLIC_KEY);
     NBTTagList paramsTag = tag.getTagList(PARAMS_LIST_KEY, new NBTTagString().getId());
     this.parametersNames = new ArrayList<>();
     for (NBTBase t : paramsTag) {
@@ -63,7 +68,7 @@ public class DefineFunctionStatement extends Statement {
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     UserFunction function = new UserFunction(this.name, this.parametersNames, this.statements);
-    scope.declareVariable(new Variable(this.name, false, false, true, true, function));
+    scope.declareVariable(new Variable(this.name, this.publiclyVisible, false, true, true, function));
     return StatementAction.PROCEED;
   }
 
@@ -76,6 +81,7 @@ public class DefineFunctionStatement extends Statement {
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = super.writeToNBT();
     tag.setString(NAME_KEY, this.name);
+    tag.setBoolean(PUBLIC_KEY, this.publiclyVisible);
     NBTTagList paramsList = new NBTTagList();
     this.parametersNames.forEach(s -> paramsList.appendTag(new NBTTagString(s)));
     tag.setTag(PARAMS_LIST_KEY, paramsList);
@@ -92,7 +98,7 @@ public class DefineFunctionStatement extends Statement {
     if (!this.statements.isEmpty()) {
       s = Utils.indentStatements(this.statements);
     }
-    return String.format("function %s(%s)%send", this.name, params, s);
+    return String.format("%sfunction %s(%s)%send", this.publiclyVisible ? "public " : "", this.name, params, s);
   }
 
   @Override

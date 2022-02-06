@@ -24,6 +24,7 @@ class DefineFunctionStatementTest extends StatementTest {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(DefineFunctionStatement.ID_KEY, DefineFunctionStatement.ID);
     tag.setString(DefineFunctionStatement.NAME_KEY, "f");
+    tag.setBoolean(DefineFunctionStatement.PUBLIC_KEY, false);
     NBTTagList paramsList = new NBTTagList();
     List<String> params = Arrays.asList("p1", "p2");
     params.forEach(s -> paramsList.appendTag(new NBTTagString(s)));
@@ -33,7 +34,7 @@ class DefineFunctionStatementTest extends StatementTest {
     NBTTagList statementsList = new NBTTagList();
     statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
     tag.setTag(DefineFunctionStatement.STATEMENTS_LIST_KEY, statementsList);
-    assertEquals(tag, new DefineFunctionStatement("f", params, statements).writeToNBT());
+    assertEquals(tag, new DefineFunctionStatement("f", params, statements, false).writeToNBT());
   }
 
   @Test
@@ -41,6 +42,7 @@ class DefineFunctionStatementTest extends StatementTest {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(DefineFunctionStatement.ID_KEY, DefineFunctionStatement.ID);
     tag.setString(DefineFunctionStatement.NAME_KEY, "f");
+    tag.setBoolean(DefineFunctionStatement.PUBLIC_KEY, false);
     NBTTagList paramsList = new NBTTagList();
     List<String> params = Arrays.asList("p1", "p2");
     params.forEach(s -> paramsList.appendTag(new NBTTagString(s)));
@@ -50,7 +52,7 @@ class DefineFunctionStatementTest extends StatementTest {
     NBTTagList statementsList = new NBTTagList();
     statements.forEach(s -> statementsList.appendTag(s.writeToNBT()));
     tag.setTag(DefineFunctionStatement.STATEMENTS_LIST_KEY, statementsList);
-    assertEquals(new DefineFunctionStatement("f", params, statements), new DefineFunctionStatement(tag));
+    assertEquals(new DefineFunctionStatement("f", params, statements, false), new DefineFunctionStatement(tag));
   }
 
   @Test
@@ -58,7 +60,7 @@ class DefineFunctionStatementTest extends StatementTest {
     List<String> params = Arrays.asList("p1", "p2");
     List<Statement> statements = Collections.singletonList(new ReturnStatement(
         new BinaryOperatorNode(BinaryOperator.PLUS, new VariableNode("p1"), new VariableNode("p2"))));
-    assertEquals(StatementAction.PROCEED, new DefineFunctionStatement("f", params, statements).execute(this.p.getScope()));
+    assertEquals(StatementAction.PROCEED, new DefineFunctionStatement("f", params, statements, false).execute(this.p.getScope()));
     assertTrue(this.p.getScope().isVariableDefined("f"));
     assertEquals(new UserFunction("f", params, statements), this.p.getScope().getVariable("f", false));
   }
@@ -68,19 +70,19 @@ class DefineFunctionStatementTest extends StatementTest {
     List<String> params = Arrays.asList("p1", "p2");
     List<Statement> statements = Collections.singletonList(new ReturnStatement(
         new BinaryOperatorNode(BinaryOperator.PLUS, new VariableNode("p1"), new VariableNode("p2"))));
-    assertThrows(NullPointerException.class, () -> new DefineFunctionStatement(null, params, statements).execute(this.p.getScope()));
+    assertThrows(NullPointerException.class, () -> new DefineFunctionStatement(null, params, statements, false).execute(this.p.getScope()));
   }
 
   @Test
   void nullParametersError() {
     List<Statement> statements = Collections.singletonList(new ReturnStatement(
         new BinaryOperatorNode(BinaryOperator.PLUS, new VariableNode("p1"), new VariableNode("p2"))));
-    assertThrows(NullPointerException.class, () -> new DefineFunctionStatement("f", null, statements).execute(this.p.getScope()));
+    assertThrows(NullPointerException.class, () -> new DefineFunctionStatement("f", null, statements, false).execute(this.p.getScope()));
   }
 
   @Test
   void nullStatementsError() {
     List<String> params = Arrays.asList("p1", "p2");
-    assertThrows(NullPointerException.class, () -> new DefineFunctionStatement("f", params, null).execute(this.p.getScope()));
+    assertThrows(NullPointerException.class, () -> new DefineFunctionStatement("f", params, null, false).execute(this.p.getScope()));
   }
 }

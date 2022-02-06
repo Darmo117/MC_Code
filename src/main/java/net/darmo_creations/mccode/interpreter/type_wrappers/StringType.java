@@ -138,6 +138,12 @@ public class StringType extends Type<String> {
     return list.stream().map(e -> this.implicitCast(scope, e)).collect(Collectors.joining(self));
   }
 
+  @Method(name = "format")
+  @Doc("Formats a string using the specified arguments.")
+  public String format(final Scope scope, final String self, final MCList args) {
+    return String.format(self, args.toArray());
+  }
+
   @Override
   protected Object __get_item__(final Scope scope, final String self, final Object key) {
     if (key instanceof Integer || key instanceof Boolean) {

@@ -43,8 +43,13 @@
       <item>INF</item>
       <item>PI</item>
       <item>E</item>
+      <item>CHAT</item>
+      <item>CONSOLE</item>
+      <item>BOTH</item>
     </list>
     <list name="builtin_functions">
+      <item>__name__</item>
+
       <item>to_block</item>
       <item>to_boolean</item>
       <item>to_float</item>

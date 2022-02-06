@@ -152,7 +152,7 @@ class ProgramParserTest {
   @Test
   void parseDefineFunctionNoParamsStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DefineFunctionStatement("f", Collections.emptyList(), Collections.singletonList(new ReturnStatement(new IntLiteralNode(1))))
+        new DefineFunctionStatement("f", Collections.emptyList(), Collections.singletonList(new ReturnStatement(new IntLiteralNode(1))), false)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "function f() return 1; end"));
   }
@@ -160,7 +160,7 @@ class ProgramParserTest {
   @Test
   void parseDefineFunctionOneParamStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DefineFunctionStatement("f", Collections.singletonList("a"), Collections.singletonList(new ReturnStatement(new VariableNode("a"))))
+        new DefineFunctionStatement("f", Collections.singletonList("a"), Collections.singletonList(new ReturnStatement(new VariableNode("a"))), false)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "function f(a) return a; end"));
   }
@@ -168,7 +168,7 @@ class ProgramParserTest {
   @Test
   void parseDefineFunctionTwoParamStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DefineFunctionStatement("f", Arrays.asList("a", "b"), Collections.singletonList(new ReturnStatement(new BinaryOperatorNode(BinaryOperator.PLUS, new VariableNode("a"), new VariableNode("b")))))
+        new DefineFunctionStatement("f", Arrays.asList("a", "b"), Collections.singletonList(new ReturnStatement(new BinaryOperatorNode(BinaryOperator.PLUS, new VariableNode("a"), new VariableNode("b")))), false)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "function f(a, b) return a + b; end"));
   }

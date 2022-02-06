@@ -3,7 +3,13 @@ package net.darmo_creations.mccode;
 import net.darmo_creations.mccode.commands.CommandProgram;
 import net.darmo_creations.mccode.interpreter.ProgramErrorReport;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -12,9 +18,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,11 +83,19 @@ public class MCCode {
     @SubscribeEvent
     public static void onTick(TickEvent.WorldTickEvent event) {
       if (!event.world.isRemote && event.phase == TickEvent.Phase.START) {
-        // TODO log errors to chat/console
         for (ProgramManager programManager : INSTANCE.PROGRAM_MANAGERS.values()) {
-          List<ProgramErrorReport> errorReports = programManager.executePrograms();
-          // TEMP
-          errorReports.forEach(e -> System.out.println(e.getTranslationKey() + " " + Arrays.toString(e.getArgs())));
+          for (ProgramErrorReport e : programManager.executePrograms()) {
+            // Log errors in chat and server console
+            ITextComponent message = new TextComponentTranslation(e.getTranslationKey(), e.getArgs())
+                .setStyle(new Style().setColor(TextFormatting.RED));
+            WorldServer world = (WorldServer) e.getScope().getProgram().getProgramManager().getWorld();
+            // Only show error messages to players that can use the "program" command
+            world.getPlayers(EntityPlayer.class, p -> true).stream()
+                .filter(p -> p.canUseCommand(2, "program"))
+                .forEach(player -> player.sendMessage(message));
+            //noinspection ConstantConditions
+            world.getMinecraftServer().sendMessage(message);
+          }
         }
       }
     }

@@ -47,7 +47,7 @@ public class ImportStatement extends Statement {
     for (NBTBase t : list) {
       this.moduleNamePath.add(((NBTTagString) t).getString());
     }
-    this.alias = tag.getString(ALIAS_KEY);
+    this.alias = tag.hasKey(ALIAS_KEY) ? tag.getString(ALIAS_KEY) : null;
   }
 
   @Override
@@ -71,7 +71,9 @@ public class ImportStatement extends Statement {
     NBTTagList list = new NBTTagList();
     this.moduleNamePath.forEach(name -> list.appendTag(new NBTTagString(name)));
     tag.setTag(NAME_KEY, list);
-    tag.setString(ALIAS_KEY, this.alias);
+    if (this.alias != null) {
+      tag.setString(ALIAS_KEY, this.alias);
+    }
     return tag;
   }
 

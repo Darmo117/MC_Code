@@ -98,10 +98,13 @@ public class IfStatement extends Statement {
 
     List<Statement> statements = this.branchesStatements.get(this.branchIndex);
     while (this.ip < statements.size()) {
-      StatementAction action = statements.get(this.ip).execute(scope);
+      Statement statement = statements.get(this.ip);
+      StatementAction action = statement.execute(scope);
       if (action == StatementAction.EXIT_FUNCTION || action == StatementAction.WAIT) {
         if (action == StatementAction.WAIT) {
-          this.ip++;
+          if (statement instanceof WaitStatement) {
+            this.ip++;
+          }
         } else {
           this.ip = 0;
         }

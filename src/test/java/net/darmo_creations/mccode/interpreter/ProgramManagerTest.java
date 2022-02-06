@@ -7,6 +7,7 @@ import net.darmo_creations.mccode.interpreter.statements.WaitStatement;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -60,6 +61,7 @@ class ProgramManagerTest {
   }
 
   @Test
+  @Disabled("Requires running server")
   void runAndExecutePrograms() {
     List<Statement> statements = Collections.singletonList(new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
     Program p = new Program("p", statements, null, null, this.pm);
@@ -71,6 +73,7 @@ class ProgramManagerTest {
   }
 
   @Test
+  @Disabled("Requires running server")
   void executeProgramsWithoutRun() {
     List<Statement> statements = Collections.singletonList(new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
     Program p = new Program("p", statements, null, null, this.pm);
@@ -81,6 +84,7 @@ class ProgramManagerTest {
   }
 
   @Test
+  @Disabled("Requires running server")
   void pauseProgram() {
     List<Statement> statements = Collections.singletonList(new WaitStatement(new IntLiteralNode(1)));
     Program p = new Program("p", statements, null, null, this.pm);
@@ -98,6 +102,7 @@ class ProgramManagerTest {
   }
 
   @Test
+  @Disabled("Requires running server")
   void scheduleOnceNoDelay() {
     List<Statement> statements = Collections.singletonList(
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
@@ -110,6 +115,7 @@ class ProgramManagerTest {
   }
 
   @Test
+  @Disabled("Requires running server")
   void scheduleOnceDelay() {
     List<Statement> statements = Collections.singletonList(
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
@@ -128,6 +134,7 @@ class ProgramManagerTest {
   }
 
   @Test
+  @Disabled("Requires running server")
   void repeatSeveralTimesNoDelay() {
     List<Statement> statements = Collections.singletonList(
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
@@ -141,6 +148,7 @@ class ProgramManagerTest {
   }
 
   @Test
+  @Disabled("Requires running server")
   void repeatSeveralTimesDelay() {
     List<Statement> statements = Collections.singletonList(
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));

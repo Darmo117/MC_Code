@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter;
 
+import net.darmo_creations.mccode.interpreter.builtin_functions.PrintFunction;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
@@ -24,7 +25,7 @@ public class Scope implements NBTDeserializable {
   private final String name;
   private final Scope parentScope;
   private final Program program;
-  private Map<String, Variable> variables = new HashMap<>();
+  private final Map<String, Variable> variables = new HashMap<>();
   private int callStackSize;
 
   /**
@@ -208,6 +209,9 @@ public class Scope implements NBTDeserializable {
     this.declareVariable(new Variable("INF", true, false, true, false, Double.POSITIVE_INFINITY));
     this.declareVariable(new Variable("PI", true, false, true, false, Math.PI));
     this.declareVariable(new Variable("E", true, false, true, false, Math.E));
+    for (PrintFunction.Channel channel : PrintFunction.Channel.values()) {
+      this.declareVariable(new Variable(channel.name(), true, false, true, false, channel.name()));
+    }
   }
 
   /**

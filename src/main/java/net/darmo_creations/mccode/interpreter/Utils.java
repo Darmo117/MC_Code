@@ -1,6 +1,9 @@
 package net.darmo_creations.mccode.interpreter;
 
 import net.darmo_creations.mccode.interpreter.statements.Statement;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -64,6 +67,27 @@ public final class Utils {
    */
   public static String unescapeString(final String s) {
     return s.substring(1, s.length() - 1).replaceAll("\\\\([\"\\\\])", "$1").replace("\\n", "\n");
+  }
+
+  /**
+   * Print a message in the server console.
+   *
+   * @param server  Server instance.
+   * @param message Message to displaly.
+   */
+  public static void consoleLog(MinecraftServer server, final String message) {
+    server.sendMessage(new TextComponentString(message));
+  }
+
+  /**
+   * Print a translated message in the server console.
+   *
+   * @param server         Server instance.
+   * @param translationKey Translation key.
+   * @param args           Translation arguments.
+   */
+  public static void consoleLogTranslated(MinecraftServer server, final String translationKey, final Object... args) {
+    server.sendMessage(new TextComponentTranslation(translationKey, args));
   }
 
   private Utils() {

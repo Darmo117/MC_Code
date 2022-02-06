@@ -2,6 +2,9 @@ package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.*;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.type_wrappers.ModuleType;
+import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
+import net.darmo_creations.mccode.interpreter.types.Function;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.List;
@@ -46,21 +49,56 @@ public class MethodCallNode extends OperationNode {
   @Override
   public Object evaluate(final Scope scope) throws EvaluationException, ArithmeticException {
     Object self = this.instance.evaluate(scope);
-    MemberFunction method = ProgramManager.getTypeForValue(self).getMethod(scope, this.methodName);
-    Scope functionScope = new Scope(method.getName(), scope);
+    Type<?> selfType = ProgramManager.getTypeForValue(self);
 
-    if (this.arguments.size() != method.getParameters().size()) {
-      throw new EvaluationException(scope, "mccode.interpreter.error.invalid_method_arguments_number",
-          method.getHostType(), method.getName(), method.getParameters().size(), this.arguments.size());
+    if (selfType.getClass() == ModuleType.class) {
+      Object property = selfType.getProperty(scope, self, this.methodName);
+
+      Function function;
+      try {
+        function = (Function) property;
+      } catch (ClassCastException e) {
+        throw new EvaluationException(scope, "mccode.interpreter.error.calling_non_callable", selfType);
+      }
+
+      int callStackSize = scope.getProgram().getScope().getCallStackSize();
+      scope.getProgram().getScope().setCallStackSize(callStackSize + 1);
+      // Use global scope as user functions can only be defined in global scope
+      // and it should not matter for builtin function.
+      Scope functionScope = new Scope(function.getName(), scope.getProgram().getScope());
+
+      if (this.arguments.size() != function.getParameters().size()) {
+        throw new EvaluationException(scope, "mccode.interpreter.error.invalid_function_arguments_number",
+            function.getName(), function.getParameters().size(), this.arguments.size());
+      }
+
+      for (int i = 0; i < this.arguments.size(); i++) {
+        Parameter parameter = function.getParameter(i);
+        functionScope.declareVariable(new Variable(parameter.getName(), false, false, false, true, this.arguments.get(i).evaluate(scope)));
+      }
+
+      Object result = function.apply(functionScope);
+      scope.getProgram().getScope().setCallStackSize(callStackSize);
+
+      return result;
+
+    } else {
+      MemberFunction method = selfType.getMethod(scope, this.methodName);
+      Scope functionScope = new Scope(method.getName(), scope);
+
+      if (this.arguments.size() != method.getParameters().size()) {
+        throw new EvaluationException(scope, "mccode.interpreter.error.invalid_method_arguments_number",
+            method.getHostType(), method.getName(), method.getParameters().size(), this.arguments.size());
+      }
+
+      functionScope.declareVariable(new Variable(MemberFunction.SELF_PARAM_NAME, false, false, true, false, self));
+      for (int i = 0; i < this.arguments.size(); i++) {
+        Parameter parameter = method.getParameter(i);
+        functionScope.declareVariable(new Variable(parameter.getName(), false, false, false, true, this.arguments.get(i).evaluate(scope)));
+      }
+
+      return method.apply(functionScope);
     }
-
-    functionScope.declareVariable(new Variable(MemberFunction.SELF_PARAM_NAME, false, false, true, false, self));
-    for (int i = 0; i < this.arguments.size(); i++) {
-      Parameter parameter = method.getParameter(i);
-      functionScope.declareVariable(new Variable(parameter.getName(), false, false, false, true, this.arguments.get(i).evaluate(scope)));
-    }
-
-    return method.apply(functionScope);
   }
 
   @Override

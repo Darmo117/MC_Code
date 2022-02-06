@@ -6,6 +6,7 @@ import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.darmo_creations.mccode.interpreter.statements.Statement;
 import net.darmo_creations.mccode.interpreter.statements.StatementAction;
 import net.darmo_creations.mccode.interpreter.statements.StatementNBTHelper;
+import net.darmo_creations.mccode.interpreter.statements.WaitStatement;
 import net.darmo_creations.mccode.interpreter.types.WorldProxy;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -150,9 +151,6 @@ public class Program {
    * Return this program’s name.
    */
   public String getName() {
-    if (this.getScope().isVariableDefined(NAME_SPECIAL_VARIABLE)) {
-      return String.valueOf(this.getScope().getVariable(NAME_SPECIAL_VARIABLE, false));
-    }
     return this.name;
   }
 
@@ -204,8 +202,8 @@ public class Program {
       this.timeToWait--;
     } else if (this.ip < this.statements.size()) {
       while (this.ip < this.statements.size()) {
-        StatementAction action = this.statements.get(this.ip).execute(this.scope);
-        this.ip++;
+        Statement statement = this.statements.get(this.ip);
+        StatementAction action = statement.execute(this.scope);
         if (action == StatementAction.EXIT_FUNCTION) {
           throw new SyntaxErrorException("mccode.interpreter.error.return_outside_function");
         } else if (action == StatementAction.EXIT_LOOP) {
@@ -216,8 +214,12 @@ public class Program {
           if (this.isModule) {
             throw new EvaluationException(this.scope, "mccode.interpreter.error.wait_in_module", this.getName());
           }
+          if (statement instanceof WaitStatement) {
+            this.ip++;
+          }
           break;
         }
+        this.ip++;
       }
     }
   }
@@ -234,10 +236,10 @@ public class Program {
    *
    * @param scope Scope this instruction is called from.
    * @param ticks Number of ticks to wait for.
-   * @throws EvaluationException If ticks amount is negative or 0.
+   * @throws EvaluationException If ticks amount is negative.
    */
   public void wait(final Scope scope, int ticks) throws EvaluationException {
-    if (ticks <= 0) {
+    if (ticks < 0) {
       throw new EvaluationException(scope, "mccode.interpreter.error.negative_wait_time");
     }
     this.timeToWait = ticks;

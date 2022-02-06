@@ -103,14 +103,15 @@ public class ForLoopStatement extends Statement {
           Object next = iterator.next();
           scope.setVariable(this.variableName, next, false);
         }
+        this.iteratorIndex++;
       } else {
         this.paused = false;
         this.resumeAfterLoad = false;
       }
 
-      this.iteratorIndex++;
       while (this.ip < this.statements.size()) {
-        StatementAction action = this.statements.get(this.ip).execute(scope);
+        Statement statement = this.statements.get(this.ip);
+        StatementAction action = statement.execute(scope);
         if (action == StatementAction.EXIT_LOOP) {
           this.ip = 0;
           break exit;
@@ -119,7 +120,9 @@ public class ForLoopStatement extends Statement {
         } else if (action == StatementAction.EXIT_FUNCTION || action == StatementAction.WAIT) {
           if (action == StatementAction.WAIT) {
             this.paused = true;
-            this.ip++;
+            if (statement instanceof WaitStatement) {
+              this.ip++;
+            }
           } else {
             this.ip = 0;
           }
