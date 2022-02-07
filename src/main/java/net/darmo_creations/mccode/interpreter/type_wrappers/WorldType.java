@@ -13,9 +13,13 @@ import net.darmo_creations.mccode.interpreter.types.MCMap;
 import net.darmo_creations.mccode.interpreter.types.WorldProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -632,6 +636,391 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   /*
+   * /scoreboard command
+   */
+
+  // /scoreboard objectives
+
+  @Method(name = "sb_get_objectives")
+  @Doc("Returns the list of defined scoreboard objectives.")
+  public MCList getScoreboardObjectives(final Scope scope, WorldProxy self) {
+    return new MCList(self.getWorld().getScoreboard().getScoreObjectives().stream().map(obj -> {
+      MCMap map = new MCMap();
+      map.put("name", obj.getName());
+      map.put("display_name", obj.getDisplayName());
+      map.put("render_type", obj.getRenderType().getRenderType());
+      map.put("criteria", obj.getCriteria().getName());
+      map.put("read_only", obj.getCriteria().isReadOnly());
+      return map;
+    }).collect(Collectors.toList()));
+  }
+
+  @Method(name = "sb_create_objective")
+  @Doc("Adds an objective to the scoreboard. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean createScoreboardObjective(final Scope scope, WorldProxy self, final String name, final String criteria, final String displayName) {
+    List<String> args = new ArrayList<>(Arrays.asList(
+        "objectives", "add", name, criteria
+    ));
+    if (displayName != null) {
+      args.add(displayName);
+    }
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        args.toArray(args.toArray(new String[0]))
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_delete_objective")
+  @Doc("Removes an objective from the scoreboard. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean deleteScoreboardObjective(final Scope scope, WorldProxy self, final String name) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "objectives", "remove", name
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_set_objective_display_slot")
+  @Doc("Sets the display slot of an objective from the scoreboard. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean setScoreboardObjectiveDisplaySlot(final Scope scope, WorldProxy self, final String slot, final String name) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "objectives", "setdisplay", slot, name
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_clear_display_slot")
+  @Doc("Clears a display slot of the scoreboard. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean clearScoreboardDisplaySlot(final Scope scope, WorldProxy self, final String slot) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "objectives", "setdisplay", slot
+    ).orElse(-1L) > 0;
+  }
+
+  // /scoreboard players
+
+  @Method(name = "sb_get_tracked_players")
+  @Doc("Returns the names of all players tracked by the scoreboard. " +
+      "Names are sorted alphabetically.")
+  public MCList getPlayersInScoreboard(final Scope scope, WorldProxy self) {
+    MCList list = new MCList(self.getWorld().getScoreboard().getObjectiveNames());
+    list.sort(null);
+    return list;
+  }
+
+  @Method(name = "sb_get_player_scores")
+  @Doc("Returns the scores for the given player.")
+  public MCMap getPlayerScores(final Scope scope, WorldProxy self, final String name) {
+    return new MCMap(self.getWorld().getScoreboard().getObjectivesForEntity(name).entrySet().stream()
+        .collect(Collectors.toMap(e -> e.getKey().getName(), e -> e.getValue().getScorePoints())));
+  }
+
+  @Method(name = "sb_set_player_score")
+  @Doc("Sets the score of an objective on selected players. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean setPlayerScore(final Scope scope, WorldProxy self, final String targetSelector,
+                                final String objective, final Long score, final MCMap dataTag) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "players", "set", targetSelector, objective, score.toString(), mapToJSON(dataTag)
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_update_player_score")
+  @Doc("Updates the score of an objective on selected players. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean updatePlayerScore(final Scope scope, WorldProxy self, final String targetSelector,
+                                   final String objective, Long amount, final MCMap dataTag) {
+    String action;
+    if (amount < 0) {
+      action = "remove";
+      amount = -amount;
+    } else {
+      action = "add";
+    }
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "players", action, targetSelector, objective, amount.toString(), mapToJSON(dataTag)
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_reset_player_scores")
+  @Doc("Resets all scores of selected players. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean resetPlayerScores(final Scope scope, WorldProxy self, final String targetSelector) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "players", "reset", targetSelector
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_enable_trigger_for_players")
+  @Doc("Enables the specified trigger of selected players. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean enableTriggerForPlayers(final Scope scope, WorldProxy self, final String targetSelector, final String trigger) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "players", "enable", targetSelector, trigger
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_is_player_score_within_range")
+  @Doc("Returns true if the objective score of the given player is within specified range. " +
+      "Min and max may be null.")
+  public Boolean isPlayerScoreWithinRange(final Scope scope, WorldProxy self, final String targetSelector,
+                                          final String objective, final Long min, final Long max) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "players", "test", targetSelector, objective, min.toString(), max.toString()
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_swap_objective_scores")
+  @Doc("Swaps the scores of objectives between two players. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean swapObjectiveScores(final Scope scope, WorldProxy self,
+                                     final String targetSelector1, final String objective1,
+                                     final String targetSelector2, final String objective2) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "players", "operation", targetSelector1, objective1, "><", targetSelector2, objective2
+    ).orElse(-1L) > 0;
+  }
+
+  // /scoreboard players tag
+
+  @Method(name = "sb_get_player_tags")
+  @Doc("Returns the tags of selected player or null if an error occurs. " +
+      "Tags are sorted alphabetically.")
+  public MCList getPlayerTags(final Scope scope, WorldProxy self, final String targetSelector) {
+    MinecraftServer server = self.getWorld().getMinecraftServer();
+    Entity entity;
+    try {
+      //noinspection ConstantConditions
+      entity = CommandBase.getEntity(server, server, targetSelector);
+    } catch (CommandException e) {
+      Utils.consoleLogTranslated(server, e.getMessage(), e.getErrorObjects());
+      return null;
+    }
+    MCList list = new MCList(entity.getTags());
+    list.sort(null);
+    return list;
+  }
+
+  @Method(name = "sb_add_tag_to_players")
+  @Doc("Adds a tag to selected players. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean addTagToPlayers(final Scope scope, WorldProxy self,
+                                 final String targetSelector, final String tagName, final MCMap dataTag) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "players", "tag", targetSelector, "add", tagName, mapToJSON(dataTag)
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_remove_tag_from_players")
+  @Doc("Removes a tag from selected players. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean removeTagFromPlayers(final Scope scope, WorldProxy self,
+                                      final String targetSelector, final String tagName, final MCMap dataTag) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "players", "tag", targetSelector, "remove", tagName, mapToJSON(dataTag)
+    ).orElse(-1L) > 0;
+  }
+
+  // /scoreboard teams
+
+  @Method(name = "sb_get_teams")
+  @Doc("Returns a list of all currently defined teams. Teams are sorted by name alphabetically.")
+  public MCList getTeams(final Scope scope, WorldProxy self) {
+    return new MCList(self.getWorld().getScoreboard().getTeams().stream()
+        .sorted(Comparator.comparing(ScorePlayerTeam::getName))
+        .map(t -> {
+          MCMap map = new MCMap();
+          map.put("name", t.getName());
+          map.put("display_name", t.getDisplayName());
+          map.put("prefix", t.getPrefix());
+          map.put("suffix", t.getSuffix());
+          map.put("friendly_fire", t.getAllowFriendlyFire());
+          map.put("see_friendly_invisible", t.getSeeFriendlyInvisiblesEnabled());
+          map.put("name_tag_visibility", t.getNameTagVisibility().internalName);
+          map.put("death_message_visibility", t.getDeathMessageVisibility().internalName);
+          map.put("color", t.getColor().getFriendlyName());
+          map.put("collision_rule", t.getCollisionRule().name);
+          return map;
+        })
+        .collect(Collectors.toList()));
+  }
+
+  @Method(name = "sb_create_team")
+  @Doc("Creates a new team of players. Display name may be null. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean createTeam(final Scope scope, WorldProxy self, final String teamName, final String displayName) {
+    List<String> args = new ArrayList<>(Arrays.asList("teams", "add", teamName, displayName));
+    if (displayName != null) {
+      args.add(displayName);
+    }
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        args.toArray(args.toArray(new String[0]))
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_delete_team")
+  @Doc("Deletes a team of players. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean deleteTeam(final Scope scope, WorldProxy self, final String teamName) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "remove", teamName
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_clear_team")
+  @Doc("Removes all players from a team. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean clearTeam(final Scope scope, WorldProxy self, final String teamName) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "empty", teamName
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_add_players_to_team")
+  @Doc("Adds players to a team. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean addPlayersToTeam(final Scope scope, WorldProxy self, final String teamName, final MCList names) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "join", teamName, names.stream().map(String::valueOf).collect(Collectors.joining(" "))
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_remove_players_from_team")
+  @Doc("Removes players from their team. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean removePlayersFromTeam(final Scope scope, WorldProxy self, final MCList names) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "leave", names.stream().map(String::valueOf).collect(Collectors.joining(" "))
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_set_team_color")
+  @Doc("Sets the color of a team. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean setTeamColor(final Scope scope, WorldProxy self, final String teamName, final String color) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "option", teamName, "color", color
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_set_team_friendly_fire")
+  @Doc("Sets whether friendly fire is activated for the specified team. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean setTeamFriendlyFire(final Scope scope, WorldProxy self, final String teamName, final Boolean friendlyFire) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "option", teamName, "friendlyFire", friendlyFire.toString()
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_set_team_see_friendly_invisible")
+  @Doc("Sets whether players from the specified team should see invisible players from their team. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean setTeamSeeFriendlyInvisible(final Scope scope, WorldProxy self, final String teamName, final Boolean seeFriendlyInvisible) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "option", teamName, "seeFriendlyInvisibles", seeFriendlyInvisible.toString()
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_set_team_name_tag_visibility")
+  @Doc("Sets the visibility of the name tags of players from the specified team. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean setTeamNameTagVisibility(final Scope scope, WorldProxy self, final String teamName, final String nameTagVisible) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "option", teamName, "nametagVisibility", nameTagVisible
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_set_team_death_message_visibility")
+  @Doc("Sets the visibility of the death messages of players from the specified team. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean setTeamDeathMessageVisibility(final Scope scope, WorldProxy self, final String teamName, final String deathMessageVisibility) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "option", teamName, "deathMessageVisibility", deathMessageVisibility
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_set_team_collision_rule")
+  @Doc("Sets the collision rule of players from the specified team. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean setTeamCollisionRule(final Scope scope, WorldProxy self, final String teamName, final String collisionRule) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "scoreboard",
+        "teams", "option", teamName, "collisionRule", collisionRule
+    ).orElse(-1L) > 0;
+  }
+
+  /*
+   * /trigger command
+   */
+
+  @Method(name = "sb_update_trigger_objective")
+  @Doc("Updates the score of the given trigger objective. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean updateTriggerObjective(final Scope scope, WorldProxy self, final String objectiveName, final Long amount) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "trigger",
+        objectiveName, "add", amount.toString()
+    ).orElse(-1L) > 0;
+  }
+
+  @Method(name = "sb_set_trigger_objective")
+  @Doc("Sets the score of the given trigger objective. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean setTriggerObjective(final Scope scope, WorldProxy self, final String objectiveName, final Long value) {
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "trigger",
+        objectiveName, "set", value.toString()
+    ).orElse(-1L) > 0;
+  }
+
+  /*
    * /setblock command
    */
 
@@ -889,7 +1278,7 @@ public class WorldType extends Type<WorldProxy> {
    * /worldborder command
    */
 
-  @Method(name = "get_world_border_diameter")
+  @Method(name = "wb_get_diameter")
   @Doc("Returns the world border’s diameter.")
   public Long getWorldBorderDiameter(final Scope scope, WorldProxy self) {
     return executeCommand(
@@ -899,7 +1288,7 @@ public class WorldType extends Type<WorldProxy> {
     ).orElse(-1L);
   }
 
-  @Method(name = "set_world_border_center")
+  @Method(name = "wb_set_center")
   @Doc("Sets the center coordinate of the world border. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean setWorldBorderCenter(final Scope scope, WorldProxy self, final Long centerX, final Long centerZ) {
@@ -910,7 +1299,7 @@ public class WorldType extends Type<WorldProxy> {
     ).orElse(-1L) > 0;
   }
 
-  @Method(name = "set_world_border_diameter")
+  @Method(name = "wb_set_diameter")
   @Doc("Sets the world border’s diameter in the specified number of seconds. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean setWorldBorderDiameter(final Scope scope, WorldProxy self, final Long diameter, final Long time) {
@@ -921,7 +1310,7 @@ public class WorldType extends Type<WorldProxy> {
     ).orElse(-1L) > 0;
   }
 
-  @Method(name = "update_world_border_diameter")
+  @Method(name = "wb_update_diameter")
   @Doc("Add the given distance to the world border’s diameter in the specified number of seconds. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean updateWorldBorderDiameter(final Scope scope, WorldProxy self, final Long amount, final Long time) {
@@ -932,7 +1321,7 @@ public class WorldType extends Type<WorldProxy> {
     ).orElse(-1L) > 0;
   }
 
-  @Method(name = "set_world_border_damage")
+  @Method(name = "wb_set_damage")
   @Doc("Sets the amount of damage per block to deal to players outside the border. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean setWorldBorderDamage(final Scope scope, WorldProxy self, final Double damagePerBlock) {
@@ -943,7 +1332,7 @@ public class WorldType extends Type<WorldProxy> {
     ).orElse(-1L) > 0;
   }
 
-  @Method(name = "set_world_border_damage_buffer")
+  @Method(name = "wb_set_damage_buffer")
   @Doc("Sets distance outside the border over which the players will take damage. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean setWorldBorderDamageBuffer(final Scope scope, WorldProxy self, final Long bufferDistance) {
@@ -954,7 +1343,7 @@ public class WorldType extends Type<WorldProxy> {
     ).orElse(-1L) > 0;
   }
 
-  @Method(name = "set_world_border_warn_distance")
+  @Method(name = "wb_set_warn_distance")
   @Doc("Sets the world border’s warning distance.")
   public Boolean setWorldBorderWarnDistance(final Scope scope, WorldProxy self, final Long distance) {
     return executeCommand(
@@ -964,7 +1353,7 @@ public class WorldType extends Type<WorldProxy> {
     ).orElse(-1L) > 0;
   }
 
-  @Method(name = "set_world_border_warn_time")
+  @Method(name = "wb_set_warn_time")
   @Doc("Sets the world border’s warning time. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean setWorldBorderWarnTime(final Scope scope, WorldProxy self, final Long time) {
