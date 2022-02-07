@@ -157,7 +157,10 @@ public abstract class Type<T> {
    * @throws CastException If the object cannot be cast into this type’s wrapped type.
    */
   public T implicitCast(final Scope scope, final Object o) throws CastException {
-    if (o != null && this.getWrappedType().isAssignableFrom(o.getClass())) {
+    if (o == null) {
+      return null;
+    }
+    if (this.getWrappedType().isAssignableFrom(o.getClass())) {
       //noinspection unchecked
       return (T) o;
     }
