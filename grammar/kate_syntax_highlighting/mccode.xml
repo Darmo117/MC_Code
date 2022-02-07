@@ -43,9 +43,21 @@
       <item>INF</item>
       <item>PI</item>
       <item>E</item>
+
       <item>CHAT</item>
       <item>CONSOLE</item>
       <item>BOTH</item>
+
+      <item>TIME_DAY</item>
+      <item>TIME_NIGHT</item>
+      <item>TIME_NOON</item>
+      <item>TIME_MIDNIGHT</item>
+      <item>TIME_SUNRISE</item>
+      <item>TIME_SUNSET</item>
+
+      <item>WEATHER_CLEAR</item>
+      <item>WEATHER_RAIN</item>
+      <item>WEATHER_THUNDER</item>
     </list>
     <list name="builtin_functions">
       <item>__name__</item>

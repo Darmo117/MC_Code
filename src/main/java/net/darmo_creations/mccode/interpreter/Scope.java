@@ -209,9 +209,21 @@ public class Scope implements NBTDeserializable {
     this.declareVariable(new Variable("INF", true, false, true, false, Double.POSITIVE_INFINITY));
     this.declareVariable(new Variable("PI", true, false, true, false, Math.PI));
     this.declareVariable(new Variable("E", true, false, true, false, Math.E));
+
     for (PrintFunction.Channel channel : PrintFunction.Channel.values()) {
       this.declareVariable(new Variable(channel.name(), true, false, true, false, channel.name()));
     }
+
+    this.declareVariable(new Variable("TIME_DAY", true, false, true, false, 1000L));
+    this.declareVariable(new Variable("TIME_NIGHT", true, false, true, false, 13000L));
+    this.declareVariable(new Variable("TIME_NOON", true, false, true, false, 6000L));
+    this.declareVariable(new Variable("TIME_MIDNIGHT", true, false, true, false, 18000L));
+    this.declareVariable(new Variable("TIME_SUNRISE", true, false, true, false, 23000L));
+    this.declareVariable(new Variable("TIME_SUNSET", true, false, true, false, 12000L));
+
+    this.declareVariable(new Variable("WEATHER_CLEAR", true, false, true, false, "clear"));
+    this.declareVariable(new Variable("WEATHER_RAIN", true, false, true, false, "rain"));
+    this.declareVariable(new Variable("WEATHER_THUNDER", true, false, true, false, "thunder"));
   }
 
   /**

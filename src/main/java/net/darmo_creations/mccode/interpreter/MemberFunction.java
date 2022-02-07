@@ -1,6 +1,5 @@
 package net.darmo_creations.mccode.interpreter;
 
-import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.nodes.MethodCallNode;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
@@ -79,10 +78,7 @@ public class MemberFunction extends Function {
       for (int i = 0; i < this.parameters.size(); i++) {
         Parameter parameter = this.parameters.get(i);
         Object arg = scope.getVariable(parameter.getName(), false);
-        if (arg != null && !parameter.getType().getWrappedType().isAssignableFrom(arg.getClass())) {
-          throw new CastException(scope, parameter.getType(), ProgramManager.getTypeForValue(arg));
-        }
-        args[i + 2] = arg;
+        args[i + 2] = parameter.getType().implicitCast(scope, arg);
       }
 
       return this.method.invoke(this.hostType, args);

@@ -23,11 +23,4 @@ public class WorldProxy {
   public World getWorld() {
     return this.world;
   }
-
-  /**
-   * Return the wrapped world’s current tick.
-   */
-  public int getWorldTick() {
-    return (int) this.world.getTotalWorldTime();
-  }
 }
