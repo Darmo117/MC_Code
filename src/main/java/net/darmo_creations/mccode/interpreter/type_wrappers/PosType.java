@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * New instances can be created by casting {@link List}s or {@link Map}s.
  */
 @Doc("Type representing a block position.")
-public class PosType extends Type<BlockPos> { // TODO add support for RelativeBlockPos
+public class PosType extends Type<BlockPos> {
   public static final String NAME = "pos";
 
   public static final String X_KEY = "X";
