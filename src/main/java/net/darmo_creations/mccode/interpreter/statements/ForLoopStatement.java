@@ -86,6 +86,7 @@ public class ForLoopStatement extends Statement {
     Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, UnaryOperator.ITERATE, valuesObject, null, null, false);
     boolean declareVariable = !this.paused && !this.resumeAfterLoad;
 
+    System.out.println(valuesObject);
     // Skip elements already iterated over
     for (int i = 0; i < this.iteratorIndex; i++) {
       iterator.next();
@@ -133,7 +134,9 @@ public class ForLoopStatement extends Statement {
       }
       this.ip = 0;
     }
-    scope.deleteVariable(this.variableName, false);
+    if (scope.isVariableDefined(this.variableName)) {
+      scope.deleteVariable(this.variableName, false);
+    }
 
     return StatementAction.PROCEED;
   }

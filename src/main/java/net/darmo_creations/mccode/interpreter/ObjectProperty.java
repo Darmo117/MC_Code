@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter;
 
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.annotations.PropertySetter;
-import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.exceptions.TypeException;
@@ -100,11 +99,8 @@ public class ObjectProperty {
         throw new TypeException(String.format("property %s expected instance of type %s, got %s",
             this.getName(), this.hostType.getWrappedType(), self != null ? self.getClass() : null));
       }
-      if (value != null && !this.type.getWrappedType().isAssignableFrom(value.getClass())) {
-        throw new CastException(scope, this.type, ProgramManager.getTypeForValue(value));
-      }
       try {
-        this.setter.invoke(this.hostType, self, this.type.copy(scope, value));
+        this.setter.invoke(this.hostType, self, this.type.copy(scope, this.type.implicitCast(scope, value)));
       } catch (IllegalAccessException | InvocationTargetException e) {
         throw new MCCodeException(e);
       }

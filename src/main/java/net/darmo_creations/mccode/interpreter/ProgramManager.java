@@ -9,17 +9,14 @@ import net.darmo_creations.mccode.interpreter.exceptions.*;
 import net.darmo_creations.mccode.interpreter.parser.ProgramParser;
 import net.darmo_creations.mccode.interpreter.type_wrappers.*;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.MapStorage;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.world.storage.ISaveHandler;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
@@ -31,7 +28,7 @@ import java.util.stream.Collectors;
  * <p>
  * The state of program managers can be saved and restored.
  */
-public class ProgramManager extends WorldSavedData {
+public class ProgramManager implements NBTDeserializable {
   public static final String DATA_NAME = MCCode.MOD_ID + "_program_manager";
 
   private static final Map<String, Type<?>> TYPES = new HashMap<>();
@@ -45,8 +42,8 @@ public class ProgramManager extends WorldSavedData {
   public static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
   public static final String RUNNING_KEY = "Running";
 
-  private File programsDir;
-  private World world;
+  private final File programsDir;
+  private final World world;
   private final Map<String, Program> programs;
   private final Map<String, Long> programsSchedules;
   private final Map<String, Long> programsRepeats;
@@ -54,22 +51,52 @@ public class ProgramManager extends WorldSavedData {
   private long lastTick;
 
   /**
-   * Create a program manager with the default name.
+   * Create a program manager for the given world.
+   *
+   * @param world The world to attach.
    */
-  public ProgramManager() {
-    this(DATA_NAME);
-  }
-
-  /**
-   * Create a program manager with the given name.
-   */
-  public ProgramManager(final String name) {
-    super(name);
+  public ProgramManager(World world) {
     this.programs = new HashMap<>();
     this.programsSchedules = new HashMap<>();
     this.programsRepeats = new HashMap<>();
     this.runningPrograms = new HashMap<>();
     this.lastTick = -1;
+    this.world = world;
+    this.programsDir = Paths.get(this.world.getSaveHandler().getWorldDirectory().getAbsolutePath(), "data", "mccode_programs").toFile();
+    this.loadFromFile();
+  }
+
+  /**
+   * Load programs from disk.
+   */
+  private void loadFromFile() {
+    ISaveHandler saveHandler = this.world.getSaveHandler();
+    File file = saveHandler.getMapFileFromName(DATA_NAME);
+    //noinspection ConstantConditions
+    if (file != null && file.exists()) {
+      try (FileInputStream fileinputstream = new FileInputStream(file)) {
+        this.readFromNBT(CompressedStreamTools.readCompressed(fileinputstream).getCompoundTag("data"));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  /**
+   * Save this manager’s programs to disk.
+   */
+  public void save() {
+    File file = this.world.getSaveHandler().getMapFileFromName(ProgramManager.DATA_NAME);
+    //noinspection ConstantConditions
+    if (file != null) {
+      NBTTagCompound nbttagcompound = new NBTTagCompound();
+      nbttagcompound.setTag("data", this.writeToNBT());
+      try (FileOutputStream fileoutputstream = new FileOutputStream(file)) {
+        CompressedStreamTools.writeCompressed(nbttagcompound, fileoutputstream);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   /**
@@ -77,15 +104,6 @@ public class ProgramManager extends WorldSavedData {
    */
   public World getWorld() {
     return this.world;
-  }
-
-  /**
-   * Set the world of this manager.
-   */
-  public void setWorld(World world) {
-    this.world = world;
-    this.programsDir = Paths.get(this.world.getSaveHandler().getWorldDirectory().getAbsolutePath(), "data", "mccode_programs").toFile();
-    this.programs.values().forEach(Program::setup);
   }
 
   /**
@@ -108,28 +126,23 @@ public class ProgramManager extends WorldSavedData {
     List<Program> toRemove = new LinkedList<>();
     for (Program program : this.programs.values()) {
       if (this.runningPrograms.get(program.getName())) {
+        boolean error = true;
         try {
-          this.markDirty();
           program.execute();
+          error = false; // Not executed if an error is thrown by execute().
         } catch (ProgramFileNotFoundException e) {
           errorReports.add(new ProgramErrorReport(program.getScope(), e.getTranslationKey(), e.getProgramName()));
-          toRemove.add(program);
-          continue;
         } catch (SyntaxErrorException e) {
           errorReports.add(new ProgramErrorReport(program.getScope(), e.getMessage()));
-          toRemove.add(program);
-          continue;
         } catch (MCCodeRuntimeException e) {
           errorReports.add(new ProgramErrorReport(e.getScope(), e.getTranslationKey(), e.getArgs()));
-          toRemove.add(program);
-          continue;
         } catch (ArithmeticException e) {
           errorReports.add(new ProgramErrorReport(program.getScope(), "mccode.interpreter.error.math_error", e.getMessage()));
-          toRemove.add(program);
-          continue;
+        } catch (Exception e) {
+          errorReports.add(new ProgramErrorReport(program.getScope(), "mccode.interpreter.error.exception", e.getMessage()));
         }
-        // Unload programs that have terminated
-        if (program.hasTerminated() && (!this.programsSchedules.containsKey(program.getName()) || this.programsRepeats.get(program.getName()) == 0)) {
+        // Unload programs that have terminated or failed
+        if (error || program.hasTerminated() && (!this.programsSchedules.containsKey(program.getName()) || this.programsRepeats.get(program.getName()) == 0)) {
           toRemove.add(program);
         }
       }
@@ -145,7 +158,7 @@ public class ProgramManager extends WorldSavedData {
       if (program.hasTerminated()) {
         if (delay <= 0) {
           long repeatAmount = this.programsRepeats.get(programName);
-          if (repeatAmount != Integer.MAX_VALUE) {
+          if (repeatAmount != Long.MAX_VALUE) {
             this.programsRepeats.put(programName, repeatAmount - 1);
           }
           //noinspection OptionalGetWithoutIsPresent
@@ -214,7 +227,6 @@ public class ProgramManager extends WorldSavedData {
       this.programsRepeats.put(program.getName(), program.getRepeatAmount().orElse(1L));
     });
     this.runningPrograms.put(name, false);
-    this.markDirty();
   }
 
   /**
@@ -231,7 +243,6 @@ public class ProgramManager extends WorldSavedData {
     this.programsSchedules.remove(name);
     this.programsRepeats.remove(name);
     this.runningPrograms.remove(name);
-    this.markDirty();
   }
 
   /**
@@ -246,7 +257,6 @@ public class ProgramManager extends WorldSavedData {
     }
     this.programs.get(name).reset();
     this.runningPrograms.put(name, false);
-    this.markDirty();
   }
 
   /**
@@ -264,7 +274,6 @@ public class ProgramManager extends WorldSavedData {
       throw new ProgramAlreadyRunningException(name);
     }
     this.runningPrograms.put(name, true);
-    this.markDirty();
   }
 
   /**
@@ -282,7 +291,6 @@ public class ProgramManager extends WorldSavedData {
       throw new ProgramAlreadyPausedException(name);
     }
     this.runningPrograms.put(name, false);
-    this.markDirty();
   }
 
   /**
@@ -305,7 +313,8 @@ public class ProgramManager extends WorldSavedData {
   }
 
   @Override
-  public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+  public NBTTagCompound writeToNBT() {
+    NBTTagCompound tag = new NBTTagCompound();
     NBTTagList programs = new NBTTagList();
     for (Program p : this.programs.values()) {
       NBTTagCompound programTag = new NBTTagCompound();
@@ -331,40 +340,25 @@ public class ProgramManager extends WorldSavedData {
     this.runningPrograms.clear();
     for (NBTBase t : list) {
       NBTTagCompound programTag = (NBTTagCompound) t;
-      Program program = new Program(programTag.getCompoundTag(PROGRAM_KEY), this);
-      this.programs.put(program.getName(), program);
-      if (programTag.hasKey(SCHEDULE_KEY)) {
-        this.programsSchedules.put(program.getName(), programTag.getLong(SCHEDULE_KEY));
-        if (programTag.hasKey(REPEAT_AMOUNT_KEY)) {
-          this.programsRepeats.put(program.getName(), programTag.getLong(REPEAT_AMOUNT_KEY));
+      try {
+        Program program = new Program(programTag.getCompoundTag(PROGRAM_KEY), this);
+        this.programs.put(program.getName(), program);
+        if (programTag.hasKey(SCHEDULE_KEY)) {
+          this.programsSchedules.put(program.getName(), programTag.getLong(SCHEDULE_KEY));
+          if (programTag.hasKey(REPEAT_AMOUNT_KEY)) {
+            this.programsRepeats.put(program.getName(), programTag.getLong(REPEAT_AMOUNT_KEY));
+          }
         }
+        this.runningPrograms.put(program.getName(), programTag.getBoolean(RUNNING_KEY));
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-      this.runningPrograms.put(program.getName(), programTag.getBoolean(RUNNING_KEY));
     }
   }
 
   /*
    * Static methods
    */
-
-  /**
-   * Attaches a manager to the global storage through a world instance.
-   * If no manager instance is already defined, a new one is created and attached to the storage.
-   *
-   * @param world The world used to access the global storage.
-   * @return The manager instance.
-   */
-  public static ProgramManager attachToGlobalStorage(World world) {
-    MapStorage storage = world.getPerWorldStorage();
-    ProgramManager instance = (ProgramManager) storage.getOrLoadData(ProgramManager.class, DATA_NAME);
-
-    if (instance == null) {
-      instance = new ProgramManager();
-      storage.setData(DATA_NAME, instance);
-    }
-    instance.setWorld(world);
-    return instance;
-  }
 
   /**
    * Finish setup of this interpreter.
@@ -574,8 +568,8 @@ public class ProgramManager extends WorldSavedData {
           throw new MCCodeException(String.format("invalid number of arguments for property %s.%s: expected 1, got %s",
               typeClass, methodName, parameterTypes.length));
         }
-        if (parameterTypes[0] != type.getWrappedType()) {
-          throw new TypeException(String.format("method argument type does not match any wrapped type in %s.%s",
+        if (!parameterTypes[0].isAssignableFrom(type.getWrappedType())) {
+          throw new TypeException(String.format("method argument type does not match wrapped type in %s.%s",
               typeClass, methodName));
         }
 
@@ -766,6 +760,7 @@ public class ProgramManager extends WorldSavedData {
     declareBuiltinFunction(ExpFunction.class);
     declareBuiltinFunction(FloorFunction.class);
     declareBuiltinFunction(HypotFunction.class);
+    declareBuiltinFunction(IsInstanceFunction.class);
     declareBuiltinFunction(LenFunction.class);
     declareBuiltinFunction(Log10Function.class);
     declareBuiltinFunction(LogFunction.class);
@@ -781,6 +776,7 @@ public class ProgramManager extends WorldSavedData {
     declareBuiltinFunction(TanFunction.class);
     declareBuiltinFunction(ToDegreesFunction.class);
     declareBuiltinFunction(ToRadiansFunction.class);
+    declareBuiltinFunction(ToRelativePosFunction.class);
 
     for (Type<?> type : TYPES.values()) {
       if (type.generateCastOperator()) {

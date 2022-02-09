@@ -1,11 +1,13 @@
 package net.darmo_creations.mccode.interpreter.types;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.Iterator;
 import java.util.Objects;
 
 /**
  * A range is an iterable object that generates integers between two bounds.
  */
+@Immutable
 public class Range implements Iterable<Long>, Cloneable {
   private final long start; // Included
   private final long end; // Excluded

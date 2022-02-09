@@ -123,12 +123,13 @@ public class Program {
       this.timeToWait = 0;
     }
     this.ip = tag.getInteger(IP_KEY);
+    this.setup();
   }
 
   /**
    * Declare global variables.
    */
-  public void setup() {
+  private void setup() {
     this.scope.declareVariable(new Variable(WORLD_VAR_NAME, false, false, true,
         false, new WorldProxy(this.programManager.getWorld())));
     if (!this.scope.isVariableDefined(NAME_SPECIAL_VARIABLE)) { // May have been overriden by program

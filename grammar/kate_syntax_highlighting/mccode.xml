@@ -48,6 +48,16 @@
       <item>CONSOLE</item>
       <item>BOTH</item>
 
+      <item>DIFF_PEACEFUL</item>
+      <item>DIFF_EASY</item>
+      <item>DIFF_NORMAL</item>
+      <item>DIFF_HARD</item>
+
+      <item>GM_SURVIVAL</item>
+      <item>GM_SPECTATOR</item>
+      <item>GM_CREATIVE</item>
+      <item>GM_ADVENTURE</item>
+
       <item>TIME_DAY</item>
       <item>TIME_NIGHT</item>
       <item>TIME_NOON</item>
@@ -70,6 +80,7 @@
       <item>to_list</item>
       <item>to_map</item>
       <item>to_pos</item>
+      <item>to_relative_pos</item>
       <item>to_resource_location</item>
       <item>to_set</item>
       <item>to_string</item>

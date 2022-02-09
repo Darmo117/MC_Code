@@ -6,6 +6,7 @@ import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.exceptions.IndexOutOfBoundsException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
+import net.darmo_creations.mccode.interpreter.types.WorldProxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
@@ -250,6 +251,9 @@ public class StringType extends Type<String> {
     if (o instanceof Item) {
       //noinspection ConstantConditions
       return ((Item) o).getRegistryName().toString();
+    }
+    if (o instanceof WorldProxy) {
+      return "<this world>";
     }
     return String.valueOf(o);
   }

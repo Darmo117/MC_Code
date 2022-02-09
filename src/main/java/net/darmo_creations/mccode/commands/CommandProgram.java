@@ -202,7 +202,6 @@ public class CommandProgram extends CommandBase {
       try {
         value = node.evaluate(program.get().getScope());
         program.get().getScope().setVariable(variableName, value, true);
-        pm.markDirty();
       } catch (EvaluationException e) {
         throw new CommandException(e.getTranslationKey(), e.getArgs());
       }
@@ -223,7 +222,6 @@ public class CommandProgram extends CommandBase {
     if (program.isPresent()) {
       String variableName = args[1];
       program.get().getScope().deleteVariable(variableName, true);
-      pm.markDirty();
     } else {
       throw new CommandException("mccode.interpreter.error.program_not_found", programName);
     }

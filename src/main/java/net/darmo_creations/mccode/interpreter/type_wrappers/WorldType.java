@@ -10,6 +10,7 @@ import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.darmo_creations.mccode.interpreter.types.MCMap;
+import net.darmo_creations.mccode.interpreter.types.RelativeBlockPos;
 import net.darmo_creations.mccode.interpreter.types.WorldProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -52,28 +53,11 @@ public class WorldType extends Type<WorldProxy> {
     return false;
   }
 
-  @Property(name = "seed")
-  @Doc("The seed of this world.")
-  public Long getSeed(final WorldProxy self) {
-    return self.getWorld().getSeed();
-  }
-
-  @Property(name = "day")
-  @Doc("The current day for this world.")
-  public Long getWorldDay(final WorldProxy self) {
-    return self.getWorld().getWorldTime() / 24000L % 2147483647L;
-  }
-
-  @Property(name = "day_time")
-  @Doc("The current time of day for this world.")
-  public Long getWorldDayTime(final WorldProxy self) {
-    return self.getWorld().getWorldTime() % 24000L;
-  }
-
-  @Property(name = "game_time")
-  @Doc("The current game time for this world.")
-  public Long getWorldTick(final WorldProxy self) {
-    return self.getWorld().getTotalWorldTime() % 2147483647L;
+  @Override
+  protected List<String> getAdditionalPropertiesNames(final WorldProxy self) {
+    return Arrays.stream(self.getWorld().getGameRules().getRules())
+        .map(rule -> "gr_" + rule)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -111,6 +95,30 @@ public class WorldType extends Type<WorldProxy> {
     if (!found) {
       super.__set_property__(scope, self, propertyName, value);
     }
+  }
+
+  @Property(name = "seed")
+  @Doc("The seed of this world.")
+  public Long getSeed(final WorldProxy self) {
+    return self.getWorld().getSeed();
+  }
+
+  @Property(name = "day")
+  @Doc("The current day for this world.")
+  public Long getWorldDay(final WorldProxy self) {
+    return self.getWorld().getWorldTime() / 24000L % 2147483647L;
+  }
+
+  @Property(name = "day_time")
+  @Doc("The current time of day for this world.")
+  public Long getWorldDayTime(final WorldProxy self) {
+    return self.getWorld().getWorldTime() % 24000L;
+  }
+
+  @Property(name = "game_time")
+  @Doc("The current game time for this world.")
+  public Long getWorldTick(final WorldProxy self) {
+    return self.getWorld().getTotalWorldTime() % 2147483647L;
   }
 
   /*
@@ -233,15 +241,14 @@ public class WorldType extends Type<WorldProxy> {
   @Doc("Clones blocks from one region to another with the \"filter\" mask. " +
       "Returns the number of affected blocks or -1 if the action failed.")
   public Long clone(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final BlockPos destination,
-                    final Block blockToClone, final Object metaOrStateToClone, final String cloneMode) {
-    //noinspection ConstantConditions
+                    final String blockToClone, final Object metaOrStateToClone, final String cloneMode) {
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_BLOCKS,
         "clone",
         "" + pos1.getX(), "" + pos1.getY(), "" + pos1.getZ(),
         "" + pos2.getX(), "" + pos2.getY(), "" + pos2.getZ(),
         "" + destination.getX(), "" + destination.getY(), "" + destination.getZ(),
-        blockToClone.getRegistryName().toString(), metaOrStateToString(scope, metaOrStateToClone), cloneMode
+        blockToClone, metaOrStateToString(scope, metaOrStateToClone), cloneMode
     ).orElse(-1L);
   }
 
@@ -318,6 +325,27 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   /*
+   * /execute command
+   */
+
+  @Method(name = "execute_command")
+  @Doc("Executes a command relatively to the selected entities. " +
+      "Returns true if the action was successful, false otherwise.")
+  public Boolean executeCommand(final Scope scope, WorldProxy self, final String targetSelector, final BlockPos pos,
+                                final Boolean relativePosition, final String command) {
+    String posPref = relativePosition ? "~" : "";
+    List<String> args = new ArrayList<>(Arrays.asList(
+        targetSelector, posPref + pos.getX(), posPref + pos.getY(), posPref + pos.getZ()
+    ));
+    args.addAll(Arrays.asList(command.split(" ")));
+    return executeCommand(
+        self, CommandResultStats.Type.SUCCESS_COUNT,
+        "execute",
+        args.toArray(args.toArray(new String[0]))
+    ).orElse(-1L) > 0;
+  }
+
+  /*
    * /experience /xp commands
    */
 
@@ -381,34 +409,18 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   /*
-   * /gamemode command
-   */
-
-  @Method(name = "set_gamemode")
-  @Doc("Sets the game mode of the selected players. " +
-      "Returns the number of affected players or -1 if the action failed.")
-  public Long setGameMode(final Scope scope, WorldProxy self, final String targetSelector, final String gameMode) {
-    return executeCommand(
-        self, CommandResultStats.Type.AFFECTED_ENTITIES,
-        "gamemode",
-        gameMode, targetSelector
-    ).orElse(-1L);
-  }
-
-  /*
    * /fill command
    */
 
   @Method(name = "fill")
   @Doc("Fills the region between the given positions in this world with the specified block and metadata. " +
       "Returns the number of affected blocks or -1 if the action failed.")
-  public Long fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final Block block, final Object metaOrState,
+  public Long fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final String block, final Object metaOrState,
                    final String mode, final MCMap dataTags) {
-    //noinspection ConstantConditions
     List<String> args = new ArrayList<>(Arrays.asList(
         "" + pos1.getX(), "" + pos1.getY(), "" + pos1.getZ(),
         "" + pos2.getX(), "" + pos2.getY(), "" + pos2.getZ(),
-        block.getRegistryName().toString(), metaOrStateToString(scope, metaOrState), mode
+        block, metaOrStateToString(scope, metaOrState), mode
     ));
     if (!"replace".equals(mode)) {
       args.add(mapToJSON(dataTags));
@@ -423,17 +435,31 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "fill_replace")
   @Doc("Fills the region between the given positions in this world with the specified block and metadata. " +
       "Returns the number of affected blocks or -1 if the action failed.")
-  public Long fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final Block block, final Object metaOrState,
-                   final Block blockToReplace, final Object metaOrStateToReplace, final MCMap dataTags) {
-    //noinspection ConstantConditions
+  public Long fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final String block, final Object metaOrState,
+                   final String blockToReplace, final Object metaOrStateToReplace, final MCMap dataTags) {
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_BLOCKS,
         "fill",
         "" + pos1.getX(), "" + pos1.getY(), "" + pos1.getZ(),
         "" + pos2.getX(), "" + pos2.getY(), "" + pos2.getZ(),
-        block.getRegistryName().toString(), metaOrStateToString(scope, metaOrState),
-        "replace", blockToReplace.getRegistryName().toString(), metaOrStateToString(scope, metaOrStateToReplace),
+        block, metaOrStateToString(scope, metaOrState),
+        "replace", blockToReplace, metaOrStateToString(scope, metaOrStateToReplace),
         mapToJSON(dataTags)
+    ).orElse(-1L);
+  }
+
+  /*
+   * /gamemode command
+   */
+
+  @Method(name = "set_gamemode")
+  @Doc("Sets the game mode of the selected players. " +
+      "Returns the number of affected players or -1 if the action failed.")
+  public Long setGameMode(final Scope scope, WorldProxy self, final String targetSelector, final String gameMode) {
+    return executeCommand(
+        self, CommandResultStats.Type.AFFECTED_ENTITIES,
+        "gamemode",
+        gameMode, targetSelector
     ).orElse(-1L);
   }
 
@@ -523,7 +549,6 @@ public class WorldType extends Type<WorldProxy> {
    * /particle command
    */
 
-  // TODO check behavior
   @Method(name = "spawn_particles")
   @Doc("Spawns particles at the given position. " +
       "Returns true if the action was successful, false otherwise.")
@@ -549,12 +574,13 @@ public class WorldType extends Type<WorldProxy> {
   @Doc("Plays the specified sound. Position may be null. " +
       "Returns the number of affected players or -1 if the action failed.")
   public Long playSound(final Scope scope, WorldProxy self, final String sound, final String source,
-                        final String targetSelector, final Double posX, final Double posY, final Double posZ) {
+                        final String targetSelector, final Double posX, final Boolean xRelative,
+                        final Double posY, final Boolean yRelative, final Double posZ, final Boolean zRelative) {
     List<String> args = new ArrayList<>(Arrays.asList(sound, source, targetSelector));
     if (posX != null && posY != null && posZ != null) {
-      args.add(posX.toString());
-      args.add(posY.toString());
-      args.add(posZ.toString());
+      args.add(xRelative ? "~" + (posX != 0 ? "" + posX : "") : "" + posX);
+      args.add(yRelative ? "~" + (posY != 0 ? "" + posY : "") : "" + posY);
+      args.add(zRelative ? "~" + (posZ != 0 ? "" + posZ : "") : "" + posZ);
     }
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_ENTITIES,
@@ -567,13 +593,16 @@ public class WorldType extends Type<WorldProxy> {
   @Doc("Plays the specified sound. Pitch and volume may be null. " +
       "Returns the number of affected players or -1 if the action failed.")
   public Long playSoundWithVolume(final Scope scope, WorldProxy self, final String sound, final String source,
-                                  final String targetSelector, final Double posX, final Double posY, final Double posZ,
+                                  final String targetSelector, final Double posX, final Boolean xRelative,
+                                  final Double posY, final Boolean yRelative, final Double posZ, final Boolean zRelative,
                                   final Double volume, final Double pitch, final Double minVolume) {
-    List<String> args = new ArrayList<>(Arrays.asList(
-        sound, source, targetSelector,
-        posX.toString(), posY.toString(), posZ.toString(),
-        volume.toString()
-    ));
+    List<String> args = new ArrayList<>(Arrays.asList(sound, source, targetSelector));
+    if (posX != null && posY != null && posZ != null) {
+      args.add(xRelative ? "~" + (posX != 0 ? "" + posX : "") : "" + posX);
+      args.add(yRelative ? "~" + (posY != 0 ? "" + posY : "") : "" + posY);
+      args.add(zRelative ? "~" + (posZ != 0 ? "" + posZ : "") : "" + posZ);
+    }
+    args.add(volume.toString());
     if (pitch != null) {
       args.add(pitch.toString());
       if (minVolume != null) {
@@ -1027,14 +1056,13 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "set_block")
   @Doc("Sets the block at the given position in this world with the given block and metadata. " +
       "Returns the number of affected blocks or -1 if the action failed.")
-  public Long setBlock(final Scope scope, WorldProxy self, final BlockPos pos, final Block block, final Object metaOrState,
+  public Long setBlock(final Scope scope, WorldProxy self, final BlockPos pos, final String block, final Object metaOrState,
                        final String mode, final MCMap dataTags) {
-    //noinspection ConstantConditions
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_BLOCKS,
         "setblock",
         "" + pos.getX(), "" + pos.getY(), "" + pos.getZ(),
-        block.getRegistryName().toString(), metaOrStateToString(scope, metaOrState),
+        block, metaOrStateToString(scope, metaOrState),
         mode, mapToJSON(dataTags)
     ).orElse(-1L);
   }
@@ -1141,17 +1169,23 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "tp_entities_to_pos")
   @Doc("Teleports the selected entities to the provided position. " +
       "Returns the number of affected entities or -1 if the action failed")
-  public Long teleportEntitiesToPos(final Scope scope, WorldProxy self, final String targetSelector, final BlockPos destination,
-                                    final Double yawAngle, final Double pitchAngle) {
-    List<String> args = new ArrayList<>(Arrays.asList(
-        targetSelector,
-        "" + destination.getX(), "" + destination.getY(), "" + destination.getZ())
-    );
-    if (yawAngle != null) {
-      args.add(yawAngle.toString());
-      if (pitchAngle != null) {
-        args.add(pitchAngle.toString());
-      }
+  public Long teleportEntitiesToPos(final Scope scope, WorldProxy self, final String targetSelector,
+                                    final BlockPos destination,
+                                    final Double yawAngle, final Boolean yawRelative,
+                                    final Double pitchAngle, final Boolean pitchRelative) {
+    List<String> args = new ArrayList<>(Collections.singletonList(targetSelector));
+    if (destination instanceof RelativeBlockPos) {
+      args.add(((RelativeBlockPos) destination).x());
+      args.add(((RelativeBlockPos) destination).y());
+      args.add(((RelativeBlockPos) destination).z());
+    } else {
+      args.add("" + destination.getX());
+      args.add("" + destination.getY());
+      args.add("" + destination.getZ());
+    }
+    if (yawAngle != null && pitchAngle != null) {
+      args.add((yawRelative ? "~" + (yawAngle != 0 ? "" + yawAngle : "") : "" + yawAngle));
+      args.add((pitchRelative ? "~" + (pitchAngle != 0 ? "" + pitchAngle : "") : "" + pitchAngle));
     }
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_ENTITIES,
@@ -1371,11 +1405,10 @@ public class WorldType extends Type<WorldProxy> {
   private static Optional<Long> executeCommand(WorldProxy self, final CommandResultStats.Type returnStatType,
                                                final String commandName, final String... args) {
     MinecraftServer server = self.getWorld().getMinecraftServer();
-    StatsCommandSender sender = new StatsCommandSender(server);
+    CommandSenderWrapper sender = new CommandSenderWrapper(self.getWorld());
     String command = commandName + " " + String.join(" ", args);
     //noinspection ConstantConditions
     server.commandManager.executeCommand(sender, command);
-    System.out.println(sender.getStats()); // DEBUG
     if (sender.getStats().get(CommandResultStats.Type.SUCCESS_COUNT) == 0) {
       return Optional.empty();
     }
@@ -1397,12 +1430,14 @@ public class WorldType extends Type<WorldProxy> {
   /**
    * Custom command sender class that gathers command result statistics.
    */
-  private static class StatsCommandSender implements ICommandSender {
+  private static class CommandSenderWrapper implements ICommandSender {
     private final MinecraftServer server;
+    private final World world;
     private final CommandStats stats;
 
-    public StatsCommandSender(MinecraftServer server) {
-      this.server = server;
+    public CommandSenderWrapper(World world) {
+      this.server = world.getMinecraftServer();
+      this.world = world;
       this.stats = new CommandStats();
     }
 
@@ -1422,7 +1457,7 @@ public class WorldType extends Type<WorldProxy> {
 
     @Override
     public World getEntityWorld() {
-      return this.server.getEntityWorld();
+      return this.world;
     }
 
     @Override
@@ -1467,7 +1502,6 @@ public class WorldType extends Type<WorldProxy> {
       i++;
     }
     sb.append("}");
-    System.out.println(sb);
     return sb.toString();
   }
 

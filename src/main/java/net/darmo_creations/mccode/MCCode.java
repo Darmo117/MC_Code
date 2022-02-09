@@ -69,7 +69,17 @@ public class MCCode {
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
       if (!event.getWorld().isRemote) {
-        INSTANCE.PROGRAM_MANAGERS.put(event.getWorld(), ProgramManager.attachToGlobalStorage(event.getWorld()));
+        INSTANCE.PROGRAM_MANAGERS.put(event.getWorld(), new ProgramManager(event.getWorld()));
+      }
+    }
+
+    @SubscribeEvent
+    public static void onWorldSave(WorldEvent.Save event) {
+      if (!event.getWorld().isRemote) {
+        ProgramManager pm = INSTANCE.PROGRAM_MANAGERS.get(event.getWorld());
+        if (pm != null) {
+          pm.save();
+        }
       }
     }
 

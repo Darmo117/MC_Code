@@ -28,7 +28,8 @@ public class PrintFunction extends BuiltinFunction {
     Program program = scope.getProgram();
     MinecraftServer minecraftServer = program.getProgramManager().getWorld().getMinecraftServer();
     if (minecraftServer != null) {
-      String text = String.valueOf(this.<Object>getParameterValue(scope, 0));
+      String text = ProgramManager.getTypeInstance(StringType.class)
+          .implicitCast(scope, this.getParameterValue(scope, 0));
       Channel channel = Channel.fromString(this.getParameterValue(scope, 1));
       if (channel == Channel.CHAT || channel == Channel.BOTH) {
         scope.getProgram().getProgramManager().getWorld().getPlayers(EntityPlayer.class, p -> true)

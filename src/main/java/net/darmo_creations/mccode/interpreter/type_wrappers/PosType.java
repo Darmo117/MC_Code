@@ -7,6 +7,7 @@ import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.types.RelativeBlockPos;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * New instances can be created by casting {@link List}s or {@link Map}s.
  */
 @Doc("Type representing a block position.")
-public class PosType extends Type<BlockPos> {
+public class PosType extends Type<BlockPos> { // TODO add support for RelativeBlockPos
   public static final String NAME = "pos";
 
   public static final String X_KEY = "X";
@@ -51,6 +52,22 @@ public class PosType extends Type<BlockPos> {
   @Property(name = "z")
   public Integer getZ(final BlockPos self) {
     return self.getZ();
+  }
+
+  @Override
+  protected Object __get_property__(final Scope scope, final BlockPos self, final String propertyName) {
+    if (self instanceof RelativeBlockPos) {
+      if ("x_relative".equals(propertyName)) {
+        return ((RelativeBlockPos) self).x();
+      }
+      if ("y_relative".equals(propertyName)) {
+        return ((RelativeBlockPos) self).y();
+      }
+      if ("z_relative".equals(propertyName)) {
+        return ((RelativeBlockPos) self).z();
+      }
+    }
+    return super.__get_property__(scope, self, propertyName);
   }
 
   @Method(name = "up")

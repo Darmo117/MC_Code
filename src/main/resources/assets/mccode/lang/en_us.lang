@@ -45,6 +45,7 @@ mccode.interpreter.error.program_not_found=Program %s not found!
 mccode.interpreter.error.program_already_running=Program %s is already running!
 mccode.interpreter.error.program_already_paused=Program %s is already paused!
 mccode.interpreter.error.math_error=Math error: %s!
+mccode.interpreter.error.exception=An unexpected error occured: %s!
 mccode.interpreter.error.syntax_error=Syntax error in program %s!
 mccode.interpreter.error.expression_syntax_error=Syntax error!
 mccode.interpreter.error.int_format=Wrong integer format for string %s!

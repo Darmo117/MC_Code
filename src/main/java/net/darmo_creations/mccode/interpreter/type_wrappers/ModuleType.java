@@ -3,11 +3,13 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 import net.darmo_creations.mccode.interpreter.Program;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Doc("Modules are programs that have been imported through the 'import' statement.")
 public class ModuleType extends Type<Program> {
@@ -31,10 +33,11 @@ public class ModuleType extends Type<Program> {
   }
 
   @Override
-  public List<String> getPropertiesNames(Object self) {
-    List<String> propertiesNames = super.getPropertiesNames(self);
-    propertiesNames.add(Program.NAME_SPECIAL_VARIABLE);
-    return propertiesNames;
+  protected List<String> getAdditionalPropertiesNames(final Program self) {
+    return self.getScope().getVariables().values().stream()
+        .filter(Variable::isPubliclyVisible)
+        .map(Variable::getName)
+        .collect(Collectors.toList());
   }
 
   @Override

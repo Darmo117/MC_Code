@@ -69,8 +69,18 @@ public abstract class Type<T> {
           this.getName(), this.getWrappedType(), self != null ? self.getClass() : null));
     }
     ArrayList<String> list = new ArrayList<>(this.properties.keySet());
+    //noinspection unchecked
+    list.addAll(this.getAdditionalPropertiesNames((T) self));
     list.sort(Comparator.comparing(String::toLowerCase));
     return list;
+  }
+
+  /**
+   * Return a list of additional property names that may be accessible through
+   * the {@link #__get_property__(Scope, T, String)} method.
+   */
+  protected List<String> getAdditionalPropertiesNames(final T self) {
+    return Collections.emptyList();
   }
 
   public Type<?> getPropertyType(final Scope scope, final Object self, final String propertyName) {

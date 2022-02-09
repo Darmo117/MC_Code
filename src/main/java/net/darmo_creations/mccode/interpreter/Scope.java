@@ -87,7 +87,7 @@ public class Scope implements NBTDeserializable {
   /**
    * Return the value of each variable.
    */
-  public Map<String, Object> getVariables() {
+  public Map<String, Variable> getVariables() {
     return new HashMap<>(this.variables);
   }
 
@@ -213,6 +213,16 @@ public class Scope implements NBTDeserializable {
     for (PrintFunction.Channel channel : PrintFunction.Channel.values()) {
       this.declareVariable(new Variable(channel.name(), true, false, true, false, channel.name()));
     }
+
+    this.declareVariable(new Variable("DIFF_PEACEFUL", true, false, true, false, "peaceful"));
+    this.declareVariable(new Variable("DIFF_EASY", true, false, true, false, "easy"));
+    this.declareVariable(new Variable("DIFF_NORMAL", true, false, true, false, "normal"));
+    this.declareVariable(new Variable("DIFF_HARD", true, false, true, false, "hard"));
+
+    this.declareVariable(new Variable("GM_SURVIVAL", true, false, true, false, "survival"));
+    this.declareVariable(new Variable("GM_SPECTATOR", true, false, true, false, "spectator"));
+    this.declareVariable(new Variable("GM_CREATIVE", true, false, true, false, "creative"));
+    this.declareVariable(new Variable("GM_ADVENTURE", true, false, true, false, "adventure"));
 
     this.declareVariable(new Variable("TIME_DAY", true, false, true, false, 1000L));
     this.declareVariable(new Variable("TIME_NIGHT", true, false, true, false, 13000L));
