@@ -1073,7 +1073,7 @@ public class WorldType extends Type<WorldProxy> {
    */
 
   @Method(name = "set_world_spawn")
-  @Doc("Sets the world’s spawn. " +
+  @Doc("Sets the world's spawn. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean setWorldSpawn(final Scope scope, WorldProxy self, final BlockPos pos) {
     return executeCommand(
@@ -1314,7 +1314,7 @@ public class WorldType extends Type<WorldProxy> {
    */
 
   @Method(name = "wb_get_diameter")
-  @Doc("Returns the world border’s diameter.")
+  @Doc("Returns the world border's diameter.")
   public Long getWorldBorderDiameter(final Scope scope, WorldProxy self) {
     return executeCommand(
         self, CommandResultStats.Type.QUERY_RESULT,
@@ -1335,7 +1335,7 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Method(name = "wb_set_diameter")
-  @Doc("Sets the world border’s diameter in the specified number of seconds. " +
+  @Doc("Sets the world border's diameter in the specified number of seconds. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean setWorldBorderDiameter(final Scope scope, WorldProxy self, final Long diameter, final Long time) {
     return executeCommand(
@@ -1346,7 +1346,7 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Method(name = "wb_update_diameter")
-  @Doc("Add the given distance to the world border’s diameter in the specified number of seconds. " +
+  @Doc("Add the given distance to the world border's diameter in the specified number of seconds. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean updateWorldBorderDiameter(final Scope scope, WorldProxy self, final Long amount, final Long time) {
     return executeCommand(
@@ -1379,7 +1379,7 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Method(name = "wb_set_warn_distance")
-  @Doc("Sets the world border’s warning distance.")
+  @Doc("Sets the world border's warning distance.")
   public Boolean setWorldBorderWarnDistance(final Scope scope, WorldProxy self, final Long distance) {
     return executeCommand(
         self, CommandResultStats.Type.SUCCESS_COUNT,
@@ -1389,7 +1389,7 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Method(name = "wb_set_warn_time")
-  @Doc("Sets the world border’s warning time. " +
+  @Doc("Sets the world border's warning time. " +
       "Returns true if the action was successful, false otherwise.")
   public Boolean setWorldBorderWarnTime(final Scope scope, WorldProxy self, final Long time) {
     return executeCommand(

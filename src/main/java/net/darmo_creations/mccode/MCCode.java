@@ -4,10 +4,7 @@ import net.darmo_creations.mccode.commands.CommandProgram;
 import net.darmo_creations.mccode.interpreter.ProgramErrorReport;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.world.WorldEvent;
@@ -98,8 +95,10 @@ public class MCCode {
         for (ProgramManager programManager : INSTANCE.PROGRAM_MANAGERS.values()) {
           for (ProgramErrorReport e : programManager.executePrograms()) {
             // Log errors in chat and server console
-            ITextComponent message = new TextComponentTranslation(e.getTranslationKey(), e.getArgs())
+            ITextComponent message = new TextComponentString(String.format("[%s] ", e.getScope().getProgram().getName()))
                 .setStyle(new Style().setColor(TextFormatting.RED));
+            message.appendSibling(new TextComponentTranslation(e.getTranslationKey(), e.getArgs())
+                .setStyle(new Style().setColor(TextFormatting.RED)));
             WorldServer world = (WorldServer) e.getScope().getProgram().getProgramManager().getWorld();
             // Only show error messages to players that can use the "program" command
             if (world.getGameRules().getBoolean(GR_SHOW_ERROR_MESSAGES)) {

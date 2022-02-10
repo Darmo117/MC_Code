@@ -96,8 +96,22 @@ public abstract class Type<T> {
     }
   }
 
+  /**
+   * Return the property object with the given name.
+   *
+   * @param name Property’s name.
+   * @return The property object.
+   */
   public ObjectProperty getProperty(final String name) {
     return this.properties.get(name);
+  }
+
+  /**
+   * Return all property objects of this type.
+   * Does not include dynamic properties accessible through {@link #__get_property__(Scope, Object, String)}.
+   */
+  public Map<String, ObjectProperty> getProperties() {
+    return this.properties;
   }
 
   /**
@@ -154,6 +168,13 @@ public abstract class Type<T> {
    */
   public MemberFunction getMethod(final String name) {
     return this.methods.get(name);
+  }
+
+  /**
+   * Return all methods of this type.
+   */
+  public Map<String, MemberFunction> getMethods() {
+    return this.methods;
   }
 
   /**

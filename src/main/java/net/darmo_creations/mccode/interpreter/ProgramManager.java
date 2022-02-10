@@ -222,7 +222,6 @@ public class ProgramManager implements NBTDeserializable {
    */
   void loadProgram(Program program) {
     String name = program.getName();
-    System.out.println(name);
     if (this.programs.containsKey(name)) {
       throw new ProgramAlreadyLoadedException(name);
     }
@@ -299,7 +298,7 @@ public class ProgramManager implements NBTDeserializable {
   }
 
   /**
-   * Return the names of all loaded programs.
+   * Return the names of all loaded programs sorted alphabetically.
    */
   public List<String> getLoadedPrograms() {
     List<String> list = new ArrayList<>(this.programs.keySet());

@@ -1,10 +1,7 @@
 package net.darmo_creations.mccode.commands;
 
 import net.darmo_creations.mccode.MCCode;
-import net.darmo_creations.mccode.interpreter.MemberFunction;
-import net.darmo_creations.mccode.interpreter.ObjectProperty;
-import net.darmo_creations.mccode.interpreter.Program;
-import net.darmo_creations.mccode.interpreter.ProgramManager;
+import net.darmo_creations.mccode.interpreter.*;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.ProgramStatusException;
 import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
@@ -21,8 +18,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CommandProgram extends CommandBase {
   @Override
@@ -262,7 +262,11 @@ public class CommandProgram extends CommandBase {
     Optional<Program> program = pm.getProgram(programName);
     if (program.isPresent()) {
       String variableName = args[1];
-      program.get().getScope().deleteVariable(variableName, true);
+      try {
+        program.get().getScope().deleteVariable(variableName, true);
+      } catch (EvaluationException e) {
+        throw new CommandException(e.getTranslationKey(), e.getArgs());
+      }
     } else {
       throw new CommandException("mccode.interpreter.error.program_not_found", programName);
     }
@@ -347,7 +351,99 @@ public class CommandProgram extends CommandBase {
 
   @Override
   public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
-    return super.getTabCompletions(server, sender, args, targetPos); // TODO
+    if (args.length == 1) {
+      return getListOfStringsMatchingLastWord(args, Arrays.stream(Option.values()).map(o -> o.name().toLowerCase()).collect(Collectors.toList()));
+
+    } else if (args.length == 2) {
+      Optional<Option> option = Option.fromString(args[0]);
+      if (option.isPresent()) {
+        Option opt = option.get();
+        if (opt == Option.DOC) {
+          return getListOfStringsMatchingLastWord(args, Arrays.stream(DocType.values()).map(t -> t.name().toLowerCase()).collect(Collectors.toList()));
+        } else if (opt != Option.LIST) {
+          ProgramManager pm = MCCode.INSTANCE.PROGRAM_MANAGERS.get(sender.getEntityWorld());
+          if (opt == Option.LOAD) {
+            // TODO return list of .mccode files in data directory
+            return getListOfStringsMatchingLastWord(args, "");
+          } else {
+            return getListOfStringsMatchingLastWord(args, pm.getLoadedPrograms());
+          }
+        }
+        return Collections.emptyList();
+      }
+
+    } else if (args.length == 3) {
+      Optional<Option> option = Option.fromString(args[0]);
+      if (option.isPresent()) {
+        Option opt = option.get();
+        if (opt == Option.DOC) {
+          // TODO return list of available types, functions, properties and methods (depending on selected option)
+          Optional<DocType> docType = DocType.fromString(args[1]);
+          if (docType.isPresent()) {
+            DocType t = docType.get();
+            switch (t) {
+              case TYPE:
+                return getListOfStringsMatchingLastWord(
+                    args,
+                    ProgramManager.getTypes().stream()
+                        .map(Type::getName)
+                        .sorted()
+                        .collect(Collectors.toList())
+                );
+              case PROPERTY:
+                return getListOfStringsMatchingLastWord(
+                    args,
+                    ProgramManager.getTypes().stream()
+                        .flatMap(type -> type.getProperties().keySet().stream().map(pName -> type.getName() + "." + pName))
+                        .sorted()
+                        .collect(Collectors.toList())
+                );
+              case METHOD:
+                return getListOfStringsMatchingLastWord(
+                    args,
+                    ProgramManager.getTypes().stream()
+                        .flatMap(type -> type.getMethods().keySet().stream().map(mName -> type.getName() + "." + mName))
+                        .sorted()
+                        .collect(Collectors.toList())
+                );
+              case FUNCTION:
+                return getListOfStringsMatchingLastWord(
+                    args,
+                    ProgramManager.getBuiltinFunctions().stream()
+                        .map(BuiltinFunction::getName)
+                        .sorted()
+                        .collect(Collectors.toList())
+                );
+            }
+          }
+
+        } else if (opt == Option.LOAD) {
+          return getListOfStringsMatchingLastWord(args, "as");
+
+        } else if (opt == Option.GET_VAR || opt == Option.SET_VAR || opt == Option.DELETE_VAR) {
+          Optional<Program> program = MCCode.INSTANCE.PROGRAM_MANAGERS.get(sender.getEntityWorld()).getProgram(args[1]);
+          if (program.isPresent()) {
+            Predicate<Variable> filter;
+            if (opt == Option.GET_VAR) {
+              filter = Variable::isPubliclyVisible;
+            } else if (opt == Option.SET_VAR) {
+              filter = v -> v.isPubliclyVisible() && v.isEditableFromOutside() && !v.isConstant();
+            } else {
+              filter = v -> v.isPubliclyVisible() && v.isDeletable();
+            }
+            return getListOfStringsMatchingLastWord(
+                args,
+                program.get().getScope().getVariables().values().stream()
+                    .filter(filter)
+                    .map(Variable::getName)
+                    .collect(Collectors.toList())
+            );
+          }
+        }
+      }
+    }
+
+    return Collections.emptyList();
   }
 
   private enum Option {

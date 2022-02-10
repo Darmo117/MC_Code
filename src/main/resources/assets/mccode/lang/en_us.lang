@@ -1,12 +1,12 @@
-commands.program.usage=/program load <program name> [<params>...] OR /program {run|unload|reset} <program name> OR /program {get|delete} <program name> <variable> OR /program set <program name> <variable> <value> OR /program list OR /program doc {type|property|method|function} <name>
+commands.program.usage=/program load <program name> [as <alias>] [<params>...] OR /program {run|unload|reset} <program name> OR /program {get|delete} <program name> <variable> OR /program set <program name> <variable> <value> OR /program list OR /program doc {type|property|method|function} <name>
 commands.program.feedback.program_loaded=Program "%s" loaded.
 commands.program.feedback.program_unloaded=Program "%s" unloaded.
 commands.program.feedback.program_reset=Program "%s" reset.
 commands.program.feedback.program_launched=Program "%s" launched.
 commands.program.feedback.program_paused=Program "%s" paused.
 commands.program.feedback.loaded_programs=Loaded programs: %s
-commands.program.feedback.get_variable_value=Variable %s is %s
-commands.program.feedback.set_variable_value=Variable %s set to %s
+commands.program.feedback.get_variable_value=Variable %s is: %s
+commands.program.feedback.set_variable_value=Variable %s set to: %s
 commands.program.feedback.doc_type=Doc for type %s:
 commands.program.feedback.doc_property=Doc for property %s.%s:
 commands.program.feedback.doc_method=Doc for method %s.%s:
