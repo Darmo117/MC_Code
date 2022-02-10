@@ -10,6 +10,7 @@ import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.RelativeBlockPos;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -40,18 +41,21 @@ public class PosType extends Type<BlockPos> {
   }
 
   @Property(name = "x")
-  public Integer getX(final BlockPos self) {
-    return self.getX();
+  @Doc("The x component of a position.")
+  public Long getX(final BlockPos self) {
+    return (long) self.getX();
   }
 
   @Property(name = "y")
-  public Integer getY(final BlockPos self) {
-    return self.getY();
+  @Doc("The y component of a position.")
+  public Long getY(final BlockPos self) {
+    return (long) self.getY();
   }
 
   @Property(name = "z")
-  public Integer getZ(final BlockPos self) {
-    return self.getZ();
+  @Doc("The z component of a position.")
+  public Long getZ(final BlockPos self) {
+    return (long) self.getZ();
   }
 
   @Override
@@ -71,33 +75,56 @@ public class PosType extends Type<BlockPos> {
   }
 
   @Method(name = "up")
+  @Doc("Returns a position that is \"offset\" blocks above.")
   public BlockPos up(final Scope scope, final BlockPos self, final Long offset) {
     return self.up(offset.intValue());
   }
 
   @Method(name = "down")
+  @Doc("Returns a position that is \"offset\" blocks below.")
   public BlockPos down(final Scope scope, final BlockPos self, final Long offset) {
     return self.down(offset.intValue());
   }
 
   @Method(name = "north")
+  @Doc("Returns a position that is \"offset\" blocks to the north.")
   public BlockPos north(final Scope scope, final BlockPos self, final Long offset) {
     return self.north(offset.intValue());
   }
 
   @Method(name = "south")
+  @Doc("Returns a position that is \"offset\" blocks to the south.")
   public BlockPos south(final Scope scope, final BlockPos self, final Long offset) {
     return self.south(offset.intValue());
   }
 
   @Method(name = "west")
+  @Doc("Returns a position that is \"offset\" blocks to the west.")
   public BlockPos west(final Scope scope, final BlockPos self, final Long offset) {
     return self.west(offset.intValue());
   }
 
   @Method(name = "east")
+  @Doc("Returns a position that is \"offset\" blocks to the east.")
   public BlockPos east(final Scope scope, final BlockPos self, final Long offset) {
     return self.east(offset.intValue());
+  }
+
+  @Method(name = "rotate")
+  @Doc("Rotates a position by 0° (0), 90° (1), 180° (2) or 270° (3).")
+  public BlockPos rotate(final Scope scope, final BlockPos self, final Long quadrant) {
+    Rotation rotation = Rotation.NONE;
+    switch (quadrant.intValue() % 4) {
+      case 1:
+        rotation = Rotation.CLOCKWISE_90;
+        break;
+      case 2:
+        rotation = Rotation.CLOCKWISE_180;
+        break;
+      case 3:
+        rotation = Rotation.COUNTERCLOCKWISE_90;
+    }
+    return self.rotate(rotation);
   }
 
   @Override

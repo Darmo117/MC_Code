@@ -107,17 +107,17 @@ class SetTypeTest extends TypeTest<SetType> {
 
   @Test
   void getUndefinedPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), new MCSet(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), new MCSet(), "a"));
   }
 
   @Test
   void setUndefinedPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), new MCSet(), "a", true));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new MCSet(), "a", true));
   }
 
   @Test
   void getUndefinedMethodError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod("a"));
   }
 
   @Test

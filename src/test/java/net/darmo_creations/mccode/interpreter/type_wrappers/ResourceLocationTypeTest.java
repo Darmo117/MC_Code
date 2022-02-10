@@ -49,34 +49,34 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
 
   @Test
   void getProperty() {
-    assertEquals("minecraft", this.typeInstance.getProperty(this.p.getScope(), new ResourceLocation("minecraft:stone"), "namespace"));
-    assertEquals("stone", this.typeInstance.getProperty(this.p.getScope(), new ResourceLocation("minecraft:stone"), "path"));
+    assertEquals("minecraft", this.typeInstance.getPropertyValue(this.p.getScope(), new ResourceLocation("minecraft:stone"), "namespace"));
+    assertEquals("stone", this.typeInstance.getPropertyValue(this.p.getScope(), new ResourceLocation("minecraft:stone"), "path"));
   }
 
   @Test
   void getUndefinedPropertyError() {
     assertThrows(EvaluationException.class,
-        () -> this.typeInstance.getProperty(this.p.getScope(), new ResourceLocation("a"), "a"));
+        () -> this.typeInstance.getPropertyValue(this.p.getScope(), new ResourceLocation("a"), "a"));
   }
 
   @Test
   void setPropertyError() {
     assertThrows(EvaluationException.class,
-        () -> this.typeInstance.setProperty(this.p.getScope(), new ResourceLocation("a"), "namespace", "b"));
+        () -> this.typeInstance.setPropertyValue(this.p.getScope(), new ResourceLocation("a"), "namespace", "b"));
     assertThrows(EvaluationException.class,
-        () -> this.typeInstance.setProperty(this.p.getScope(), new ResourceLocation("a"), "path", "b"));
+        () -> this.typeInstance.setPropertyValue(this.p.getScope(), new ResourceLocation("a"), "path", "b"));
   }
 
   @Test
   void setUndefinedPropertyError() {
     assertThrows(EvaluationException.class,
-        () -> this.typeInstance.setProperty(this.p.getScope(), new ResourceLocation("a"), "a", "b"));
+        () -> this.typeInstance.setPropertyValue(this.p.getScope(), new ResourceLocation("a"), "a", "b"));
   }
 
   @Test
   void getUndefinedMethodError() {
     assertThrows(EvaluationException.class,
-        () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
+        () -> this.typeInstance.getMethod("a"));
   }
 
   @Test

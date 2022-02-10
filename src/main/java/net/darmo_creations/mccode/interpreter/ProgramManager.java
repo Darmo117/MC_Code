@@ -177,15 +177,19 @@ public class ProgramManager implements NBTDeserializable {
    * Load a program.
    *
    * @param name     Program’s name.
+   * @param alias    An optional alias to use in registries instead of first argument.
+   *                 Useful when loading same program multiple times.
    * @param asModule If true, the program instance is returned instead of being loaded in this manager.
+   * @param args     Optional command arguments for the program. Ignored if the program is loaded as a module.
    * @return The program.
    * @throws SyntaxErrorException         If a syntax error is present in the program’s source file.
    * @throws ProgramFileNotFoundException If no .mccode file was found for the given name.
    */
-  public Program loadProgram(final String name, final boolean asModule)
+  public Program loadProgram(final String name, final String alias, final boolean asModule, Object... args)
       throws SyntaxErrorException, ProgramFileNotFoundException {
-    if (!asModule && this.programs.containsKey(name)) {
-      throw new ProgramAlreadyLoadedException(name);
+    String actualName = alias != null ? alias : name;
+    if (!asModule && this.programs.containsKey(actualName)) {
+      throw new ProgramAlreadyLoadedException(actualName);
     }
     String[] splitPath = name.split("\\.");
     splitPath[splitPath.length - 1] += ".mccode";
@@ -203,7 +207,7 @@ public class ProgramManager implements NBTDeserializable {
       throw new ProgramFileNotFoundException(programFile.getName());
     }
 
-    Program program = ProgramParser.parse(this, name, code.toString());
+    Program program = ProgramParser.parse(this, actualName, code.toString(), asModule, args);
     if (!asModule) {
       this.loadProgram(program);
     }
@@ -218,6 +222,7 @@ public class ProgramManager implements NBTDeserializable {
    */
   void loadProgram(Program program) {
     String name = program.getName();
+    System.out.println(name);
     if (this.programs.containsKey(name)) {
       throw new ProgramAlreadyLoadedException(name);
     }
@@ -606,9 +611,9 @@ public class ProgramManager implements NBTDeserializable {
             typeName, propertyName));
       }
 
-      String doc = String.format("%s.%s -> %s", typeName, propertyName, returnType.getName());
+      String doc = "Type: " + returnType.getName();
       if (getterMethod.isAnnotationPresent(Doc.class)) {
-        doc = getterMethod.getAnnotation(Doc.class).value();
+        doc = getterMethod.getAnnotation(Doc.class).value() + "\n" + doc;
       }
 
       ObjectProperty property = new ObjectProperty(type, propertyName, returnType, getterMethod, setterMethods.get(propertyName), doc);
@@ -646,6 +651,7 @@ public class ProgramManager implements NBTDeserializable {
             method.getAnnotation(net.darmo_creations.mccode.interpreter.annotations.Method.class);
         String methodName = methodAnnotation.name();
         Class<?>[] parameterTypes = method.getParameterTypes();
+        java.lang.reflect.Parameter[] parameters = method.getParameters();
 
         if (methods.containsKey(methodName)) {
           throw new MCCodeException(String.format("method %s already defined for type %s",
@@ -679,8 +685,14 @@ public class ProgramManager implements NBTDeserializable {
               method.getReturnType(), typeName, methodName));
         }
 
-        List<String> paramsTypesNames = paramsTypes.stream().map(Type::getName).collect(Collectors.toList());
-        String doc = String.format("%s.%s(%s) -> %s", typeName, methodName, String.join(", ", paramsTypesNames), returnType.getName());
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < paramsTypes.size(); i++) {
+          if (i > 0) {
+            sb.append(", ");
+          }
+          sb.append(paramsTypes.get(i).getName()).append(' ').append(parameters[i + 2].getName());
+        }
+        String doc = "Signature: " + String.format("%s.%s(%s) -> %s", typeName, methodName, sb, returnType.getName());
         if (method.isAnnotationPresent(Doc.class)) {
           doc = method.getAnnotation(Doc.class).value() + "\n" + doc;
         }
@@ -781,7 +793,7 @@ public class ProgramManager implements NBTDeserializable {
     for (Type<?> type : TYPES.values()) {
       if (type.generateCastOperator()) {
         String name = "to_" + type.getName();
-        FUNCTIONS.put(name, new BuiltinFunction(name, type, ProgramManager.getTypeInstance(AnyType.class)) {
+        FUNCTIONS.put(name, new BuiltinFunction(name, type, new Parameter("o", ProgramManager.getTypeInstance(AnyType.class))) {
           @Override
           public Object apply(final Scope scope) {
             return type.explicitCast(scope, this.getParameterValue(scope, 0));
@@ -806,23 +818,31 @@ public class ProgramManager implements NBTDeserializable {
   private static void setFunctionDoc(BuiltinFunction function) {
     Class<? extends BuiltinFunction> functionClass = function.getClass();
 
+    List<Parameter> parameters = function.getParameters();
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < parameters.size(); i++) {
+      if (i > 0) {
+        sb.append(", ");
+      }
+      sb.append(parameters.get(i).getType().getName()).append(' ').append(parameters.get(i).getName());
+    }
+    String doc = "Signature: " + String.format("%s(%s) -> %s", function.getName(), sb, function.getReturnType().getName());
     if (functionClass.isAnnotationPresent(Doc.class)) {
-      Doc docAnnotation = functionClass.getAnnotation(Doc.class);
-      String doc = docAnnotation.value();
+      doc = functionClass.getAnnotation(Doc.class).value() + "\n" + doc;
+    }
 
-      // Retrieve Type class
-      Class<?> c = functionClass;
-      while (c != BuiltinFunction.class) {
-        c = c.getSuperclass();
-      }
+    // Retrieve Type class
+    Class<?> c = functionClass;
+    while (c != BuiltinFunction.class) {
+      c = c.getSuperclass();
+    }
 
-      try {
-        Field nameField = c.getDeclaredField("doc");
-        nameField.setAccessible(true);
-        nameField.set(function, doc);
-      } catch (NoSuchFieldException | IllegalAccessException e) {
-        throw new TypeException("missing field 'doc' for builtin function " + c);
-      }
+    try {
+      Field nameField = c.getDeclaredField("doc");
+      nameField.setAccessible(true);
+      nameField.set(function, doc);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      throw new TypeException("missing field 'doc' for builtin function " + c);
     }
   }
 

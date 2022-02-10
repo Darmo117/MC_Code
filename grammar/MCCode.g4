@@ -74,6 +74,7 @@ INT   : [0-9]+;
 FLOAT : ([0-9]+'.'[0-9]*|'.'?[0-9]+)([eE]'-'?[0-9]+)?;
 STRING: '"'('\\'["\\n]|~["\\\n\r])*?'"';
 IDENT : [a-zA-Z_][a-zA-Z0-9_]*;
+CMDARG: '$'('$'|[0-9]+);
 
 module:
   (SCHED ticks=INT (REPEAT times=(INT | FOREVER))? SEMIC)?
@@ -140,4 +141,5 @@ expr:
   | left=expr operator=AND right=expr               # BinaryOperator // ID: 201
   | left=expr operator=OR right=expr                # BinaryOperator // ID: 201
   | IDENT  # Variable // ID: 100
+  | CMDARG # Variable // ID: 100
 ;

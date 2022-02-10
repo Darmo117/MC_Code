@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.builtin_functions;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
@@ -20,8 +21,10 @@ public class ToRelativePosFunction extends BuiltinFunction {
    */
   public ToRelativePosFunction() {
     super("to_relative_pos", ProgramManager.getTypeInstance(PosType.class),
-        ProgramManager.getTypeInstance(AnyType.class), ProgramManager.getTypeInstance(BooleanType.class),
-        ProgramManager.getTypeInstance(BooleanType.class), ProgramManager.getTypeInstance(BooleanType.class));
+        new Parameter("pos", ProgramManager.getTypeInstance(AnyType.class)),
+        new Parameter("x_relative", ProgramManager.getTypeInstance(BooleanType.class)),
+        new Parameter("y_relative", ProgramManager.getTypeInstance(BooleanType.class)),
+        new Parameter("z_relative", ProgramManager.getTypeInstance(BooleanType.class)));
   }
 
   @Override

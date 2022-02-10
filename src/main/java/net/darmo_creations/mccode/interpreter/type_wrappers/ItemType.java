@@ -33,13 +33,13 @@ public class ItemType extends Type<Item> {
   }
 
   @Property(name = "id")
-  @Doc("Returns the ID of this item.")
+  @Doc("The ID of an item.")
   public ResourceLocation getID(final Item self) {
     return ForgeRegistries.ITEMS.getKey(self);
   }
 
   @Property(name = "max_stack_size")
-  @Doc("Return the max stack size of this item.")
+  @Doc("The max stack size of an item.")
   public Long getMaxStackSize(final Item self) {
     //noinspection deprecation
     return (long) self.getItemStackLimit();

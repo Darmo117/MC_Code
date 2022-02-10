@@ -1,6 +1,7 @@
 package net.darmo_creations.mccode.interpreter;
 
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.darmo_creations.mccode.interpreter.statements.Statement;
@@ -8,11 +9,11 @@ import net.darmo_creations.mccode.interpreter.statements.StatementAction;
 import net.darmo_creations.mccode.interpreter.statements.StatementNBTHelper;
 import net.darmo_creations.mccode.interpreter.statements.WaitStatement;
 import net.darmo_creations.mccode.interpreter.types.WorldProxy;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +33,9 @@ public class Program {
   public static final String WAIT_TIME_KEY = "WaitTime";
   public static final String IP_KEY = "IP";
   public static final String IS_MODULE_KEY = "IsModule";
+  public static final String ARGS_KEY = "CommandArgs";
+  public static final String ARG_TYPE_KEY = "Type";
+  public static final String ARG_VALUE_KEY = "Value";
 
   private final String name;
   private final List<Statement> statements;
@@ -46,6 +50,8 @@ public class Program {
    */
   private int ip;
 
+  private final List<Object> args;
+
   /**
    * Create a new program.
    *
@@ -54,10 +60,11 @@ public class Program {
    * @param scheduleDelay  Program’s schedule delay. May be null.
    * @param repeatAmount   Program’s repeat amount. May be null.
    * @param programManager Program’s manager.
+   * @param args           Optional command arguments for the program.
    * @throws MCCodeRuntimeException If the schedule delay or repeat amount is negative,
    *                                or a repeat amount is defined without a schedule delay.
    */
-  public Program(final String name, final List<Statement> statements, final Long scheduleDelay, final Long repeatAmount, ProgramManager programManager) {
+  public Program(final String name, final List<Statement> statements, final Long scheduleDelay, final Long repeatAmount, ProgramManager programManager, Object... args) {
     this.programManager = Objects.requireNonNull(programManager);
     this.name = Objects.requireNonNull(name);
     this.statements = Objects.requireNonNull(statements);
@@ -76,6 +83,7 @@ public class Program {
     this.timeToWait = 0;
     this.ip = 0;
     this.isModule = false;
+    this.args = Arrays.asList(args);
     this.setup();
   }
 
@@ -97,6 +105,7 @@ public class Program {
     this.timeToWait = 0;
     this.ip = 0;
     this.isModule = true;
+    this.args = Collections.emptyList();
     this.setup();
   }
 
@@ -123,6 +132,21 @@ public class Program {
       this.timeToWait = 0;
     }
     this.ip = tag.getInteger(IP_KEY);
+    this.args = new ArrayList<>();
+    for (NBTBase nbtBase : tag.getTagList(ARGS_KEY, new NBTTagCompound().getId())) {
+      NBTTagCompound t = (NBTTagCompound) nbtBase;
+      String argType = t.getString(ARG_TYPE_KEY);
+      switch (argType) {
+        case "int":
+          this.args.add(t.getInteger(ARG_VALUE_KEY));
+        case "float":
+          this.args.add(t.getDouble(ARG_VALUE_KEY));
+        case "boolean":
+          this.args.add(t.getBoolean(ARG_VALUE_KEY));
+        default:
+          throw new MCCodeException("invalid arg type " + argType);
+      }
+    }
     this.setup();
   }
 
@@ -132,6 +156,10 @@ public class Program {
   private void setup() {
     this.scope.declareVariable(new Variable(WORLD_VAR_NAME, false, false, true,
         false, new WorldProxy(this.programManager.getWorld())));
+    this.scope.declareVariable(new Variable("$$", false, false, true, false, (long) this.args.size()));
+    for (int i = 0; i < this.args.size(); i++) {
+      this.scope.declareVariable(new Variable("$" + i, false, false, true, false, this.args.get(i)));
+    }
     if (!this.scope.isVariableDefined(NAME_SPECIAL_VARIABLE)) { // May have been overriden by program
       this.scope.declareVariable(new Variable(NAME_SPECIAL_VARIABLE, true, false, false,
           false, this.getName()));
@@ -265,6 +293,21 @@ public class Program {
     }
     tag.setInteger(IP_KEY, this.ip);
     tag.setBoolean(IS_MODULE_KEY, this.isModule);
+    NBTTagList argsList = new NBTTagList();
+    for (Object arg : this.args) {
+      NBTTagCompound t = new NBTTagCompound();
+      if (arg instanceof Long) {
+        t.setString(ARG_TYPE_KEY, "int");
+        t.setLong(ARG_VALUE_KEY, (Long) arg);
+      } else if (arg instanceof Double) {
+        t.setString(ARG_TYPE_KEY, "float");
+        t.setDouble(ARG_VALUE_KEY, (Double) arg);
+      } else if (arg instanceof Boolean) {
+        t.setString(ARG_TYPE_KEY, "boolean");
+        t.setBoolean(ARG_VALUE_KEY, (Boolean) arg);
+      }
+      argsList.appendTag(t);
+    }
     return tag;
   }
 

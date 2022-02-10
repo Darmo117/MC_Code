@@ -2,11 +2,10 @@ package net.darmo_creations.mccode.interpreter.types;
 
 import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.Scope;
+import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Base class for functions.
@@ -25,7 +24,16 @@ public abstract class Function {
    */
   public Function(final String name, final List<Parameter> parameters, final Type<?> returnType) {
     this.name = name == null ? "<anonymous>" : name;
-    this.parameters = Objects.requireNonNull(parameters);
+    // Check for duplicate names
+    Set<String> names = new HashSet<>();
+    for (Parameter parameter : parameters) {
+      String parameterName = parameter.getName();
+      if (names.contains(parameterName)) {
+        throw new MCCodeException(String.format("parameter %s declared twice in function %s", parameterName, names));
+      }
+      names.add(parameterName);
+    }
+    this.parameters = parameters;
     this.returnType = Objects.requireNonNull(returnType);
   }
 

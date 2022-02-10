@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.builtin_functions;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
@@ -17,7 +18,8 @@ public class CeilFunction extends BuiltinFunction {
    * that is greater than or equal to the argument and is equal to a mathematical integer.
    */
   public CeilFunction() {
-    super("ceil", ProgramManager.getTypeInstance(IntType.class), ProgramManager.getTypeInstance(FloatType.class));
+    super("ceil", ProgramManager.getTypeInstance(IntType.class),
+        new Parameter("x", ProgramManager.getTypeInstance(FloatType.class)));
   }
 
   @Override

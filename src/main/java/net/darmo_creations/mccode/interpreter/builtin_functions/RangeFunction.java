@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.builtin_functions;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
@@ -18,7 +19,9 @@ public class RangeFunction extends BuiltinFunction {
    */
   public RangeFunction() {
     super("range", ProgramManager.getTypeInstance(RangeType.class),
-        ProgramManager.getTypeInstance(IntType.class), ProgramManager.getTypeInstance(IntType.class), ProgramManager.getTypeInstance(IntType.class));
+        new Parameter("start", ProgramManager.getTypeInstance(IntType.class)),
+        new Parameter("end", ProgramManager.getTypeInstance(IntType.class)),
+        new Parameter("step", ProgramManager.getTypeInstance(IntType.class)));
   }
 
   @Override

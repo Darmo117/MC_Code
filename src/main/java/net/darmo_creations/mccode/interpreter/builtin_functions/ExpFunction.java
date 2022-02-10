@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.builtin_functions;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
@@ -15,7 +16,8 @@ public class ExpFunction extends BuiltinFunction {
    * Create a function that returns Euler's number e raised to the power of its parameter.
    */
   public ExpFunction() {
-    super("exp", ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
+    super("exp", ProgramManager.getTypeInstance(FloatType.class),
+        new Parameter("x", ProgramManager.getTypeInstance(FloatType.class)));
   }
 
   @Override

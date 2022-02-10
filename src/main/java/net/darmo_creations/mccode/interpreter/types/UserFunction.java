@@ -99,7 +99,6 @@ public class UserFunction extends Function {
     NBTTagList parametersList = new NBTTagList();
     this.parameters.stream()
         .map(Parameter::getName)
-        .sorted()
         .forEach(paramName -> parametersList.appendTag(new NBTTagString(paramName)));
     tag.setTag(PARAMETERS_KEY, parametersList);
     tag.setTag(STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(this.statements));

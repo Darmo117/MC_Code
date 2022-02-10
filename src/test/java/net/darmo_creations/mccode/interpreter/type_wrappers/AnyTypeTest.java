@@ -46,17 +46,17 @@ class AnyTypeTest extends TypeTest<AnyType> {
 
   @Test
   void getPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), new Object(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), new Object(), "a"));
   }
 
   @Test
   void setPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), new Object(), "a", true));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new Object(), "a", true));
   }
 
   @Test
   void getMethodError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod("a"));
   }
 
   @ParameterizedTest

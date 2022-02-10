@@ -67,7 +67,7 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
 
   @Test
   void getNameProperty() {
-    assertEquals("m", this.typeInstance.getProperty(this.p.getScope(), this.m, "__name__"));
+    assertEquals("m", this.typeInstance.getPropertyValue(this.p.getScope(), this.m, "__name__"));
   }
 
   @Test
@@ -75,24 +75,24 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
     Program m = new Program("m", Collections.singletonList(
         new AssignVariableStatement("__name__", AssigmentOperator.ASSIGN, new StringLiteralNode("test"))), new ProgramManager("pm"));
     m.execute();
-    assertEquals("test", this.typeInstance.getProperty(this.p.getScope(), m, "__name__"));
+    assertEquals("test", this.typeInstance.getPropertyValue(this.p.getScope(), m, "__name__"));
   }
 
   @Test
   void getPropertyVariable() {
-    assertEquals(1L, this.typeInstance.getProperty(this.p.getScope(), this.m, "a"));
+    assertEquals(1L, this.typeInstance.getPropertyValue(this.p.getScope(), this.m, "a"));
   }
 
   @Test
   void getPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), this.m, "b"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), this.m, "b"));
   }
 
   @Test
   void setPropertyVariable() {
     MCList list = new MCList();
-    this.typeInstance.setProperty(this.p.getScope(), this.m, "a", list);
-    Object value = this.typeInstance.getProperty(this.p.getScope(), this.m, "a");
+    this.typeInstance.setPropertyValue(this.p.getScope(), this.m, "a", list);
+    Object value = this.typeInstance.getPropertyValue(this.p.getScope(), this.m, "a");
     assertEquals(list, value);
     assertNotSame(list, value);
   }
@@ -102,7 +102,7 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
     this.m = new Program("m", Collections.singletonList(
         new DeclareVariableStatement(true, false, false, "a", new IntLiteralNode(1))), new ProgramManager("pm"));
     this.m.execute();
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), this.m, "a", 2));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), this.m, "a", 2));
   }
 
   @Test
@@ -110,22 +110,22 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
     this.m = new Program("m", Collections.singletonList(
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1))), new ProgramManager("pm"));
     this.m.execute();
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), this.m, "a", 2));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), this.m, "a", 2));
   }
 
   @Test
   void setNamePropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), this.m, "__name__", 2));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), this.m, "__name__", 2));
   }
 
   @Test
   void setPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), this.m, "b", true));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), this.m, "b", true));
   }
 
   @Test
   void getMethodError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod("a"));
   }
 
   @Test

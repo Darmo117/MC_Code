@@ -176,4 +176,15 @@ public class Variable implements NBTSerializable {
   public int hashCode() {
     return Objects.hash(this.name, this.publiclyVisible, this.editableFromOutside, this.constant, this.deletable, this.value);
   }
+
+  @Override
+  public String toString() {
+    return String.format("Variable{name=%s,publiclyVisible=%b,editableFromOutside=%b,constant=%b,deletable=%b,value=%s}",
+        this.name,
+        this.publiclyVisible,
+        this.editableFromOutside,
+        this.constant,
+        this.deletable,
+        this.value);
+  }
 }

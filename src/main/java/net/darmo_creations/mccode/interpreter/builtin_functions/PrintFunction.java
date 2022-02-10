@@ -1,9 +1,11 @@
 package net.darmo_creations.mccode.interpreter.builtin_functions;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.Program;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
+import net.darmo_creations.mccode.interpreter.type_wrappers.FloatType;
 import net.darmo_creations.mccode.interpreter.type_wrappers.NullType;
 import net.darmo_creations.mccode.interpreter.type_wrappers.StringType;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
@@ -20,7 +22,8 @@ public class PrintFunction extends BuiltinFunction {
    */
   public PrintFunction() {
     super("print", ProgramManager.getTypeInstance(NullType.class),
-        ProgramManager.getTypeInstance(AnyType.class), ProgramManager.getTypeInstance(StringType.class));
+        new Parameter("message", ProgramManager.getTypeInstance(AnyType.class)),
+        new Parameter("channel", ProgramManager.getTypeInstance(StringType.class)));
   }
 
   @Override

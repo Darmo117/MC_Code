@@ -55,21 +55,21 @@ public class ListType extends Type<MCList> {
   }
 
   @Method(name = "clear")
-  @Doc("Removes all values from this list. Modifies this list.")
+  @Doc("Removes all values from a list. Modifies the list.")
   public Void clear(final Scope scope, final MCList self) {
     self.clear();
     return null;
   }
 
   @Method(name = "add")
-  @Doc("Adds a value at the end of this list. Modifies this list.")
+  @Doc("Adds a value at the end of a list. Modifies the list.")
   public Void add(final Scope scope, final MCList self, final Object value) {
     self.add(ProgramManager.getTypeForValue(value).copy(scope, value));
     return null;
   }
 
   @Method(name = "insert")
-  @Doc("Adds a value at the specified index of this list. Modifies this list.")
+  @Doc("Adds a value at the specified index of a list. Modifies the list.")
   public Void insert(final Scope scope, final MCList self, final Long index, final Object value) {
     if (index < 0 || index > self.size()) {
       throw new IndexOutOfBoundsException(scope, index.intValue());
@@ -79,20 +79,20 @@ public class ListType extends Type<MCList> {
   }
 
   @Method(name = "count")
-  @Doc("Counts the number of times the given value occurs in this list.")
+  @Doc("Counts the number of times the given value occurs in a list.")
   public Long count(final Scope scope, final MCList self, final Object value) {
     return self.stream().filter(e -> e.equals(value)).count();
   }
 
   @Method(name = "index")
-  @Doc("Returns the index of the first occurence of the given value in this list." +
-      " Returns -1 if the value is not present in this list.")
+  @Doc("Returns the index of the first occurence of the given value in a list." +
+      " Returns -1 if the value is not present in the list.")
   public Long indexOf(final Scope scope, final MCList self, final Object value) {
     return (long) self.indexOf(value);
   }
 
   @Method(name = "sort")
-  @Doc("Sorts this list using natural ordering of its elements. Modifies this list.")
+  @Doc("Sorts a list using natural ordering of its elements. Modifies the list.")
   public Void sort(final Scope scope, final MCList self, final boolean reversed) {
     self.sort(comparator(scope, reversed));
     return null;

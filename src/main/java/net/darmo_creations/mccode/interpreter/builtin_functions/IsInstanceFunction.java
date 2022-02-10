@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.builtin_functions;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
@@ -18,7 +19,8 @@ public class IsInstanceFunction extends BuiltinFunction {
    */
   public IsInstanceFunction() {
     super("is_instance", ProgramManager.getTypeInstance(BooleanType.class),
-        ProgramManager.getTypeInstance(StringType.class), ProgramManager.getTypeInstance(AnyType.class));
+        new Parameter("type_name", ProgramManager.getTypeInstance(StringType.class)),
+        new Parameter("o", ProgramManager.getTypeInstance(AnyType.class)));
   }
 
   @Override

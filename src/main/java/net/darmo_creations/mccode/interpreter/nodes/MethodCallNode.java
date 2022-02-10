@@ -52,7 +52,7 @@ public class MethodCallNode extends OperationNode {
     Type<?> selfType = ProgramManager.getTypeForValue(self);
 
     if (selfType.getClass() == ModuleType.class) {
-      Object property = selfType.getProperty(scope, self, this.methodName);
+      Object property = selfType.getPropertyValue(scope, self, this.methodName);
 
       Function function;
       try {
@@ -83,7 +83,10 @@ public class MethodCallNode extends OperationNode {
       return result;
 
     } else {
-      MemberFunction method = selfType.getMethod(scope, this.methodName);
+      MemberFunction method = selfType.getMethod(this.methodName);
+      if (method == null) {
+        throw new EvaluationException(scope, "mccode.interpreter.error.no_method_for_type", this, this.methodName);
+      }
       Scope functionScope = new Scope(method.getName(), scope);
 
       if (this.arguments.size() != method.getParameters().size()) {

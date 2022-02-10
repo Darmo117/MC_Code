@@ -53,7 +53,7 @@ public class ImportStatement extends Statement {
   @Override
   public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
     String name = this.getModulePath();
-    Program module = scope.getProgram().getProgramManager().loadProgram(name, true);
+    Program module = scope.getProgram().getProgramManager().loadProgram(name, null, true);
     module.execute();
     scope.declareVariable(new Variable(this.alias != null ? this.alias : name.replace('.', '_'),
         false, false, false, true, module));

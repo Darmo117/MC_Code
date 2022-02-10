@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
  * <p>
  * It does not have a cast operator.
  */
+@Doc("This type represents a specific dimension (overworld, nether, end, etc.).")
 public class WorldType extends Type<WorldProxy> {
   public static final String NAME = "world";
 
@@ -98,25 +99,25 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Property(name = "seed")
-  @Doc("The seed of this world.")
+  @Doc("The seed of a world.")
   public Long getSeed(final WorldProxy self) {
     return self.getWorld().getSeed();
   }
 
   @Property(name = "day")
-  @Doc("The current day for this world.")
+  @Doc("The current day of a world.")
   public Long getWorldDay(final WorldProxy self) {
     return self.getWorld().getWorldTime() / 24000L % 2147483647L;
   }
 
   @Property(name = "day_time")
-  @Doc("The current time of day for this world.")
+  @Doc("The current time of day of a world.")
   public Long getWorldDayTime(final WorldProxy self) {
     return self.getWorld().getWorldTime() % 24000L;
   }
 
   @Property(name = "game_time")
-  @Doc("The current game time for this world.")
+  @Doc("The current game time of a world.")
   public Long getWorldTick(final WorldProxy self) {
     return self.getWorld().getTotalWorldTime() % 2147483647L;
   }

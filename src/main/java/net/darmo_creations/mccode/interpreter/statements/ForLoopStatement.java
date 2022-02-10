@@ -86,7 +86,6 @@ public class ForLoopStatement extends Statement {
     Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, UnaryOperator.ITERATE, valuesObject, null, null, false);
     boolean declareVariable = !this.paused && !this.resumeAfterLoad;
 
-    System.out.println(valuesObject);
     // Skip elements already iterated over
     for (int i = 0; i < this.iteratorIndex; i++) {
       iterator.next();

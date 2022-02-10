@@ -21,16 +21,18 @@ public final class ProgramParser {
    * @param programManager The manager that requests the program.
    * @param programName    Name of the program.
    * @param script         Code of the program.
+   * @param asModule       Whether the program should be parsed as a module.
+   * @param args           Optional command arguments for the program.
    * @return The program instance.
    * @throws SyntaxErrorException If a syntax error is encountered.
    */
-  public static Program parse(final ProgramManager programManager, final String programName, final String script)
+  public static Program parse(final ProgramManager programManager, final String programName, final String script, boolean asModule, final Object... args)
       throws SyntaxErrorException {
     MCCodeLexer lexer = new MCCodeLexer(CharStreams.fromString(script));
     MCCodeParser parser = new MCCodeParser(new CommonTokenStream(lexer));
     ErrorListener errorListener = new ErrorListener();
     parser.addErrorListener(errorListener);
-    return new ProgramVisitor(programManager, programName).visit(parser.module());
+    return new ProgramVisitor(programManager, programName, asModule, args).visit(parser.module());
   }
 
   /**

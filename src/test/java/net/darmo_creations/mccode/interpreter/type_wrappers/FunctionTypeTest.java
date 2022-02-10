@@ -66,17 +66,17 @@ class FunctionTypeTest extends TypeTest<FunctionType> {
 
   @Test
   void getPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), this.userFunction, "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), this.userFunction, "a"));
   }
 
   @Test
   void setPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), this.userFunction, "a", true));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), this.userFunction, "a", true));
   }
 
   @Test
   void getMethodError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod("a"));
   }
 
   @Test

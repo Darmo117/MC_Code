@@ -4,6 +4,7 @@ import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,13 +20,13 @@ public abstract class BuiltinFunction extends Function {
   /**
    * Create a builtin function.
    *
-   * @param name           Function’s name.
-   * @param returnType     Function’s return type.
-   * @param parameterTypes Function’s parameter types. Parameter names are generated:
-   *                       {@code _x&lt;i>_} where {@code i} is the parameter’s index.
+   * @param name       Function’s name.
+   * @param returnType Function’s return type.
+   * @param parameters Function’s parameter types. Parameter names are generated:
+   *                   {@code _x&lt;i>_} where {@code i} is the parameter’s index.
    */
-  public BuiltinFunction(final String name, final Type<?> returnType, final Type<?>... parameterTypes) {
-    super(name, generateParameters(parameterTypes), returnType);
+  public BuiltinFunction(final String name, final Type<?> returnType, final Parameter... parameters) {
+    super(name, Arrays.asList(parameters), returnType);
   }
 
   /**

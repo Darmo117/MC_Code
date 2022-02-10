@@ -121,6 +121,7 @@
         <keyword attribute="Builtin Constant" context="#stay" String="builtin_constants"/>
         <keyword attribute="Builtin Function" context="#stay" String="builtin_functions"/>
         <DetectChar attribute="String" context="string" char="&quot;"/>
+        <RegExpr attribute="Command Argument" context="#stay" String="\$(?:\$|\d+)(?=[^$\w])"/>
         <keyword attribute="Literal" context="#stay" String="literals"/>
         <DetectIdentifier attribute="Identifier"/>
         <DetectChar attribute="Comment" context="comment" char="#"/>
@@ -146,6 +147,7 @@
       <itemData name="Escape" defStyleNum="dsSpecialChar"/>
       <itemData name="Builtin Constant" defStyleNum="dsConstant"/>
       <itemData name="Builtin Function" defStyleNum="dsBuiltIn"/>
+      <itemData name="Command Argument" defStyleNum="dsBuiltIn"/>
       <itemData name="Comment" defStyleNum="dsComment"/>
       <itemData name="Error" defStyleNum="dsError"/>
     </itemDatas>

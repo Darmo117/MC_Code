@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.builtin_functions;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
@@ -16,7 +17,8 @@ public class HypotFunction extends BuiltinFunction {
    */
   public HypotFunction() {
     super("hypot", ProgramManager.getTypeInstance(FloatType.class),
-        ProgramManager.getTypeInstance(FloatType.class), ProgramManager.getTypeInstance(FloatType.class));
+        new Parameter("x", ProgramManager.getTypeInstance(FloatType.class)),
+        new Parameter("y", ProgramManager.getTypeInstance(FloatType.class)));
   }
 
   @Override

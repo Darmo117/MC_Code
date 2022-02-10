@@ -41,19 +41,19 @@ public class MapType extends Type<MCMap> {
   }
 
   @Property(name = "keys")
-  @Doc("Returns the set of all keys of this map.")
+  @Doc("Returns the set of all keys of a map.")
   public MCSet getKeys(final MCMap self) {
     return new MCSet(self.keySet());
   }
 
   @Property(name = "values")
-  @Doc("Returns a list of all values of this map. Order of values in the returned list is not guaranteed.")
+  @Doc("Returns a list of all values of a map. Order of values in the returned list is not guaranteed.")
   public MCList getValues(final MCMap self) {
     return new MCList(self.values());
   }
 
   @Method(name = "clear")
-  @Doc("Removes all entries from this map. Modifies this map.")
+  @Doc("Removes all entries from a map. Modifies the map.")
   public Void clear(final Scope scope, final MCMap self) {
     self.clear();
     return null;
@@ -198,7 +198,7 @@ public class MapType extends Type<MCMap> {
       MCMap map = new MCMap();
       if (!properties.isEmpty()) {
         for (String s : properties) {
-          Object value = type.getProperty(scope, o, s);
+          Object value = type.getPropertyValue(scope, o, s);
           if (value instanceof Byte || value instanceof Short || value instanceof Integer) {
             value = ((Number) value).longValue();
           } else if (value instanceof Float) {

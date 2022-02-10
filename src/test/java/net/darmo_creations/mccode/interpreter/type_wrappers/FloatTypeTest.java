@@ -49,17 +49,17 @@ class FloatTypeTest extends TypeTest<FloatType> {
 
   @Test
   void getPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), 1.0, "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), 1.0, "a"));
   }
 
   @Test
   void setPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), 1.0, "a", true));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), 1.0, "a", true));
   }
 
   @Test
   void getMethodError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod("a"));
   }
 
   @ParameterizedTest

@@ -19,16 +19,22 @@ import java.util.stream.Collectors;
 public class ProgramVisitor extends MCCodeBaseVisitor<Program> {
   private final ProgramManager programManager;
   private final String programName;
+  private final Object[] args;
+  private final boolean asModule;
 
   /**
    * Create a visitor for the given program name.
    *
    * @param programManager Program manager that requests the program instance.
    * @param programName    Program’s name.
+   * @param asModule       Whether the program should be parsed as a module.
+   * @param args           Optional command arguments for the program.
    */
-  public ProgramVisitor(final ProgramManager programManager, final String programName) {
+  public ProgramVisitor(final ProgramManager programManager, final String programName, boolean asModule, final Object... args) {
     this.programManager = programManager;
+    this.asModule = asModule;
     this.programName = programName;
+    this.args = args;
   }
 
   @Override
@@ -36,6 +42,9 @@ public class ProgramVisitor extends MCCodeBaseVisitor<Program> {
     Long scheduleDelay = null;
     Long repeatAmount = null;
     if (ctx.SCHED() != null) {
+      if (this.asModule) {
+        throw new SyntaxErrorException("modules cannot be scheduled");
+      }
       scheduleDelay = Long.parseLong(ctx.ticks.getText());
       if (ctx.REPEAT() != null) {
         String timesText = ctx.times.getText();
@@ -62,6 +71,12 @@ public class ProgramVisitor extends MCCodeBaseVisitor<Program> {
 
     ctx.global_statement().stream().map(statementVisitor::visit).forEach(statements::add);
 
-    return new Program(this.programName, statements, scheduleDelay, repeatAmount, this.programManager);
+    Program program;
+    if (!this.asModule) {
+      program = new Program(this.programName, statements, scheduleDelay, repeatAmount, this.programManager, this.args);
+    } else {
+      program = new Program(this.programName, statements, this.programManager);
+    }
+    return program;
   }
 }

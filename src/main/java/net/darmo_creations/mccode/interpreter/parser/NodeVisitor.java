@@ -71,7 +71,10 @@ public class NodeVisitor extends MCCodeBaseVisitor<Node> {
 
   @Override
   public Node visitVariable(MCCodeParser.VariableContext ctx) {
-    return new VariableNode(ctx.IDENT().getText());
+    if (ctx.IDENT() != null) {
+      return new VariableNode(ctx.IDENT().getText());
+    }
+    return new VariableNode(ctx.CMDARG().getText());
   }
 
   @Override

@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.builtin_functions;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
@@ -18,7 +19,8 @@ public class ReversedFunction extends BuiltinFunction {
    * Create a function that reverses the given iterable object.
    */
   public ReversedFunction() {
-    super("reversed", ProgramManager.getTypeInstance(AnyType.class), ProgramManager.getTypeInstance(AnyType.class));
+    super("reversed", ProgramManager.getTypeInstance(AnyType.class),
+        new Parameter("o", ProgramManager.getTypeInstance(AnyType.class)));
   }
 
   @Override

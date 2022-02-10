@@ -36,27 +36,27 @@ public class SetType extends Type<MCSet> {
   }
 
   @Method(name = "clear")
-  @Doc("Removes all values from this set. Modifies this set.")
+  @Doc("Removes all values from a set. Modifies the set.")
   public Void clear(final Scope scope, final MCSet self) {
     self.clear();
     return null;
   }
 
   @Method(name = "add")
-  @Doc("Adds a value to this set. Modifies this set.")
+  @Doc("Adds a value to a set. Modifies the set.")
   public Void add(final Scope scope, final MCSet self, final Object value) {
     self.add(ProgramManager.getTypeForValue(value).copy(scope, value));
     return null;
   }
 
   @Method(name = "union")
-  @Doc("Returns the union of values from this set and the other. Alias of '+' operator. Does not modify this set.")
+  @Doc("Returns the union of values of two sets. Alias of '+' operator. Does not modify the sets it is applied to.")
   public MCSet union(final Scope scope, final MCSet self, final MCSet other) {
     return (MCSet) this.__add__(scope, self, other, false);
   }
 
   @Method(name = "intersection")
-  @Doc("Returns the intersection of values from this set and the other. Does not modify this set.")
+  @Doc("Returns the intersection of values of two sets. Does not modify the sets it is applied to.")
   public MCSet intersection(final Scope scope, final MCSet self, final MCSet other) {
     MCSet set = this.__copy__(scope, self);
     set.retainAll(other);

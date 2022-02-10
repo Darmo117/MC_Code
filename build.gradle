@@ -87,11 +87,15 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
 
+compileJava {
+    options.compilerArgs << "-parameters" // Keep method parameters names at runtime
+}
+
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "naissancee",
+                "Specification-Title"     : "mccode",
                 "Specification-Vendor"    : "Darmo",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,

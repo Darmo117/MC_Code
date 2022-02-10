@@ -49,17 +49,17 @@ class RangeTypeTest extends TypeTest<RangeType> {
 
   @Test
   void getUndefinedPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), new Range(1, 1, 1), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), new Range(1, 1, 1), "a"));
   }
 
   @Test
   void setUndefinedPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), new Range(1, 1, 1), "a", true));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new Range(1, 1, 1), "a", true));
   }
 
   @Test
   void getUndefinedMethodError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod("a"));
   }
 
   @Test

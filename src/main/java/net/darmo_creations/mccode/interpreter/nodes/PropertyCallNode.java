@@ -47,7 +47,7 @@ public class PropertyCallNode extends Node {
   public Object evaluate(final Scope scope) throws EvaluationException, ArithmeticException {
     Object obj = this.object.evaluate(scope);
     Type<?> objectType = ProgramManager.getTypeForValue(obj);
-    return objectType.getProperty(scope, obj, this.propertyName);
+    return objectType.getPropertyValue(scope, obj, this.propertyName);
   }
 
   @Override

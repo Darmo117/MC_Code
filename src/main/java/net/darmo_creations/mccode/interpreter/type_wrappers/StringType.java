@@ -39,19 +39,19 @@ public class StringType extends Type<String> {
   }
 
   @Method(name = "lower")
-  @Doc("Returns this string as lower case.")
+  @Doc("Returns a string as lower case.")
   public String toLowerCase(final Scope scope, final String self) {
     return self.toLowerCase();
   }
 
   @Method(name = "upper")
-  @Doc("Returns this string as upper case.")
+  @Doc("Returns a string as upper case.")
   public String toUpperCase(final Scope scope, final String self) {
     return self.toUpperCase();
   }
 
   @Method(name = "title")
-  @Doc("Returns this string as title case.")
+  @Doc("Returns a string as title case.")
   public String toTitleCase(final Scope scope, final String self) {
     // Based on https://stackoverflow.com/a/1086134/3779986
     StringBuilder titleCase = new StringBuilder(self.length());
@@ -73,19 +73,19 @@ public class StringType extends Type<String> {
   }
 
   @Method(name = "starts_with")
-  @Doc("Returns whether this string starts with the given string.")
+  @Doc("Returns whether a string starts with the given string.")
   public Boolean startsWith(final Scope scope, final String self, final String prefix) {
     return self.startsWith(prefix);
   }
 
   @Method(name = "ends_with")
-  @Doc("Returns whether this string ends with the given string.")
+  @Doc("Returns whether a string ends with the given string.")
   public Boolean endsWith(final Scope scope, final String self, final String suffix) {
     return self.endsWith(suffix);
   }
 
   @Method(name = "count")
-  @Doc("Returns the number of times the given string is present in this string.")
+  @Doc("Returns the number of times the given string is present in another.")
   public Long count(final Scope scope, final String self, final String needle) {
     if ("".equals(needle)) {
       return (long) self.length() + 1;
@@ -94,49 +94,49 @@ public class StringType extends Type<String> {
   }
 
   @Method(name = "index")
-  @Doc("Returns the index of the first occurence of the given string in this string.")
+  @Doc("Returns the index of the first occurence of the given string in another, or -1 if no occurence were found.")
   public Long indexOf(final Scope scope, final String self, final String needle) {
     return (long) self.indexOf(needle);
   }
 
   @Method(name = "strip")
-  @Doc("Removes all leading and trailing whitespace from this string.")
+  @Doc("Removes all leading and trailing whitespace from a string.")
   public String trim(final Scope scope, final String self) {
     return self.trim();
   }
 
   @Method(name = "left_strip")
-  @Doc("Removes all leading whitespace from this string.")
+  @Doc("Removes all leading whitespace from a string.")
   public String trimLeft(final Scope scope, final String self) {
     return self.replaceFirst("^\\s+", "");
   }
 
   @Method(name = "right_strip")
-  @Doc("Removes all trailing whitespace from this string.")
+  @Doc("Removes all trailing whitespace from a string.")
   public String trimRight(final Scope scope, final String self) {
     return self.replaceFirst("\\s+$", "");
   }
 
   @Method(name = "replace")
-  @Doc("Replaces each substring of this string that matches the target string with the specified literal replacement sequence.")
+  @Doc("Replaces each substring of a string that matches the target string with the specified literal replacement sequence.")
   public String replace(final Scope scope, final String self, final String target, final String replacement) {
     return self.replace(target, replacement);
   }
 
   @Method(name = "replace_regex")
-  @Doc("Replaces each substring of this string that matches the regex string with the specified literal replacement sequence.")
+  @Doc("Replaces each substring of a string that matches the regex string with the specified literal replacement sequence.")
   public String replaceRegex(final Scope scope, final String self, final String target, final String replacement) {
     return self.replaceAll(target, replacement);
   }
 
   @Method(name = "split")
-  @Doc("Splits this string around matches of the given regular expression.")
+  @Doc("Splits a string around matches of the given regular expression.")
   public MCList split(final Scope scope, final String self, final String separator) {
     return new MCList(Arrays.asList(self.split(separator, -1)));
   }
 
   @Method(name = "join")
-  @Doc("Joins all strings from the given list using this string as a delimiter.")
+  @Doc("Joins all strings from the given list using a specified delimiter.")
   public String join(final Scope scope, final String self, final Object collection) {
     MCList list = ProgramManager.getTypeInstance(ListType.class).implicitCast(scope, collection);
     return list.stream().map(e -> this.implicitCast(scope, e)).collect(Collectors.joining(self));

@@ -31,7 +31,7 @@ public class BlockType extends Type<Block> {
   }
 
   @Property(name = "id")
-  @Doc("Returns the ID of this block.")
+  @Doc("The ID of a block.")
   public ResourceLocation getID(final Block self) {
     return ForgeRegistries.BLOCKS.getKey(self);
   }

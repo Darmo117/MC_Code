@@ -57,19 +57,19 @@ class ItemTypeTest extends TypeTest<ItemType> {
 
   @Test
   void getPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), new Item(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), new Item(), "a"));
   }
 
   @Test
   void setPropertyError() { // FIXME Minecraft classes not initialized
 //    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), Items.STICK, "id", "s"));
 //    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), Items.STICK, "max_stack_size", 1));
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), new Item(), "a", "s"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new Item(), "a", "s"));
   }
 
   @Test
   void getMethodError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod("a"));
   }
 
   @Test

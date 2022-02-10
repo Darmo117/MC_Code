@@ -1,5 +1,6 @@
 package net.darmo_creations.mccode.interpreter.builtin_functions;
 
+import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
@@ -22,7 +23,8 @@ public class SortedFunction extends BuiltinFunction {
    */
   public SortedFunction() {
     super("sorted", ProgramManager.getTypeInstance(AnyType.class),
-        ProgramManager.getTypeInstance(AnyType.class), ProgramManager.getTypeInstance(BooleanType.class));
+        new Parameter("o", ProgramManager.getTypeInstance(AnyType.class)),
+        new Parameter("reversed", ProgramManager.getTypeInstance(BooleanType.class)));
   }
 
   @Override

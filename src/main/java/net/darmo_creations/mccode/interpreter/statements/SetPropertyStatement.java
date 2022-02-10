@@ -44,12 +44,12 @@ public class SetPropertyStatement extends Statement {
     Object targetObject = this.target.evaluate(scope);
     Type<?> targetType = ProgramManager.getTypeForValue(targetObject);
     Type<?> propertyType = targetType.getPropertyType(scope, targetObject, this.propertyName);
-    Object propertyValue = targetType.getProperty(scope, targetObject, this.propertyName);
+    Object propertyValue = targetType.getPropertyValue(scope, targetObject, this.propertyName);
     Object newPropertyValue = this.value.evaluate(scope);
     Object result = this.operator.getBaseOperator()
         .map(op -> propertyType.applyOperator(scope, op, propertyValue, newPropertyValue, null, true))
         .orElse(newPropertyValue);
-    targetType.setProperty(scope, targetObject, this.propertyName, result);
+    targetType.setPropertyValue(scope, targetObject, this.propertyName, result);
 
     return StatementAction.PROCEED;
   }

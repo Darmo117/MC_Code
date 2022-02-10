@@ -49,47 +49,47 @@ class PosTypeTest extends TypeTest<PosType> {
 
   @Test
   void getPropertyX() {
-    assertEquals(1, this.typeInstance.getProperty(this.p.getScope(), new BlockPos(1, 2, 3), "x"));
+    assertEquals(1, this.typeInstance.getPropertyValue(this.p.getScope(), new BlockPos(1, 2, 3), "x"));
   }
 
   @Test
   void getPropertyY() {
-    assertEquals(2, this.typeInstance.getProperty(this.p.getScope(), new BlockPos(1, 2, 3), "y"));
+    assertEquals(2, this.typeInstance.getPropertyValue(this.p.getScope(), new BlockPos(1, 2, 3), "y"));
   }
 
   @Test
   void getPropertyZ() {
-    assertEquals(3, this.typeInstance.getProperty(this.p.getScope(), new BlockPos(1, 2, 3), "z"));
+    assertEquals(3, this.typeInstance.getPropertyValue(this.p.getScope(), new BlockPos(1, 2, 3), "z"));
   }
 
   @Test
   void getUndefinedPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getProperty(this.p.getScope(), new BlockPos(1, 1, 1), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), new BlockPos(1, 1, 1), "a"));
   }
 
   @Test
   void setPropertyXError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), new BlockPos(0, 0, 0), "x", 1));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new BlockPos(0, 0, 0), "x", 1));
   }
 
   @Test
   void setPropertyYError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), new BlockPos(0, 0, 0), "y", 1));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new BlockPos(0, 0, 0), "y", 1));
   }
 
   @Test
   void setPropertyZError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), new BlockPos(0, 0, 0), "z", 1));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new BlockPos(0, 0, 0), "z", 1));
   }
 
   @Test
   void setUndefinedPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setProperty(this.p.getScope(), new BlockPos(0, 0, 0), "a", 1));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new BlockPos(0, 0, 0), "a", 1));
   }
 
   @Test
   void getUndefinedMethodError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod(this.p.getScope(), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getMethod("a"));
   }
 
   @ParameterizedTest
