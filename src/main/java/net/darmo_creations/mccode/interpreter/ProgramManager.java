@@ -767,6 +767,7 @@ public class ProgramManager implements NBTDeserializable {
     declareBuiltinFunction(CbrtFunction.class);
     declareBuiltinFunction(CeilFunction.class);
     declareBuiltinFunction(CosFunction.class);
+    declareBuiltinFunction(ErrorFunction.class);
     declareBuiltinFunction(ExpFunction.class);
     declareBuiltinFunction(FloorFunction.class);
     declareBuiltinFunction(HypotFunction.class);
