@@ -30,6 +30,8 @@ public class MCCode {
   public static final String MOD_NAME = "MC_Code";
   public static final String VERSION = "1.0";
 
+  public static final String GR_SHOW_ERROR_MESSAGES = "showProgramErrorMessages";
+
   /**
    * This is the instance of your mod as created by Forge. It will never be null.
    */
@@ -100,9 +102,11 @@ public class MCCode {
                 .setStyle(new Style().setColor(TextFormatting.RED));
             WorldServer world = (WorldServer) e.getScope().getProgram().getProgramManager().getWorld();
             // Only show error messages to players that can use the "program" command
-            world.getPlayers(EntityPlayer.class, p -> true).stream()
-                .filter(p -> p.canUseCommand(2, "program"))
-                .forEach(player -> player.sendMessage(message));
+            if (world.getGameRules().getBoolean(GR_SHOW_ERROR_MESSAGES)) {
+              world.getPlayers(EntityPlayer.class, p -> true).stream()
+                  .filter(p -> p.canUseCommand(2, "program"))
+                  .forEach(player -> player.sendMessage(message));
+            }
             //noinspection ConstantConditions
             world.getMinecraftServer().sendMessage(message);
           }
