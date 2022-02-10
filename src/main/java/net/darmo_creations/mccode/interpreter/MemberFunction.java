@@ -90,7 +90,6 @@ public class MemberFunction extends Function {
   @Override
   public String toString() {
     String params = this.parameters.stream()
-        .sorted(Comparator.comparing(Parameter::getName))
         .map(p -> p.getType().getName() + " " + p.getName())
         .collect(Collectors.joining(", "));
     return String.format("builtin method %s.%s(%s) -> %s", this.hostType, this.getName(), params, this.getReturnType());

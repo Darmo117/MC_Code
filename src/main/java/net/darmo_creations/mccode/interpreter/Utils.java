@@ -12,7 +12,7 @@ import java.util.StringJoiner;
  * Utility functions for interpreter-related classes.
  */
 public final class Utils {
-  private static final String IDENT = "  ";
+  private static final String INDENT = "  ";
 
   /**
    * Stringify the given list of statements and indents them.
@@ -25,8 +25,10 @@ public final class Utils {
     if (statements.isEmpty()) {
       return "";
     }
-    StringJoiner code = new StringJoiner("\n" + IDENT, "\n" + IDENT, "\n");
-    statements.forEach(s -> code.add(s.toString()));
+    StringJoiner code = new StringJoiner("\n" + INDENT, "\n" + INDENT, "\n");
+    for (Statement s : statements) {
+      code.add(String.join("\n" + INDENT, s.toString().split("\n")));
+    }
     return code.toString();
   }
 

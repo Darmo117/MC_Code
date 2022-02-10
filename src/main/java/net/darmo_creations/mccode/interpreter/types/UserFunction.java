@@ -111,9 +111,9 @@ public class UserFunction extends Function {
   public String toString() {
     String params = this.parameters.stream()
         .map(Parameter::getName)
-        .sorted()
         .collect(Collectors.joining(", "));
-    return String.format("function %s(%s) do%send", this.getName(), params, Utils.indentStatements(this.statements));
+    return String.format("function %s(%s)%send",
+        this.getName(), params, this.statements.isEmpty() ? "\n" : Utils.indentStatements(this.statements));
   }
 
   /**
