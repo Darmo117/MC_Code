@@ -38,9 +38,9 @@ public abstract class BuiltinFunction extends Function {
    * @return Parameter’s value.
    */
   protected <T> T getParameterValue(final Scope scope, final int index) {
+    Parameter parameter = this.parameters.get(index);
     //noinspection unchecked
-    return (T) this.parameters.get(index).getType()
-        .implicitCast(scope, scope.getVariable(getAutoParameterNameForIndex(index), false));
+    return (T) parameter.getType().implicitCast(scope, scope.getVariable(parameter.getName(), false));
   }
 
   @Override
