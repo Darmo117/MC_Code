@@ -43,19 +43,19 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
       // Last IDENT token is the alias
       path.remove(path.size() - 1);
     }
-    return new ImportStatement(path, alias);
+    return new ImportStatement(path, alias, ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override
   public Statement visitDeclareGlobalVariable(MCCodeParser.DeclareGlobalVariableContext ctx) {
     return new DeclareVariableStatement(true, ctx.EDITABLE() != null, false,
-        ctx.name.getText(), this.nodeVisitor.visit(ctx.value));
+        ctx.name.getText(), this.nodeVisitor.visit(ctx.value), ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override
   public Statement visitDeclareGlobalConstant(MCCodeParser.DeclareGlobalConstantContext ctx) {
     return new DeclareVariableStatement(true, false, true,
-        ctx.name.getText(), this.nodeVisitor.visit(ctx.value));
+        ctx.name.getText(), this.nodeVisitor.visit(ctx.value), ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override
@@ -63,13 +63,14 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
     String name = ctx.name.getText();
     List<String> params = ctx.IDENT().stream().skip(1).map(TerminalNode::getText).collect(Collectors.toList());
     List<Statement> statements = ctx.statement().stream().map(super::visit).collect(Collectors.toList());
-    return new DefineFunctionStatement(name, params, statements, ctx.PUBLIC() != null);
+    return new DefineFunctionStatement(name, params, statements, ctx.PUBLIC() != null,
+        ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override
   public Statement visitDeclareVariableStatement(MCCodeParser.DeclareVariableStatementContext ctx) {
     return new DeclareVariableStatement(false, false, ctx.CONST() != null,
-        ctx.name.getText(), this.nodeVisitor.visit(ctx.value));
+        ctx.name.getText(), this.nodeVisitor.visit(ctx.value), ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override
@@ -77,7 +78,9 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
     return new AssignVariableStatement(
         ctx.name.getText(),
         AssigmentOperator.fromString(ctx.operator.getText()),
-        this.nodeVisitor.visit(ctx.value)
+        this.nodeVisitor.visit(ctx.value),
+        ctx.start.getLine(),
+        ctx.start.getCharPositionInLine() + 1
     );
   }
 
@@ -87,7 +90,9 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
         this.nodeVisitor.visit(ctx.target),
         this.nodeVisitor.visit(ctx.key),
         AssigmentOperator.fromString(ctx.operator.getText()),
-        this.nodeVisitor.visit(ctx.value)
+        this.nodeVisitor.visit(ctx.value),
+        ctx.start.getLine(),
+        ctx.start.getCharPositionInLine() + 1
     );
   }
 
@@ -97,23 +102,27 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
         this.nodeVisitor.visit(ctx.target),
         ctx.name.getText(),
         AssigmentOperator.fromString(ctx.operator.getText()),
-        this.nodeVisitor.visit(ctx.value)
+        this.nodeVisitor.visit(ctx.value),
+        ctx.start.getLine(),
+        ctx.start.getCharPositionInLine() + 1
     );
   }
 
   @Override
   public Statement visitDeleteStatement(MCCodeParser.DeleteStatementContext ctx) {
-    return new DeleteVariableStatement(ctx.name.getText());
+    return new DeleteVariableStatement(ctx.name.getText(), ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override
   public Statement visitDeleteItemStatement(MCCodeParser.DeleteItemStatementContext ctx) {
-    return new DeleteItemStatement(this.nodeVisitor.visit(ctx.target), this.nodeVisitor.visit(ctx.key));
+    return new DeleteItemStatement(this.nodeVisitor.visit(ctx.target), this.nodeVisitor.visit(ctx.key),
+        ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override
   public Statement visitExpressionStatement(MCCodeParser.ExpressionStatementContext ctx) {
-    return new ExpressionStatement(this.nodeVisitor.visit(ctx.expr()));
+    return new ExpressionStatement(this.nodeVisitor.visit(ctx.expr()),
+        ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override
@@ -138,7 +147,9 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
     return new IfStatement(
         conditions,
         branches,
-        elseStatements
+        elseStatements,
+        ctx.start.getLine(),
+        ctx.start.getCharPositionInLine() + 1
     );
   }
 
@@ -146,7 +157,9 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
   public Statement visitWhileLoopStatement(MCCodeParser.WhileLoopStatementContext ctx) {
     return new WhileLoopStatement(
         this.nodeVisitor.visit(ctx.cond),
-        ctx.loop_stmt().stream().map(super::visit).collect(Collectors.toList())
+        ctx.loop_stmt().stream().map(super::visit).collect(Collectors.toList()),
+        ctx.start.getLine(),
+        ctx.start.getCharPositionInLine() + 1
     );
   }
 
@@ -155,27 +168,37 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
     return new ForLoopStatement(
         ctx.variable.getText(),
         this.nodeVisitor.visit(ctx.range),
-        ctx.loop_stmt().stream().map(super::visit).collect(Collectors.toList())
+        ctx.loop_stmt().stream().map(super::visit).collect(Collectors.toList()),
+        ctx.start.getLine(),
+        ctx.start.getCharPositionInLine() + 1
     );
   }
 
   @Override
   public Statement visitWaitStatement(MCCodeParser.WaitStatementContext ctx) {
-    return new WaitStatement(this.nodeVisitor.visit(ctx.expr()));
+    return new WaitStatement(
+        this.nodeVisitor.visit(ctx.expr()),
+        ctx.start.getLine(),
+        ctx.start.getCharPositionInLine() + 1
+    );
   }
 
   @Override
   public Statement visitReturnStatement(MCCodeParser.ReturnStatementContext ctx) {
-    return new ReturnStatement(ctx.returned != null ? this.nodeVisitor.visit(ctx.returned) : null);
+    return new ReturnStatement(
+        ctx.returned != null ? this.nodeVisitor.visit(ctx.returned) : null,
+        ctx.start.getLine(),
+        ctx.start.getCharPositionInLine() + 1
+    );
   }
 
   @Override
   public Statement visitBreakStatement(MCCodeParser.BreakStatementContext ctx) {
-    return new BreakStatement();
+    return new BreakStatement(ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override
   public Statement visitContinueStatement(MCCodeParser.ContinueStatementContext ctx) {
-    return new ContinueStatement();
+    return new ContinueStatement(ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 }

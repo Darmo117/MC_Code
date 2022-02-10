@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter.statements;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
@@ -30,8 +29,11 @@ public class AssignVariableStatement extends Statement {
    * @param variableName Name of the variable to assign the value to.
    * @param operator     Operation to perform before assigning the value.
    * @param value        The value to assign.
+   * @param line         The line this statement starts on.
+   * @param column       The column in the line this statement starts at.
    */
-  public AssignVariableStatement(final String variableName, final AssigmentOperator operator, final Node value) {
+  public AssignVariableStatement(final String variableName, final AssigmentOperator operator, final Node value, final int line, final int column) {
+    super(line, column);
     this.variableName = Objects.requireNonNull(variableName);
     this.operator = Objects.requireNonNull(operator);
     this.value = Objects.requireNonNull(value);
@@ -43,15 +45,14 @@ public class AssignVariableStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public AssignVariableStatement(final NBTTagCompound tag) {
-    this(
-        tag.getString(VAR_NAME_KEY),
-        AssigmentOperator.fromString(tag.getString(OPERATOR_KEY)),
-        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUE_KEY))
-    );
+    super(tag);
+    this.variableName = tag.getString(VAR_NAME_KEY);
+    this.operator = AssigmentOperator.fromString(tag.getString(OPERATOR_KEY));
+    this.value = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUE_KEY));
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     Object targetObject = scope.getVariable(this.variableName, false);
     Type<?> targetType = ProgramManager.getTypeForValue(targetObject);
     Object valueObject = this.value.evaluate(scope);

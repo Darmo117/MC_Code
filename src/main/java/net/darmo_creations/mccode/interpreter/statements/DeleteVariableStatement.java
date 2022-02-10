@@ -1,7 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Objects;
@@ -20,8 +19,11 @@ public class DeleteVariableStatement extends Statement {
    * Create a statement that deletes a variable or function.
    *
    * @param variableName Name of the variable or function to delete.
+   * @param line         The line this statement starts on.
+   * @param column       The column in the line this statement starts at.
    */
-  public DeleteVariableStatement(final String variableName) {
+  public DeleteVariableStatement(final String variableName, final int line, final int column) {
+    super(line, column);
     this.variableName = Objects.requireNonNull(variableName);
   }
 
@@ -31,11 +33,12 @@ public class DeleteVariableStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public DeleteVariableStatement(final NBTTagCompound tag) {
-    this(tag.getString(VAR_NAME_KEY));
+    super(tag);
+    this.variableName = tag.getString(VAR_NAME_KEY);
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     scope.deleteVariable(this.variableName, false);
     return StatementAction.PROCEED;
   }

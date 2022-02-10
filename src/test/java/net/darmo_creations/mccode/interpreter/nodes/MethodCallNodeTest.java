@@ -32,18 +32,18 @@ class MethodCallNodeTest extends NodeTest {
     assertThrows(NullPointerException.class, () -> new MethodCallNode(
         null,
         "up",
-        Collections.singletonList(new IntLiteralNode(1))
-    ));
+        Collections.singletonList(new IntLiteralNode(1, 0, 0)),
+        0, 0));
     assertThrows(NullPointerException.class, () -> new MethodCallNode(
         this.instance,
         null,
-        Collections.singletonList(new IntLiteralNode(1))
-    ));
+        Collections.singletonList(new IntLiteralNode(1, 0, 0)),
+        0, 0));
     assertThrows(NullPointerException.class, () -> new MethodCallNode(
         this.instance,
         "up",
-        null
-    ));
+        null,
+        0, 0));
   }
 
   @Test
@@ -51,8 +51,8 @@ class MethodCallNodeTest extends NodeTest {
     Object r = new MethodCallNode(
         this.instance,
         "up",
-        Collections.singletonList(new IntLiteralNode(1))
-    ).evaluate(this.p.getScope());
+        Collections.singletonList(new IntLiteralNode(1, 0, 0)),
+        0, 0).evaluate(this.p.getScope());
     assertSame(BlockPos.class, r.getClass());
     assertEquals(new BlockPos(1, 2, 1), r);
   }
@@ -60,10 +60,10 @@ class MethodCallNodeTest extends NodeTest {
   @Test
   void evaluateUndefinedError() {
     assertThrows(EvaluationException.class, () -> new MethodCallNode(
-        new IntLiteralNode(1),
+        new IntLiteralNode(1, 0, 0),
         "up",
-        Collections.singletonList(new IntLiteralNode(1))
-    ).evaluate(this.p.getScope()));
+        Collections.singletonList(new IntLiteralNode(1, 0, 0)),
+        0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
@@ -71,8 +71,8 @@ class MethodCallNodeTest extends NodeTest {
     assertThrows(EvaluationException.class, () -> new MethodCallNode(
         this.instance,
         "up",
-        Collections.emptyList()
-    ).evaluate(this.p.getScope()));
+        Collections.emptyList(),
+        0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
@@ -80,8 +80,8 @@ class MethodCallNodeTest extends NodeTest {
     assertThrows(EvaluationException.class, () -> new MethodCallNode(
         this.instance,
         "up",
-        Arrays.asList(new IntLiteralNode(1), new IntLiteralNode(2))
-    ).evaluate(this.p.getScope()));
+        Arrays.asList(new IntLiteralNode(1, 0, 0), new IntLiteralNode(2, 0, 0)),
+        0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
@@ -89,8 +89,8 @@ class MethodCallNodeTest extends NodeTest {
     assertThrows(CastException.class, () -> new MethodCallNode(
         this.instance,
         "up",
-        Collections.singletonList(new StringLiteralNode("string"))
-    ).evaluate(this.p.getScope()));
+        Collections.singletonList(new StringLiteralNode("string", 0, 0)),
+        0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
@@ -100,13 +100,13 @@ class MethodCallNodeTest extends NodeTest {
     tag.setTag(MethodCallNode.INSTANCE_KEY, this.instance.writeToNBT());
     tag.setString(MethodCallNode.METHOD_NAME_KEY, "up");
     NBTTagList args = new NBTTagList();
-    args.appendTag(new IntLiteralNode(1).writeToNBT());
+    args.appendTag(new IntLiteralNode(1, 0, 0).writeToNBT());
     tag.setTag(FunctionCallNode.ARGUMENTS_KEY, args);
     assertEquals(tag, new MethodCallNode(
         this.instance,
         "up",
-        Collections.singletonList(new IntLiteralNode(1))
-    ).writeToNBT());
+        Collections.singletonList(new IntLiteralNode(1, 0, 0)),
+        0, 0).writeToNBT());
   }
 
   @Test
@@ -116,7 +116,7 @@ class MethodCallNodeTest extends NodeTest {
     tag.setTag(MethodCallNode.INSTANCE_KEY, this.instance.writeToNBT());
     tag.setString(MethodCallNode.METHOD_NAME_KEY, "up");
     NBTTagList args = new NBTTagList();
-    args.appendTag(new IntLiteralNode(1).writeToNBT());
+    args.appendTag(new IntLiteralNode(1, 0, 0).writeToNBT());
     tag.setTag(FunctionCallNode.ARGUMENTS_KEY, args);
     assertEquals("to_pos([1, 1, 1]).up(1)", new MethodCallNode(tag).toString());
   }
@@ -126,13 +126,13 @@ class MethodCallNodeTest extends NodeTest {
     assertEquals("to_pos([1, 1, 1]).up(1)", new MethodCallNode(
         this.instance,
         "up",
-        Collections.singletonList(new IntLiteralNode(1))
-    ).toString());
+        Collections.singletonList(new IntLiteralNode(1, 0, 0)),
+        0, 0).toString());
   }
 
   @Test
   void testEquals() {
-    assertEquals(new MethodCallNode(new VariableNode("floor"), "a", Collections.singletonList(new FloatLiteralNode(1.0))),
-        new MethodCallNode(new VariableNode("floor"), "a", Collections.singletonList(new FloatLiteralNode(1.0))));
+    assertEquals(new MethodCallNode(new VariableNode("floor", 0, 0), "a", Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0),
+        new MethodCallNode(new VariableNode("floor", 0, 0), "a", Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0));
   }
 }

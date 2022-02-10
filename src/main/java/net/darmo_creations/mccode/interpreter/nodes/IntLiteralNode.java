@@ -13,10 +13,12 @@ public class IntLiteralNode extends LiteralNode<Long> {
   /**
    * Create an integer literal node.
    *
-   * @param value Integer value.
+   * @param value  Integer value.
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public IntLiteralNode(final long value) {
-    super(value);
+  public IntLiteralNode(final long value, final int line, final int column) {
+    super(value, line, column);
   }
 
   /**
@@ -25,7 +27,7 @@ public class IntLiteralNode extends LiteralNode<Long> {
    * @param tag The tag to deserialize.
    */
   public IntLiteralNode(final NBTTagCompound tag) {
-    super(tag::getLong);
+    super(tag, tag::getLong);
   }
 
   @Override

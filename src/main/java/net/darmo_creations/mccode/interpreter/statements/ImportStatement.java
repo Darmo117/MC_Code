@@ -3,7 +3,6 @@ package net.darmo_creations.mccode.interpreter.statements;
 import net.darmo_creations.mccode.interpreter.Program;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Variable;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -30,8 +29,11 @@ public class ImportStatement extends Statement {
    *
    * @param moduleNamePath Module’s name.
    * @param alias          Alias to use instead of the full name. May be null.
+   * @param line           The line this statement starts on.
+   * @param column         The column in the line this statement starts at.
    */
-  public ImportStatement(final List<String> moduleNamePath, final String alias) {
+  public ImportStatement(final List<String> moduleNamePath, final String alias, final int line, final int column) {
+    super(line, column);
     this.moduleNamePath = new ArrayList<>(moduleNamePath);
     this.alias = alias;
   }
@@ -42,6 +44,7 @@ public class ImportStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public ImportStatement(final NBTTagCompound tag) {
+    super(tag);
     NBTTagList list = tag.getTagList(NAME_KEY, new NBTTagString().getId());
     this.moduleNamePath = new ArrayList<>();
     for (NBTBase t : list) {
@@ -51,7 +54,7 @@ public class ImportStatement extends Statement {
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     String name = this.getModulePath();
     Program module = scope.getProgram().getProgramManager().loadProgram(name, null, true);
     module.execute();

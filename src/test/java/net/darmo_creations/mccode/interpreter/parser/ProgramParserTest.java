@@ -30,7 +30,7 @@ class ProgramParserTest {
   @Test
   void parseScheduleNoRepeat() {
     Program p = new Program("p", Collections.singletonList(
-        new ExpressionStatement(new VariableNode("a"))
+        new ExpressionStatement(new VariableNode("a", 0, 0), 0, 0)
     ), 1L, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "schedule 1; a;", false));
   }
@@ -38,7 +38,7 @@ class ProgramParserTest {
   @Test
   void parseScheduleRepeatFixed() {
     Program p = new Program("p", Collections.singletonList(
-        new ExpressionStatement(new VariableNode("a"))
+        new ExpressionStatement(new VariableNode("a", 0, 0), 0, 0)
     ), 1L, 2L, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "schedule 1 repeat 2; a;", false));
   }
@@ -46,7 +46,7 @@ class ProgramParserTest {
   @Test
   void parseScheduleRepeatForever() {
     Program p = new Program("p", Collections.singletonList(
-        new ExpressionStatement(new VariableNode("a"))
+        new ExpressionStatement(new VariableNode("a", 0, 0), 0, 0)
     ), 1L, Long.MAX_VALUE, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "schedule 1 repeat forever; a;", false));
   }
@@ -61,7 +61,7 @@ class ProgramParserTest {
   @Test
   void parseSimpleImportStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new ImportStatement(Collections.singletonList("a"), null)
+        new ImportStatement(Collections.singletonList("a"), null, 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "import a;", false));
   }
@@ -69,7 +69,7 @@ class ProgramParserTest {
   @Test
   void parsePathImportStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new ImportStatement(Arrays.asList("a", "b"), null)
+        new ImportStatement(Arrays.asList("a", "b"), null, 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "import a.b;", false));
   }
@@ -77,7 +77,7 @@ class ProgramParserTest {
   @Test
   void parseSimpleImportStatementWithAlias() {
     Program p = new Program("p", Collections.singletonList(
-        new ImportStatement(Collections.singletonList("a"), "b")
+        new ImportStatement(Collections.singletonList("a"), "b", 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "import a as b;", false));
   }
@@ -85,7 +85,7 @@ class ProgramParserTest {
   @Test
   void parsePathImportStatementWithAlias() {
     Program p = new Program("p", Collections.singletonList(
-        new ImportStatement(Arrays.asList("a", "b"), "b")
+        new ImportStatement(Arrays.asList("a", "b"), "b", 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "import a.b as b;", false));
   }
@@ -104,7 +104,7 @@ class ProgramParserTest {
   @EnumSource(AssigmentOperator.class)
   void parseAssignVariableStatement(AssigmentOperator op) {
     Program p = new Program("p", Collections.singletonList(
-        new AssignVariableStatement("a", op, new IntLiteralNode(1))
+        new AssignVariableStatement("a", op, new IntLiteralNode(1, 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", String.format("a %s 1;", op.getSymbol()), false));
   }
@@ -112,7 +112,7 @@ class ProgramParserTest {
   @Test
   void parseDeclareVariableStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1))
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "var a := 1;", false));
   }
@@ -120,7 +120,7 @@ class ProgramParserTest {
   @Test
   void parseDeclarePublicVariableStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DeclareVariableStatement(true, false, false, "a", new IntLiteralNode(1))
+        new DeclareVariableStatement(true, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "public var a := 1;", false));
   }
@@ -128,7 +128,7 @@ class ProgramParserTest {
   @Test
   void parseDeclarePublicEditableVariableStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1))
+        new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1, 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "public editable var a := 1;", false));
   }
@@ -136,7 +136,7 @@ class ProgramParserTest {
   @Test
   void parseDeclareConstStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DeclareVariableStatement(false, false, true, "a", new IntLiteralNode(1))
+        new DeclareVariableStatement(false, false, true, "a", new IntLiteralNode(1, 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "const a := 1;", false));
   }
@@ -144,7 +144,7 @@ class ProgramParserTest {
   @Test
   void parseDeclarePublicConstStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DeclareVariableStatement(true, false, true, "a", new IntLiteralNode(1))
+        new DeclareVariableStatement(true, false, true, "a", new IntLiteralNode(1, 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "public const a := 1;", false));
   }
@@ -152,7 +152,7 @@ class ProgramParserTest {
   @Test
   void parseDefineFunctionNoParamsStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DefineFunctionStatement("f", Collections.emptyList(), Collections.singletonList(new ReturnStatement(new IntLiteralNode(1))), false)
+        new DefineFunctionStatement("f", Collections.emptyList(), Collections.singletonList(new ReturnStatement(new IntLiteralNode(1, 0, 0), 0, 0)), false, 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "function f() return 1; end", false));
   }
@@ -160,7 +160,7 @@ class ProgramParserTest {
   @Test
   void parseDefineFunctionOneParamStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DefineFunctionStatement("f", Collections.singletonList("a"), Collections.singletonList(new ReturnStatement(new VariableNode("a"))), false)
+        new DefineFunctionStatement("f", Collections.singletonList("a"), Collections.singletonList(new ReturnStatement(new VariableNode("a", 0, 0), 0, 0)), false, 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "function f(a) return a; end", false));
   }
@@ -168,7 +168,7 @@ class ProgramParserTest {
   @Test
   void parseDefineFunctionTwoParamStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DefineFunctionStatement("f", Arrays.asList("a", "b"), Collections.singletonList(new ReturnStatement(new BinaryOperatorNode(BinaryOperator.PLUS, new VariableNode("a"), new VariableNode("b")))), false)
+        new DefineFunctionStatement("f", Arrays.asList("a", "b"), Collections.singletonList(new ReturnStatement(new BinaryOperatorNode(BinaryOperator.PLUS, new VariableNode("a", 0, 0), new VariableNode("b", 0, 0), 0, 0), 0, 0)), false, 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "function f(a, b) return a + b; end", false));
   }
@@ -176,23 +176,23 @@ class ProgramParserTest {
   @Test
   void parseDeleteVariableStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new DeleteVariableStatement("a")
+        new DeleteVariableStatement("a", 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "del a;", false));
   }
 
   @Test
   void parseExpressionStatement() {
-    Program p = new Program("p", Collections.singletonList(new ExpressionStatement(new VariableNode("a"))), null, null, this.pm);
+    Program p = new Program("p", Collections.singletonList(new ExpressionStatement(new VariableNode("a", 0, 0), 0, 0)), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "a;", false));
   }
 
   @Test
   void parseForLoopStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new ForLoopStatement("i", new FunctionCallNode(new VariableNode("range"),
-            Arrays.asList(new IntLiteralNode(1), new IntLiteralNode(3), new IntLiteralNode(1))),
-            Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"), Collections.singletonList(new VariableNode("i"))))))
+        new ForLoopStatement("i", new FunctionCallNode(new VariableNode("range", 0, 0),
+            Arrays.asList(new IntLiteralNode(1, 0, 0), new IntLiteralNode(3, 0, 0), new IntLiteralNode(1, 0, 0)), 0, 0),
+            Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0), Collections.singletonList(new VariableNode("i", 0, 0)), 0, 0), 0, 0)), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "for i in range(1, 3, 1) do print(i); end", false));
   }
@@ -201,11 +201,11 @@ class ProgramParserTest {
   void parseIfStatement() {
     Program p = new Program("p", Collections.singletonList(
         new IfStatement(
-            Collections.singletonList(new VariableNode("b")),
-            Collections.singletonList(Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                Collections.singletonList(new IntLiteralNode(1)))))),
-            Collections.emptyList()
-        )
+            Collections.singletonList(new VariableNode("b", 0, 0)),
+            Collections.singletonList(Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                Collections.singletonList(new IntLiteralNode(1, 0, 0)), 0, 0), 0, 0))),
+            Collections.emptyList(),
+            0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "if b then print(1); end", false));
   }
@@ -214,14 +214,14 @@ class ProgramParserTest {
   void parseIfElseStatement() {
     Program p = new Program("p", Collections.singletonList(
         new IfStatement(
-            Collections.singletonList(new VariableNode("b")),
+            Collections.singletonList(new VariableNode("b", 0, 0)),
             Collections.singletonList(
-                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                    Collections.singletonList(new IntLiteralNode(1)))))
+                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                    Collections.singletonList(new IntLiteralNode(1, 0, 0)), 0, 0), 0, 0))
             ),
-            Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                Collections.singletonList(new IntLiteralNode(2)))))
-        )
+            Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                Collections.singletonList(new IntLiteralNode(2, 0, 0)), 0, 0), 0, 0)),
+            0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "if b then print(1); else print(2); end", false));
   }
@@ -231,17 +231,17 @@ class ProgramParserTest {
     Program p = new Program("p", Collections.singletonList(
         new IfStatement(
             Arrays.asList(
-                new VariableNode("b"),
-                new VariableNode("c")
+                new VariableNode("b", 0, 0),
+                new VariableNode("c", 0, 0)
             ),
             Arrays.asList(
-                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                    Collections.singletonList(new IntLiteralNode(1))))),
-                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                    Collections.singletonList(new IntLiteralNode(2)))))
+                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                    Collections.singletonList(new IntLiteralNode(1, 0, 0)), 0, 0), 0, 0)),
+                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                    Collections.singletonList(new IntLiteralNode(2, 0, 0)), 0, 0), 0, 0))
             ),
-            Collections.emptyList()
-        )
+            Collections.emptyList(),
+            0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "if b then print(1); elseif c then print(2); end", false));
   }
@@ -251,18 +251,18 @@ class ProgramParserTest {
     Program p = new Program("p", Collections.singletonList(
         new IfStatement(
             Arrays.asList(
-                new VariableNode("b"),
-                new VariableNode("c")
+                new VariableNode("b", 0, 0),
+                new VariableNode("c", 0, 0)
             ),
             Arrays.asList(
-                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                    Collections.singletonList(new IntLiteralNode(1))))),
-                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                    Collections.singletonList(new IntLiteralNode(2)))))
+                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                    Collections.singletonList(new IntLiteralNode(1, 0, 0)), 0, 0), 0, 0)),
+                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                    Collections.singletonList(new IntLiteralNode(2, 0, 0)), 0, 0), 0, 0))
             ),
-            Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                Collections.singletonList(new IntLiteralNode(3)))))
-        )
+            Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                Collections.singletonList(new IntLiteralNode(3, 0, 0)), 0, 0), 0, 0)),
+            0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "if b then print(1); elseif c then print(2); else print(3); end", false));
   }
@@ -272,20 +272,20 @@ class ProgramParserTest {
     Program p = new Program("p", Collections.singletonList(
         new IfStatement(
             Arrays.asList(
-                new VariableNode("b"),
-                new VariableNode("c"),
-                new UnaryOperatorNode(UnaryOperator.NOT, new VariableNode("d"))
+                new VariableNode("b", 0, 0),
+                new VariableNode("c", 0, 0),
+                new UnaryOperatorNode(UnaryOperator.NOT, new VariableNode("d", 0, 0), 0, 0)
             ),
             Arrays.asList(
-                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                    Collections.singletonList(new IntLiteralNode(1))))),
-                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                    Collections.singletonList(new IntLiteralNode(2))))),
-                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"),
-                    Collections.singletonList(new IntLiteralNode(3)))))
+                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                    Collections.singletonList(new IntLiteralNode(1, 0, 0)), 0, 0), 0, 0)),
+                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                    Collections.singletonList(new IntLiteralNode(2, 0, 0)), 0, 0), 0, 0)),
+                Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0),
+                    Collections.singletonList(new IntLiteralNode(3, 0, 0)), 0, 0), 0, 0))
             ),
-            Collections.emptyList()
-        )
+            Collections.emptyList(),
+            0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "if b then print(1); elseif c then print(2); elseif not d then print(3); end", false));
   }
@@ -294,7 +294,7 @@ class ProgramParserTest {
   @EnumSource(AssigmentOperator.class)
   void parseSetItemStatement(AssigmentOperator op) {
     Program p = new Program("p", Collections.singletonList(
-        new SetItemStatement(new VariableNode("a"), new IntLiteralNode(1), op, new IntLiteralNode(2))
+        new SetItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(1, 0, 0), op, new IntLiteralNode(2, 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", String.format("a[1] %s 2;", op.getSymbol()), false));
   }
@@ -303,7 +303,7 @@ class ProgramParserTest {
   @EnumSource(AssigmentOperator.class)
   void parseSetItemKeyStatement(AssigmentOperator op) {
     Program p = new Program("p", Collections.singletonList(
-        new SetItemStatement(new VariableNode("a"), new StringLiteralNode("b"), op, new IntLiteralNode(2))
+        new SetItemStatement(new VariableNode("a", 0, 0), new StringLiteralNode("b", 0, 0), op, new IntLiteralNode(2, 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", String.format("a[\"b\"] %s 2;", op.getSymbol()), false));
   }
@@ -312,7 +312,7 @@ class ProgramParserTest {
   @EnumSource(AssigmentOperator.class)
   void parseSetPropertyStatement(AssigmentOperator op) {
     Program p = new Program("p", Collections.singletonList(
-        new SetPropertyStatement(new VariableNode("a"), "b", op, new IntLiteralNode(2))
+        new SetPropertyStatement(new VariableNode("a", 0, 0), "b", op, new IntLiteralNode(2, 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", String.format("a.b %s 2;", op.getSymbol()), false));
   }
@@ -320,7 +320,7 @@ class ProgramParserTest {
   @Test
   void parseWaitStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new WaitStatement(new VariableNode("a"))
+        new WaitStatement(new VariableNode("a", 0, 0), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "wait a;", false));
   }
@@ -328,8 +328,8 @@ class ProgramParserTest {
   @Test
   void parseWhileLoopStatement() {
     Program p = new Program("p", Collections.singletonList(
-        new WhileLoopStatement(new BinaryOperatorNode(BinaryOperator.GT, new VariableNode("a"), new IntLiteralNode(1)),
-            Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print"), Collections.singletonList(new FloatLiteralNode(1.0))))))
+        new WhileLoopStatement(new BinaryOperatorNode(BinaryOperator.GT, new VariableNode("a", 0, 0), new IntLiteralNode(1, 0, 0), 0, 0),
+            Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("print", 0, 0), Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0), 0, 0)), 0, 0)
     ), null, null, this.pm);
     assertEquals(p, ProgramParser.parse(this.pm, "p", "while a > 1 do print(1.0); end", false));
   }

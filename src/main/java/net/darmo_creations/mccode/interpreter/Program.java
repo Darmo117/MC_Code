@@ -226,7 +226,7 @@ public class Program {
    * @throws SyntaxErrorException   If any break/continue statement is found outside a loop,
    *                                or a return statement is found outside a function.
    */
-  public void execute() throws MCCodeRuntimeException, ArithmeticException, SyntaxErrorException {
+  public void execute() throws MCCodeRuntimeException, SyntaxErrorException {
     if (this.timeToWait > 0) {
       this.timeToWait--;
     } else if (this.ip < this.statements.size()) {
@@ -234,14 +234,18 @@ public class Program {
         Statement statement = this.statements.get(this.ip);
         StatementAction action = statement.execute(this.scope);
         if (action == StatementAction.EXIT_FUNCTION) {
-          throw new SyntaxErrorException("mccode.interpreter.error.return_outside_function");
+          throw new SyntaxErrorException(statement.getLine(), statement.getColumn(), "mccode.interpreter.error.return_outside_function"
+          );
         } else if (action == StatementAction.EXIT_LOOP) {
-          throw new SyntaxErrorException("mccode.interpreter.error.break_outside_loop");
+          throw new SyntaxErrorException(statement.getLine(), statement.getColumn(), "mccode.interpreter.error.break_outside_loop"
+          );
         } else if (action == StatementAction.CONTINUE_LOOP) {
-          throw new SyntaxErrorException("mccode.interpreter.error.continue_outside_loop");
+          throw new SyntaxErrorException(statement.getLine(), statement.getColumn(), "mccode.interpreter.error.continue_outside_loop"
+          );
         } else if (action == StatementAction.WAIT) {
           if (this.isModule) {
-            throw new EvaluationException(this.scope, "mccode.interpreter.error.wait_in_module", this.getName());
+            throw new MCCodeRuntimeException(this.scope, statement.getLine(), statement.getColumn(),
+                "mccode.interpreter.error.wait_in_module", this.getName());
           }
           if (statement instanceof WaitStatement) {
             this.ip++;

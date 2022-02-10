@@ -111,6 +111,7 @@
       <item>sorted</item>
       <item>reversed</item>
       <item>print</item>
+      <item>error</item>
     </list>
     <contexts>
       <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text">

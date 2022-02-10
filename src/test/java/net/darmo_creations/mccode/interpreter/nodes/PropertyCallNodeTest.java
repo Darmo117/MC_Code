@@ -21,21 +21,21 @@ class PropertyCallNodeTest extends NodeTest {
   public void setUp() {
     super.setUp();
     this.instance = new FunctionCallNode(
-        new VariableNode("to_pos"),
-        Collections.singletonList(new ListLiteralNode(Arrays.asList(new IntLiteralNode(1), new IntLiteralNode(2), new IntLiteralNode(3))))
-    );
+        new VariableNode("to_pos", 0, 0),
+        Collections.singletonList(new ListLiteralNode(Arrays.asList(new IntLiteralNode(1, 0, 0), new IntLiteralNode(2, 0, 0), new IntLiteralNode(3, 0, 0)), 0, 0)),
+        0, 0);
   }
 
   @Test
   void evaluate() {
-    Object r = new PropertyCallNode(this.instance, "x").evaluate(this.p.getScope());
+    Object r = new PropertyCallNode(this.instance, "x", 0, 0).evaluate(this.p.getScope());
     assertSame(Integer.class, r.getClass());
     assertEquals(1, r);
   }
 
   @Test
   void evaluateUndefinedError() {
-    assertThrows(EvaluationException.class, () -> new PropertyCallNode(new IntLiteralNode(1), "x").evaluate(this.p.getScope()));
+    assertThrows(EvaluationException.class, () -> new PropertyCallNode(new IntLiteralNode(1, 0, 0), "x", 0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
@@ -44,7 +44,7 @@ class PropertyCallNodeTest extends NodeTest {
     tag.setInteger(PropertyCallNode.ID_KEY, PropertyCallNode.ID);
     tag.setTag(PropertyCallNode.INSTANCE_KEY, this.instance.writeToNBT());
     tag.setString(PropertyCallNode.PROPERTY_NAME_KEY, "x");
-    assertEquals(tag, new PropertyCallNode(this.instance, "x").writeToNBT());
+    assertEquals(tag, new PropertyCallNode(this.instance, "x", 0, 0).writeToNBT());
   }
 
   @Test
@@ -58,12 +58,12 @@ class PropertyCallNodeTest extends NodeTest {
 
   @Test
   void testToString() {
-    assertEquals("to_pos([1, 2, 3]).x", new PropertyCallNode(this.instance, "x").toString());
+    assertEquals("to_pos([1, 2, 3]).x", new PropertyCallNode(this.instance, "x", 0, 0).toString());
   }
 
   @Test
   void testEquals() {
-    assertEquals(new PropertyCallNode(new VariableNode("floor"), "a"),
-        new PropertyCallNode(new VariableNode("floor"), "a"));
+    assertEquals(new PropertyCallNode(new VariableNode("floor", 0, 0), "a", 0, 0),
+        new PropertyCallNode(new VariableNode("floor", 0, 0), "a", 0, 0));
   }
 }

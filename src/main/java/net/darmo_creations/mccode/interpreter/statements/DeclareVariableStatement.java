@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter.statements;
 
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Variable;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
@@ -36,9 +35,12 @@ public class DeclareVariableStatement extends Statement {
    * @param constant           Whether the variable should be a constant.
    * @param variableName       Variable’s name.
    * @param value              Variable’s value.
+   * @param line               The line this statement starts on.
+   * @param column             The column in the line this statement starts at.
    */
   public DeclareVariableStatement(final boolean publiclyVisible, final boolean editableByCommands, final boolean constant,
-                                  final String variableName, final Node value) {
+                                  final String variableName, final Node value, final int line, final int column) {
+    super(line, column);
     if (constant && editableByCommands) {
       throw new MCCodeException("constant cannot be editable through commands");
     }
@@ -58,17 +60,22 @@ public class DeclareVariableStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public DeclareVariableStatement(final NBTTagCompound tag) {
-    this(
-        tag.getBoolean(PUBLIC_KEY),
-        tag.getBoolean(EDITABLE_KEY),
-        tag.getBoolean(CONSTANT_KEY),
-        tag.getString(VAR_NAME_KEY),
-        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUE_KEY))
-    );
+    super(tag);
+    this.publiclyVisible = tag.getBoolean(PUBLIC_KEY);
+    this.editableByCommands = tag.getBoolean(EDITABLE_KEY);
+    this.constant = tag.getBoolean(CONSTANT_KEY);
+    this.variableName = tag.getString(VAR_NAME_KEY);
+    this.value = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUE_KEY));
+    if (this.constant && this.editableByCommands) {
+      throw new MCCodeException("constant cannot be editable through commands");
+    }
+    if (!this.publiclyVisible && this.editableByCommands) {
+      throw new MCCodeException("private variable cannot be editable through commands");
+    }
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     Object value = this.value.evaluate(scope);
     scope.declareVariable(new Variable(this.variableName, this.publiclyVisible, this.editableByCommands, this.constant, true, value));
 

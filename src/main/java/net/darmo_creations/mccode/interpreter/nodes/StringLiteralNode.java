@@ -15,10 +15,12 @@ public class StringLiteralNode extends LiteralNode<String> {
   /**
    * Create a string literal node.
    *
-   * @param value String value.
+   * @param value  String value.
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public StringLiteralNode(final String value) {
-    super(value);
+  public StringLiteralNode(final String value, final int line, final int column) {
+    super(value, line, column);
     if (value.matches("[\t\b\r\f]")) {
       throw new MCCodeException("illegal character(s) in string literal");
     }
@@ -30,7 +32,7 @@ public class StringLiteralNode extends LiteralNode<String> {
    * @param tag The tag to deserialize.
    */
   public StringLiteralNode(final NBTTagCompound tag) {
-    super(tag::getString);
+    super(tag, tag::getString);
   }
 
   @Override

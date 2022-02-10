@@ -41,7 +41,7 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
     ProgramManager pm = new ProgramManager("pm");
     this.p = new Program("p", Collections.emptyList(), null, null, pm);
     this.m = new Program("m", Collections.singletonList(
-        new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1))), pm);
+        new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1, 0, 0), 0, 0)), pm);
     this.m.execute();
   }
 
@@ -73,7 +73,7 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
   @Test
   void getNamePropertyOverriden() {
     Program m = new Program("m", Collections.singletonList(
-        new AssignVariableStatement("__name__", AssigmentOperator.ASSIGN, new StringLiteralNode("test"))), new ProgramManager("pm"));
+        new AssignVariableStatement("__name__", AssigmentOperator.ASSIGN, new StringLiteralNode("test", 0, 0), 0, 0)), new ProgramManager("pm"));
     m.execute();
     assertEquals("test", this.typeInstance.getPropertyValue(this.p.getScope(), m, "__name__"));
   }
@@ -100,7 +100,7 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
   @Test
   void setPropertyVariableError1() {
     this.m = new Program("m", Collections.singletonList(
-        new DeclareVariableStatement(true, false, false, "a", new IntLiteralNode(1))), new ProgramManager("pm"));
+        new DeclareVariableStatement(true, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0)), new ProgramManager("pm"));
     this.m.execute();
     assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), this.m, "a", 2));
   }
@@ -108,7 +108,7 @@ class ModuleTypeTest extends TypeTest<ModuleType> {
   @Test
   void setPropertyVariableError2() {
     this.m = new Program("m", Collections.singletonList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1))), new ProgramManager("pm"));
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0)), new ProgramManager("pm"));
     this.m.execute();
     assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), this.m, "a", 2));
   }

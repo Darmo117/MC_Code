@@ -22,9 +22,12 @@ public class ReturnStatement extends Statement {
   /**
    * Create a return statement.
    *
-   * @param node Expression to return. May be null.
+   * @param node   Expression to return. May be null.
+   * @param line   The line this statement starts on.
+   * @param column The column in the line this statement starts at.
    */
-  public ReturnStatement(final Node node) {
+  public ReturnStatement(final Node node, final int line, final int column) {
+    super(line, column);
     this.node = Objects.requireNonNull(node);
   }
 
@@ -34,11 +37,12 @@ public class ReturnStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public ReturnStatement(final NBTTagCompound tag) {
-    this(NodeNBTHelper.getNodeForTag(tag.getCompoundTag(EXPR_KEY)));
+    super(tag);
+    this.node = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(EXPR_KEY));
   }
 
   @Override
-  public StatementAction execute(Scope scope) {
+  protected StatementAction executeWrapped(Scope scope) {
     Object value = this.node != null ? this.node.evaluate(scope) : null;
     scope.declareVariable(new Variable(RETURN_SPECIAL_VAR_NAME, false, false, true, false, value));
     return StatementAction.EXIT_FUNCTION;

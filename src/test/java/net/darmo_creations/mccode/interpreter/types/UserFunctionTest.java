@@ -31,7 +31,7 @@ class UserFunctionTest extends TestBase {
   public void setUp() {
     super.setUp();
     this.f = new UserFunction("f", Collections.singletonList("p"),
-        Collections.singletonList(new ReturnStatement(new VariableNode("p"))));
+        Collections.singletonList(new ReturnStatement(new VariableNode("p", 0, 0), 0, 0)));
   }
 
   @Test
@@ -58,14 +58,14 @@ class UserFunctionTest extends TestBase {
   @Test
   void waitStatementError() {
     UserFunction f = new UserFunction("f", Collections.emptyList(),
-        Collections.singletonList(new WaitStatement(new IntLiteralNode(1))));
+        Collections.singletonList(new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0)));
     assertThrows(SyntaxErrorException.class, () -> f.apply(this.p.getScope()));
   }
 
   @Test
   void recursionError() {
     UserFunction f = new UserFunction("f", Collections.emptyList(),
-        Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("f"), Collections.emptyList()))));
+        Collections.singletonList(new ExpressionStatement(new FunctionCallNode(new VariableNode("f", 0, 0), Collections.emptyList(), 0, 0), 0, 0)));
     this.p.getScope().declareVariable(new Variable("f", false, false, false, true, f));
     assertThrows(EvaluationException.class, () -> f.apply(this.p.getScope()));
   }
@@ -79,7 +79,7 @@ class UserFunctionTest extends TestBase {
     list.appendTag(new NBTTagString("p"));
     tag.setTag(UserFunction.PARAMETERS_KEY, list);
     NBTTagList statements = new NBTTagList();
-    statements.appendTag(new ReturnStatement(new VariableNode("p")).writeToNBT());
+    statements.appendTag(new ReturnStatement(new VariableNode("p", 0, 0), 0, 0).writeToNBT());
     tag.setTag(UserFunction.STATEMENTS_KEY, statements);
     assertEquals(tag, this.f.writeToNBT());
   }
@@ -93,7 +93,7 @@ class UserFunctionTest extends TestBase {
     list.appendTag(new NBTTagString("p"));
     tag.setTag(UserFunction.PARAMETERS_KEY, list);
     NBTTagList statements = new NBTTagList();
-    statements.appendTag(new ReturnStatement(new VariableNode("p")).writeToNBT());
+    statements.appendTag(new ReturnStatement(new VariableNode("p", 0, 0), 0, 0).writeToNBT());
     tag.setTag(UserFunction.STATEMENTS_KEY, statements);
     assertEquals(this.f, new UserFunction(tag));
   }
@@ -101,6 +101,6 @@ class UserFunctionTest extends TestBase {
   @Test
   void testEquals() {
     assertEquals(new UserFunction("f", Collections.singletonList("p"),
-        Collections.singletonList(new ReturnStatement(new VariableNode("p")))), this.f);
+        Collections.singletonList(new ReturnStatement(new VariableNode("p", 0, 0), 0, 0))), this.f);
   }
 }

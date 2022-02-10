@@ -17,8 +17,11 @@ public abstract class OperationNode extends Node {
    * Create an operation call node.
    *
    * @param arguments Operation’s arguments.
+   * @param line      The line this node starts on.
+   * @param column    The column in the line this node starts at.
    */
-  public OperationNode(final List<Node> arguments) {
+  public OperationNode(final List<Node> arguments, final int line, final int column) {
+    super(line, column);
     this.arguments = new ArrayList<>(arguments);
   }
 
@@ -28,7 +31,8 @@ public abstract class OperationNode extends Node {
    * @param tag The tag to deserialize.
    */
   public OperationNode(final NBTTagCompound tag) {
-    this(NodeNBTHelper.deserializeNodesList(tag, ARGUMENTS_KEY));
+    super(tag);
+    this.arguments = NodeNBTHelper.deserializeNodesList(tag, ARGUMENTS_KEY);
   }
 
   /**

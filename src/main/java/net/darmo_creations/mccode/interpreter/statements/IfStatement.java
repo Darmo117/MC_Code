@@ -3,7 +3,6 @@ package net.darmo_creations.mccode.interpreter.statements;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
@@ -45,8 +44,12 @@ public class IfStatement extends Statement {
    *                           Each expression should evaluate to boolean values.
    * @param branchesStatements List of statements for each branch.
    * @param elseStatements     Statements for the default branch.
+   * @param line               The line this statement starts on.
+   * @param column             The column in the line this statement starts at.
    */
-  public IfStatement(final List<Node> conditions, final List<List<Statement>> branchesStatements, final List<Statement> elseStatements) {
+  public IfStatement(final List<Node> conditions, final List<List<Statement>> branchesStatements,
+                     final List<Statement> elseStatements, final int line, final int column) {
+    super(line, column);
     this.conditions = Objects.requireNonNull(conditions);
     if (conditions.size() != branchesStatements.size()) {
       throw new MCCodeException("\"if\" statement should have the same number of branches and conditions");
@@ -63,6 +66,7 @@ public class IfStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public IfStatement(final NBTTagCompound tag) {
+    super(tag);
     this.conditions = NodeNBTHelper.deserializeNodesList(tag, CONDITIONS_KEY);
     this.branchesStatements = new ArrayList<>();
     NBTTagList list = tag.getTagList(BRANCHES_KEY, new NBTTagList().getId());
@@ -81,7 +85,7 @@ public class IfStatement extends Statement {
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     if (this.branchIndex == -1) {
       for (int i = 0; i < this.conditions.size(); i++) { // Check every branch until a condition evaluates to true
         Object value = this.conditions.get(i).evaluate(scope);

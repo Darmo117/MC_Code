@@ -16,31 +16,31 @@ class WaitStatementTest extends StatementTest {
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(WaitStatement.ID_KEY, WaitStatement.ID);
-    tag.setTag(WaitStatement.TICKS_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(tag, new WaitStatement(new IntLiteralNode(1)).writeToNBT());
+    tag.setTag(WaitStatement.TICKS_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(tag, new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0).writeToNBT());
   }
 
   @Test
   void constructFromNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(WaitStatement.ID_KEY, WaitStatement.ID);
-    tag.setTag(WaitStatement.TICKS_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(new WaitStatement(new IntLiteralNode(1)), new WaitStatement(tag));
+    tag.setTag(WaitStatement.TICKS_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0), new WaitStatement(tag));
   }
 
   @Test
   void execute() {
-    assertEquals(StatementAction.WAIT, new WaitStatement(new IntLiteralNode(1)).execute(this.p.getScope()));
+    assertEquals(StatementAction.WAIT, new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0).execute(this.p.getScope()));
     assertEquals(1, this.p.getScope().getProgram().getWaitTime());
   }
 
   @Test
   void nullParameterError() {
-    assertThrows(NullPointerException.class, () -> new WaitStatement((Node) null));
+    assertThrows(NullPointerException.class, () -> new WaitStatement((Node) null, 0, 0));
   }
 
   @Test
   void testEquals() {
-    assertEquals(new WaitStatement(new IntLiteralNode(1)), new WaitStatement(new IntLiteralNode(1)));
+    assertEquals(new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0), new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0));
   }
 }

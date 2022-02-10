@@ -1,51 +1,54 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
-import net.darmo_creations.mccode.interpreter.NBTSerializable;
+import net.darmo_creations.mccode.interpreter.ProgramElement;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Base class for statements.
- * A statement is an instruction that can be executed in a given scope.
+ * A statement is an program instruction that can be executed and may alter the execution flow.
  * <p>
  * Statements can be serialized to NBT tags.
  */
-public abstract class Statement implements NBTSerializable {
+public abstract class Statement extends ProgramElement {
   /**
-   * NBT tag key of statement ID property.
+   * Create a statement.
+   *
+   * @param line   The line this statement starts on.
+   * @param column The column in the line this statement starts at.
    */
-  public static final String ID_KEY = "StatementID";
+  public Statement(final int line, final int column) {
+    super(line, column);
+  }
+
+  /**
+   * Create a statement from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
+  public Statement(final NBTTagCompound tag) {
+    super(tag);
+  }
 
   /**
    * Execute this statement.
    *
    * @param scope Current scope.
    * @return The action to take after this statement has been executed.
-   * @throws EvaluationException If an error occured during evaluation.
-   * @throws ArithmeticException If a math error occured.
+   * @throws MCCodeRuntimeException If an error occured during execution.
    */
-  public abstract StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException;
-
-  @Override
-  public NBTTagCompound writeToNBT() {
-    NBTTagCompound tag = new NBTTagCompound();
-    tag.setInteger(ID_KEY, this.getID());
-    return tag;
+  public StatementAction execute(Scope scope) throws MCCodeRuntimeException {
+    return this.wrapErrors(scope, () -> this.executeWrapped(scope));
   }
 
   /**
-   * Return the ID of this statement.
-   * Used to serialize this statement; must be unique to each concrete subclass.
+   * Execute this statement. Any thrown exception will be wrapped into a {@link MCCodeRuntimeException}
+   * with line and column number added if missing.
+   *
+   * @param scope Current scope.
+   * @return The action to take after this statement has been executed.
    */
-  public abstract int getID();
-
-  @Override
-  public abstract String toString();
-
-  @Override
-  public abstract boolean equals(Object o);
-
-  @Override
-  public abstract int hashCode();
+  protected abstract StatementAction executeWrapped(Scope scope) throws EvaluationException, ArithmeticException;
 }

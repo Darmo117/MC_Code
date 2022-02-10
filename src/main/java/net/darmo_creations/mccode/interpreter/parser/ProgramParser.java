@@ -41,7 +41,7 @@ public final class ProgramParser {
   private static class ErrorListener implements ANTLRErrorListener {
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-      throw new SyntaxErrorException(msg);
+      throw new SyntaxErrorException(line, charPositionInLine, "mccode.interpreter.error.syntax_error", msg);
     }
 
     @Override

@@ -131,15 +131,14 @@ public class ProgramManager implements NBTDeserializable {
           program.execute();
           error = false; // Not executed if an error is thrown by execute().
         } catch (ProgramFileNotFoundException e) {
-          errorReports.add(new ProgramErrorReport(program.getScope(), e.getTranslationKey(), e.getProgramName()));
+          errorReports.add(new ProgramErrorReport(
+              program.getScope(), -1, -1, e.getTranslationKey(), e.getProgramName()));
         } catch (SyntaxErrorException e) {
-          errorReports.add(new ProgramErrorReport(program.getScope(), e.getMessage()));
+          errorReports.add(new ProgramErrorReport(
+              program.getScope(), e.getLine(), e.getColumn(), e.getTranslationKey(), e.getArgs()));
         } catch (MCCodeRuntimeException e) {
-          errorReports.add(new ProgramErrorReport(e.getScope(), e.getTranslationKey(), e.getArgs()));
-        } catch (ArithmeticException e) {
-          errorReports.add(new ProgramErrorReport(program.getScope(), "mccode.interpreter.error.math_error", e.getMessage()));
-        } catch (Exception e) {
-          errorReports.add(new ProgramErrorReport(program.getScope(), "mccode.interpreter.error.exception", e.getMessage()));
+          errorReports.add(new ProgramErrorReport(
+              e.getScope(), e.getLine(), e.getColumn(), e.getTranslationKey(), e.getArgs()));
         }
         // Unload programs that have terminated or failed
         if (error || program.hasTerminated() && (!this.programsSchedules.containsKey(program.getName()) || this.programsRepeats.get(program.getName()) == 0)) {

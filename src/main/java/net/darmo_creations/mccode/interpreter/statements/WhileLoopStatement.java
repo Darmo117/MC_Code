@@ -3,7 +3,6 @@ package net.darmo_creations.mccode.interpreter.statements;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.darmo_creations.mccode.interpreter.type_wrappers.BooleanType;
@@ -39,8 +38,11 @@ public class WhileLoopStatement extends Statement {
    *
    * @param condition  Expression that evaluates to a boolean.
    * @param statements Statements of the loop.
+   * @param line       The line this statement starts on.
+   * @param column     The column in the line this statement starts at.
    */
-  public WhileLoopStatement(final Node condition, final List<Statement> statements) {
+  public WhileLoopStatement(final Node condition, final List<Statement> statements, final int line, final int column) {
+    super(line, column);
     this.condition = condition;
     this.statements = statements;
     this.ip = 0;
@@ -53,6 +55,7 @@ public class WhileLoopStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public WhileLoopStatement(final NBTTagCompound tag) {
+    super(tag);
     this.condition = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(CONDITION_KEY));
     this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);
     this.ip = tag.getInteger(IP_KEY);
@@ -60,7 +63,7 @@ public class WhileLoopStatement extends Statement {
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     BooleanType booleanType = ProgramManager.getTypeInstance(BooleanType.class);
     exit:
     // Do not re-evaluate condition if loop was paused by "wait" a statement

@@ -25,9 +25,9 @@ class MapLiteralNodeTest extends NodeTest {
     expectedMap.put("a", 1L);
     expectedMap.put("b", "string");
     Map<String, Node> map = new HashMap<>();
-    map.put("a", new IntLiteralNode(1));
-    map.put("b", new StringLiteralNode("string"));
-    Object r = new MapLiteralNode(map).evaluate(this.p.getScope());
+    map.put("a", new IntLiteralNode(1, 0, 0));
+    map.put("b", new StringLiteralNode("string", 0, 0));
+    Object r = new MapLiteralNode(map, 0, 0).evaluate(this.p.getScope());
     assertSame(MCMap.class, r.getClass());
     assertEquals(expectedMap, r);
   }
@@ -35,9 +35,9 @@ class MapLiteralNodeTest extends NodeTest {
   @Test
   void writeToNBT() {
     Map<String, Node> map = new HashMap<>();
-    map.put("a", new IntLiteralNode(1));
-    map.put("b", new StringLiteralNode("string"));
-    NBTTagCompound actualTag = new MapLiteralNode(map).writeToNBT();
+    map.put("a", new IntLiteralNode(1, 0, 0));
+    map.put("b", new StringLiteralNode("string", 0, 0));
+    NBTTagCompound actualTag = new MapLiteralNode(map, 0, 0).writeToNBT();
     assertEquals(MapLiteralNode.ID, actualTag.getInteger(MapLiteralNode.ID_KEY));
     Map<String, NBTTagCompound> actualTagMap = new HashMap<>();
     NBTTagCompound tag = actualTag.getCompoundTag(MapLiteralNode.VALUES_KEY);
@@ -45,8 +45,8 @@ class MapLiteralNodeTest extends NodeTest {
       actualTagMap.put(k, tag.getCompoundTag(k));
     }
     Map<String, NBTTagCompound> expectedTagMap = new HashMap<>();
-    expectedTagMap.put("a", new IntLiteralNode(1).writeToNBT());
-    expectedTagMap.put("b", new StringLiteralNode("string").writeToNBT());
+    expectedTagMap.put("a", new IntLiteralNode(1, 0, 0).writeToNBT());
+    expectedTagMap.put("b", new StringLiteralNode("string", 0, 0).writeToNBT());
     assertEquals(expectedTagMap, actualTagMap);
   }
 
@@ -55,8 +55,8 @@ class MapLiteralNodeTest extends NodeTest {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(MapLiteralNode.ID_KEY, MapLiteralNode.ID);
     NBTTagCompound values = new NBTTagCompound();
-    values.setTag("a", new IntLiteralNode(1).writeToNBT());
-    values.setTag("b", new StringLiteralNode("string").writeToNBT());
+    values.setTag("a", new IntLiteralNode(1, 0, 0).writeToNBT());
+    values.setTag("b", new StringLiteralNode("string", 0, 0).writeToNBT());
     tag.setTag(MapLiteralNode.VALUES_KEY, values);
     MCMap expectedMap = new MCMap();
     expectedMap.put("a", 1L);
@@ -66,29 +66,29 @@ class MapLiteralNodeTest extends NodeTest {
 
   @Test
   void nullParameterError() {
-    assertThrows(NullPointerException.class, () -> new MapLiteralNode((Map<String, Node>) null));
+    assertThrows(NullPointerException.class, () -> new MapLiteralNode((Map<String, Node>) null, 0, 0));
   }
 
   @Test
   @Ignore
   void testToString() {
-    assertEquals("{}", new MapLiteralNode(Collections.emptyMap()).toString());
-    assertEquals("{\"a\\n\": \"b\\n\"}", new MapLiteralNode(Collections.singletonMap("a\n", new StringLiteralNode("b\n"))).toString());
-    assertEquals("{\"a\\n\": [\"b\\n\"]}", new MapLiteralNode(Collections.singletonMap("a\n", new ListLiteralNode(Collections.singleton(new StringLiteralNode("b\n"))))).toString());
-    assertEquals("{\"a\\n\": {\"b\\n\"}}", new MapLiteralNode(Collections.singletonMap("a\n", new SetLiteralNode(Collections.singleton(new StringLiteralNode("b\n"))))).toString());
-    assertEquals("{\"a\\n\": {\"c\\n\": \"b\\n\"}}", new MapLiteralNode(Collections.singletonMap("a\n", (new MapLiteralNode(Collections.singletonMap("c\n", new StringLiteralNode("b\n")))))).toString());
+    assertEquals("{}", new MapLiteralNode(Collections.emptyMap(), 0, 0).toString());
+    assertEquals("{\"a\\n\": \"b\\n\"}", new MapLiteralNode(Collections.singletonMap("a\n", new StringLiteralNode("b\n", 0, 0)), 0, 0).toString());
+    assertEquals("{\"a\\n\": [\"b\\n\"]}", new MapLiteralNode(Collections.singletonMap("a\n", new ListLiteralNode(Collections.singleton(new StringLiteralNode("b\n", 0, 0)), 0, 0)), 0, 0).toString());
+    assertEquals("{\"a\\n\": {\"b\\n\"}}", new MapLiteralNode(Collections.singletonMap("a\n", new SetLiteralNode(Collections.singleton(new StringLiteralNode("b\n", 0, 0)), 0, 0)), 0, 0).toString());
+    assertEquals("{\"a\\n\": {\"c\\n\": \"b\\n\"}}", new MapLiteralNode(Collections.singletonMap("a\n", (new MapLiteralNode(Collections.singletonMap("c\n", new StringLiteralNode("b\n", 0, 0)), 0, 0))), 0, 0).toString());
   }
 
   @ParameterizedTest
   @MethodSource("provideArgsForEquals")
   void testEquals(Map<String, Node> list) {
-    assertEquals(new MapLiteralNode(list), new MapLiteralNode(list));
+    assertEquals(new MapLiteralNode(list, 0, 0), new MapLiteralNode(list, 0, 0));
   }
 
   static Stream<Arguments> provideArgsForEquals() {
     return Stream.of(
         Arguments.of(Collections.emptyMap()),
-        Arguments.of(Collections.singletonMap("a", new IntLiteralNode(1)))
+        Arguments.of(Collections.singletonMap("a", new IntLiteralNode(1, 0, 0)))
     );
   }
 }

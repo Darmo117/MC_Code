@@ -1,8 +1,9 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
-import net.darmo_creations.mccode.interpreter.NBTSerializable;
+import net.darmo_creations.mccode.interpreter.ProgramElement;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
@@ -11,37 +12,43 @@ import net.minecraft.nbt.NBTTagCompound;
  * <p>
  * Nodes can be serialized to NBT tags.
  */
-public abstract class Node implements NBTSerializable {
-  public static final String ID_KEY = "NodeID";
+public abstract class Node extends ProgramElement {
+  /**
+   * Create a node.
+   *
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
+   */
+  public Node(final int line, final int column) {
+    super(line, column);
+  }
+
+  /**
+   * Create a node from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
+   */
+  public Node(final NBTTagCompound tag) {
+    super(tag);
+  }
 
   /**
    * Evaluate this node.
    *
    * @param scope The scope this node is evaluated from.
    * @return The value of this node.
-   * @throws EvaluationException If an error occured during evaluation.
-   * @throws ArithmeticException If a math error occured during evaluation.
+   * @throws MCCodeRuntimeException If an error occured during evaluation.
    */
-  public abstract Object evaluate(Scope scope) throws EvaluationException, ArithmeticException;
-
-  @Override
-  public NBTTagCompound writeToNBT() {
-    NBTTagCompound tag = new NBTTagCompound();
-    tag.setInteger(ID_KEY, this.getID());
-    return tag;
+  public Object evaluate(Scope scope) throws MCCodeRuntimeException {
+    return this.wrapErrors(scope, () -> this.evaluateWrapped(scope));
   }
 
   /**
-   * Return the type ID of this Node.
+   * Evaluate this node. Any thrown exception will be wrapped into a {@link MCCodeRuntimeException}
+   * with line and column number added if missing.
+   *
+   * @param scope Current scope.
+   * @return The value of this node.
    */
-  public abstract int getID();
-
-  @Override
-  public abstract String toString();
-
-  @Override
-  public abstract boolean equals(Object o);
-
-  @Override
-  public abstract int hashCode();
+  protected abstract Object evaluateWrapped(Scope scope) throws EvaluationException, ArithmeticException;
 }

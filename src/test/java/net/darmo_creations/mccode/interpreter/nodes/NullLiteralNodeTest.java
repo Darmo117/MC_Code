@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class NullLiteralNodeTest extends NodeTest {
   @Test
   void evaluate() {
-    assertNull(new NullLiteralNode().evaluate(this.p.getScope()));
+    assertNull(new NullLiteralNode(0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(NullLiteralNode.ID_KEY, NullLiteralNode.ID);
-    assertEquals(tag, new NullLiteralNode().writeToNBT());
+    assertEquals(tag, new NullLiteralNode(0, 0).writeToNBT());
   }
 
   @Test
@@ -31,11 +31,11 @@ class NullLiteralNodeTest extends NodeTest {
 
   @Test
   void testToString() {
-    assertEquals("null", new NullLiteralNode().toString());
+    assertEquals("null", new NullLiteralNode(0, 0).toString());
   }
 
   @Test
   void testEquals() {
-    assertEquals(new NullLiteralNode(), new NullLiteralNode());
+    assertEquals(new NullLiteralNode(0, 0), new NullLiteralNode(0, 0));
   }
 }

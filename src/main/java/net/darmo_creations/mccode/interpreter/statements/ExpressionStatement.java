@@ -1,7 +1,6 @@
 package net.darmo_creations.mccode.interpreter.statements;
 
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,8 +21,11 @@ public class ExpressionStatement extends Statement {
    * Create a statement that contains a single expression.
    *
    * @param expression The expression to evaluate.
+   * @param line       The line this statement starts on.
+   * @param column     The column in the line this statement starts at.
    */
-  public ExpressionStatement(final Node expression) {
+  public ExpressionStatement(final Node expression, final int line, final int column) {
+    super(line, column);
     this.expression = expression;
   }
 
@@ -33,11 +35,12 @@ public class ExpressionStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public ExpressionStatement(final NBTTagCompound tag) {
-    this(NodeNBTHelper.getNodeForTag(tag.getCompoundTag(EXPRESSION_KEY)));
+    super(tag);
+    this.expression = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(EXPRESSION_KEY));
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     this.expression.evaluate(scope);
     return StatementAction.PROCEED;
   }

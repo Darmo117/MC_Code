@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter.statements;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.darmo_creations.mccode.interpreter.type_wrappers.IntType;
@@ -23,10 +22,12 @@ public class WaitStatement extends Statement {
   /**
    * Create a "wait" statement.
    *
-   * @param value Amount of ticks to pause the program.
-   *              Expression that evaluates to a positive integer.
+   * @param value  Amount of ticks to pause the program. Expression that evaluates to a positive integer.
+   * @param line   The line this statement starts on.
+   * @param column The column in the line this statement starts at.
    */
-  public WaitStatement(final Node value) {
+  public WaitStatement(final Node value, final int line, final int column) {
+    super(line, column);
     this.value = Objects.requireNonNull(value);
   }
 
@@ -36,11 +37,12 @@ public class WaitStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public WaitStatement(final NBTTagCompound tag) {
-    this(NodeNBTHelper.getNodeForTag(tag.getCompoundTag(TICKS_KEY)));
+    super(tag);
+    this.value = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(TICKS_KEY));
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     long ticks = ProgramManager.getTypeInstance(IntType.class).implicitCast(scope, this.value.evaluate(scope));
     scope.getProgram().wait(scope, ticks);
     return StatementAction.WAIT;

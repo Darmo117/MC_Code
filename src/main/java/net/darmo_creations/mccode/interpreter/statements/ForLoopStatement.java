@@ -4,7 +4,6 @@ import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.Variable;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
@@ -54,8 +53,12 @@ public class ForLoopStatement extends Statement {
    * @param variableName Name of the loop variable.
    * @param values       Expression that returns an iterator.
    * @param statements   Statements of the loop.
+   * @param line         The line this statement starts on.
+   * @param column       The column in the line this statement starts at.
    */
-  public ForLoopStatement(final String variableName, final Node values, final List<Statement> statements) {
+  public ForLoopStatement(final String variableName, final Node values, final List<Statement> statements,
+                          final int line, final int column) {
+    super(line, column);
     this.variableName = variableName;
     this.values = values;
     this.statements = statements;
@@ -70,6 +73,7 @@ public class ForLoopStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public ForLoopStatement(final NBTTagCompound tag) {
+    super(tag);
     this.variableName = tag.getString(VARIABLE_NAME_KEY);
     this.values = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUES_KEY));
     this.statements = StatementNBTHelper.deserializeStatementsList(tag, STATEMENTS_KEY);
@@ -80,7 +84,7 @@ public class ForLoopStatement extends Statement {
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     Object valuesObject = this.values.evaluate(scope);
     Type<?> type = ProgramManager.getTypeForValue(valuesObject);
     Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, UnaryOperator.ITERATE, valuesObject, null, null, false);

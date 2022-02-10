@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter.statements;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.darmo_creations.mccode.interpreter.type_wrappers.BinaryOperator;
@@ -12,6 +11,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Objects;
 
+/**
+ * Statement that sets the value of an item on an object.
+ */
 public class SetItemStatement extends Statement {
   public static final int ID = 13;
 
@@ -25,24 +27,40 @@ public class SetItemStatement extends Statement {
   private final AssigmentOperator operator;
   private final Node value;
 
-  public SetItemStatement(final Node target, final Node key, final AssigmentOperator operator, final Node value) {
+  /**
+   * Create an item assigment statement.
+   *
+   * @param target   Object to get the key from.
+   * @param key      The key of the item.
+   * @param operator The assignment operator to apply.
+   * @param value    The value to assign.
+   * @param line     The line this statement starts on.
+   * @param column   The column in the line this statement starts at.
+   */
+  public SetItemStatement(final Node target, final Node key, final AssigmentOperator operator, final Node value,
+                          final int line, final int column) {
+    super(line, column);
     this.target = Objects.requireNonNull(target);
     this.key = Objects.requireNonNull(key);
     this.operator = Objects.requireNonNull(operator);
     this.value = Objects.requireNonNull(value);
   }
 
+  /**
+   * Create an item assigment statement.
+   *
+   * @param tag The tag to deserialize.
+   */
   public SetItemStatement(final NBTTagCompound tag) {
-    this(
-        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(TARGET_KEY)),
-        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(KEY_KEY)),
-        AssigmentOperator.fromString(tag.getString(OPERATOR_KEY)),
-        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUE_KEY))
-    );
+    super(tag);
+    this.target = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(TARGET_KEY));
+    this.key = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(KEY_KEY));
+    this.operator = AssigmentOperator.fromString(tag.getString(OPERATOR_KEY));
+    this.value = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(VALUE_KEY));
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     Object targetObject = this.target.evaluate(scope);
     Type<?> targetObjectType = ProgramManager.getTypeForValue(targetObject);
     Object keyValue = this.key.evaluate(scope);

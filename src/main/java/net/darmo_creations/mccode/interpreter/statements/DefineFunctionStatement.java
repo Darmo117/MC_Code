@@ -3,7 +3,6 @@ package net.darmo_creations.mccode.interpreter.statements;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.Variable;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.UserFunction;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,8 +36,12 @@ public class DefineFunctionStatement extends Statement {
    * @param parametersNames Function’s parameter names.
    * @param statements      Function’s statements.
    * @param publiclyVisible Whether the function should be visible from outside the program.
+   * @param line            The line this statement starts on.
+   * @param column          The column in the line this statement starts at.
    */
-  public DefineFunctionStatement(final String name, final List<String> parametersNames, final List<Statement> statements, final boolean publiclyVisible) {
+  public DefineFunctionStatement(final String name, final List<String> parametersNames, final List<Statement> statements,
+                                 final boolean publiclyVisible, final int line, final int column) {
+    super(line, column);
     this.name = Objects.requireNonNull(name);
     this.parametersNames = parametersNames;
     this.statements = statements;
@@ -51,6 +54,7 @@ public class DefineFunctionStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public DefineFunctionStatement(final NBTTagCompound tag) {
+    super(tag);
     this.name = tag.getString(NAME_KEY);
     this.publiclyVisible = tag.getBoolean(PUBLIC_KEY);
     NBTTagList paramsTag = tag.getTagList(PARAMS_LIST_KEY, new NBTTagString().getId());
@@ -66,7 +70,7 @@ public class DefineFunctionStatement extends Statement {
   }
 
   @Override
-  public StatementAction execute(Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(Scope scope) {
     UserFunction function = new UserFunction(this.name, this.parametersNames, this.statements);
     scope.declareVariable(new Variable(this.name, this.publiclyVisible, false, true, true, function));
     return StatementAction.PROCEED;

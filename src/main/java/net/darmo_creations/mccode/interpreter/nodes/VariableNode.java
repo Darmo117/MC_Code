@@ -1,7 +1,6 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Objects;
@@ -22,9 +21,12 @@ public class VariableNode extends Node {
   /**
    * Create a variable node.
    *
-   * @param name Variable’s name.
+   * @param name   Variable’s name.
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public VariableNode(final String name) {
+  public VariableNode(final String name, final int line, final int column) {
+    super(line, column);
     this.name = Objects.requireNonNull(name);
   }
 
@@ -34,11 +36,12 @@ public class VariableNode extends Node {
    * @param tag The tag to deserialize.
    */
   public VariableNode(final NBTTagCompound tag) {
-    this(tag.getString(NAME_KEY));
+    super(tag);
+    this.name = tag.getString(NAME_KEY);
   }
 
   @Override
-  public Object evaluate(final Scope scope) throws EvaluationException {
+  protected Object evaluateWrapped(final Scope scope) {
     return scope.getVariable(this.name, false);
   }
 

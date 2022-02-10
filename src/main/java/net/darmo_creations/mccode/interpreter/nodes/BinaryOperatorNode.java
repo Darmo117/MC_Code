@@ -24,9 +24,11 @@ public class BinaryOperatorNode extends OperatorNode {
    * @param operator Operator to apply.
    * @param left     Left operand.
    * @param right    Right operand.
+   * @param line     The line this node starts on.
+   * @param column   The column in the line this node starts at.
    */
-  public BinaryOperatorNode(final BinaryOperator operator, final Node left, final Node right) {
-    super(operator.getSymbol(), 2, Arrays.asList(Objects.requireNonNull(left), Objects.requireNonNull(right)));
+  public BinaryOperatorNode(final BinaryOperator operator, final Node left, final Node right, final int line, final int column) {
+    super(operator.getSymbol(), 2, Arrays.asList(Objects.requireNonNull(left), Objects.requireNonNull(right)), line, column);
     this.operator = operator;
   }
 

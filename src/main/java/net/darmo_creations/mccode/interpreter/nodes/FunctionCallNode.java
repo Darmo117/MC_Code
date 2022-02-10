@@ -27,9 +27,11 @@ public class FunctionCallNode extends OperationNode {
    *
    * @param functionObject Expression that evaluates to a {@link Function} object.
    * @param arguments      Function’s arguments.
+   * @param line           The line this node starts on.
+   * @param column         The column in the line this node starts at.
    */
-  public FunctionCallNode(final Node functionObject, final List<Node> arguments) {
-    super(arguments);
+  public FunctionCallNode(final Node functionObject, final List<Node> arguments, final int line, final int column) {
+    super(arguments, line, column);
     this.functionObject = Objects.requireNonNull(functionObject);
   }
 
@@ -44,7 +46,7 @@ public class FunctionCallNode extends OperationNode {
   }
 
   @Override
-  public Object evaluate(final Scope scope) throws EvaluationException, ArithmeticException {
+  protected Object evaluateWrapped(final Scope scope) {
     Object o = this.functionObject.evaluate(scope);
 
     Function function;

@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.Type;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -25,8 +24,11 @@ public class PropertyCallNode extends Node {
    *
    * @param object       Expression that evaluates to the object to get the property of.
    * @param propertyName Name of the property.
+   * @param line         The line this node starts on.
+   * @param column       The column in the line this node starts at.
    */
-  public PropertyCallNode(final Node object, final String propertyName) {
+  public PropertyCallNode(final Node object, final String propertyName, final int line, final int column) {
+    super(line, column);
     this.object = Objects.requireNonNull(object);
     this.propertyName = Objects.requireNonNull(propertyName);
   }
@@ -37,14 +39,13 @@ public class PropertyCallNode extends Node {
    * @param tag The tag to deserialize.
    */
   public PropertyCallNode(final NBTTagCompound tag) {
-    this(
-        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(INSTANCE_KEY)),
-        tag.getString(PROPERTY_NAME_KEY)
-    );
+    super(tag);
+    this.object = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(INSTANCE_KEY));
+    this.propertyName = tag.getString(PROPERTY_NAME_KEY);
   }
 
   @Override
-  public Object evaluate(final Scope scope) throws EvaluationException, ArithmeticException {
+  protected Object evaluateWrapped(final Scope scope) {
     Object obj = this.object.evaluate(scope);
     Type<?> objectType = ProgramManager.getTypeForValue(obj);
     return objectType.getPropertyValue(scope, obj, this.propertyName);

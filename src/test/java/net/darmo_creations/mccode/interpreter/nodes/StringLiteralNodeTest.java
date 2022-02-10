@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class StringLiteralNodeTest extends NodeTest {
   @Test
   void nullParameterError() {
-    assertThrows(NullPointerException.class, () -> new StringLiteralNode((String) null));
+    assertThrows(NullPointerException.class, () -> new StringLiteralNode((String) null, 0, 0));
   }
 
   @Test
   void evaluate() {
-    Object r = new StringLiteralNode("string").evaluate(this.p.getScope());
+    Object r = new StringLiteralNode("string", 0, 0).evaluate(this.p.getScope());
     assertSame(String.class, r.getClass());
     assertEquals("string", r);
   }
@@ -29,7 +29,7 @@ class StringLiteralNodeTest extends NodeTest {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(StringLiteralNode.ID_KEY, StringLiteralNode.ID);
     tag.setString(StringLiteralNode.VALUE_KEY, "string");
-    assertEquals(tag, new StringLiteralNode("string").writeToNBT());
+    assertEquals(tag, new StringLiteralNode("string", 0, 0).writeToNBT());
   }
 
   @Test
@@ -42,35 +42,35 @@ class StringLiteralNodeTest extends NodeTest {
 
   @Test
   void invalidStringEscapeError() {
-    assertThrows(MCCodeException.class, () -> new StringLiteralNode("\r"));
-    assertThrows(MCCodeException.class, () -> new StringLiteralNode("\t"));
-    assertThrows(MCCodeException.class, () -> new StringLiteralNode("\b"));
-    assertThrows(MCCodeException.class, () -> new StringLiteralNode("\f"));
+    assertThrows(MCCodeException.class, () -> new StringLiteralNode("\r", 0, 0));
+    assertThrows(MCCodeException.class, () -> new StringLiteralNode("\t", 0, 0));
+    assertThrows(MCCodeException.class, () -> new StringLiteralNode("\b", 0, 0));
+    assertThrows(MCCodeException.class, () -> new StringLiteralNode("\f", 0, 0));
   }
 
   @Test
   void testToString() {
-    assertEquals("\"test\"", new StringLiteralNode("test").toString());
+    assertEquals("\"test\"", new StringLiteralNode("test", 0, 0).toString());
   }
 
   @Test
   void testToStringLineReturn() {
-    assertEquals("\"te\\nst\"", new StringLiteralNode("te\nst").toString());
+    assertEquals("\"te\\nst\"", new StringLiteralNode("te\nst", 0, 0).toString());
   }
 
   @Test
   void testToStringBackslash() {
-    assertEquals("\"te\\\\st\"", new StringLiteralNode("te\\st").toString());
+    assertEquals("\"te\\\\st\"", new StringLiteralNode("te\\st", 0, 0).toString());
   }
 
   @Test
   void testToStringQuote() {
-    assertEquals("\"te\\\"st\"", new StringLiteralNode("te\"st").toString());
+    assertEquals("\"te\\\"st\"", new StringLiteralNode("te\"st", 0, 0).toString());
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"", "a"})
   void testEquals(String s) {
-    assertEquals(new StringLiteralNode(s), new StringLiteralNode(s));
+    assertEquals(new StringLiteralNode(s, 0, 0), new StringLiteralNode(s, 0, 0));
   }
 }

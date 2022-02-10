@@ -12,18 +12,21 @@ public class NullLiteralNode extends LiteralNode<Void> {
 
   /**
    * Create the null literal node.
+   *
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public NullLiteralNode() {
-    super((Void) null);
+  public NullLiteralNode(final int line, final int column) {
+    super(null, line, column);
   }
 
   /**
    * Create the null literal node from an NBT tag.
    *
-   * @param ignored The tag to deserialize.
+   * @param tag The tag to deserialize.
    */
-  public NullLiteralNode(final NBTTagCompound ignored) {
-    super(key -> null);
+  public NullLiteralNode(final NBTTagCompound tag) {
+    super(tag, key -> null);
   }
 
   @Override

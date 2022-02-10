@@ -30,8 +30,8 @@ class AssignVariableStatementTest extends StatementTest {
     tag.setInteger(AssignVariableStatement.ID_KEY, AssignVariableStatement.ID);
     tag.setString(AssignVariableStatement.VAR_NAME_KEY, "a");
     tag.setString(AssignVariableStatement.OPERATOR_KEY, "+=");
-    tag.setTag(AssignVariableStatement.VALUE_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(tag, new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1)).writeToNBT());
+    tag.setTag(AssignVariableStatement.VALUE_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(tag, new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0).writeToNBT());
   }
 
   @Test
@@ -40,20 +40,20 @@ class AssignVariableStatementTest extends StatementTest {
     tag.setInteger(AssignVariableStatement.ID_KEY, AssignVariableStatement.ID);
     tag.setString(AssignVariableStatement.VAR_NAME_KEY, "a");
     tag.setString(AssignVariableStatement.OPERATOR_KEY, "+=");
-    tag.setTag(AssignVariableStatement.VALUE_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1)), new AssignVariableStatement(tag));
+    tag.setTag(AssignVariableStatement.VALUE_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0), new AssignVariableStatement(tag));
   }
 
   @Test
   void execute() {
     assertEquals(StatementAction.PROCEED, new AssignVariableStatement("a", AssigmentOperator.PLUS,
-        new IntLiteralNode(1)).execute(this.p.getScope()));
+        new IntLiteralNode(1, 0, 0), 0, 0).execute(this.p.getScope()));
     assertEquals(2L, this.p.getScope().getVariable("a", false));
 
     MCList list = new MCList();
     this.p.getScope().declareVariable(new Variable("b", false, false, false, true, list));
     assertEquals(StatementAction.PROCEED, new AssignVariableStatement("b", AssigmentOperator.PLUS,
-        new ListLiteralNode(Collections.singletonList(new IntLiteralNode(1)))).execute(this.p.getScope()));
+        new ListLiteralNode(Collections.singletonList(new IntLiteralNode(1, 0, 0)), 0, 0), 0, 0).execute(this.p.getScope()));
     Object res = this.p.getScope().getVariable("b", false);
     assertEquals(new MCList(Collections.singletonList(1L)), res);
     assertSame(list, res);
@@ -61,7 +61,7 @@ class AssignVariableStatementTest extends StatementTest {
 
   @Test
   void testEquals() {
-    assertEquals(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1)),
-        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1)));
+    assertEquals(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0),
+        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0));
   }
 }

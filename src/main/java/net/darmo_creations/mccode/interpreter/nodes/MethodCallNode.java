@@ -28,9 +28,11 @@ public class MethodCallNode extends OperationNode {
    *
    * @param instance  Expression evaluating to an object the method will be applied on.
    * @param arguments Method’s arguments.
+   * @param line      The line this node starts on.
+   * @param column    The column in the line this node starts at.
    */
-  public MethodCallNode(final Node instance, final String methodName, final List<Node> arguments) {
-    super(arguments);
+  public MethodCallNode(final Node instance, final String methodName, final List<Node> arguments, final int line, final int column) {
+    super(arguments, line, column);
     this.instance = Objects.requireNonNull(instance);
     this.methodName = Objects.requireNonNull(methodName);
   }
@@ -47,7 +49,7 @@ public class MethodCallNode extends OperationNode {
   }
 
   @Override
-  public Object evaluate(final Scope scope) throws EvaluationException, ArithmeticException {
+  protected Object evaluateWrapped(final Scope scope) {
     Object self = this.instance.evaluate(scope);
     Type<?> selfType = ProgramManager.getTypeForValue(self);
 

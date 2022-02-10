@@ -39,7 +39,7 @@ class FunctionTypeTest extends TypeTest<FunctionType> {
         return null;
       }
     };
-    this.userFunction = new UserFunction("g", Collections.singletonList("a"), Collections.singletonList(new ReturnStatement(new IntLiteralNode(1))));
+    this.userFunction = new UserFunction("g", Collections.singletonList("a"), Collections.singletonList(new ReturnStatement(new IntLiteralNode(1, 0, 0), 0, 0)));
     this.p.getScope().declareVariable(new Variable(this.builtinFunction.getName(), false, false, true, true, this.builtinFunction));
     this.p.getScope().declareVariable(new Variable(this.userFunction.getName(), false, false, true, true, this.userFunction));
   }

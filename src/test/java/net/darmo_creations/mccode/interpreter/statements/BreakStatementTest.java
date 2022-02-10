@@ -13,16 +13,16 @@ class BreakStatementTest extends StatementTest {
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(BreakStatement.ID_KEY, BreakStatement.ID);
-    assertEquals(tag, new BreakStatement().writeToNBT());
+    assertEquals(tag, new BreakStatement(0, 0).writeToNBT());
   }
 
   @Test
   void execute() {
-    assertEquals(StatementAction.EXIT_LOOP, new BreakStatement().execute(this.p.getScope()));
+    assertEquals(StatementAction.EXIT_LOOP, new BreakStatement(0, 0).execute(this.p.getScope()));
   }
 
   @Test
   void testEquals() {
-    assertEquals(new BreakStatement(), new BreakStatement());
+    assertEquals(new BreakStatement(0, 0), new BreakStatement(0, 0));
   }
 }

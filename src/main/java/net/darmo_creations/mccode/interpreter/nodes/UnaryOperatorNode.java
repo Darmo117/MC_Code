@@ -23,9 +23,11 @@ public class UnaryOperatorNode extends OperatorNode {
    *
    * @param operator Operator’s symbol.
    * @param operand  Operator’s operand.
+   * @param line     The line this node starts on.
+   * @param column   The column in the line this node starts at.
    */
-  public UnaryOperatorNode(final UnaryOperator operator, final Node operand) {
-    super(operator.getSymbol(), 1, Collections.singletonList(Objects.requireNonNull(operand)));
+  public UnaryOperatorNode(final UnaryOperator operator, final Node operand, final int line, final int column) {
+    super(operator.getSymbol(), 1, Collections.singletonList(Objects.requireNonNull(operand)), line, column);
     this.operator = operator;
   }
 

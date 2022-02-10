@@ -13,16 +13,16 @@ class ContinueStatementTest extends StatementTest {
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(ContinueStatement.ID_KEY, ContinueStatement.ID);
-    assertEquals(tag, new ContinueStatement().writeToNBT());
+    assertEquals(tag, new ContinueStatement(0, 0).writeToNBT());
   }
 
   @Test
   void execute() {
-    assertEquals(StatementAction.CONTINUE_LOOP, new ContinueStatement().execute(this.p.getScope()));
+    assertEquals(StatementAction.CONTINUE_LOOP, new ContinueStatement(0, 0).execute(this.p.getScope()));
   }
 
   @Test
   void testEquals() {
-    assertEquals(new ContinueStatement(), new ContinueStatement());
+    assertEquals(new ContinueStatement(0, 0), new ContinueStatement(0, 0));
   }
 }

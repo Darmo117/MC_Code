@@ -23,7 +23,7 @@ class ImportStatementTest extends StatementTest {
     list.appendTag(new NBTTagString("b"));
     tag.setTag(ImportStatement.NAME_KEY, list);
     tag.setString(ImportStatement.ALIAS_KEY, "c");
-    assertEquals(tag, new ImportStatement(Arrays.asList("a", "b"), "c").writeToNBT());
+    assertEquals(tag, new ImportStatement(Arrays.asList("a", "b"), "c", 0, 0).writeToNBT());
   }
 
   @Test
@@ -35,12 +35,12 @@ class ImportStatementTest extends StatementTest {
     list.appendTag(new NBTTagString("b"));
     tag.setTag(ImportStatement.NAME_KEY, list);
     tag.setString(ImportStatement.ALIAS_KEY, "c");
-    assertEquals(new ImportStatement(Arrays.asList("a", "b"), "c"), new ImportStatement(tag));
+    assertEquals(new ImportStatement(Arrays.asList("a", "b"), "c", 0, 0), new ImportStatement(tag));
   }
 
   @Test
   void testEquals() {
-    assertEquals(new ImportStatement(Collections.singletonList("a"), null), new ImportStatement(Collections.singletonList("a"), null));
-    assertEquals(new ImportStatement(Collections.singletonList("a"), "b"), new ImportStatement(Collections.singletonList("a"), "b"));
+    assertEquals(new ImportStatement(Collections.singletonList("a"), null, 0, 0), new ImportStatement(Collections.singletonList("a"), null, 0, 0));
+    assertEquals(new ImportStatement(Collections.singletonList("a"), "b", 0, 0), new ImportStatement(Collections.singletonList("a"), "b", 0, 0));
   }
 }

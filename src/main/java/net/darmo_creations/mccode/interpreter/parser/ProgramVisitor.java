@@ -43,7 +43,8 @@ public class ProgramVisitor extends MCCodeBaseVisitor<Program> {
     Long repeatAmount = null;
     if (ctx.SCHED() != null) {
       if (this.asModule) {
-        throw new SyntaxErrorException("modules cannot be scheduled");
+        throw new SyntaxErrorException(ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1,
+            "mccode.interpreter.error.schedule_in_module", this.programName);
       }
       scheduleDelay = Long.parseLong(ctx.ticks.getText());
       if (ctx.REPEAT() != null) {
@@ -63,7 +64,8 @@ public class ProgramVisitor extends MCCodeBaseVisitor<Program> {
       ImportStatement stmt = (ImportStatement) statementVisitor.visit(tree);
       String modulePath = stmt.getModulePath();
       if (modules.contains(modulePath)) {
-        throw new SyntaxErrorException(String.format("module %s imported twice", modulePath));
+        throw new SyntaxErrorException(stmt.getLine(), stmt.getColumn(),
+            "mccode.interpreter.error.duplicate_import", modulePath);
       }
       modules.add(modulePath);
       return stmt;

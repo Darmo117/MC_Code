@@ -93,13 +93,21 @@ public class MCCode {
     public static void onTick(TickEvent.WorldTickEvent event) {
       if (!event.world.isRemote && event.phase == TickEvent.Phase.START) {
         for (ProgramManager programManager : INSTANCE.PROGRAM_MANAGERS.values()) {
-          for (ProgramErrorReport e : programManager.executePrograms()) {
+          for (ProgramErrorReport report : programManager.executePrograms()) {
             // Log errors in chat and server console
-            ITextComponent message = new TextComponentString(String.format("[%s] ", e.getScope().getProgram().getName()))
-                .setStyle(new Style().setColor(TextFormatting.RED));
-            message.appendSibling(new TextComponentTranslation(e.getTranslationKey(), e.getArgs())
+            ITextComponent message;
+            if (report.getLine() != -1 && report.getColumn() != -1) {
+              message = new TextComponentString(
+                  String.format("[%s:%d:%d] ", report.getScope().getProgram().getName(), report.getLine(), report.getColumn()))
+                  .setStyle(new Style().setColor(TextFormatting.RED));
+            } else {
+              message = new TextComponentString(String.format("[%s] ", report.getScope().getProgram().getName()))
+                  .setStyle(new Style().setColor(TextFormatting.RED));
+            }
+            message.appendSibling(new TextComponentTranslation(report.getTranslationKey(), report.getArgs())
                 .setStyle(new Style().setColor(TextFormatting.RED)));
-            WorldServer world = (WorldServer) e.getScope().getProgram().getProgramManager().getWorld();
+
+            WorldServer world = (WorldServer) report.getScope().getProgram().getProgramManager().getWorld();
             // Only show error messages to players that can use the "program" command
             if (world.getGameRules().getBoolean(GR_SHOW_ERROR_MESSAGES)) {
               world.getPlayers(EntityPlayer.class, p -> true).stream()

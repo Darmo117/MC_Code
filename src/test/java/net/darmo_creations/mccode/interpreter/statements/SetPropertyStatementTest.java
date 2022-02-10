@@ -22,22 +22,22 @@ class SetPropertyStatementTest extends StatementTest {
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(SetPropertyStatement.ID_KEY, SetPropertyStatement.ID);
-    tag.setTag(SetPropertyStatement.TARGET_KEY, new VariableNode("a").writeToNBT());
+    tag.setTag(SetPropertyStatement.TARGET_KEY, new VariableNode("a", 0, 0).writeToNBT());
     tag.setTag(SetPropertyStatement.PROPERTY_NAME_KEY, new NBTTagString("b"));
     tag.setString(SetPropertyStatement.OPERATOR_KEY, "+=");
-    tag.setTag(SetPropertyStatement.VALUE_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(tag, new SetPropertyStatement(new VariableNode("a"), "b", AssigmentOperator.PLUS, new IntLiteralNode(1)).writeToNBT());
+    tag.setTag(SetPropertyStatement.VALUE_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(tag, new SetPropertyStatement(new VariableNode("a", 0, 0), "b", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0).writeToNBT());
   }
 
   @Test
   void constructFromNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(SetPropertyStatement.ID_KEY, SetPropertyStatement.ID);
-    tag.setTag(SetPropertyStatement.TARGET_KEY, new VariableNode("a").writeToNBT());
+    tag.setTag(SetPropertyStatement.TARGET_KEY, new VariableNode("a", 0, 0).writeToNBT());
     tag.setTag(SetPropertyStatement.PROPERTY_NAME_KEY, new NBTTagString("b"));
     tag.setString(SetPropertyStatement.OPERATOR_KEY, "+=");
-    tag.setTag(SetPropertyStatement.VALUE_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(new SetPropertyStatement(new VariableNode("a"), "b", AssigmentOperator.PLUS, new IntLiteralNode(1)), new SetPropertyStatement(tag));
+    tag.setTag(SetPropertyStatement.VALUE_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(new SetPropertyStatement(new VariableNode("a", 0, 0), "b", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0), new SetPropertyStatement(tag));
   }
 
   @Test
@@ -47,7 +47,7 @@ class SetPropertyStatementTest extends StatementTest {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, true, o));
     this.p.getScope().declareVariable(new Variable("list", false, false, true, true, list));
     assertEquals(StatementAction.PROCEED,
-        new SetPropertyStatement(new VariableNode("a"), "property", AssigmentOperator.ASSIGN, new VariableNode("list")).execute(this.p.getScope()));
+        new SetPropertyStatement(new VariableNode("a", 0, 0), "property", AssigmentOperator.ASSIGN, new VariableNode("list", 0, 0), 0, 0).execute(this.p.getScope()));
     MCList value = ((DummyObject) this.p.getScope().getVariable("a", false)).value;
     assertEquals(list, value);
     assertNotSame(list, value);
@@ -56,24 +56,24 @@ class SetPropertyStatementTest extends StatementTest {
   @Test
   void noPropertyError() {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, false, 1));
-    assertThrows(EvaluationException.class, () -> new SetPropertyStatement(new VariableNode("a"), "b", AssigmentOperator.ASSIGN, new IntLiteralNode(1)).execute(this.p.getScope()));
+    assertThrows(EvaluationException.class, () -> new SetPropertyStatement(new VariableNode("a", 0, 0), "b", AssigmentOperator.ASSIGN, new IntLiteralNode(1, 0, 0), 0, 0).execute(this.p.getScope()));
   }
 
   @Test
   void noPropertySetterError() {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, false, new BlockPos(0, 0, 0)));
-    assertThrows(EvaluationException.class, () -> new SetPropertyStatement(new VariableNode("a"), "x", AssigmentOperator.ASSIGN, new IntLiteralNode(1)).execute(this.p.getScope()));
+    assertThrows(EvaluationException.class, () -> new SetPropertyStatement(new VariableNode("a", 0, 0), "x", AssigmentOperator.ASSIGN, new IntLiteralNode(1, 0, 0), 0, 0).execute(this.p.getScope()));
   }
 
   @Test
   void wrongTypeError() {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, true, new DummyObject()));
-    assertThrows(CastException.class, () -> new SetPropertyStatement(new VariableNode("a"), "property", AssigmentOperator.ASSIGN, new IntLiteralNode(1)).execute(this.p.getScope()));
+    assertThrows(CastException.class, () -> new SetPropertyStatement(new VariableNode("a", 0, 0), "property", AssigmentOperator.ASSIGN, new IntLiteralNode(1, 0, 0), 0, 0).execute(this.p.getScope()));
   }
 
   @Test
   void testEquals() {
-    assertEquals(new SetItemStatement(new VariableNode("a"), new IntLiteralNode(0), AssigmentOperator.ASSIGN, new IntLiteralNode(1)),
-        new SetItemStatement(new VariableNode("a"), new IntLiteralNode(0), AssigmentOperator.ASSIGN, new IntLiteralNode(1)));
+    assertEquals(new SetItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(0, 0, 0), AssigmentOperator.ASSIGN, new IntLiteralNode(1, 0, 0), 0, 0),
+        new SetItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(0, 0, 0), AssigmentOperator.ASSIGN, new IntLiteralNode(1, 0, 0), 0, 0));
   }
 }

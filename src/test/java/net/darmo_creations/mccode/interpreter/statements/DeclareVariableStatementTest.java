@@ -24,8 +24,8 @@ class DeclareVariableStatementTest extends StatementTest {
     tag.setBoolean(DeclareVariableStatement.PUBLIC_KEY, true);
     tag.setBoolean(DeclareVariableStatement.EDITABLE_KEY, true);
     tag.setBoolean(DeclareVariableStatement.CONSTANT_KEY, false);
-    tag.setTag(DeclareVariableStatement.VALUE_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(tag, new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1)).writeToNBT());
+    tag.setTag(DeclareVariableStatement.VALUE_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(tag, new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1, 0, 0), 0, 0).writeToNBT());
   }
 
   @Test
@@ -36,15 +36,15 @@ class DeclareVariableStatementTest extends StatementTest {
     tag.setBoolean(DeclareVariableStatement.PUBLIC_KEY, true);
     tag.setBoolean(DeclareVariableStatement.EDITABLE_KEY, true);
     tag.setBoolean(DeclareVariableStatement.CONSTANT_KEY, false);
-    tag.setTag(DeclareVariableStatement.VALUE_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1)),
+    tag.setTag(DeclareVariableStatement.VALUE_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1, 0, 0), 0, 0),
         new DeclareVariableStatement(tag));
   }
 
   @Test
   void execute() {
     assertEquals(StatementAction.PROCEED, new DeclareVariableStatement(true, true, false, "a",
-        new IntLiteralNode(1)).execute(this.p.getScope()));
+        new IntLiteralNode(1, 0, 0), 0, 0).execute(this.p.getScope()));
     assertTrue(this.p.getScope().isVariableDefined("a"));
     assertEquals(1L, this.p.getScope().getVariable("a", false));
   }
@@ -52,7 +52,7 @@ class DeclareVariableStatementTest extends StatementTest {
   @ParameterizedTest
   @MethodSource("provideArgsForFlagsErrors")
   void flagsErrors(boolean public_, boolean editable, boolean constant) {
-    assertThrows(MCCodeException.class, () -> new DeclareVariableStatement(public_, editable, constant, "a", new IntLiteralNode(1)));
+    assertThrows(MCCodeException.class, () -> new DeclareVariableStatement(public_, editable, constant, "a", new IntLiteralNode(1, 0, 0), 0, 0));
   }
 
   static Stream<Arguments> provideArgsForFlagsErrors() {
@@ -64,17 +64,17 @@ class DeclareVariableStatementTest extends StatementTest {
 
   @Test
   void nullNameError() {
-    assertThrows(NullPointerException.class, () -> new DeclareVariableStatement(false, false, false, null, new IntLiteralNode(1)));
+    assertThrows(NullPointerException.class, () -> new DeclareVariableStatement(false, false, false, null, new IntLiteralNode(1, 0, 0), 0, 0));
   }
 
   @Test
   void nullNodeError() {
-    assertThrows(NullPointerException.class, () -> new DeclareVariableStatement(false, false, false, "a", null));
+    assertThrows(NullPointerException.class, () -> new DeclareVariableStatement(false, false, false, "a", null, 0, 0));
   }
 
   @Test
   void testEquals() {
-    assertEquals(new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1)),
-        new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1)));
+    assertEquals(new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1, 0, 0), 0, 0),
+        new DeclareVariableStatement(true, true, false, "a", new IntLiteralNode(1, 0, 0), 0, 0));
   }
 }

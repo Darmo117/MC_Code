@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -26,8 +25,11 @@ public class ListLiteralNode extends Node {
    * Create an list literal node.
    *
    * @param values List’s values.
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public ListLiteralNode(final Collection<Node> values) {
+  public ListLiteralNode(final Collection<Node> values, final int line, final int column) {
+    super(line, column);
     this.values = new ArrayList<>(values);
   }
 
@@ -37,11 +39,12 @@ public class ListLiteralNode extends Node {
    * @param tag The tag to deserialize.
    */
   public ListLiteralNode(final NBTTagCompound tag) {
-    this(NodeNBTHelper.deserializeNodesList(tag, VALUES_KEY));
+    super(tag);
+    this.values = NodeNBTHelper.deserializeNodesList(tag, VALUES_KEY);
   }
 
   @Override
-  public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
+  protected Object evaluateWrapped(Scope scope) {
     return new MCList(this.values.stream().map(node -> {
       Object v = node.evaluate(scope);
       return ProgramManager.getTypeForValue(v).copy(scope, v);

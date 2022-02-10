@@ -77,7 +77,8 @@ public class UserFunction extends Function {
         break;
       }
       if (action == StatementAction.WAIT) {
-        throw new SyntaxErrorException("mccode.interpreter.error.wait_in_function");
+        throw new SyntaxErrorException(statement.getLine(), statement.getColumn(), "mccode.interpreter.error.wait_in_function"
+        );
       }
       this.ip++;
     }

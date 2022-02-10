@@ -110,7 +110,7 @@ public class CommandProgram extends CommandBase {
     try {
       pm.loadProgram(programName, alias, false, parsedArgs);
     } catch (SyntaxErrorException e) {
-      throw new CommandException("mccode.interpreter.error.syntax_error", programName);
+      throw new CommandException(e.getTranslationKey(), e.getArgs());
     } catch (ProgramStatusException e) {
       throw new CommandException(e.getTranslationKey(), e.getProgramName());
     }
@@ -236,7 +236,7 @@ public class CommandProgram extends CommandBase {
       try {
         node = ExpressionParser.parse(expression);
       } catch (SyntaxErrorException e) {
-        throw new CommandException("mccode.interpreter.error.expression_syntax_error");
+        throw new CommandException(e.getTranslationKey(), e.getArgs());
       }
 
       Object value;

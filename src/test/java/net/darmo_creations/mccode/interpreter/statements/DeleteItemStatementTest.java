@@ -24,24 +24,24 @@ class DeleteItemStatementTest extends StatementTest {
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(DeleteItemStatement.ID_KEY, DeleteItemStatement.ID);
-    tag.setTag(DeleteItemStatement.TARGET_KEY, new VariableNode("a").writeToNBT());
-    tag.setTag(DeleteItemStatement.KEY_KEY, new IntLiteralNode(0).writeToNBT());
-    assertEquals(tag, new DeleteItemStatement(new VariableNode("a"), new IntLiteralNode(0)).writeToNBT());
+    tag.setTag(DeleteItemStatement.TARGET_KEY, new VariableNode("a", 0, 0).writeToNBT());
+    tag.setTag(DeleteItemStatement.KEY_KEY, new IntLiteralNode(0, 0, 0).writeToNBT());
+    assertEquals(tag, new DeleteItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(0, 0, 0), 0, 0).writeToNBT());
   }
 
   @Test
   void constructFromNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(DeleteItemStatement.ID_KEY, DeleteItemStatement.ID);
-    tag.setTag(DeleteItemStatement.TARGET_KEY, new VariableNode("a").writeToNBT());
-    tag.setTag(DeleteItemStatement.KEY_KEY, new IntLiteralNode(0).writeToNBT());
-    assertEquals(new DeleteItemStatement(new VariableNode("a"), new IntLiteralNode(0)), new DeleteItemStatement(tag));
+    tag.setTag(DeleteItemStatement.TARGET_KEY, new VariableNode("a", 0, 0).writeToNBT());
+    tag.setTag(DeleteItemStatement.KEY_KEY, new IntLiteralNode(0, 0, 0).writeToNBT());
+    assertEquals(new DeleteItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(0, 0, 0), 0, 0), new DeleteItemStatement(tag));
   }
 
   @Test
   void execute() {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, true, new MCList(Collections.singletonList(1))));
-    assertEquals(StatementAction.PROCEED, new DeleteItemStatement(new VariableNode("a"), new IntLiteralNode(0)).execute(this.p.getScope()));
+    assertEquals(StatementAction.PROCEED, new DeleteItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(0, 0, 0), 0, 0).execute(this.p.getScope()));
     assertTrue(this.p.getScope().isVariableDefined("a"));
     assertEquals(new MCList(), this.p.getScope().getVariable("a", false));
   }
@@ -49,34 +49,34 @@ class DeleteItemStatementTest extends StatementTest {
   @Test
   void deleteUnsupportedError() {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, false, 1));
-    assertThrows(UnsupportedOperatorException.class, () -> new DeleteItemStatement(new VariableNode("a"), new IntLiteralNode(0)).execute(this.p.getScope()));
+    assertThrows(UnsupportedOperatorException.class, () -> new DeleteItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(0, 0, 0), 0, 0).execute(this.p.getScope()));
   }
 
   @Test
   void deleteUndefinedIndexError() {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, true, new MCList(Collections.singletonList(1))));
-    assertThrows(IndexOutOfBoundsException.class, () -> new DeleteItemStatement(new VariableNode("a"), new IntLiteralNode(1)).execute(this.p.getScope()));
+    assertThrows(IndexOutOfBoundsException.class, () -> new DeleteItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(1, 0, 0), 0, 0).execute(this.p.getScope()));
   }
 
   @Test
   void deleteUndefinedKeyError() {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, true, new MCMap(Collections.singletonMap("a", 1))));
-    assertThrows(NoSuchKeyException.class, () -> new DeleteItemStatement(new VariableNode("a"), new StringLiteralNode("b")).execute(this.p.getScope()));
+    assertThrows(NoSuchKeyException.class, () -> new DeleteItemStatement(new VariableNode("a", 0, 0), new StringLiteralNode("b", 0, 0), 0, 0).execute(this.p.getScope()));
   }
 
   @Test
   void nullTargetNodeError() {
-    assertThrows(NullPointerException.class, () -> new DeleteItemStatement(null, new IntLiteralNode(1)));
+    assertThrows(NullPointerException.class, () -> new DeleteItemStatement(null, new IntLiteralNode(1, 0, 0), 0, 0));
   }
 
   @Test
   void nullKeyNodeError() {
-    assertThrows(NullPointerException.class, () -> new DeleteItemStatement(new VariableNode("a"), null));
+    assertThrows(NullPointerException.class, () -> new DeleteItemStatement(new VariableNode("a", 0, 0), null, 0, 0));
   }
 
   @Test
   void testEquals() {
-    assertEquals(new DeleteItemStatement(new VariableNode("a"), new IntLiteralNode(1)),
-        new DeleteItemStatement(new VariableNode("a"), new IntLiteralNode(1)));
+    assertEquals(new DeleteItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(1, 0, 0), 0, 0),
+        new DeleteItemStatement(new VariableNode("a", 0, 0), new IntLiteralNode(1, 0, 0), 0, 0));
   }
 }

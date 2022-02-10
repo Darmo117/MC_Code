@@ -13,10 +13,12 @@ public class FloatLiteralNode extends LiteralNode<Double> {
   /**
    * Create a float literal node.
    *
-   * @param value Float value.
+   * @param value  Float value.
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public FloatLiteralNode(final double value) {
-    super(value);
+  public FloatLiteralNode(final double value, final int line, final int column) {
+    super(value, line, column);
   }
 
   /**
@@ -25,7 +27,7 @@ public class FloatLiteralNode extends LiteralNode<Double> {
    * @param tag The tag to deserialize.
    */
   public FloatLiteralNode(final NBTTagCompound tag) {
-    super(tag::getDouble);
+    super(tag, tag::getDouble);
   }
 
   @Override

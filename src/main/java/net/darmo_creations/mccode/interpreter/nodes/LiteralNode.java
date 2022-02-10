@@ -20,23 +20,28 @@ public abstract class LiteralNode<T> extends Node {
   /**
    * Create a literal node.
    *
-   * @param value Literal’s value.
+   * @param value  Literal’s value.
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public LiteralNode(final T value) {
+  public LiteralNode(final T value, final int line, final int column) {
+    super(line, column);
     this.value = value;
   }
 
   /**
    * Create a literal node from deserializing function.
    *
+   * @param tag          The tag to deserialize.
    * @param deserializer The type-specific function to deserialize the tag.
    */
-  public LiteralNode(final Function<String, T> deserializer) {
-    this(deserializer.apply(VALUE_KEY));
+  public LiteralNode(final NBTTagCompound tag, final Function<String, T> deserializer) {
+    super(tag);
+    this.value = deserializer.apply(VALUE_KEY);
   }
 
   @Override
-  public Object evaluate(final Scope scope) {
+  protected Object evaluateWrapped(final Scope scope) {
     return this.value;
   }
 

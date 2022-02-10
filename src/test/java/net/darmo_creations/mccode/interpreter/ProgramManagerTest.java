@@ -51,7 +51,7 @@ class ProgramManagerTest {
 
   @Test
   void resetProgram() {
-    List<Statement> statements = Collections.singletonList(new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
+    List<Statement> statements = Collections.singletonList(new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0));
     Program p = new Program("p", statements, null, null, this.pm);
     this.pm.loadProgram(p);
     p.execute();
@@ -63,7 +63,7 @@ class ProgramManagerTest {
   @Test
   @Disabled("Requires running server")
   void runAndExecutePrograms() {
-    List<Statement> statements = Collections.singletonList(new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
+    List<Statement> statements = Collections.singletonList(new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0));
     Program p = new Program("p", statements, null, null, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());
@@ -75,7 +75,7 @@ class ProgramManagerTest {
   @Test
   @Disabled("Requires running server")
   void executeProgramsWithoutRun() {
-    List<Statement> statements = Collections.singletonList(new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
+    List<Statement> statements = Collections.singletonList(new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0));
     Program p = new Program("p", statements, null, null, this.pm);
     this.pm.loadProgram(p);
     assertFalse(p.hasTerminated());
@@ -86,7 +86,7 @@ class ProgramManagerTest {
   @Test
   @Disabled("Requires running server")
   void pauseProgram() {
-    List<Statement> statements = Collections.singletonList(new WaitStatement(new IntLiteralNode(1)));
+    List<Statement> statements = Collections.singletonList(new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0));
     Program p = new Program("p", statements, null, null, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());
@@ -105,7 +105,7 @@ class ProgramManagerTest {
   @Disabled("Requires running server")
   void scheduleOnceNoDelay() {
     List<Statement> statements = Collections.singletonList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0));
     Program p = new Program("p", statements, 0L, null, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());
@@ -118,7 +118,7 @@ class ProgramManagerTest {
   @Disabled("Requires running server")
   void scheduleOnceDelay() {
     List<Statement> statements = Collections.singletonList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0));
     Program p = new Program("p", statements, 1L, null, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());
@@ -137,7 +137,7 @@ class ProgramManagerTest {
   @Disabled("Requires running server")
   void repeatSeveralTimesNoDelay() {
     List<Statement> statements = Collections.singletonList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0));
     Program p = new Program("p", statements, 0L, 2L, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());
@@ -151,7 +151,7 @@ class ProgramManagerTest {
   @Disabled("Requires running server")
   void repeatSeveralTimesDelay() {
     List<Statement> statements = Collections.singletonList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)));
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0));
     Program p = new Program("p", statements, 1L, 2L, this.pm);
     this.pm.loadProgram(p);
     this.pm.runProgram(p.getName());

@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter.statements;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.Node;
 import net.darmo_creations.mccode.interpreter.nodes.NodeNBTHelper;
 import net.darmo_creations.mccode.interpreter.type_wrappers.BinaryOperator;
@@ -28,8 +27,11 @@ public class DeleteItemStatement extends Statement {
    *
    * @param target Expression that returns the object to apply the operator on.
    * @param key    Expression that returns the key to delete.
+   * @param line   The line this statement starts on.
+   * @param column The column in the line this statement starts at.
    */
-  public DeleteItemStatement(final Node target, final Node key) {
+  public DeleteItemStatement(final Node target, final Node key, final int line, final int column) {
+    super(line, column);
     this.target = Objects.requireNonNull(target);
     this.key = Objects.requireNonNull(key);
   }
@@ -40,14 +42,13 @@ public class DeleteItemStatement extends Statement {
    * @param tag The tag to deserialize.
    */
   public DeleteItemStatement(final NBTTagCompound tag) {
-    this(
-        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(TARGET_KEY)),
-        NodeNBTHelper.getNodeForTag(tag.getCompoundTag(KEY_KEY))
-    );
+    super(tag);
+    this.target = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(TARGET_KEY));
+    this.key = NodeNBTHelper.getNodeForTag(tag.getCompoundTag(KEY_KEY));
   }
 
   @Override
-  public StatementAction execute(final Scope scope) throws EvaluationException, ArithmeticException {
+  protected StatementAction executeWrapped(final Scope scope) {
     Object targetValue = this.target.evaluate(scope);
     Type<?> targetType = ProgramManager.getTypeForValue(targetValue);
     targetType.applyOperator(scope, BinaryOperator.DEL_ITEM, targetValue, this.key.evaluate(scope), null, true);

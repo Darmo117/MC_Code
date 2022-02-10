@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 class IntLiteralNodeTest extends NodeTest {
   @Test
   void evaluate() {
-    Object r = new IntLiteralNode(1).evaluate(this.p.getScope());
+    Object r = new IntLiteralNode(1, 0, 0).evaluate(this.p.getScope());
     assertSame(Long.class, r.getClass());
     assertEquals(1L, r);
   }
@@ -22,7 +22,7 @@ class IntLiteralNodeTest extends NodeTest {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(IntLiteralNode.ID_KEY, IntLiteralNode.ID);
     tag.setLong(IntLiteralNode.VALUE_KEY, 1);
-    assertEquals(tag, new IntLiteralNode(1).writeToNBT());
+    assertEquals(tag, new IntLiteralNode(1, 0, 0).writeToNBT());
   }
 
   @Test
@@ -35,11 +35,11 @@ class IntLiteralNodeTest extends NodeTest {
 
   @Test
   void testToString() {
-    assertEquals("1", new IntLiteralNode(1).toString());
+    assertEquals("1", new IntLiteralNode(1, 0, 0).toString());
   }
 
   @Test
   void testEquals() {
-    assertEquals(new IntLiteralNode(1), new IntLiteralNode(1));
+    assertEquals(new IntLiteralNode(1, 0, 0), new IntLiteralNode(1, 0, 0));
   }
 }

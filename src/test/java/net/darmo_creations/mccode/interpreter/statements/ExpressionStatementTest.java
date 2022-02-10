@@ -21,27 +21,27 @@ class ExpressionStatementTest extends StatementTest {
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(ExpressionStatement.ID_KEY, ExpressionStatement.ID);
-    tag.setTag(ExpressionStatement.EXPRESSION_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(tag, new ExpressionStatement(new IntLiteralNode(1)).writeToNBT());
+    tag.setTag(ExpressionStatement.EXPRESSION_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(tag, new ExpressionStatement(new IntLiteralNode(1, 0, 0), 0, 0).writeToNBT());
   }
 
   @Test
   void constructFromNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(ExpressionStatement.ID_KEY, ExpressionStatement.ID);
-    tag.setTag(ExpressionStatement.EXPRESSION_KEY, new IntLiteralNode(1).writeToNBT());
-    assertEquals(new ExpressionStatement(new IntLiteralNode(1)), new ExpressionStatement(tag));
+    tag.setTag(ExpressionStatement.EXPRESSION_KEY, new IntLiteralNode(1, 0, 0).writeToNBT());
+    assertEquals(new ExpressionStatement(new IntLiteralNode(1, 0, 0), 0, 0), new ExpressionStatement(tag));
   }
 
   @Test
   void execute() {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, true, new MCList(Collections.singletonList(1))));
-    assertEquals(StatementAction.PROCEED, new ExpressionStatement(new MethodCallNode(new VariableNode("a"), "clear", Collections.emptyList())).execute(this.p.getScope()));
+    assertEquals(StatementAction.PROCEED, new ExpressionStatement(new MethodCallNode(new VariableNode("a", 0, 0), "clear", Collections.emptyList(), 0, 0), 0, 0).execute(this.p.getScope()));
     assertTrue(((MCList) this.p.getScope().getVariable("a", false)).isEmpty());
   }
 
   @Test
   void testEquals() {
-    assertEquals(new ExpressionStatement(new IntLiteralNode(1)), new ExpressionStatement(new IntLiteralNode(1)));
+    assertEquals(new ExpressionStatement(new IntLiteralNode(1, 0, 0), 0, 0), new ExpressionStatement(new IntLiteralNode(1, 0, 0), 0, 0));
   }
 }

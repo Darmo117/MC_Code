@@ -8,6 +8,8 @@ import net.darmo_creations.mccode.interpreter.Scope;
 public class MCCodeRuntimeException extends MCCodeException {
   private final Scope scope;
   private final Object[] args;
+  private int line = -1;
+  private int column = -1;
 
   /**
    * Create a runtime exception.
@@ -20,6 +22,56 @@ public class MCCodeRuntimeException extends MCCodeException {
     super(translationKey);
     this.scope = scope;
     this.args = args;
+  }
+
+  /**
+   * Create a runtime exception.
+   *
+   * @param scope          The scope this exception was thrown from.
+   * @param translationKey Unlocalized string of the error message.
+   * @param args           Values to use to format the error message.
+   * @param line           Line where this error occured on.
+   * @param column         Column of the line this error occured on.
+   */
+  public MCCodeRuntimeException(final Scope scope, final int line, final int column,
+                                final String translationKey, final Object... args) {
+    super(translationKey);
+    this.scope = scope;
+    this.args = args;
+    this.line = line;
+    this.column = column;
+  }
+
+  /**
+   * Return the line where this error occured on.
+   */
+  public int getLine() {
+    return this.line;
+  }
+
+  /**
+   * Set the line this error occured on.
+   *
+   * @param line Line number.
+   */
+  public void setLine(int line) {
+    this.line = line;
+  }
+
+  /**
+   * Return the column where this error occured on.
+   */
+  public int getColumn() {
+    return this.column;
+  }
+
+  /**
+   * Set the column this error occured on.
+   *
+   * @param column Column number.
+   */
+  public void setColumn(int column) {
+    this.column = column;
   }
 
   /**

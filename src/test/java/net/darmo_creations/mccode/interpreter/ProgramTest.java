@@ -23,8 +23,8 @@ class ProgramTest {
   @BeforeEach
   void setUp() {
     List<Statement> statements = Arrays.asList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)),
-        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0),
+        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)
     );
     this.p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
   }
@@ -65,9 +65,9 @@ class ProgramTest {
   @Test
   void testWait() {
     List<Statement> statements = Arrays.asList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)),
-        new WaitStatement(new IntLiteralNode(1)),
-        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0),
+        new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0),
+        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)
     );
     Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
     p.execute();
@@ -90,28 +90,28 @@ class ProgramTest {
 
   @Test
   void breakOutsideLoopError() {
-    List<Statement> statements = Collections.singletonList(new BreakStatement());
+    List<Statement> statements = Collections.singletonList(new BreakStatement(0, 0));
     Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
     assertThrows(SyntaxErrorException.class, p::execute);
   }
 
   @Test
   void continueOutsideLoopError() {
-    List<Statement> statements = Collections.singletonList(new ContinueStatement());
+    List<Statement> statements = Collections.singletonList(new ContinueStatement(0, 0));
     Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
     assertThrows(SyntaxErrorException.class, p::execute);
   }
 
   @Test
   void returnOutsideFunctionError() {
-    List<Statement> statements = Collections.singletonList(new ReturnStatement(new NullLiteralNode()));
+    List<Statement> statements = Collections.singletonList(new ReturnStatement(new NullLiteralNode(0, 0), 0, 0));
     Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
     assertThrows(SyntaxErrorException.class, p::execute);
   }
 
   @Test
   void waitInModuleError() {
-    Program p = new Program("p", Collections.singletonList(new WaitStatement(new IntLiteralNode(1))),
+    Program p = new Program("p", Collections.singletonList(new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0)),
         new ProgramManager("pm"));
     assertThrows(EvaluationException.class, p::execute);
   }
@@ -129,8 +129,8 @@ class ProgramTest {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(Program.NAME_KEY, "p");
     List<Statement> statements = Arrays.asList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)),
-        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0),
+        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)
     );
     tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(statements));
     tag.setTag(Program.SCOPE_KEY, this.p.getScope().writeToNBT());
@@ -144,11 +144,11 @@ class ProgramTest {
 
   @Test
   void writeModuleToNBT() {
-    Program p = new Program("p", Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))),
+    Program p = new Program("p", Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)),
         new ProgramManager("pm"));
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(Program.NAME_KEY, "p");
-    tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1)))));
+    tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0))));
     tag.setTag(Program.SCOPE_KEY, p.getScope().writeToNBT());
     tag.setInteger(Program.IP_KEY, 0);
     tag.setBoolean(Program.IS_MODULE_KEY, true);
@@ -160,8 +160,8 @@ class ProgramTest {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(Program.NAME_KEY, "p");
     List<Statement> statements = Arrays.asList(
-        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1)),
-        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))
+        new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0),
+        new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)
     );
     tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(statements));
     tag.setTag(Program.SCOPE_KEY, this.p.getScope().writeToNBT());
@@ -178,11 +178,11 @@ class ProgramTest {
   void constructModuleFromNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(Program.NAME_KEY, "p");
-    tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1)))));
+    tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0))));
     tag.setTag(Program.SCOPE_KEY, this.p.getScope().writeToNBT());
     tag.setInteger(Program.IP_KEY, 0);
     tag.setBoolean(Program.IS_MODULE_KEY, true);
-    assertEquals(new Program("p", Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1))),
+    assertEquals(new Program("p", Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)),
             new ProgramManager("pm")),
         new Program(tag, new ProgramManager("pm")));
   }

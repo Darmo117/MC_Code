@@ -2,7 +2,6 @@ package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.MCSet;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,8 +27,11 @@ public class SetLiteralNode extends Node {
    * Create a set literal node.
    *
    * @param values Set’s values.
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public SetLiteralNode(final Collection<Node> values) {
+  public SetLiteralNode(final Collection<Node> values, final int line, final int column) {
+    super(line, column);
     this.values = new ArrayList<>(values);
   }
 
@@ -39,6 +41,7 @@ public class SetLiteralNode extends Node {
    * @param tag The tag to deserialize.
    */
   public SetLiteralNode(final NBTTagCompound tag) {
+    super(tag);
     NBTTagList list = tag.getTagList(VALUES_KEY, new NBTTagCompound().getId());
     this.values = new ArrayList<>();
     for (NBTBase t : list) {
@@ -47,7 +50,7 @@ public class SetLiteralNode extends Node {
   }
 
   @Override
-  public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
+  protected Object evaluateWrapped(Scope scope) {
     return new MCSet(this.values.stream().map(node -> {
       Object v = node.evaluate(scope);
       return ProgramManager.getTypeForValue(v).copy(scope, v);

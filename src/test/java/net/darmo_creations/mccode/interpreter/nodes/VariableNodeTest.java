@@ -27,14 +27,14 @@ class VariableNodeTest extends NodeTest {
 
   @Test
   void evaluate() {
-    Object r = new VariableNode("variable").evaluate(this.p.getScope());
+    Object r = new VariableNode("variable", 0, 0).evaluate(this.p.getScope());
     assertSame(Integer.class, r.getClass());
     assertEquals(1, r);
   }
 
   @Test
   void evaluateUndefinedError() {
-    assertThrows(EvaluationException.class, () -> new VariableNode("auieauie").evaluate(this.p.getScope()));
+    assertThrows(EvaluationException.class, () -> new VariableNode("auieauie", 0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
@@ -42,7 +42,7 @@ class VariableNodeTest extends NodeTest {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(VariableNode.ID_KEY, VariableNode.ID);
     tag.setString(VariableNode.NAME_KEY, "variable");
-    assertEquals(tag, new VariableNode("variable").writeToNBT());
+    assertEquals(tag, new VariableNode("variable", 0, 0).writeToNBT());
   }
 
   @Test
@@ -55,16 +55,16 @@ class VariableNodeTest extends NodeTest {
 
   @Test
   void nullParameterError() {
-    assertThrows(NullPointerException.class, () -> new VariableNode((String) null));
+    assertThrows(NullPointerException.class, () -> new VariableNode((String) null, 0, 0));
   }
 
   @Test
   void testToString() {
-    assertEquals("variable", new VariableNode("variable").toString());
+    assertEquals("variable", new VariableNode("variable", 0, 0).toString());
   }
 
   @Test
   void testEquals() {
-    assertEquals(new VariableNode("a"), new VariableNode("a"));
+    assertEquals(new VariableNode("a", 0, 0), new VariableNode("a", 0, 0));
   }
 }

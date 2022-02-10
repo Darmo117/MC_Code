@@ -1,7 +1,6 @@
 package net.darmo_creations.mccode.interpreter.nodes;
 
 import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -23,13 +22,17 @@ public abstract class OperatorNode extends OperationNode {
    * @param symbol   Operator’s symbol.
    * @param arity    Operator’s arity, i.e. its number of operands.
    * @param operands Operator’s operands.
+   * @param line     The line this node starts on.
+   * @param column   The column in the line this node starts at.
    * @throws SyntaxErrorException If the number of operands does not match the arity.
    */
-  public OperatorNode(final String symbol, final int arity, final List<Node> operands) throws SyntaxErrorException {
-    super(operands);
+  public OperatorNode(final String symbol, final int arity, final List<Node> operands, final int line, final int column)
+      throws SyntaxErrorException {
+    super(operands, line, column);
     this.symbol = Objects.requireNonNull(symbol);
     if (this.arguments.size() != arity) {
-      throw new SyntaxErrorException(String.format("operator %s expected %d arguments, got %d", symbol, arity, operands.size()));
+      throw new SyntaxErrorException(line, column,
+          "mccode.interpreter.error.invalid_operator_operands_number", symbol, arity, operands.size());
     }
   }
 
@@ -51,8 +54,10 @@ public abstract class OperatorNode extends OperationNode {
   }
 
   @Override
-  public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
-    return this.evaluateImpl(scope, this.arguments.stream().map(node -> node.evaluate(scope)).collect(Collectors.toList()));
+  protected Object evaluateWrapped(Scope scope) {
+    return this.evaluateImpl(scope, this.arguments.stream()
+        .map(node -> node.evaluate(scope))
+        .collect(Collectors.toList()));
   }
 
   /**

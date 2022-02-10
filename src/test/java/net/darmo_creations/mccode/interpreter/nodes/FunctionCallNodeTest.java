@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class FunctionCallNodeTest extends NodeTest {
   @Test
   void nullParameterError() {
-    assertThrows(NullPointerException.class, () -> new FunctionCallNode(null, Collections.singletonList(new FloatLiteralNode(1.0))));
-    assertThrows(NullPointerException.class, () -> new FunctionCallNode(new VariableNode("floor"), null));
+    assertThrows(NullPointerException.class, () -> new FunctionCallNode(null, Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0));
+    assertThrows(NullPointerException.class, () -> new FunctionCallNode(new VariableNode("floor", 0, 0), null, 0, 0));
   }
 
   @Test
   void evaluate() {
-    Object r = new FunctionCallNode(new VariableNode("floor"), Collections.singletonList(new FloatLiteralNode(1.0))).evaluate(this.p.getScope());
+    Object r = new FunctionCallNode(new VariableNode("floor", 0, 0), Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0).evaluate(this.p.getScope());
     assertSame(Long.class, r.getClass());
     assertEquals(1L, r);
   }
@@ -32,70 +32,70 @@ class FunctionCallNodeTest extends NodeTest {
   @Test
   void evaluateNotCallableError() {
     this.p.getScope().declareVariable(new Variable("a", false, false, true, true, 1));
-    assertThrows(EvaluationException.class, () -> new FunctionCallNode(new VariableNode("a"),
-        Collections.singletonList(new FloatLiteralNode(1.0))).evaluate(this.p.getScope()));
+    assertThrows(EvaluationException.class, () -> new FunctionCallNode(new VariableNode("a", 0, 0),
+        Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
   void evaluateUndefinedError() {
-    assertThrows(EvaluationException.class, () -> new FunctionCallNode(new VariableNode("uaieaie"),
-        Collections.singletonList(new FloatLiteralNode(1.0))).evaluate(this.p.getScope()));
+    assertThrows(EvaluationException.class, () -> new FunctionCallNode(new VariableNode("uaieaie", 0, 0),
+        Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
   void evaluateMissingParameterError() {
-    assertThrows(EvaluationException.class, () -> new FunctionCallNode(new VariableNode("hypot"),
-        Collections.singletonList(new FloatLiteralNode(1.0))).evaluate(this.p.getScope()));
+    assertThrows(EvaluationException.class, () -> new FunctionCallNode(new VariableNode("hypot", 0, 0),
+        Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
   void evaluateTooManyParametersError() {
-    assertThrows(EvaluationException.class, () -> new FunctionCallNode(new VariableNode("hypot"),
-        Arrays.asList(new FloatLiteralNode(1.0), new FloatLiteralNode(1.0), new FloatLiteralNode(1.0))).evaluate(this.p.getScope()));
+    assertThrows(EvaluationException.class, () -> new FunctionCallNode(new VariableNode("hypot", 0, 0),
+        Arrays.asList(new FloatLiteralNode(1.0, 0, 0), new FloatLiteralNode(1.0, 0, 0), new FloatLiteralNode(1.0, 0, 0)), 0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
   void evaluateCastError() {
-    assertThrows(CastException.class, () -> new FunctionCallNode(new VariableNode("floor"),
-        Collections.singletonList(new StringLiteralNode("s"))).evaluate(this.p.getScope()));
+    assertThrows(CastException.class, () -> new FunctionCallNode(new VariableNode("floor", 0, 0),
+        Collections.singletonList(new StringLiteralNode("s", 0, 0)), 0, 0).evaluate(this.p.getScope()));
   }
 
   @Test
   void writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(FunctionCallNode.ID_KEY, FunctionCallNode.ID);
-    tag.setTag(FunctionCallNode.FUNCTION_OBJ_KEY, new VariableNode("hypot").writeToNBT());
+    tag.setTag(FunctionCallNode.FUNCTION_OBJ_KEY, new VariableNode("hypot", 0, 0).writeToNBT());
     NBTTagList args = new NBTTagList();
-    args.appendTag(new FloatLiteralNode(1.0).writeToNBT());
-    args.appendTag(new IntLiteralNode(1).writeToNBT());
+    args.appendTag(new FloatLiteralNode(1.0, 0, 0).writeToNBT());
+    args.appendTag(new IntLiteralNode(1, 0, 0).writeToNBT());
     tag.setTag(FunctionCallNode.ARGUMENTS_KEY, args);
-    assertEquals(tag, new FunctionCallNode(new VariableNode("hypot"),
-        Arrays.asList(new FloatLiteralNode(1.0), new IntLiteralNode(1))).writeToNBT());
+    assertEquals(tag, new FunctionCallNode(new VariableNode("hypot", 0, 0),
+        Arrays.asList(new FloatLiteralNode(1.0, 0, 0), new IntLiteralNode(1, 0, 0)), 0, 0).writeToNBT());
   }
 
   @Test
   void deserializeNBT() {
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger(FunctionCallNode.ID_KEY, FunctionCallNode.ID);
-    tag.setTag(FunctionCallNode.FUNCTION_OBJ_KEY, new VariableNode("hypot").writeToNBT());
+    tag.setTag(FunctionCallNode.FUNCTION_OBJ_KEY, new VariableNode("hypot", 0, 0).writeToNBT());
     NBTTagList args = new NBTTagList();
-    args.appendTag(new FloatLiteralNode(1.0).writeToNBT());
-    args.appendTag(new IntLiteralNode(1).writeToNBT());
+    args.appendTag(new FloatLiteralNode(1.0, 0, 0).writeToNBT());
+    args.appendTag(new IntLiteralNode(1, 0, 0).writeToNBT());
     tag.setTag(FunctionCallNode.ARGUMENTS_KEY, args);
     assertEquals("hypot(1.0, 1)", new FunctionCallNode(tag).toString());
   }
 
   @Test
   void testToString() {
-    assertEquals("floor(1.0)", new FunctionCallNode(new VariableNode("floor"),
-        Collections.singletonList(new FloatLiteralNode(1.0))).toString());
-    assertEquals("hypot(1.0, 1)", new FunctionCallNode(new VariableNode("hypot"),
-        Arrays.asList(new FloatLiteralNode(1.0), new IntLiteralNode(1))).toString());
+    assertEquals("floor(1.0)", new FunctionCallNode(new VariableNode("floor", 0, 0),
+        Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0).toString());
+    assertEquals("hypot(1.0, 1)", new FunctionCallNode(new VariableNode("hypot", 0, 0),
+        Arrays.asList(new FloatLiteralNode(1.0, 0, 0), new IntLiteralNode(1, 0, 0)), 0, 0).toString());
   }
 
   @Test
   void testEquals() {
-    assertEquals(new FunctionCallNode(new VariableNode("floor"), Collections.singletonList(new FloatLiteralNode(1.0))),
-        new FunctionCallNode(new VariableNode("floor"), Collections.singletonList(new FloatLiteralNode(1.0))));
+    assertEquals(new FunctionCallNode(new VariableNode("floor", 0, 0), Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0),
+        new FunctionCallNode(new VariableNode("floor", 0, 0), Collections.singletonList(new FloatLiteralNode(1.0, 0, 0)), 0, 0));
   }
 }

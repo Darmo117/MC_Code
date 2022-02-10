@@ -13,10 +13,12 @@ public class BooleanLiteralNode extends LiteralNode<Boolean> {
   /**
    * Create a boolean literal node.
    *
-   * @param value Boolean value.
+   * @param value  Boolean value.
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public BooleanLiteralNode(final boolean value) {
-    super(value);
+  public BooleanLiteralNode(final boolean value, final int line, final int column) {
+    super(value, line, column);
   }
 
   /**
@@ -25,7 +27,7 @@ public class BooleanLiteralNode extends LiteralNode<Boolean> {
    * @param tag The tag to deserialize.
    */
   public BooleanLiteralNode(final NBTTagCompound tag) {
-    super(tag::getBoolean);
+    super(tag, tag::getBoolean);
   }
 
   @Override

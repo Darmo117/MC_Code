@@ -3,7 +3,6 @@ package net.darmo_creations.mccode.interpreter.nodes;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Utils;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.types.MCMap;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -26,8 +25,11 @@ public class MapLiteralNode extends Node {
    * Create a map literal node.
    *
    * @param values Map’s entries.
+   * @param line   The line this node starts on.
+   * @param column The column in the line this node starts at.
    */
-  public MapLiteralNode(final Map<String, Node> values) {
+  public MapLiteralNode(final Map<String, Node> values, final int line, final int column) {
+    super(line, column);
     this.values = new HashMap<>(values);
   }
 
@@ -37,6 +39,7 @@ public class MapLiteralNode extends Node {
    * @param tag The tag to deserialize.
    */
   public MapLiteralNode(final NBTTagCompound tag) {
+    super(tag);
     NBTTagCompound map = tag.getCompoundTag(VALUES_KEY);
     this.values = new HashMap<>();
     for (String k : map.getKeySet()) {
@@ -45,7 +48,7 @@ public class MapLiteralNode extends Node {
   }
 
   @Override
-  public Object evaluate(Scope scope) throws EvaluationException, ArithmeticException {
+  protected Object evaluateWrapped(Scope scope) {
     return new MCMap(this.values.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
       Object v = e.getValue().evaluate(scope);
       return ProgramManager.getTypeForValue(v).copy(scope, v);

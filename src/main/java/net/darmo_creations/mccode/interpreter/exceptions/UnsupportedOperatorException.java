@@ -18,7 +18,7 @@ public class UnsupportedOperatorException extends MCCodeRuntimeException {
    * @param type     Type of the object the operator was applied to.
    */
   public UnsupportedOperatorException(final Scope scope, final UnaryOperator operator, final Type<?> type) {
-    super(scope, "mccode.interpreter.error.unsupported_operator_unary", operator, type);
+    super(scope, "mccode.interpreter.error.unsupported_operator_unary", type, operator.getSymbol());
   }
 
   /**
@@ -30,7 +30,7 @@ public class UnsupportedOperatorException extends MCCodeRuntimeException {
    * @param type2    Type of the operator’s right operand.
    */
   public UnsupportedOperatorException(final Scope scope, final BinaryOperator operator, final Type<?> type1, final Type<?> type2) {
-    super(scope, "mccode.interpreter.error.unsupported_binary_operator", operator, type1, type2);
+    super(scope, "mccode.interpreter.error.unsupported_binary_operator", type1, operator.getSymbol(), type2);
   }
 
   /**
@@ -43,6 +43,6 @@ public class UnsupportedOperatorException extends MCCodeRuntimeException {
    * @param type3    Type of the third operand.
    */
   public UnsupportedOperatorException(final Scope scope, final TernaryOperator operator, final Type<?> type1, final Type<?> type2, final Type<?> type3) {
-    super(scope, "mccode.interpreter.error.unsupported_ternary_operator", operator, type1, type2, type3);
+    super(scope, "mccode.interpreter.error.unsupported_ternary_operator", type1, operator.getSymbol(), type2, type3);
   }
 }

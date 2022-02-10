@@ -13,18 +13,25 @@ public class ContinueStatement extends Statement {
 
   /**
    * Create a continue statement.
+   *
+   * @param line   The line this statement starts on.
+   * @param column The column in the line this statement starts at.
    */
-  public ContinueStatement() {
+  public ContinueStatement(final int line, final int column) {
+    super(line, column);
   }
 
   /**
    * Create a continue statement from an NBT tag.
+   *
+   * @param tag The tag to deserialize.
    */
-  public ContinueStatement(final NBTTagCompound ignoredTag) {
+  public ContinueStatement(final NBTTagCompound tag) {
+    super(tag);
   }
 
   @Override
-  public StatementAction execute(final Scope scope) {
+  protected StatementAction executeWrapped(final Scope scope) {
     return StatementAction.CONTINUE_LOOP;
   }
 
