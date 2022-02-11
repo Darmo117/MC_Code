@@ -70,13 +70,13 @@ public class Program {
     this.statements = Objects.requireNonNull(statements);
     this.scope = new Scope(this);
     if (scheduleDelay != null && scheduleDelay < 0) {
-      throw new MCCodeRuntimeException(this.scope, "mccode.interpreter.error.invalid_schedule_delay", scheduleDelay);
+      throw new MCCodeRuntimeException(this.scope, null, "mccode.interpreter.error.invalid_schedule_delay", scheduleDelay);
     }
     if (repeatAmount != null && repeatAmount <= 0) {
-      throw new MCCodeRuntimeException(this.scope, "mccode.interpreter.error.invalid_schedule_repeat", scheduleDelay);
+      throw new MCCodeRuntimeException(this.scope, null, "mccode.interpreter.error.invalid_schedule_repeat", scheduleDelay);
     }
     if (scheduleDelay == null && repeatAmount != null) {
-      throw new MCCodeRuntimeException(this.scope, "mccode.interpreter.error.missing_schedule_delay");
+      throw new MCCodeRuntimeException(this.scope, null, "mccode.interpreter.error.missing_schedule_delay");
     }
     this.scheduleDelay = scheduleDelay;
     this.repeatAmount = repeatAmount;
@@ -244,7 +244,7 @@ public class Program {
           );
         } else if (action == StatementAction.WAIT) {
           if (this.isModule) {
-            throw new MCCodeRuntimeException(this.scope, statement.getLine(), statement.getColumn(),
+            throw new MCCodeRuntimeException(this.scope, null, statement.getLine(), statement.getColumn(),
                 "mccode.interpreter.error.wait_in_module", this.getName());
           }
           if (statement instanceof WaitStatement) {

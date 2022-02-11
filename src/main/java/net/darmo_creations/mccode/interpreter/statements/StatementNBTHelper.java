@@ -33,6 +33,7 @@ public final class StatementNBTHelper {
     STMT_PROVIDERS.put(IfStatement.ID, IfStatement::new);
     STMT_PROVIDERS.put(WhileLoopStatement.ID, WhileLoopStatement::new);
     STMT_PROVIDERS.put(ForLoopStatement.ID, ForLoopStatement::new);
+    STMT_PROVIDERS.put(TryExceptStatement.ID, TryExceptStatement::new);
 
     STMT_PROVIDERS.put(WaitStatement.ID, WaitStatement::new);
 

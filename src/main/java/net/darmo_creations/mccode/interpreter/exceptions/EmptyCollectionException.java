@@ -3,7 +3,7 @@ package net.darmo_creations.mccode.interpreter.exceptions;
 import net.darmo_creations.mccode.interpreter.Scope;
 
 /**
- * Exception throw by max and min functions.
+ * Exception thrown by max and min functions.
  */
 public class EmptyCollectionException extends MCCodeRuntimeException {
   /**
@@ -12,6 +12,11 @@ public class EmptyCollectionException extends MCCodeRuntimeException {
    * @param scope The scope this exception was thrown from.
    */
   public EmptyCollectionException(final Scope scope) {
-    super(scope, "mccode.interpreter.error.empty_collection");
+    super(scope, null, "mccode.interpreter.error.empty_collection");
+  }
+
+  @Override
+  public String getName() {
+    return "empty_collection_error";
   }
 }

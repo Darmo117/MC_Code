@@ -4,7 +4,7 @@ import net.darmo_creations.mccode.interpreter.Parameter;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
-import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.exceptions.UserException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
 import net.darmo_creations.mccode.interpreter.type_wrappers.NullType;
 import net.darmo_creations.mccode.interpreter.type_wrappers.StringType;
@@ -26,7 +26,10 @@ public class ErrorFunction extends BuiltinFunction {
   @Override
   public Object apply(final Scope scope) {
     Object message = this.getParameterValue(scope, 0);
-    throw new EvaluationException(scope, "mccode.interpreter.error.user_exception",
-        ProgramManager.getTypeInstance(StringType.class).implicitCast(scope, message));
+    throw new UserException(
+        scope,
+        ProgramManager.getTypeInstance(StringType.class).implicitCast(scope, message),
+        ProgramManager.getTypeForValue(message).copy(scope, message)
+    );
   }
 }

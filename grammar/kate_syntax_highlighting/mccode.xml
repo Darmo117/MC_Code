@@ -26,6 +26,8 @@
       <item>wait</item>
       <item>repeat</item>
       <item>forever</item>
+      <item>try</item>
+      <item>except</item>
     </list>
     <list name="operators">
       <item>in</item>

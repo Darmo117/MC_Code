@@ -66,6 +66,8 @@ CONTINUE: 'continue';
 WAIT   : 'wait';
 REPEAT : 'repeat';
 FOREVER: 'forever';
+TRY    : 'try';
+EXCEPT : 'except';
 
 NULL  : 'null';
 TRUE  : 'true';
@@ -97,8 +99,9 @@ statement:
   | DELETE name=IDENT SEMIC                          # DeleteStatement // ID: 20
   | DELETE target=expr LBRACK key=expr RBRACK SEMIC  # DeleteItemStatement // ID: 21
   | IF cond=expr THEN statement* (elseif)* (else_)? END # IfStatement // ID: 40
-  | WHILE cond=expr DO loop_stmt* END                  # WhileLoopStatement // ID: 41
-  | FOR variable=IDENT IN range=expr DO loop_stmt* END # ForLoopStatement // ID: 42
+  | WHILE cond=expr DO loop_stmt* END                   # WhileLoopStatement // ID: 41
+  | FOR variable=IDENT IN range=expr DO loop_stmt* END  # ForLoopStatement // ID: 42
+  | TRY statement* except END                           # TryExceptStatement // ID: 43
   | WAIT expr SEMIC               # WaitStatement // ID: 50 Raises an error if present in a function
   | RETURN (returned=expr)? SEMIC # ReturnStatement // ID: 62 Raises an error if outside of a function
   | name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC                         # VariableAssignmentStatement // ID: 12
@@ -107,9 +110,12 @@ statement:
   | expr SEMIC # ExpressionStatement // ID: 30
 ;
 
-// Split if-statement for easier parsing
+// Split if-elsif-else statement for easier parsing
 elseif: ELIF cond=expr THEN statement*;
 else_: ELSE statement*;
+
+// Split try-except statement for easier parsing
+except: EXCEPT IDENT THEN statement*;
 
 loop_stmt:
     BREAK SEMIC    # BreakStatement // ID: 60

@@ -1,23 +1,25 @@
 package net.darmo_creations.mccode.interpreter.exceptions;
 
 /**
- * Error thrown when a program features a syntax error.
+ * Exception class used to wrap any exception that should not be caught by try-except statements.
  */
-public class SyntaxErrorException extends MCCodeException {
+public class WrappedException extends MCCodeException {
   private final int line;
   private final int column;
   private final Object[] args;
 
   /**
-   * Create syntax error exception.
+   * Create a wrapped exception.
    *
+   * @param throwable      The exception to wrap.
    * @param line           Line where this error occured on.
    * @param column         Column of the line this error occured on.
    * @param translationKey Unlocalized string of the error message.
    * @param args           Values to use to format the error message.
    */
-  public SyntaxErrorException(final int line, final int column, final String translationKey, final Object... args) {
-    super(translationKey);
+  public WrappedException(Throwable throwable, final int line, final int column,
+                          final String translationKey, final Object... args) {
+    super(translationKey, throwable);
     this.line = line;
     this.column = column;
     this.args = args;

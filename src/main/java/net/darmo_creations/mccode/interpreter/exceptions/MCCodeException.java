@@ -11,4 +11,8 @@ public class MCCodeException extends RuntimeException {
   public MCCodeException(final Throwable throwable) {
     super(throwable);
   }
+
+  public MCCodeException(final String s, final Throwable throwable) {
+    super(s, throwable);
+  }
 }

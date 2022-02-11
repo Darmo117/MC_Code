@@ -139,6 +139,9 @@ public class ProgramManager implements NBTDeserializable {
         } catch (MCCodeRuntimeException e) {
           errorReports.add(new ProgramErrorReport(
               e.getScope(), e.getLine(), e.getColumn(), e.getTranslationKey(), e.getArgs()));
+        } catch (WrappedException e) {
+          errorReports.add(new ProgramErrorReport(
+              program.getScope(), e.getLine(), e.getColumn(), e.getTranslationKey(), e.getArgs()));
         }
         // Unload programs that have terminated or failed
         if (error || program.hasTerminated() && (!this.programsSchedules.containsKey(program.getName()) || this.programsRepeats.get(program.getName()) == 0)) {

@@ -172,6 +172,18 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterTryExceptStatement(MCCodeParser.TryExceptStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTryExceptStatement(MCCodeParser.TryExceptStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterWaitStatement(MCCodeParser.WaitStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -263,6 +275,18 @@ public class MCCodeBaseListener implements MCCodeListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitElse_(MCCodeParser.Else_Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExcept(MCCodeParser.ExceptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExcept(MCCodeParser.ExceptContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

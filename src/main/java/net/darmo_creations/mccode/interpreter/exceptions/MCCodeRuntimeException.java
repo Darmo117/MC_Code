@@ -7,6 +7,7 @@ import net.darmo_creations.mccode.interpreter.Scope;
  */
 public class MCCodeRuntimeException extends MCCodeException {
   private final Scope scope;
+  private final Object data;
   private final Object[] args;
   private int line = -1;
   private int column = -1;
@@ -15,12 +16,14 @@ public class MCCodeRuntimeException extends MCCodeException {
    * Create a runtime exception.
    *
    * @param scope          The scope this exception was thrown from.
+   * @param data           Optional data accessible to try-catch statement.
    * @param translationKey Unlocalized string of the error message.
    * @param args           Values to use to format the error message.
    */
-  public MCCodeRuntimeException(final Scope scope, final String translationKey, final Object... args) {
+  public MCCodeRuntimeException(final Scope scope, final Object data, final String translationKey, final Object... args) {
     super(translationKey);
     this.scope = scope;
+    this.data = data;
     this.args = args;
   }
 
@@ -28,18 +31,28 @@ public class MCCodeRuntimeException extends MCCodeException {
    * Create a runtime exception.
    *
    * @param scope          The scope this exception was thrown from.
+   * @param data           Optional data accessible to try-catch statement.
    * @param translationKey Unlocalized string of the error message.
    * @param args           Values to use to format the error message.
    * @param line           Line where this error occured on.
    * @param column         Column of the line this error occured on.
    */
-  public MCCodeRuntimeException(final Scope scope, final int line, final int column,
+  public MCCodeRuntimeException(final Scope scope, final Object data, final int line, final int column,
                                 final String translationKey, final Object... args) {
     super(translationKey);
     this.scope = scope;
+    this.data = data;
     this.args = args;
     this.line = line;
     this.column = column;
+  }
+
+  public String getName() {
+    return "error";
+  }
+
+  public Object getData() {
+    return this.data;
   }
 
   /**

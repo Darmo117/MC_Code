@@ -158,6 +158,18 @@ public interface MCCodeListener extends ParseTreeListener {
 	 */
 	void exitForLoopStatement(MCCodeParser.ForLoopStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code TryExceptStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterTryExceptStatement(MCCodeParser.TryExceptStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TryExceptStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitTryExceptStatement(MCCodeParser.TryExceptStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code WaitStatement}
 	 * labeled alternative in {@link MCCodeParser#statement}.
 	 * @param ctx the parse tree
@@ -249,6 +261,16 @@ public interface MCCodeListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitElse_(MCCodeParser.Else_Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link MCCodeParser#except}.
+	 * @param ctx the parse tree
+	 */
+	void enterExcept(MCCodeParser.ExceptContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MCCodeParser#except}.
+	 * @param ctx the parse tree
+	 */
+	void exitExcept(MCCodeParser.ExceptContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code BreakStatement}
 	 * labeled alternative in {@link MCCodeParser#loop_stmt}.

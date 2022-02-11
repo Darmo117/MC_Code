@@ -18,10 +18,12 @@ import java.util.stream.Collectors;
 public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
   private final NodeVisitor nodeVisitor;
   private final IfVisitor ifVisitor;
+  private final ExceptVisitor exceptVisitor;
 
   public StatementVisitor() {
     this.nodeVisitor = new NodeVisitor();
     this.ifVisitor = new IfVisitor(this, this.nodeVisitor);
+    this.exceptVisitor = new ExceptVisitor(this);
   }
 
   @Override
@@ -172,6 +174,18 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
         ctx.start.getLine(),
         ctx.start.getCharPositionInLine() + 1
     );
+  }
+
+  @Override
+  public Statement visitTryExceptStatement(MCCodeParser.TryExceptStatementContext ctx) {
+    List<Statement> tryStatements = ctx.statement().stream()
+        .map(super::visit)
+        .collect(Collectors.toList());
+    Pair<String, List<Statement>> p = this.exceptVisitor.visit(ctx.except());
+    String errorVariableName = p.getLeft();
+    List<Statement> exceptStatements = p.getRight();
+    return new TryExceptStatement(tryStatements, exceptStatements, errorVariableName,
+        ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1);
   }
 
   @Override

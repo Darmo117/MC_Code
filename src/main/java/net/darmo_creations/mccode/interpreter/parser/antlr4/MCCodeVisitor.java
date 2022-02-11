@@ -99,6 +99,13 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitForLoopStatement(MCCodeParser.ForLoopStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code TryExceptStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTryExceptStatement(MCCodeParser.TryExceptStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code WaitStatement}
 	 * labeled alternative in {@link MCCodeParser#statement}.
 	 * @param ctx the parse tree
@@ -152,6 +159,12 @@ public interface MCCodeVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitElse_(MCCodeParser.Else_Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link MCCodeParser#except}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExcept(MCCodeParser.ExceptContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code BreakStatement}
 	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
