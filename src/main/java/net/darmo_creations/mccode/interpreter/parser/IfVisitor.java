@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Utility visitor for if-statement branches.
+ * Utility visitor for elseif-else branches of 'if' statement.
  */
 public class IfVisitor extends MCCodeBaseVisitor<Pair<Node, List<Statement>>> {
   private final StatementVisitor statementVisitor;

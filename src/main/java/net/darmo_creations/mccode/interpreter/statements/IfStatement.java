@@ -104,7 +104,8 @@ public class IfStatement extends Statement {
     while (this.ip < statements.size()) {
       Statement statement = statements.get(this.ip);
       StatementAction action = statement.execute(scope);
-      if (action == StatementAction.EXIT_FUNCTION || action == StatementAction.WAIT) {
+      if (action == StatementAction.EXIT_FUNCTION || action == StatementAction.WAIT
+          || action == StatementAction.EXIT_LOOP || action == StatementAction.CONTINUE_LOOP) {
         if (action == StatementAction.WAIT) {
           if (statement instanceof WaitStatement) {
             this.ip++;
