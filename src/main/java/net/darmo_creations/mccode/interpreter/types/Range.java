@@ -18,11 +18,14 @@ public class Range implements Iterable<Long>, Cloneable {
    *
    * @param start Range’s start value (included).
    * @param end   Range’s end value (excluded).
-   * @param step  Range’s step.
+   * @param step  Range’s step; cannot be 0.
    */
   public Range(final long start, final long end, final long step) {
     this.start = start;
     this.end = end;
+    if (step == 0) {
+      throw new IllegalArgumentException("range step cannot be 0");
+    }
     this.step = step;
   }
 
@@ -54,7 +57,8 @@ public class Range implements Iterable<Long>, Cloneable {
 
       @Override
       public boolean hasNext() {
-        return this.i < Range.this.end - Range.this.step + 1;
+        return Range.this.step > 0 && this.i < Range.this.end - Range.this.step + 1
+            || Range.this.step < 0 && this.i > Range.this.end + Range.this.step + 1;
       }
 
       @Override
