@@ -69,3 +69,4 @@ mccode.interpreter.error.schedule_in_module=Schedule statement not allowed in mo
 mccode.interpreter.error.duplicate_import=Module %s imported twice!
 mccode.interpreter.error.invalid_operator_operands_number=Operator %s expected %d arguments, got %d!
 mccode.interpreter.error.user_exception=Program raised an error: %s
+mccode.interpreter.error.random_invalid_bounds=Invalid bounds: %s and %s!

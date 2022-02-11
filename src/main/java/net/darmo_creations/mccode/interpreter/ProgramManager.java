@@ -788,9 +788,12 @@ public class ProgramManager implements NBTDeserializable {
     declareBuiltinFunction(MaxFunction.class);
     declareBuiltinFunction(MinFunction.class);
     declareBuiltinFunction(PrintFunction.class);
+    declareBuiltinFunction(RandomFloatFunction.class);
+    declareBuiltinFunction(RandomIntFunction.class);
     declareBuiltinFunction(RangeFunction.class);
     declareBuiltinFunction(ReversedFunction.class);
     declareBuiltinFunction(RoundFunction.class);
+    declareBuiltinFunction(SetRandomSeedFunction.class);
     declareBuiltinFunction(SinFunction.class);
     declareBuiltinFunction(SortedFunction.class);
     declareBuiltinFunction(SqrtFunction.class);

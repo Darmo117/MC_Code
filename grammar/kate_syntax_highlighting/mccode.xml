@@ -114,6 +114,9 @@
       <item>reversed</item>
       <item>print</item>
       <item>error</item>
+      <item>set_random_seed</item>
+      <item>random_int</item>
+      <item>random_float</item>
     </list>
     <contexts>
       <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text">

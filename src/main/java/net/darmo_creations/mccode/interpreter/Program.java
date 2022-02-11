@@ -49,6 +49,7 @@ public class Program {
    * Instruction pointer.
    */
   private int ip;
+  private final Random rng = new Random();
 
   private final List<Object> args;
 
@@ -216,6 +217,26 @@ public class Program {
    */
   public ProgramManager getProgramManager() {
     return this.programManager;
+  }
+
+  /**
+   * Return the random number generator for this program.
+   */
+  public Random getRNG() {
+    return this.rng;
+  }
+
+  /**
+   * Set the seed for the random number generator of this program.
+   * <p>
+   * <strong>Notice</strong>: The seed is not saved when this program is serialized as NBT
+   * and is thus lost when deserializing. Consequently, programs should not rely on fixed
+   * seeds outside of debugging.
+   *
+   * @param seed The seed.
+   */
+  public void setRNGSeed(long seed) {
+    this.rng.setSeed(seed);
   }
 
   /**
