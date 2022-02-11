@@ -111,19 +111,21 @@ public class IfStatement extends Statement {
             this.ip++;
           }
         } else {
-          this.branchIndex = -1;
-          this.ip = 0;
+          this.reset();
         }
         return action;
       } else {
         this.ip++;
       }
     }
-
-    this.branchIndex = -1;
-    this.ip = 0;
+    this.reset();
 
     return StatementAction.PROCEED;
+  }
+
+  private void reset() {
+    this.branchIndex = -1;
+    this.ip = 0;
   }
 
   @Override

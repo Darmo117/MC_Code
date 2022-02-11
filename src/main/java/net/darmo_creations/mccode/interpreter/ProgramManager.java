@@ -14,7 +14,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.ISaveHandler;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -30,8 +29,6 @@ import java.util.stream.Collectors;
  * The state of program managers can be saved and restored.
  */
 public class ProgramManager implements NBTDeserializable {
-  public static final String DATA_NAME = MCCode.MOD_ID + "_program_manager";
-
   private static final Map<String, Type<?>> TYPES = new HashMap<>();
   private static final Map<Class<?>, Type<?>> WRAPPED_TYPES = new HashMap<>();
   private static final Map<String, BuiltinFunction> FUNCTIONS = new HashMap<>();
@@ -43,6 +40,7 @@ public class ProgramManager implements NBTDeserializable {
   public static final String REPEAT_AMOUNT_KEY = "RepeatAmount";
   public static final String RUNNING_KEY = "Running";
 
+  private final File dataDir;
   private final File programsDir;
   private final World world;
   private final Map<String, Program> programs;
@@ -63,20 +61,29 @@ public class ProgramManager implements NBTDeserializable {
     this.runningPrograms = new HashMap<>();
     this.lastTick = -1;
     this.world = world;
-    this.programsDir = Paths.get(this.world.getSaveHandler().getWorldDirectory().getAbsolutePath(), "data", "mccode_programs").toFile();
+    this.dataDir = new File(this.world.getSaveHandler().getWorldDirectory().getAbsolutePath(), "data");
+    this.programsDir = new File(this.dataDir, "mccode_programs");
     this.loadFromFile();
+  }
+
+  /**
+   * Return the dimension-specific save file path.
+   */
+  private File getSaveFile() {
+    return new File(
+        this.dataDir,
+        String.format("%s_program_manager_%d.dat", MCCode.MOD_ID, this.world.provider.getDimension())
+    );
   }
 
   /**
    * Load programs from disk.
    */
   private void loadFromFile() {
-    ISaveHandler saveHandler = this.world.getSaveHandler();
-    File file = saveHandler.getMapFileFromName(DATA_NAME);
-    //noinspection ConstantConditions
-    if (file != null && file.exists()) {
+    File file = this.getSaveFile();
+    if (file.exists()) {
       try (FileInputStream fileinputstream = new FileInputStream(file)) {
-        this.readFromNBT(CompressedStreamTools.readCompressed(fileinputstream).getCompoundTag("data"));
+        this.readFromNBT(CompressedStreamTools.readCompressed(fileinputstream));
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -87,16 +94,10 @@ public class ProgramManager implements NBTDeserializable {
    * Save this manager’s programs to disk.
    */
   public void save() {
-    File file = this.world.getSaveHandler().getMapFileFromName(ProgramManager.DATA_NAME);
-    //noinspection ConstantConditions
-    if (file != null) {
-      NBTTagCompound nbttagcompound = new NBTTagCompound();
-      nbttagcompound.setTag("data", this.writeToNBT());
-      try (FileOutputStream fileoutputstream = new FileOutputStream(file)) {
-        CompressedStreamTools.writeCompressed(nbttagcompound, fileoutputstream);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    try (FileOutputStream fileoutputstream = new FileOutputStream(this.getSaveFile())) {
+      CompressedStreamTools.writeCompressed(this.writeToNBT(), fileoutputstream);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 

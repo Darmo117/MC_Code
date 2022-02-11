@@ -88,7 +88,6 @@ public class ForLoopStatement extends Statement {
     Object valuesObject = this.values.evaluate(scope);
     Type<?> type = ProgramManager.getTypeForValue(valuesObject);
     Iterator<?> iterator = (Iterator<?>) type.applyOperator(scope, UnaryOperator.ITERATE, valuesObject, null, null, false);
-    boolean declareVariable = !this.paused && !this.resumeAfterLoad;
 
     // Skip elements already iterated over
     for (int i = 0; i < this.iteratorIndex; i++) {
@@ -98,26 +97,19 @@ public class ForLoopStatement extends Statement {
     exit:
     // Do not test again if loop was paused by a "wait" statement
     while (this.paused || this.resumeAfterLoad || iterator.hasNext()) {
-      // Do not re-declare or re-set variable if loop was paused by a "wait" statement
-      if (this.ip == 0) {
-        if (declareVariable) {
-          scope.declareVariable(new Variable(this.variableName, false, false, false, true, iterator.next()));
-          declareVariable = false;
-        } else {
-          Object next = iterator.next();
-          scope.setVariable(this.variableName, next, false);
-        }
+      // If first statement returns WAIT, "ip" is not yet updated -> do not recreate variable
+      if (this.ip == 0 && !scope.isVariableDefined(this.variableName)) {
+        // Variable is deleted and recreated on each iteration
+        scope.declareVariable(new Variable(this.variableName, false, false, false, true, iterator.next()));
         this.iteratorIndex++;
-      } else {
-        this.paused = false;
-        this.resumeAfterLoad = false;
       }
+      this.paused = false;
+      this.resumeAfterLoad = false;
 
       while (this.ip < this.statements.size()) {
         Statement statement = this.statements.get(this.ip);
         StatementAction action = statement.execute(scope);
         if (action == StatementAction.EXIT_LOOP) {
-          this.ip = 0;
           break exit;
         } else if (action == StatementAction.CONTINUE_LOOP) {
           break;
@@ -128,20 +120,29 @@ public class ForLoopStatement extends Statement {
               this.ip++;
             }
           } else {
-            this.ip = 0;
+            this.reset(scope);
           }
           return action;
         } else {
           this.ip++;
         }
       }
+      if (scope.isVariableDefined(this.variableName)) {
+        scope.deleteVariable(this.variableName, false);
+      }
       this.ip = 0;
     }
+    this.reset(scope);
+
+    return StatementAction.PROCEED;
+  }
+
+  private void reset(Scope scope) {
+    this.ip = 0;
+    this.iteratorIndex = 0;
     if (scope.isVariableDefined(this.variableName)) {
       scope.deleteVariable(this.variableName, false);
     }
-
-    return StatementAction.PROCEED;
   }
 
   @Override
