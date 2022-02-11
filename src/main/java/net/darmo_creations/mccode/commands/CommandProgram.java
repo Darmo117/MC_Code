@@ -17,6 +17,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -363,8 +364,12 @@ public class CommandProgram extends CommandBase {
         } else if (opt != Option.LIST) {
           ProgramManager pm = MCCode.INSTANCE.PROGRAM_MANAGERS.get(sender.getEntityWorld());
           if (opt == Option.LOAD) {
-            // TODO return list of .mccode files in data directory
-            return getListOfStringsMatchingLastWord(args, "");
+            File dir = pm.getProgramsDirectory();
+            //noinspection ConstantConditions
+            List<String> names = Arrays.stream(dir.listFiles(f -> f.getName().endsWith(".mccode")))
+                .map(f -> f.getName().substring(0, f.getName().indexOf('.')))
+                .collect(Collectors.toList());
+            return getListOfStringsMatchingLastWord(args, names);
           } else {
             return getListOfStringsMatchingLastWord(args, pm.getLoadedPrograms());
           }
@@ -377,7 +382,6 @@ public class CommandProgram extends CommandBase {
       if (option.isPresent()) {
         Option opt = option.get();
         if (opt == Option.DOC) {
-          // TODO return list of available types, functions, properties and methods (depending on selected option)
           Optional<DocType> docType = DocType.fromString(args[1]);
           if (docType.isPresent()) {
             DocType t = docType.get();

@@ -318,6 +318,13 @@ public class ProgramManager implements NBTDeserializable {
     return Optional.ofNullable(this.programs.get(name));
   }
 
+  /**
+   * Return the directory containing program files.
+   */
+  public File getProgramsDirectory() {
+    return this.programsDir;
+  }
+
   @Override
   public NBTTagCompound writeToNBT() {
     NBTTagCompound tag = new NBTTagCompound();
