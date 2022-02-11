@@ -99,10 +99,12 @@ statement:
   | DELETE name=IDENT SEMIC                          # DeleteStatement // ID: 20
   | DELETE target=expr LBRACK key=expr RBRACK SEMIC  # DeleteItemStatement // ID: 21
   | IF cond=expr THEN statement* (elseif)* (else_)? END # IfStatement // ID: 40
-  | WHILE cond=expr DO loop_stmt* END                   # WhileLoopStatement // ID: 41
-  | FOR variable=IDENT IN range=expr DO loop_stmt* END  # ForLoopStatement // ID: 42
+  | WHILE cond=expr DO statement* END                   # WhileLoopStatement // ID: 41
+  | FOR variable=IDENT IN range=expr DO statement* END  # ForLoopStatement // ID: 42
   | TRY statement* except END                           # TryExceptStatement // ID: 43
-  | WAIT expr SEMIC               # WaitStatement // ID: 50 Raises an error if present in a function
+  | WAIT expr SEMIC # WaitStatement // ID: 50 Raises an error if present in a function
+  | BREAK SEMIC     # BreakStatement // ID: 60 Raises an error if outside of a loop
+  | CONTINUE SEMIC  # ContinueStatement // ID: 61 Raises an error if outside of a loop
   | RETURN (returned=expr)? SEMIC # ReturnStatement // ID: 62 Raises an error if outside of a function
   | name=IDENT operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC                         # VariableAssignmentStatement // ID: 12
   | target=expr LBRACK key=expr RBRACK operator=(ASSIGN | PLUSA | MINUSA | MULA | DIVA | INTDIVA | MODA | POWERA) value=expr SEMIC # SetItemStatement // ID: 13
@@ -110,18 +112,12 @@ statement:
   | expr SEMIC # ExpressionStatement // ID: 30
 ;
 
-// Split if-elsif-else statement for easier parsing
+// Split if-elseif-else statement for easier parsing
 elseif: ELIF cond=expr THEN statement*;
 else_: ELSE statement*;
 
 // Split try-except statement for easier parsing
 except: EXCEPT IDENT THEN statement*;
-
-loop_stmt:
-    BREAK SEMIC    # BreakStatement // ID: 60
-  | CONTINUE SEMIC # ContinueStatement // ID: 61
-  | statement      # Statement_
-;
 
 expr:
     LPAREN exp=expr RPAREN # Parentheses

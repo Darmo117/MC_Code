@@ -32,11 +32,6 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
   }
 
   @Override
-  public Statement visitStatement_(MCCodeParser.Statement_Context ctx) {
-    return super.visit(ctx.statement());
-  }
-
-  @Override
   public Statement visitImport_statement(MCCodeParser.Import_statementContext ctx) {
     String alias = null;
     List<String> path = ctx.IDENT().stream().map(TerminalNode::getText).collect(Collectors.toList());
@@ -159,7 +154,7 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
   public Statement visitWhileLoopStatement(MCCodeParser.WhileLoopStatementContext ctx) {
     return new WhileLoopStatement(
         this.nodeVisitor.visit(ctx.cond),
-        ctx.loop_stmt().stream().map(super::visit).collect(Collectors.toList()),
+        ctx.statement().stream().map(super::visit).collect(Collectors.toList()),
         ctx.start.getLine(),
         ctx.start.getCharPositionInLine() + 1
     );
@@ -170,7 +165,7 @@ public class StatementVisitor extends MCCodeBaseVisitor<Statement> {
     return new ForLoopStatement(
         ctx.variable.getText(),
         this.nodeVisitor.visit(ctx.range),
-        ctx.loop_stmt().stream().map(super::visit).collect(Collectors.toList()),
+        ctx.statement().stream().map(super::visit).collect(Collectors.toList()),
         ctx.start.getLine(),
         ctx.start.getCharPositionInLine() + 1
     );

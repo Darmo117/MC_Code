@@ -95,7 +95,7 @@ public abstract class ProgramElement implements NBTSerializable {
       throws MCCodeRuntimeException, SyntaxErrorException {
     try {
       return supplier.get();
-    } catch (SyntaxErrorException e) {
+    } catch (SyntaxErrorException | WrappedException e) {
       throw e; // Explicit rethrow to not get caught by last catch clause
     } catch (MCCodeRuntimeException e) {
       if (e.getLine() == -1 || e.getColumn() == -1) {

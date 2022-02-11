@@ -111,6 +111,7 @@ public class TryExceptStatement extends Statement {
             this.ip++;
           }
         } else {
+          this.inExcept = false;
           this.ip = 0;
         }
         return action;
@@ -118,6 +119,7 @@ public class TryExceptStatement extends Statement {
         this.ip++;
       }
     }
+
     return StatementAction.PROCEED;
   }
 

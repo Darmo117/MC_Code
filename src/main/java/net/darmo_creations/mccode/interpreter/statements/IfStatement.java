@@ -111,6 +111,7 @@ public class IfStatement extends Statement {
             this.ip++;
           }
         } else {
+          this.branchIndex = -1;
           this.ip = 0;
         }
         return action;

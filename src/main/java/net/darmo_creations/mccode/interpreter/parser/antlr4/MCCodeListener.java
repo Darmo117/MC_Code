@@ -182,6 +182,30 @@ public interface MCCodeListener extends ParseTreeListener {
 	 */
 	void exitWaitStatement(MCCodeParser.WaitStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code BreakStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterBreakStatement(MCCodeParser.BreakStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code BreakStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitBreakStatement(MCCodeParser.BreakStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ContinueStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterContinueStatement(MCCodeParser.ContinueStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ContinueStatement}
+	 * labeled alternative in {@link MCCodeParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitContinueStatement(MCCodeParser.ContinueStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code ReturnStatement}
 	 * labeled alternative in {@link MCCodeParser#statement}.
 	 * @param ctx the parse tree
@@ -271,42 +295,6 @@ public interface MCCodeListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExcept(MCCodeParser.ExceptContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code BreakStatement}
-	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterBreakStatement(MCCodeParser.BreakStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code BreakStatement}
-	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitBreakStatement(MCCodeParser.BreakStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ContinueStatement}
-	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterContinueStatement(MCCodeParser.ContinueStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ContinueStatement}
-	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitContinueStatement(MCCodeParser.ContinueStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Statement_}
-	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterStatement_(MCCodeParser.Statement_Context ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Statement_}
-	 * labeled alternative in {@link MCCodeParser#loop_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitStatement_(MCCodeParser.Statement_Context ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Variable}
 	 * labeled alternative in {@link MCCodeParser#expr}.

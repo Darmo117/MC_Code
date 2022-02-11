@@ -234,14 +234,14 @@ public class Program {
         Statement statement = this.statements.get(this.ip);
         StatementAction action = statement.execute(this.scope);
         if (action == StatementAction.EXIT_FUNCTION) {
-          throw new SyntaxErrorException(statement.getLine(), statement.getColumn(), "mccode.interpreter.error.return_outside_function"
-          );
+          throw new SyntaxErrorException(statement.getLine(), statement.getColumn(),
+              "mccode.interpreter.error.return_outside_function");
         } else if (action == StatementAction.EXIT_LOOP) {
-          throw new SyntaxErrorException(statement.getLine(), statement.getColumn(), "mccode.interpreter.error.break_outside_loop"
-          );
+          throw new SyntaxErrorException(statement.getLine(), statement.getColumn(),
+              "mccode.interpreter.error.break_outside_loop");
         } else if (action == StatementAction.CONTINUE_LOOP) {
-          throw new SyntaxErrorException(statement.getLine(), statement.getColumn(), "mccode.interpreter.error.continue_outside_loop"
-          );
+          throw new SyntaxErrorException(statement.getLine(), statement.getColumn(),
+              "mccode.interpreter.error.continue_outside_loop");
         } else if (action == StatementAction.WAIT) {
           if (this.isModule) {
             throw new MCCodeRuntimeException(this.scope, null, statement.getLine(), statement.getColumn(),

@@ -75,10 +75,15 @@ public class UserFunction extends Function {
       StatementAction action = statement.execute(scope);
       if (action == StatementAction.EXIT_FUNCTION) {
         break;
-      }
-      if (action == StatementAction.WAIT) {
-        throw new SyntaxErrorException(statement.getLine(), statement.getColumn(), "mccode.interpreter.error.wait_in_function"
-        );
+      } else if (action == StatementAction.EXIT_LOOP) {
+        throw new SyntaxErrorException(statement.getLine(), statement.getColumn(),
+            "mccode.interpreter.error.break_outside_loop");
+      } else if (action == StatementAction.CONTINUE_LOOP) {
+        throw new SyntaxErrorException(statement.getLine(), statement.getColumn(),
+            "mccode.interpreter.error.continue_outside_loop");
+      } else if (action == StatementAction.WAIT) {
+        throw new SyntaxErrorException(statement.getLine(), statement.getColumn(),
+            "mccode.interpreter.error.wait_in_function");
       }
       this.ip++;
     }
