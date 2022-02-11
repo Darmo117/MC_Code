@@ -1,7 +1,7 @@
 [
   {
     "modid": "mccode",
-    "name": "MC_Code",
+    "name": "MC Code",
     "description": "A mod that adds the possiblity to write scripts using a dedicated scripting language. A bit like vanilla functions but better.",
     "version": "${version}",
     "mcversion": "${mcversion}",
