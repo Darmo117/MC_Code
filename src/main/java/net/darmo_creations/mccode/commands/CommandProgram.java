@@ -195,10 +195,15 @@ public class CommandProgram extends CommandBase {
     notifyCommandListener(sender, this, "commands.program.feedback.program_paused", programName);
   }
 
-  private void listPrograms(ICommandSender sender) {
+  private void listPrograms(ICommandSender sender) throws CommandException {
     ProgramManager pm = MCCode.INSTANCE.PROGRAM_MANAGERS.get(sender.getEntityWorld());
-    String list = String.join(", ", pm.getLoadedPrograms());
-    notifyCommandListener(sender, this, "commands.program.feedback.loaded_programs", list);
+    List<String> loadedPrograms = pm.getLoadedPrograms();
+    if (loadedPrograms.isEmpty()) {
+      throw new CommandException("commands.program.error.no_loaded_programs");
+    } else {
+      notifyCommandListener(sender, this, "commands.program.feedback.loaded_programs",
+          String.join(", ", loadedPrograms));
+    }
   }
 
   private void getVariableValue(ICommandSender sender, String[] args) throws CommandException {
