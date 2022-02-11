@@ -62,7 +62,7 @@ public class UnsupportedOperatorException extends MCCodeRuntimeException {
     MCMap map = new MCMap();
     map.put("operator", operator.getSymbol());
     for (int i = 0; i < types.length; i++) {
-      map.put("type_" + i, types[i].getName());
+      map.put("type_" + (i + 1), types[i].getName());
     }
     return map;
   }
