@@ -62,11 +62,7 @@ public class MapType extends Type<MCMap> {
   @Override
   protected Object __get_item__(final Scope scope, final MCMap self, final Object key) {
     if (key instanceof String) {
-      String k = (String) key;
-      if (!self.containsKey(k)) {
-        throw new NoSuchKeyException(scope, k);
-      }
-      return self.get(k);
+      return self.get((String) key);
     }
     return super.__get_item__(scope, self, key);
   }
