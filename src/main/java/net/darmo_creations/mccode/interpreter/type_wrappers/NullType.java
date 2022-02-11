@@ -32,7 +32,7 @@ public class NullType extends Type<Void> {
   @Override
   protected Object __add__(Scope scope, Void self, Object o, boolean inPlace) {
     if (o instanceof String) {
-      return "null" + o;
+      return this.__str__(self) + o;
     }
     return super.__add__(scope, self, o, inPlace);
   }

@@ -32,7 +32,7 @@ public class BooleanType extends Type<Boolean> {
   @Override
   protected Object __add__(final Scope scope, final Boolean self, final Object o, boolean inPlace) {
     if (o instanceof String) {
-      return self.toString() + o;
+      return this.__str__(self) + o;
     }
     IntType intType = ProgramManager.getTypeInstance(IntType.class);
     return intType.__add__(scope, intType.implicitCast(scope, self), o, inPlace);

@@ -75,7 +75,7 @@ public class SetType extends Type<MCSet> {
       }
       return this.add(scope, new MCSet(self), other, false);
     } else if (o instanceof String) {
-      return self.toString() + o;
+      return this.__str__(self) + o;
     }
     return super.__add__(scope, self, o, inPlace);
   }

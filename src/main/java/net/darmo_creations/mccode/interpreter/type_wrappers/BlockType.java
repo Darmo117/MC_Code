@@ -37,6 +37,14 @@ public class BlockType extends Type<Block> {
   }
 
   @Override
+  protected Object __add__(final Scope scope, final Block self, final Object o, boolean inPlace) {
+    if (o instanceof String) {
+      return this.__str__(self) + o;
+    }
+    return super.__add__(scope, self, o, inPlace);
+  }
+
+  @Override
   protected Object __eq__(final Scope scope, final Block self, final Object o) {
     if (!(o instanceof Block)) {
       return false;

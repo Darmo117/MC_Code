@@ -46,6 +46,14 @@ public class ItemType extends Type<Item> {
   }
 
   @Override
+  protected Object __add__(final Scope scope, final Item self, final Object o, final boolean inPlace) {
+    if (o instanceof String) {
+      return this.__str__(self) + o;
+    }
+    return super.__add__(scope, self, o, inPlace);
+  }
+
+  @Override
   protected Object __eq__(final Scope scope, final Item self, final Object o) {
     if (!(o instanceof Item)) {
       return false;

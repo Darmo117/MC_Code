@@ -102,7 +102,7 @@ public class MapType extends Type<MCMap> {
       }
       return this.add(scope, new MCMap(self), other, false);
     } else if (o instanceof String) {
-      return self.toString() + o;
+      return this.__str__(self) + o;
     }
     return super.__add__(scope, self, o, inPlace);
   }

@@ -137,7 +137,7 @@ public class PosType extends Type<BlockPos> {
     if (o instanceof BlockPos) {
       return self.add(ProgramManager.getTypeInstance(PosType.class).implicitCast(scope, o));
     } else if (o instanceof String) {
-      return self.toString() + o;
+      return this.__str__(self) + o;
     }
     return super.__add__(scope, self, o, inPlace);
   }

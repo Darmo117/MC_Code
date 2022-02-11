@@ -62,6 +62,14 @@ public class ModuleType extends Type<Program> {
   }
 
   @Override
+  protected Object __add__(final Scope scope, final Program self, final Object o, final boolean inPlace) {
+    if (o instanceof String) {
+      return this.__str__(self) + o;
+    }
+    return super.__add__(scope, self, o, inPlace);
+  }
+
+  @Override
   protected NBTTagCompound _writeToNBT(final Program self) {
     NBTTagCompound tag = super._writeToNBT(self);
     tag.setTag(MODULE_KEY, self.writeToNBT());

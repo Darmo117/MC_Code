@@ -45,6 +45,14 @@ public class ResourceLocationType extends Type<ResourceLocation> {
   }
 
   @Override
+  protected Object __add__(final Scope scope, final ResourceLocation self, final Object o, final boolean inPlace) {
+    if (o instanceof String) {
+      return this.__str__(self) + o;
+    }
+    return super.__add__(scope, self, o, inPlace);
+  }
+
+  @Override
   protected Object __eq__(final Scope scope, final ResourceLocation self, final Object o) {
     if (o instanceof ResourceLocation) {
       return self.equals(o);

@@ -149,7 +149,7 @@ public class ListType extends Type<MCList> {
       }
       return this.add(scope, new MCList(self), other, false);
     } else if (o instanceof String) {
-      return self.toString() + o;
+      return this.__str__(self) + o;
     }
     return super.__add__(scope, self, o, inPlace);
   }

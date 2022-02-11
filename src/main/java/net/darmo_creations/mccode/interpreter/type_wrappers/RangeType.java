@@ -38,7 +38,7 @@ public class RangeType extends Type<Range> {
   @Override
   protected Object __add__(final Scope scope, final Range self, final Object o, final boolean inPlace) {
     if (o instanceof String) {
-      return self.toString() + o;
+      return this.__str__(self) + o;
     }
     return super.__add__(scope, self, o, inPlace);
   }

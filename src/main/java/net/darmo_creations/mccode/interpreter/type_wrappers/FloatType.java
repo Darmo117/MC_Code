@@ -42,7 +42,7 @@ public class FloatType extends Type<Double> {
     } else if (o instanceof Boolean) {
       return self + ((Boolean) o ? 1 : 0);
     } else if (o instanceof String) {
-      return self.toString() + o;
+      return this.__str__(self) + o;
     }
     return super.__add__(scope, self, o, inPlace);
   }

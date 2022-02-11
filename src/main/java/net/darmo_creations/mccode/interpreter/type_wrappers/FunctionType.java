@@ -39,6 +39,14 @@ public class FunctionType extends Type<Function> {
   }
 
   @Override
+  protected Object __add__(final Scope scope, final Function self, final Object o, final boolean inPlace) {
+    if (o instanceof String) {
+      return this.__str__(self) + o;
+    }
+    return super.__add__(scope, self, o, inPlace);
+  }
+
+  @Override
   protected NBTTagCompound _writeToNBT(final Function self) {
     NBTTagCompound tag = super._writeToNBT(self);
     if (self instanceof BuiltinFunction) {

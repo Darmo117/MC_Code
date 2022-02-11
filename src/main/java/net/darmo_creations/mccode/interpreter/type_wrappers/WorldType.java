@@ -1400,6 +1400,14 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Override
+  protected Object __add__(final Scope scope, final WorldProxy self, final Object o, final boolean inPlace) {
+    if (o instanceof String) {
+      return this.__str__(self) + o;
+    }
+    return super.__add__(scope, self, o, inPlace);
+  }
+
+  @Override
   protected String __str__(final WorldProxy self) {
     return "<this world>";
   }
