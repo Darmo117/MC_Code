@@ -704,7 +704,7 @@ public class ProgramManager implements NBTDeserializable {
           paramName = Utils.replaceAll(paramName, Pattern.compile("([A-Z])"), m -> "_" + m.group().toLowerCase());
           sb.append(paramsTypes.get(i).getName()).append(' ').append(paramName);
         }
-        String doc = "Signature: " + String.format("%s.%s(%s) -> %s", typeName, methodName, sb, returnType.getName());
+        String doc = "§nSignature§r: " + String.format("%s.%s(%s) -> %s", typeName, methodName, sb, returnType.getName());
         if (method.isAnnotationPresent(Doc.class)) {
           doc = method.getAnnotation(Doc.class).value() + "\n" + doc;
         }
@@ -842,7 +842,7 @@ public class ProgramManager implements NBTDeserializable {
       }
       sb.append(parameters.get(i).getType().getName()).append(' ').append(parameters.get(i).getName());
     }
-    String doc = "Signature: " + String.format("%s(%s) -> %s", function.getName(), sb, function.getReturnType().getName());
+    String doc = "§nSignature§r: " + String.format("%s(%s) -> %s", function.getName(), sb, function.getReturnType().getName());
     if (functionClass.isAnnotationPresent(Doc.class)) {
       doc = functionClass.getAnnotation(Doc.class).value() + "\n" + doc;
     }

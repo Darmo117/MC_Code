@@ -15,7 +15,10 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.io.File;
 import java.util.Arrays;
@@ -351,7 +354,8 @@ public class CommandProgram extends CommandBase {
         throw new WrongUsageException(this.getUsage(sender));
     }
 
-    notifyCommandListener(sender, this, "commands.program.feedback.doc_" + docType.name().toLowerCase(), translationArgs);
+    sender.sendMessage(new TextComponentTranslation("commands.program.feedback.doc_" + docType.name().toLowerCase(), translationArgs)
+        .setStyle(new Style().setColor(TextFormatting.GREEN)));
     sender.sendMessage(new TextComponentString(doc));
   }
 
