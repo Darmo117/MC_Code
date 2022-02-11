@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -698,7 +699,10 @@ public class ProgramManager implements NBTDeserializable {
           if (i > 0) {
             sb.append(", ");
           }
-          sb.append(paramsTypes.get(i).getName()).append(' ').append(parameters[i + 2].getName());
+          String paramName = parameters[i + 2].getName();
+          // Convert name to snake_case
+          paramName = Utils.replaceAll(paramName, Pattern.compile("([A-Z])"), m -> "_" + m.group().toLowerCase());
+          sb.append(paramsTypes.get(i).getName()).append(' ').append(paramName);
         }
         String doc = "Signature: " + String.format("%s.%s(%s) -> %s", typeName, methodName, sb, returnType.getName());
         if (method.isAnnotationPresent(Doc.class)) {

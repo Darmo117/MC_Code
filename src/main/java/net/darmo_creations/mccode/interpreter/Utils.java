@@ -7,6 +7,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utility functions for interpreter-related classes.
@@ -69,6 +72,25 @@ public final class Utils {
    */
   public static String unescapeString(final String s) {
     return s.substring(1, s.length() - 1).replaceAll("\\\\([\"\\\\])", "$1").replace("\\n", "\n");
+  }
+
+  /**
+   * Replaces all substrings that match the given pattern by the values returned by the specified callback.
+   *
+   * @param input    The target string.
+   * @param regex    The pattern to apply.
+   * @param callback A function that is called for each pattern match and returns a replacement string.
+   * @return The resulting string.
+   */
+  public static String replaceAll(String input, Pattern regex, Function<Matcher, String> callback) {
+    StringBuffer resultString = new StringBuffer();
+    Matcher regexMatcher = regex.matcher(input);
+    while (regexMatcher.find()) {
+      regexMatcher.appendReplacement(resultString, callback.apply(regexMatcher));
+    }
+    regexMatcher.appendTail(resultString);
+
+    return resultString.toString();
   }
 
   /**
