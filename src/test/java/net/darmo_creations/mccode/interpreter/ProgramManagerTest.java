@@ -22,7 +22,7 @@ class ProgramManagerTest {
 
   @BeforeEach
   void setUp() {
-    this.pm = new ProgramManager("pm");
+    this.pm = new ProgramManager(null);
   }
 
   @Test
@@ -186,12 +186,12 @@ class ProgramManagerTest {
     programs.appendTag(programTag);
     tag.setTag(ProgramManager.PROGRAMS_KEY, programs);
     this.pm.loadProgram(p);
-    assertEquals(tag, this.pm.writeToNBT(new NBTTagCompound()));
+    assertEquals(tag, this.pm.writeToNBT());
   }
 
   @Test
   void readFromNBT() {
-    ProgramManager pm = new ProgramManager("pm");
+    ProgramManager pm = new ProgramManager(null);
     Program p = new Program("p", Collections.emptyList(), 1L, 2L, pm);
     NBTTagCompound tag = new NBTTagCompound();
     NBTTagList programs = new NBTTagList();
@@ -203,8 +203,8 @@ class ProgramManagerTest {
     programs.appendTag(programTag);
     tag.setTag(ProgramManager.PROGRAMS_KEY, programs);
     pm.loadProgram(p);
-    ProgramManager pm2 = new ProgramManager("pm");
+    ProgramManager pm2 = new ProgramManager(null);
     pm2.readFromNBT(tag);
-    assertEquals(pm.writeToNBT(new NBTTagCompound()), pm2.writeToNBT(new NBTTagCompound()));
+    assertEquals(pm.writeToNBT(), pm2.writeToNBT());
   }
 }

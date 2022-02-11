@@ -9,7 +9,7 @@ public abstract class TestBase {
 
   @BeforeEach
   public void setUp() {
-    ProgramManager pm = new ProgramManager("testPM");
+    ProgramManager pm = new ProgramManager(null);
     this.p = new Program("test", Collections.emptyList(), null, null, pm);
   }
 }

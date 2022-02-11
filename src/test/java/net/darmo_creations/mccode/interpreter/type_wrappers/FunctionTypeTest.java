@@ -1,9 +1,6 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
-import net.darmo_creations.mccode.interpreter.ProgramManager;
-import net.darmo_creations.mccode.interpreter.Scope;
-import net.darmo_creations.mccode.interpreter.SetupProgramManager;
-import net.darmo_creations.mccode.interpreter.Variable;
+import net.darmo_creations.mccode.interpreter.*;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.IntLiteralNode;
 import net.darmo_creations.mccode.interpreter.statements.ReturnStatement;
@@ -33,7 +30,8 @@ class FunctionTypeTest extends TypeTest<FunctionType> {
   @BeforeEach
   public void setUp() {
     super.setUp();
-    this.builtinFunction = new BuiltinFunction("f", ProgramManager.getTypeInstance(AnyType.class), ProgramManager.getTypeInstance(IntType.class)) {
+    this.builtinFunction = new BuiltinFunction("f", ProgramManager.getTypeInstance(AnyType.class),
+        new Parameter("p", ProgramManager.getTypeInstance(IntType.class))) {
       @Override
       public Object apply(Scope scope) {
         return null;

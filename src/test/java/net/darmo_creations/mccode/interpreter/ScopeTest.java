@@ -16,7 +16,7 @@ class ScopeTest {
 
   @BeforeEach
   void setUp() {
-    this.s = new Scope(new Program("p", Collections.emptyList(), null, null, new ProgramManager("pm")));
+    this.s = new Scope(new Program("p", Collections.emptyList(), null, null, new ProgramManager(null)));
     this.s.declareVariable(new Variable("var", false, false, false, true, 1L));
     this.sub = new Scope("sub", this.s);
   }
@@ -255,7 +255,7 @@ class ScopeTest {
     NBTTagList vars = new NBTTagList();
     vars.appendTag(new Variable("var", false, false, false, true, 1L).writeToNBT());
     tag.setTag(Scope.VARIABLES_KEY, vars);
-    Scope s = new Scope(new Program("p", Collections.emptyList(), null, null, new ProgramManager("pm")));
+    Scope s = new Scope(new Program("p", Collections.emptyList(), null, null, new ProgramManager(null)));
     s.readFromNBT(tag);
     assertEquals(this.s.getVariables(), s.getVariables());
   }

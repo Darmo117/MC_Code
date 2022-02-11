@@ -24,7 +24,7 @@ class ProgramParserTest {
 
   @BeforeEach
   void setUp() {
-    this.pm = new ProgramManager("pm");
+    this.pm = new ProgramManager(null);
   }
 
   @Test

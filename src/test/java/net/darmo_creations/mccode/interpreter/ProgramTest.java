@@ -26,7 +26,7 @@ class ProgramTest {
         new DeclareVariableStatement(false, false, false, "a", new IntLiteralNode(1, 0, 0), 0, 0),
         new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)
     );
-    this.p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
+    this.p = new Program("p", statements, 1L, 1L, new ProgramManager(null));
   }
 
   @Test
@@ -69,7 +69,7 @@ class ProgramTest {
         new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0),
         new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)
     );
-    Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
+    Program p = new Program("p", statements, 1L, 1L, new ProgramManager(null));
     p.execute();
     assertEquals(1L, p.getWaitTime());
     assertEquals(1L, p.getScope().getVariable("a", false));
@@ -91,28 +91,28 @@ class ProgramTest {
   @Test
   void breakOutsideLoopError() {
     List<Statement> statements = Collections.singletonList(new BreakStatement(0, 0));
-    Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
+    Program p = new Program("p", statements, 1L, 1L, new ProgramManager(null));
     assertThrows(SyntaxErrorException.class, p::execute);
   }
 
   @Test
   void continueOutsideLoopError() {
     List<Statement> statements = Collections.singletonList(new ContinueStatement(0, 0));
-    Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
+    Program p = new Program("p", statements, 1L, 1L, new ProgramManager(null));
     assertThrows(SyntaxErrorException.class, p::execute);
   }
 
   @Test
   void returnOutsideFunctionError() {
     List<Statement> statements = Collections.singletonList(new ReturnStatement(new NullLiteralNode(0, 0), 0, 0));
-    Program p = new Program("p", statements, 1L, 1L, new ProgramManager("pm"));
+    Program p = new Program("p", statements, 1L, 1L, new ProgramManager(null));
     assertThrows(SyntaxErrorException.class, p::execute);
   }
 
   @Test
   void waitInModuleError() {
     Program p = new Program("p", Collections.singletonList(new WaitStatement(new IntLiteralNode(1, 0, 0), 0, 0)),
-        new ProgramManager("pm"));
+        new ProgramManager(null));
     assertThrows(EvaluationException.class, p::execute);
   }
 
@@ -145,7 +145,7 @@ class ProgramTest {
   @Test
   void writeModuleToNBT() {
     Program p = new Program("p", Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)),
-        new ProgramManager("pm"));
+        new ProgramManager(null));
     NBTTagCompound tag = new NBTTagCompound();
     tag.setString(Program.NAME_KEY, "p");
     tag.setTag(Program.STATEMENTS_KEY, StatementNBTHelper.serializeStatementsList(Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0))));
@@ -170,8 +170,8 @@ class ProgramTest {
     tag.setLong(Program.WAIT_TIME_KEY, 0);
     tag.setInteger(Program.IP_KEY, 0);
     tag.setBoolean(Program.IS_MODULE_KEY, false);
-    assertEquals(new Program("p", statements, 1L, 1L, new ProgramManager("pm")),
-        new Program(tag, new ProgramManager("pm")));
+    assertEquals(new Program("p", statements, 1L, 1L, new ProgramManager(null)),
+        new Program(tag, new ProgramManager(null)));
   }
 
   @Test
@@ -183,7 +183,7 @@ class ProgramTest {
     tag.setInteger(Program.IP_KEY, 0);
     tag.setBoolean(Program.IS_MODULE_KEY, true);
     assertEquals(new Program("p", Collections.singletonList(new AssignVariableStatement("a", AssigmentOperator.PLUS, new IntLiteralNode(1, 0, 0), 0, 0)),
-            new ProgramManager("pm")),
-        new Program(tag, new ProgramManager("pm")));
+            new ProgramManager(null)),
+        new Program(tag, new ProgramManager(null)));
   }
 }
