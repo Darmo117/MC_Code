@@ -229,6 +229,17 @@ public abstract class Type<T> {
   }
 
   /**
+   * Returns the string representation of an object of this type.
+   *
+   * @param self An instance of this type to convert.
+   * @return The string representation of the object.
+   */
+  public final String toString(final Object self) {
+    //noinspection unchecked
+    return this.__str__((T) self);
+  }
+
+  /**
    * Return a deep copy of the given object.
    *
    * @param scope Scope the operation is performed from.
@@ -647,6 +658,16 @@ public abstract class Type<T> {
    */
   protected boolean __bool__(final T self) {
     return true;
+  }
+
+  /**
+   * Returns the string representation of an object of this type.
+   *
+   * @param self An instance of this type to convert.
+   * @return The string representation of the object.
+   */
+  protected String __str__(final T self) {
+    return self.toString();
   }
 
   /**

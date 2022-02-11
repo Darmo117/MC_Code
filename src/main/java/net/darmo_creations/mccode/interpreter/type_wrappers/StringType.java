@@ -6,12 +6,8 @@ import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.exceptions.IndexOutOfBoundsException;
 import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.WorldProxy;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -139,7 +135,7 @@ public class StringType extends Type<String> {
   @Doc("Joins all strings from the given list using a specified delimiter.")
   public String join(final Scope scope, final String self, final Object collection) {
     MCList list = ProgramManager.getTypeInstance(ListType.class).implicitCast(scope, collection);
-    return list.stream().map(e -> this.implicitCast(scope, e)).collect(Collectors.joining(self));
+    return list.stream().map(e -> ProgramManager.getTypeForValue(e).toString(e)).collect(Collectors.joining(self));
   }
 
   @Method(name = "format")
@@ -162,7 +158,7 @@ public class StringType extends Type<String> {
 
   @Override
   protected Object __add__(final Scope scope, final String self, final Object o, final boolean inPlace) {
-    return self + this.implicitCast(scope, o);
+    return self + ProgramManager.getTypeForValue(o).toString(o);
   }
 
   @Override
@@ -239,23 +235,7 @@ public class StringType extends Type<String> {
 
   @Override
   public String implicitCast(final Scope scope, final Object o) {
-    // “Override” toString() for some Minecraft classes
-    if (o instanceof BlockPos) {
-      BlockPos pos = (BlockPos) o;
-      return String.format("(%d, %d, %d)", pos.getX(), pos.getY(), pos.getZ());
-    }
-    if (o instanceof Block) {
-      //noinspection ConstantConditions
-      return ((Block) o).getRegistryName().toString();
-    }
-    if (o instanceof Item) {
-      //noinspection ConstantConditions
-      return ((Item) o).getRegistryName().toString();
-    }
-    if (o instanceof WorldProxy) {
-      return "<this world>";
-    }
-    return String.valueOf(o);
+    return ProgramManager.getTypeForValue(o).toString(o);
   }
 
   @Override

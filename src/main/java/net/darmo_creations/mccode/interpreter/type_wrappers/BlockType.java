@@ -45,6 +45,12 @@ public class BlockType extends Type<Block> {
   }
 
   @Override
+  protected String __str__(final Block self) {
+    //noinspection ConstantConditions
+    return self.getRegistryName().toString();
+  }
+
+  @Override
   public Block explicitCast(final Scope scope, final Object o) throws MCCodeRuntimeException {
     if (o instanceof String) {
       return ForgeRegistries.BLOCKS.getValue(new ResourceLocation((String) o));

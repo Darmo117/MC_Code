@@ -43,6 +43,11 @@ public class NullType extends Type<Void> {
   }
 
   @Override
+  protected String __str__(final Void self) {
+    return "null";
+  }
+
+  @Override
   public Void implicitCast(final Scope scope, final Object o) throws CastException {
     if (o == null) {
       return null;

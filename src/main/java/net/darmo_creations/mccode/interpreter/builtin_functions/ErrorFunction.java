@@ -7,7 +7,6 @@ import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.exceptions.UserException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
 import net.darmo_creations.mccode.interpreter.type_wrappers.NullType;
-import net.darmo_creations.mccode.interpreter.type_wrappers.StringType;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
 
 /**
@@ -28,7 +27,7 @@ public class ErrorFunction extends BuiltinFunction {
     Object message = this.getParameterValue(scope, 0);
     throw new UserException(
         scope,
-        ProgramManager.getTypeInstance(StringType.class).implicitCast(scope, message),
+        ProgramManager.getTypeForValue(message).toString(message),
         ProgramManager.getTypeForValue(message).copy(scope, message)
     );
   }

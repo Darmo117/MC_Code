@@ -1399,6 +1399,11 @@ public class WorldType extends Type<WorldProxy> {
     ).orElse(-1L) > 0;
   }
 
+  @Override
+  protected String __str__(final WorldProxy self) {
+    return "<this world>";
+  }
+
   /*
    * Utility methods
    */

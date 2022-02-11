@@ -54,6 +54,12 @@ public class ItemType extends Type<Item> {
   }
 
   @Override
+  protected String __str__(final Item self) {
+    //noinspection ConstantConditions
+    return self.getRegistryName().toString();
+  }
+
+  @Override
   public Item explicitCast(final Scope scope, final Object o) throws MCCodeRuntimeException {
     if (o instanceof String) {
       return ForgeRegistries.ITEMS.getValue(new ResourceLocation((String) o));

@@ -221,6 +221,11 @@ public class PosType extends Type<BlockPos> {
   }
 
   @Override
+  protected String __str__(final BlockPos self) {
+    return String.format("(%d, %d, %d)", self.getX(), self.getY(), self.getZ());
+  }
+
+  @Override
   public BlockPos explicitCast(final Scope scope, final Object o) {
     if (o instanceof List) {
       //noinspection unchecked

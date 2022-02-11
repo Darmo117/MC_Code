@@ -5,7 +5,6 @@ import net.darmo_creations.mccode.interpreter.Program;
 import net.darmo_creations.mccode.interpreter.ProgramManager;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
-import net.darmo_creations.mccode.interpreter.type_wrappers.FloatType;
 import net.darmo_creations.mccode.interpreter.type_wrappers.NullType;
 import net.darmo_creations.mccode.interpreter.type_wrappers.StringType;
 import net.darmo_creations.mccode.interpreter.types.BuiltinFunction;
@@ -31,8 +30,8 @@ public class PrintFunction extends BuiltinFunction {
     Program program = scope.getProgram();
     MinecraftServer minecraftServer = program.getProgramManager().getWorld().getMinecraftServer();
     if (minecraftServer != null) {
-      String text = ProgramManager.getTypeInstance(StringType.class)
-          .implicitCast(scope, this.getParameterValue(scope, 0));
+      Object message = this.getParameterValue(scope, 0);
+      String text = ProgramManager.getTypeForValue(message).toString(message);
       Channel channel = Channel.fromString(this.getParameterValue(scope, 1));
       if (channel == Channel.CHAT || channel == Channel.BOTH) {
         scope.getProgram().getProgramManager().getWorld().getPlayers(EntityPlayer.class, p -> true)
