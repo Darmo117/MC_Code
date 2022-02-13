@@ -1,9 +1,6 @@
 package net.darmo_creations.mccode.interpreter;
 
-import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
-import net.darmo_creations.mccode.interpreter.exceptions.MathException;
-import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
-import net.darmo_creations.mccode.interpreter.exceptions.WrappedException;
+import net.darmo_creations.mccode.interpreter.exceptions.*;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.function.Supplier;
@@ -106,6 +103,7 @@ public abstract class ProgramElement implements NBTSerializable {
     } catch (ArithmeticException e) {
       throw new MathException(scope, this.getLine(), this.getColumn(), e.getMessage());
     } catch (Throwable e) {
+      e.printStackTrace();
       // Wrap any other exception to prevent them from being caught by try-except statements
       throw new WrappedException(e, this.getLine(), this.getColumn(),
           "mccode.interpreter.error.exception", e.getClass().getSimpleName(), e.getMessage());
