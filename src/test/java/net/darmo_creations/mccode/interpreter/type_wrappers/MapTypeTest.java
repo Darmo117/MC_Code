@@ -6,14 +6,10 @@ import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.NoSuchKeyException;
 import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -215,7 +211,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("a", 2L)), new MCMap(Collections.singletonMap("a", 1L)), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("b", 1L)), new MCMap(Collections.singletonMap("a", 1L)), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(Collections.singletonMap("b", 2L)), new MCMap(Collections.singletonMap("a", 1L)), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCMap(), new BlockPos(0, 0, 0), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCMap(), new Position(0, 0, 0), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), new Range(1, 1, 1), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCMap(), new ResourceLocation("minecraft:stone"), false, false),
 
@@ -232,7 +228,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("a", 2L)), new MCMap(Collections.singletonMap("a", 1L)), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("b", 1L)), new MCMap(Collections.singletonMap("a", 1L)), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(Collections.singletonMap("b", 2L)), new MCMap(Collections.singletonMap("a", 1L)), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new BlockPos(0, 0, 0), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new Position(0, 0, 0), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new Range(1, 1, 1), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCMap(), new ResourceLocation("minecraft:stone"), true, false),
 
@@ -267,7 +263,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.PLUS, new MCMap(), new MCList(Collections.singletonList(1)), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), new MCSet(Collections.singletonList(1)), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -281,7 +277,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.SUB, new MCMap(), null, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -308,7 +304,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.DIV, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -322,7 +318,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -336,7 +332,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.MOD, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -350,7 +346,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.POW, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -364,7 +360,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.GT, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -378,7 +374,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.GE, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -391,7 +387,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.LT, new MCMap(), null, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -405,7 +401,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.LE, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -418,7 +414,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.IN, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -431,7 +427,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -446,7 +442,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -460,7 +456,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
@@ -506,7 +502,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1))
     );
   }
@@ -527,7 +523,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCMap(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
@@ -558,7 +554,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(new MCMap(), new MCMap()),
 //        Arguments.of(new MCMap(Collections.singletonMap("id", "minecraft:stick")), Items.STICK), // FIXME raises error because of sound system not initialized
 //        Arguments.of(new MCMap(Collections.singletonMap("id", "minecraft:stone")), Blocks.STONE), // FIXME raises error because of sound system not initialized
-        Arguments.of(posMap, new BlockPos(1, 2, 3)),
+        Arguments.of(posMap, new Position(1, 2, 3)),
         Arguments.of(resourceMap, new ResourceLocation("minecraft:stone"))
     );
   }
@@ -589,7 +585,7 @@ class MapTypeTest extends TypeTest<MapType> {
         Arguments.of(new Item()),
 //        Arguments.of(Blocks.STONE), // FIXME raises error because of sound system not initialized
         Arguments.of((Object) null),
-        Arguments.of(new BlockPos(0, 0, 0)),
+        Arguments.of(new Position(0, 0, 0)),
         Arguments.of(new Range(1, 1, 1)),
         Arguments.of(new ResourceLocation("minecraft:stone"))
     );
@@ -653,11 +649,11 @@ class MapTypeTest extends TypeTest<MapType> {
     tag.setString(MapType.NAME_KEY, "map");
     NBTTagCompound entries = new NBTTagCompound();
     entries.setTag("a", ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
-    entries.setTag("b", ProgramManager.getTypeInstance(PosType.class).writeToNBT(new BlockPos(1, 2, 3)));
+    entries.setTag("b", ProgramManager.getTypeInstance(PosType.class).writeToNBT(new Position(1, 2, 3)));
     tag.setTag(MapType.ENTRIES_KEY, entries);
     MCMap map = new MCMap();
     map.put("a", 1L);
-    map.put("b", new BlockPos(1, 2, 3));
+    map.put("b", new Position(1, 2, 3));
     assertEquals(tag, this.typeInstance.writeToNBT(map));
   }
 
@@ -667,11 +663,11 @@ class MapTypeTest extends TypeTest<MapType> {
     tag.setString(MapType.NAME_KEY, "map");
     NBTTagCompound entries = new NBTTagCompound();
     entries.setTag("a", ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
-    entries.setTag("b", ProgramManager.getTypeInstance(PosType.class).writeToNBT(new BlockPos(1, 2, 3)));
+    entries.setTag("b", ProgramManager.getTypeInstance(PosType.class).writeToNBT(new Position(1, 2, 3)));
     tag.setTag(MapType.ENTRIES_KEY, entries);
     MCMap map = new MCMap();
     map.put("a", 1L);
-    map.put("b", new BlockPos(1, 2, 3));
+    map.put("b", new Position(1, 2, 3));
     assertEquals(map, this.typeInstance.readFromNBT(this.p.getScope(), tag));
   }
 

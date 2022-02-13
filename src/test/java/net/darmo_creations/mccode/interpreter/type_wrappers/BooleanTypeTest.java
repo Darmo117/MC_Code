@@ -3,14 +3,10 @@ package net.darmo_creations.mccode.interpreter.type_wrappers;
 import net.darmo_creations.mccode.interpreter.SetupProgramManager;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -121,7 +117,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.MUL, false, 1.0, 0.0),
         Arguments.of(BinaryOperator.MUL, false, true, 0L),
         Arguments.of(BinaryOperator.MUL, false, false, 0L),
-        Arguments.of(BinaryOperator.MUL, true, new BlockPos(1, 1, 1), new BlockPos(1, 1, 1)),
+        Arguments.of(BinaryOperator.MUL, true, new Position(1, 1, 1), new Position(1, 1, 1)),
         Arguments.of(BinaryOperator.MUL, true, "a", "a"),
         Arguments.of(BinaryOperator.MUL, false, "a", ""),
         Arguments.of(BinaryOperator.MUL, true, new MCList(Collections.singletonList(1)), new MCList(Collections.singletonList(1))),
@@ -183,8 +179,8 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.EQUAL, false, new MCSet(), false),
         Arguments.of(BinaryOperator.EQUAL, true, new MCMap(), false),
         Arguments.of(BinaryOperator.EQUAL, false, new MCMap(), false),
-        Arguments.of(BinaryOperator.EQUAL, true, new BlockPos(0, 0, 0), false),
-        Arguments.of(BinaryOperator.EQUAL, false, new BlockPos(0, 0, 0), false),
+        Arguments.of(BinaryOperator.EQUAL, true, new Position(0, 0, 0), false),
+        Arguments.of(BinaryOperator.EQUAL, false, new Position(0, 0, 0), false),
         Arguments.of(BinaryOperator.EQUAL, true, new Range(1, 1, 1), false),
         Arguments.of(BinaryOperator.EQUAL, false, new Range(1, 1, 1), false),
         Arguments.of(BinaryOperator.EQUAL, true, new ResourceLocation("minecraft:stone"), false),
@@ -212,8 +208,8 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.NOT_EQUAL, false, new MCSet(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, true, new MCMap(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, false, new MCMap(), true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, true, new BlockPos(0, 0, 0), true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, false, new BlockPos(0, 0, 0), true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, true, new Position(0, 0, 0), true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, false, new Position(0, 0, 0), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, true, new Range(1, 1, 1), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, false, new Range(1, 1, 1), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, true, new ResourceLocation("minecraft:stone"), true),
@@ -286,7 +282,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.PLUS, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -296,7 +292,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.SUB, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -315,7 +311,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.DIV, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -327,7 +323,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.INT_DIV, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -339,7 +335,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.MOD, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -349,7 +345,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.POW, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -359,7 +355,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.GT, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -369,7 +365,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.GE, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -379,7 +375,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.LT, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -389,7 +385,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.LE, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -402,7 +398,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.IN, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -415,7 +411,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.NOT_IN, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -428,7 +424,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.GET_ITEM, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -441,7 +437,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(BinaryOperator.DEL_ITEM, true, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, true, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, true, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, true, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, true, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, true, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, true, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
@@ -480,7 +476,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1))
     );
   }
@@ -502,7 +498,7 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(TernaryOperator.SET_ITEM, true, new MCList(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, true, new MCSet(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, true, new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, true, new BlockPos(0, 0, 0), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, true, new Position(0, 0, 0), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, true, new Range(1, 1, 1), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, true, new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class)
 
@@ -540,8 +536,8 @@ class BooleanTypeTest extends TypeTest<BooleanType> {
         Arguments.of(true, new Item()),
 //        Arguments.of(true, new Block(Material.AIR)), // FIXME raises error because of sound system not initialized
         Arguments.of(false, null),
-        Arguments.of(true, new BlockPos(0, 0, 0)),
-        Arguments.of(true, new BlockPos(1, 1, 1)),
+        Arguments.of(true, new Position(0, 0, 0)),
+        Arguments.of(true, new Position(1, 1, 1)),
         Arguments.of(true, new Range(1, 1, 1)),
         Arguments.of(true, new ResourceLocation("minecraft:stone")),
         Arguments.of(true, "a"),

@@ -4,14 +4,10 @@ import net.darmo_creations.mccode.interpreter.SetupProgramManager;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -123,8 +119,8 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.MUL, 0.0, 1.0, 0.0),
         Arguments.of(BinaryOperator.MUL, 0.0, true, 0.0),
         Arguments.of(BinaryOperator.MUL, 0.0, false, 0.0),
-        Arguments.of(BinaryOperator.MUL, 1.0, new BlockPos(1, 1, 1), new BlockPos(1, 1, 1)),
-        Arguments.of(BinaryOperator.MUL, 1.5, new BlockPos(1, 2, 3), new BlockPos(1, 3, 4)),
+        Arguments.of(BinaryOperator.MUL, 1.0, new Position(1, 1, 1), new Position(1, 1, 1)),
+        Arguments.of(BinaryOperator.MUL, 1.5, new Position(1, 2, 3), new Position(1, 3, 4)),
 
         Arguments.of(BinaryOperator.DIV, 1.0, 2L, 0.5),
         Arguments.of(BinaryOperator.DIV, 1.0, 2.0, 0.5),
@@ -186,8 +182,8 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.EQUAL, 0.0, new MCSet(), false),
         Arguments.of(BinaryOperator.EQUAL, 1.0, new MCMap(), false),
         Arguments.of(BinaryOperator.EQUAL, 0.0, new MCMap(), false),
-        Arguments.of(BinaryOperator.EQUAL, 1.0, new BlockPos(0, 0, 0), false),
-        Arguments.of(BinaryOperator.EQUAL, 0.0, new BlockPos(0, 0, 0), false),
+        Arguments.of(BinaryOperator.EQUAL, 1.0, new Position(0, 0, 0), false),
+        Arguments.of(BinaryOperator.EQUAL, 0.0, new Position(0, 0, 0), false),
         Arguments.of(BinaryOperator.EQUAL, 1.0, new Range(1, 1, 1), false),
         Arguments.of(BinaryOperator.EQUAL, 0.0, new Range(1, 1, 1), false),
         Arguments.of(BinaryOperator.EQUAL, 1.0, new ResourceLocation("minecraft:stone"), false),
@@ -215,8 +211,8 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.NOT_EQUAL, 0.0, new MCSet(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, 1.0, new MCMap(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, 0.0, new MCMap(), true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, 1.0, new BlockPos(0, 0, 0), true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, 0.0, new BlockPos(0, 0, 0), true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, 1.0, new Position(0, 0, 0), true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, 0.0, new Position(0, 0, 0), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, 1.0, new Range(1, 1, 1), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, 0.0, new Range(1, 1, 1), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, 1.0, new ResourceLocation("minecraft:stone"), true),
@@ -289,7 +285,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.PLUS, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -299,7 +295,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.SUB, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -320,7 +316,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.DIV, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -332,7 +328,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.INT_DIV, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -344,7 +340,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.MOD, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -354,7 +350,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.POW, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -364,7 +360,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.GT, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -374,7 +370,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.GE, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -384,7 +380,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.LT, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -394,7 +390,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.LE, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -407,7 +403,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.IN, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -420,7 +416,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.NOT_IN, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -433,7 +429,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.GET_ITEM, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -446,7 +442,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(BinaryOperator.DEL_ITEM, 1.0, new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, 1.0, new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, 1.0, new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, 1.0, new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, 1.0, new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, 1.0, new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, 1.0, new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
@@ -485,7 +481,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1))
     );
   }
@@ -507,7 +503,7 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(TernaryOperator.SET_ITEM, 1.0, new MCList(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, 1.0, new MCSet(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, 1.0, new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, 1.0, new BlockPos(0, 0, 0), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, 1.0, new Position(0, 0, 0), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, 1.0, new Range(1, 1, 1), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, 1.0, new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class)
 
@@ -578,8 +574,8 @@ class FloatTypeTest extends TypeTest<FloatType> {
         Arguments.of(new Item()),
 //        Arguments.of(new Block(Material.AIR)), // FIXME raises error because of sound system not initialized
         Arguments.of((Object) null),
-        Arguments.of(new BlockPos(0, 0, 0)),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(0, 0, 0)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1)),
         Arguments.of(new ResourceLocation("minecraft:stone"))
     );

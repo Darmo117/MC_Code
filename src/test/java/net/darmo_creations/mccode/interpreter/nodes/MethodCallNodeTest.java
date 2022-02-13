@@ -4,9 +4,9 @@ import net.darmo_creations.mccode.TestUtils;
 import net.darmo_creations.mccode.interpreter.SetupProgramManager;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
+import net.darmo_creations.mccode.interpreter.types.Position;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,8 +53,8 @@ class MethodCallNodeTest extends NodeTest {
         "up",
         Collections.singletonList(new IntLiteralNode(1, 0, 0)),
         0, 0).evaluate(this.p.getScope());
-    assertSame(BlockPos.class, r.getClass());
-    assertEquals(new BlockPos(1, 2, 1), r);
+    assertSame(Position.class, r.getClass());
+    assertEquals(new Position(1, 2, 1), r);
   }
 
   @Test

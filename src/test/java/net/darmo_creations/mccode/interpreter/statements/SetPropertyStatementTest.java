@@ -8,9 +8,9 @@ import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.nodes.IntLiteralNode;
 import net.darmo_creations.mccode.interpreter.nodes.VariableNode;
 import net.darmo_creations.mccode.interpreter.types.MCList;
+import net.darmo_creations.mccode.interpreter.types.Position;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -61,7 +61,7 @@ class SetPropertyStatementTest extends StatementTest {
 
   @Test
   void noPropertySetterError() {
-    this.p.getScope().declareVariable(new Variable("a", false, false, true, false, new BlockPos(0, 0, 0)));
+    this.p.getScope().declareVariable(new Variable("a", false, false, true, false, new Position(0, 0, 0)));
     assertThrows(EvaluationException.class, () -> new SetPropertyStatement(new VariableNode("a", 0, 0), "x", AssigmentOperator.ASSIGN, new IntLiteralNode(1, 0, 0), 0, 0).execute(this.p.getScope()));
   }
 

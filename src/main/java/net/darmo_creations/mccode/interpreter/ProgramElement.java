@@ -108,7 +108,7 @@ public abstract class ProgramElement implements NBTSerializable {
     } catch (Throwable e) {
       // Wrap any other exception to prevent them from being caught by try-except statements
       throw new WrappedException(e, this.getLine(), this.getColumn(),
-          "mccode.interpreter.error.exception", e.getMessage());
+          "mccode.interpreter.error.exception", e.getClass().getSimpleName(), e.getMessage());
     }
   }
 }

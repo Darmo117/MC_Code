@@ -4,14 +4,10 @@ import net.darmo_creations.mccode.interpreter.SetupProgramManager;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -145,7 +141,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.EQUAL, new Range(1, 2, 1), new MCList(), false),
         Arguments.of(BinaryOperator.EQUAL, new Range(1, 2, 1), new MCSet(), false),
         Arguments.of(BinaryOperator.EQUAL, new Range(1, 2, 1), new MCMap(), false),
-        Arguments.of(BinaryOperator.EQUAL, new Range(1, 2, 1), new BlockPos(0, 0, 0), false),
+        Arguments.of(BinaryOperator.EQUAL, new Range(1, 2, 1), new Position(0, 0, 0), false),
         Arguments.of(BinaryOperator.EQUAL, new Range(1, 2, 1), new Range(1, 2, 1), true),
         Arguments.of(BinaryOperator.EQUAL, new Range(2, 1, 1), new Range(1, 1, 1), false),
         Arguments.of(BinaryOperator.EQUAL, new Range(1, 2, 1), new Range(1, 1, 1), false),
@@ -166,7 +162,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.NOT_EQUAL, new Range(1, 2, 1), new MCList(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new Range(1, 2, 1), new MCSet(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new Range(1, 2, 1), new MCMap(), true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new Range(1, 2, 1), new BlockPos(0, 0, 0), true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new Range(1, 2, 1), new Position(0, 0, 0), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new Range(1, 2, 1), new Range(1, 2, 1), false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new Range(2, 1, 1), new Range(1, 1, 1), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new Range(1, 2, 1), new Range(1, 1, 1), true),
@@ -192,7 +188,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.PLUS, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -206,7 +202,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.SUB, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -230,7 +226,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.DIV, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -243,7 +239,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.INT_DIV, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -256,7 +252,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.MOD, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -270,7 +266,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.POW, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -284,7 +280,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.GT, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -298,7 +294,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.GE, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -312,7 +308,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.LT, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -326,7 +322,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.LE, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -339,7 +335,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.IN, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -352,7 +348,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.NOT_IN, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -365,7 +361,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.GET_ITEM, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -378,7 +374,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(BinaryOperator.DEL_ITEM, new Range(1, 2, 1), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new Range(1, 2, 1), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new Range(1, 2, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new Range(1, 2, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Range(1, 2, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new Range(1, 2, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new Range(1, 2, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
@@ -419,7 +415,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1))
     );
   }
@@ -441,7 +437,7 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(TernaryOperator.SET_ITEM, new Range(1, 1, 1), new MCList(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new Range(1, 1, 1), new MCSet(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new Range(1, 1, 1), new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new Range(1, 1, 1), new BlockPos(0, 0, 0), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Range(1, 1, 1), new Position(0, 0, 0), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new Range(1, 1, 1), new Range(1, 1, 1), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new Range(1, 1, 1), new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class)
 
@@ -483,8 +479,8 @@ class RangeTypeTest extends TypeTest<RangeType> {
         Arguments.of(new MCMap()),
         Arguments.of(new Item()),
 //        Arguments.of(new Block(Material.AIR)), // FIXME raises error because of sound system not initialized
-        Arguments.of(new BlockPos(0, 0, 0)),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(0, 0, 0)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new ResourceLocation("minecraft:stone")),
         Arguments.of("a"),
         Arguments.of("")

@@ -8,7 +8,6 @@ import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -108,8 +107,8 @@ class FunctionTypeTest extends TypeTest<FunctionType> {
         Arguments.of(new MCMap()),
         Arguments.of(new Item()),
 //        Arguments.of(new Block(Material.AIR)), // FIXME raises error because of sound system not initialized
-        Arguments.of(new BlockPos(0, 0, 0)),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(0, 0, 0)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1)),
         Arguments.of(new ResourceLocation("minecraft:stone")),
         Arguments.of("")

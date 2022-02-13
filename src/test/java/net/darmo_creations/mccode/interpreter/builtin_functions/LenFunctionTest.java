@@ -7,13 +7,9 @@ import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
 import net.darmo_creations.mccode.interpreter.type_wrappers.IntType;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -78,7 +74,7 @@ class LenFunctionTest extends BuiltinFunctionTest<LenFunction> {
         Arguments.of((Object) null),
         Arguments.of(new Item()),
 //        Arguments.of(Blocks.STONE), // TODO not initialized
-        Arguments.of(new BlockPos(0, 0, 0)),
+        Arguments.of(new Position(0, 0, 0)),
         Arguments.of(new Range(1, 1, 1)),
         Arguments.of(new ResourceLocation("minecraft:stone"))
     );

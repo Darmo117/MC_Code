@@ -4,14 +4,10 @@ import net.darmo_creations.mccode.interpreter.SetupProgramManager;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,7 +30,7 @@ class PosTypeTest extends TypeTest<PosType> {
 
   @Test
   void getWrappedType() {
-    assertSame(BlockPos.class, this.typeInstance.getWrappedType());
+    assertSame(Position.class, this.typeInstance.getWrappedType());
   }
 
   @Test
@@ -44,47 +40,47 @@ class PosTypeTest extends TypeTest<PosType> {
 
   @Test
   void getPropertiesNames() {
-    assertEquals(Arrays.asList("x", "y", "z"), this.typeInstance.getPropertiesNames(new BlockPos(0, 0, 0)));
+    assertEquals(Arrays.asList("x", "y", "z"), this.typeInstance.getPropertiesNames(new Position(0, 0, 0)));
   }
 
   @Test
   void getPropertyX() {
-    assertEquals(1, this.typeInstance.getPropertyValue(this.p.getScope(), new BlockPos(1, 2, 3), "x"));
+    assertEquals(1, this.typeInstance.getPropertyValue(this.p.getScope(), new Position(1, 2, 3), "x"));
   }
 
   @Test
   void getPropertyY() {
-    assertEquals(2, this.typeInstance.getPropertyValue(this.p.getScope(), new BlockPos(1, 2, 3), "y"));
+    assertEquals(2, this.typeInstance.getPropertyValue(this.p.getScope(), new Position(1, 2, 3), "y"));
   }
 
   @Test
   void getPropertyZ() {
-    assertEquals(3, this.typeInstance.getPropertyValue(this.p.getScope(), new BlockPos(1, 2, 3), "z"));
+    assertEquals(3, this.typeInstance.getPropertyValue(this.p.getScope(), new Position(1, 2, 3), "z"));
   }
 
   @Test
   void getUndefinedPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), new BlockPos(1, 1, 1), "a"));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.getPropertyValue(this.p.getScope(), new Position(1, 1, 1), "a"));
   }
 
   @Test
   void setPropertyXError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new BlockPos(0, 0, 0), "x", 1));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new Position(0, 0, 0), "x", 1));
   }
 
   @Test
   void setPropertyYError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new BlockPos(0, 0, 0), "y", 1));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new Position(0, 0, 0), "y", 1));
   }
 
   @Test
   void setPropertyZError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new BlockPos(0, 0, 0), "z", 1));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new Position(0, 0, 0), "z", 1));
   }
 
   @Test
   void setUndefinedPropertyError() {
-    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new BlockPos(0, 0, 0), "a", 1));
+    assertThrows(EvaluationException.class, () -> this.typeInstance.setPropertyValue(this.p.getScope(), new Position(0, 0, 0), "a", 1));
   }
 
   @Test
@@ -94,16 +90,16 @@ class PosTypeTest extends TypeTest<PosType> {
 
   @ParameterizedTest
   @MethodSource("provideArgsForApplyUnaryOperator")
-  void applyUnaryOperator(UnaryOperator operator, BlockPos self, Object expected) {
+  void applyUnaryOperator(UnaryOperator operator, Position self, Object expected) {
     Object r = this.typeInstance.applyOperator(this.p.getScope(), operator, self, null, null, false);
     assertEquals(expected, r);
   }
 
   public static Stream<Arguments> provideArgsForApplyUnaryOperator() {
     return Stream.of(
-        Arguments.of(UnaryOperator.MINUS, new BlockPos(1, 2, 3), new BlockPos(-1, -2, -3)),
-        Arguments.of(UnaryOperator.NOT, new BlockPos(0, 0, 0), false),
-        Arguments.of(UnaryOperator.NOT, new BlockPos(1, 1, 1), false)
+        Arguments.of(UnaryOperator.MINUS, new Position(1, 2, 3), new Position(-1, -2, -3)),
+        Arguments.of(UnaryOperator.NOT, new Position(0, 0, 0), false),
+        Arguments.of(UnaryOperator.NOT, new Position(1, 1, 1), false)
     );
   }
 
@@ -111,287 +107,287 @@ class PosTypeTest extends TypeTest<PosType> {
   @EnumSource(value = UnaryOperator.class, names = {"LENGTH", "ITERATE"})
   void applyUnaryOperatorError(UnaryOperator operator) {
     assertThrows(UnsupportedOperatorException.class,
-        () -> this.typeInstance.applyOperator(this.p.getScope(), operator, new BlockPos(1, 1, 1), null, null, false));
+        () -> this.typeInstance.applyOperator(this.p.getScope(), operator, new Position(1, 1, 1), null, null, false));
   }
 
   @ParameterizedTest
   @MethodSource("provideArgsForApplyBinaryOperator")
-  void applyBinaryOperator(BinaryOperator operator, BlockPos self, Object o, Object expected) {
+  void applyBinaryOperator(BinaryOperator operator, Position self, Object o, Object expected) {
     Object r = this.typeInstance.applyOperator(this.p.getScope(), operator, self, o, null, false);
     assertEquals(expected, r);
   }
 
   public static Stream<Arguments> provideArgsForApplyBinaryOperator() {
     return Stream.of(
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), new BlockPos(1, 2, 3), new BlockPos(2, 3, 4)),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), "a", "BlockPos{x=1, y=1, z=1}a"),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), new Position(1, 2, 3), new Position(2, 3, 4)),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), "a", "(1.0, 1.0, 1.0)a"),
 
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), new BlockPos(1, 2, 3), new BlockPos(0, -1, -2)),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), new Position(1, 2, 3), new Position(0, -1, -2)),
 
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), true, new BlockPos(1, 1, 1)),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), false, new BlockPos(0, 0, 0)),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), 2, new BlockPos(2, 2, 2)),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), 2.0, new BlockPos(2, 2, 2)),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), 2.5, new BlockPos(2, 2, 2)),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), true, new Position(1, 1, 1)),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), false, new Position(0, 0, 0)),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), 2, new Position(2, 2, 2)),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), 2.0, new Position(2, 2, 2)),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), 2.5, new Position(2, 2, 2)),
 
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), true, new BlockPos(1, 1, 1)),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(4, 4, 4), 2, new BlockPos(2, 2, 2)),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(4, 4, 4), 2.0, new BlockPos(2, 2, 2)),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(4, 4, 4), 2.5, new BlockPos(1, 1, 1)),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), true, new Position(1, 1, 1)),
+        Arguments.of(BinaryOperator.DIV, new Position(4, 4, 4), 2, new Position(2, 2, 2)),
+        Arguments.of(BinaryOperator.DIV, new Position(4, 4, 4), 2.0, new Position(2, 2, 2)),
+        Arguments.of(BinaryOperator.DIV, new Position(4, 4, 4), 2.5, new Position(1, 1, 1)),
 
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), true, new BlockPos(1, 1, 1)),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(4, 4, 4), 2, new BlockPos(2, 2, 2)),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(4, 4, 4), 2.0, new BlockPos(2, 2, 2)),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(4, 4, 4), 2.5, new BlockPos(1, 1, 1)),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), true, new Position(1, 1, 1)),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(4, 4, 4), 2, new Position(2, 2, 2)),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(4, 4, 4), 2.0, new Position(2, 2, 2)),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(4, 4, 4), 2.5, new Position(1, 1, 1)),
 
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), true, new BlockPos(0, 0, 0)),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(3, 3, 3), 2, new BlockPos(1, 1, 1)),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(-3, -3, -3), 2, new BlockPos(1, 1, 1)),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(3, 3, 3), 2.0, new BlockPos(1, 1, 1)),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(-3, -3, -3), 2.0, new BlockPos(1, 1, 1)),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(4, 4, 4), 2.5, new BlockPos(1, 1, 1)),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), true, new Position(0, 0, 0)),
+        Arguments.of(BinaryOperator.MOD, new Position(3, 3, 3), 2, new Position(1, 1, 1)),
+        Arguments.of(BinaryOperator.MOD, new Position(-3, -3, -3), 2, new Position(1, 1, 1)),
+        Arguments.of(BinaryOperator.MOD, new Position(3, 3, 3), 2.0, new Position(1, 1, 1)),
+        Arguments.of(BinaryOperator.MOD, new Position(-3, -3, -3), 2.0, new Position(1, 1, 1)),
+        Arguments.of(BinaryOperator.MOD, new Position(4, 4, 4), 2.5, new Position(1, 1, 1)),
 
-        Arguments.of(BinaryOperator.POW, new BlockPos(2, 2, 2), true, new BlockPos(2, 2, 2)),
-        Arguments.of(BinaryOperator.POW, new BlockPos(2, 2, 2), false, new BlockPos(1, 1, 1)),
-        Arguments.of(BinaryOperator.POW, new BlockPos(3, 3, 3), 2, new BlockPos(9, 9, 9)),
-        Arguments.of(BinaryOperator.POW, new BlockPos(-3, -3, -3), 2, new BlockPos(9, 9, 9)),
-        Arguments.of(BinaryOperator.POW, new BlockPos(3, 3, 3), 2.0, new BlockPos(9, 9, 9)),
-        Arguments.of(BinaryOperator.POW, new BlockPos(-3, -3, -3), 2.0, new BlockPos(9, 9, 9)),
-        Arguments.of(BinaryOperator.POW, new BlockPos(4, 4, 4), 2.5, new BlockPos(32, 32, 32)),
+        Arguments.of(BinaryOperator.POW, new Position(2, 2, 2), true, new Position(2, 2, 2)),
+        Arguments.of(BinaryOperator.POW, new Position(2, 2, 2), false, new Position(1, 1, 1)),
+        Arguments.of(BinaryOperator.POW, new Position(3, 3, 3), 2, new Position(9, 9, 9)),
+        Arguments.of(BinaryOperator.POW, new Position(-3, -3, -3), 2, new Position(9, 9, 9)),
+        Arguments.of(BinaryOperator.POW, new Position(3, 3, 3), 2.0, new Position(9, 9, 9)),
+        Arguments.of(BinaryOperator.POW, new Position(-3, -3, -3), 2.0, new Position(9, 9, 9)),
+        Arguments.of(BinaryOperator.POW, new Position(4, 4, 4), 2.5, new Position(32, 32, 32)),
 
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), true, false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), 1, false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), 1.0, false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), null, false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), "", false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), "BlockPos{x=1, y=1, z=1}", false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), new Item(), false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), new MCList(), false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), new MCSet(), false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), new MCMap(), false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), new BlockPos(0, 0, 0), false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), new BlockPos(1, 1, 1), true),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), new Range(1, 1, 1), false),
-        Arguments.of(BinaryOperator.EQUAL, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), true, false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), 1, false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), 1.0, false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), null, false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), "", false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), "(1.0, 1.0, 1.0)", false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), new Item(), false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), new MCList(), false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), new MCSet(), false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), new MCMap(), false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), new Position(0, 0, 0), false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), new Position(1, 1, 1), true),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), new Range(1, 1, 1), false),
+        Arguments.of(BinaryOperator.EQUAL, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), false),
 
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), new BlockPos(1, 1, 1), false),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 2, 1), new BlockPos(1, 1, 1), true),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 2, 2), new BlockPos(1, 2, 1), true),
-        Arguments.of(BinaryOperator.GT, new BlockPos(2, 2, 2), new BlockPos(1, 2, 2), true),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), new BlockPos(1, 2, 1), false),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 2, 1), new BlockPos(1, 2, 2), false),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 2, 2), new BlockPos(2, 2, 2), false),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), new Position(1, 1, 1), false),
+        Arguments.of(BinaryOperator.GT, new Position(1, 2, 1), new Position(1, 1, 1), true),
+        Arguments.of(BinaryOperator.GT, new Position(1, 2, 2), new Position(1, 2, 1), true),
+        Arguments.of(BinaryOperator.GT, new Position(2, 2, 2), new Position(1, 2, 2), true),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), new Position(1, 2, 1), false),
+        Arguments.of(BinaryOperator.GT, new Position(1, 2, 1), new Position(1, 2, 2), false),
+        Arguments.of(BinaryOperator.GT, new Position(1, 2, 2), new Position(2, 2, 2), false),
 
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), new BlockPos(1, 1, 1), true),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 2, 1), new BlockPos(1, 1, 1), true),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 2, 2), new BlockPos(1, 2, 1), true),
-        Arguments.of(BinaryOperator.GE, new BlockPos(2, 2, 2), new BlockPos(1, 2, 2), true),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), new BlockPos(1, 2, 1), false),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 2, 1), new BlockPos(1, 2, 2), false),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 2, 2), new BlockPos(2, 2, 2), false),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), new Position(1, 1, 1), true),
+        Arguments.of(BinaryOperator.GE, new Position(1, 2, 1), new Position(1, 1, 1), true),
+        Arguments.of(BinaryOperator.GE, new Position(1, 2, 2), new Position(1, 2, 1), true),
+        Arguments.of(BinaryOperator.GE, new Position(2, 2, 2), new Position(1, 2, 2), true),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), new Position(1, 2, 1), false),
+        Arguments.of(BinaryOperator.GE, new Position(1, 2, 1), new Position(1, 2, 2), false),
+        Arguments.of(BinaryOperator.GE, new Position(1, 2, 2), new Position(2, 2, 2), false),
 
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), new BlockPos(1, 1, 1), false),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 2, 1), new BlockPos(1, 1, 1), false),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 2, 2), new BlockPos(1, 2, 1), false),
-        Arguments.of(BinaryOperator.LT, new BlockPos(2, 2, 2), new BlockPos(1, 2, 2), false),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), new BlockPos(1, 2, 1), true),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 2, 1), new BlockPos(1, 2, 2), true),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 2, 2), new BlockPos(2, 2, 2), true),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), new Position(1, 1, 1), false),
+        Arguments.of(BinaryOperator.LT, new Position(1, 2, 1), new Position(1, 1, 1), false),
+        Arguments.of(BinaryOperator.LT, new Position(1, 2, 2), new Position(1, 2, 1), false),
+        Arguments.of(BinaryOperator.LT, new Position(2, 2, 2), new Position(1, 2, 2), false),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), new Position(1, 2, 1), true),
+        Arguments.of(BinaryOperator.LT, new Position(1, 2, 1), new Position(1, 2, 2), true),
+        Arguments.of(BinaryOperator.LT, new Position(1, 2, 2), new Position(2, 2, 2), true),
 
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), new BlockPos(1, 1, 1), true),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 2, 1), new BlockPos(1, 1, 1), false),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 2, 2), new BlockPos(1, 2, 1), false),
-        Arguments.of(BinaryOperator.LE, new BlockPos(2, 2, 2), new BlockPos(1, 2, 2), false),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), new BlockPos(1, 2, 1), true),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 2, 1), new BlockPos(1, 2, 2), true),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 2, 2), new BlockPos(2, 2, 2), true)
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), new Position(1, 1, 1), true),
+        Arguments.of(BinaryOperator.LE, new Position(1, 2, 1), new Position(1, 1, 1), false),
+        Arguments.of(BinaryOperator.LE, new Position(1, 2, 2), new Position(1, 2, 1), false),
+        Arguments.of(BinaryOperator.LE, new Position(2, 2, 2), new Position(1, 2, 2), false),
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), new Position(1, 2, 1), true),
+        Arguments.of(BinaryOperator.LE, new Position(1, 2, 1), new Position(1, 2, 2), true),
+        Arguments.of(BinaryOperator.LE, new Position(1, 2, 2), new Position(2, 2, 2), true)
     );
   }
 
   @ParameterizedTest
   @MethodSource("provideArgsForApplyBinaryOperatorError")
-  void applyBinaryOperatorError(BinaryOperator operator, BlockPos self, Object o, Class<? extends Throwable> exceptionClass) {
+  void applyBinaryOperatorError(BinaryOperator operator, Position self, Object o, Class<? extends Throwable> exceptionClass) {
     assertThrows(exceptionClass, () -> this.typeInstance.applyOperator(this.p.getScope(), operator, self, o, null, false));
   }
 
   public static Stream<Arguments> provideArgsForApplyBinaryOperatorError() {
     return Stream.of(
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), 1, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), 1.0, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), 1.0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), true, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), false, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), 1, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), 1.0, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), false, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), 1.0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), true, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), false, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), new BlockPos(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), "a", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MUL, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), new Position(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), "a", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MUL, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), false, ArithmeticException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), 0, ArithmeticException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), 0.0, ArithmeticException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), false, ArithmeticException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), 0, ArithmeticException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), 0.0, ArithmeticException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), false, ArithmeticException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), 0, ArithmeticException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), 0.0, ArithmeticException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), false, ArithmeticException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), 0, ArithmeticException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), 0.0, ArithmeticException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), false, ArithmeticException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), 0, ArithmeticException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), 0.0, ArithmeticException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), false, ArithmeticException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), 0, ArithmeticException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), 0.0, ArithmeticException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.POW, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new BlockPos(1, 1, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Position(1, 1, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), 1, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), 1.0, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), true, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), 1.0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), 1, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), 1.0, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), true, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), 1.0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), 1, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), 1.0, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), true, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), 1.0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), true, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), 1, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), 1.0, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), "", UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), new Item(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), null, UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new BlockPos(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), true, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), 1, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), 1.0, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), "", UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), new Item(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), null, UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), new MCList(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), new MCSet(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), new MCMap(), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), new Position(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), new Range(1, 1, 1), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Position(1, 1, 1), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
   }
 
   @ParameterizedTest
   @MethodSource("provideArgsForApplyLogicOperator")
   void applyAndOperator(Object o) {
-    BlockPos pos = new BlockPos(1, 1, 1);
+    Position pos = new Position(1, 1, 1);
     assertSame(o, this.typeInstance.applyOperator(this.p.getScope(), BinaryOperator.AND, pos, o, null, false));
     assertEquals(o, this.typeInstance.applyOperator(this.p.getScope(), BinaryOperator.AND, pos, o, null, false));
   }
@@ -399,7 +395,7 @@ class PosTypeTest extends TypeTest<PosType> {
   @ParameterizedTest
   @MethodSource("provideArgsForApplyLogicOperator")
   void applyOrOperator(Object o) {
-    BlockPos pos = new BlockPos(1, 1, 1);
+    Position pos = new Position(1, 1, 1);
     assertSame(pos, this.typeInstance.applyOperator(this.p.getScope(), BinaryOperator.OR, pos, o, null, false));
     assertEquals(pos, this.typeInstance.applyOperator(this.p.getScope(), BinaryOperator.OR, pos, o, null, false));
   }
@@ -423,45 +419,45 @@ class PosTypeTest extends TypeTest<PosType> {
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1))
     );
   }
 
   @ParameterizedTest
   @MethodSource("provideArgsForApplyTernaryOperatorError")
-  void applyTernaryOperatorError(TernaryOperator operator, BlockPos self, Object o1, Object o2, Class<? extends Throwable> exceptionClass) {
+  void applyTernaryOperatorError(TernaryOperator operator, Position self, Object o1, Object o2, Class<? extends Throwable> exceptionClass) {
     assertThrows(exceptionClass, () -> this.typeInstance.applyOperator(this.p.getScope(), operator, self, o1, o2, true));
   }
 
   static Stream<Arguments> provideArgsForApplyTernaryOperatorError() {
     return Stream.of(
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), true, true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), 1, true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), 1.0, true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), "", true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), new Item(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), null, true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), new MCList(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), new MCSet(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), new Range(1, 1, 1), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new BlockPos(0, 0, 0), new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class)
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), true, true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), 1, true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), 1.0, true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), "", true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), new Item(), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), null, true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), new MCList(), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), new MCSet(), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), new MCMap(), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), new Position(0, 0, 0), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), new Range(1, 1, 1), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Position(0, 0, 0), new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class)
 
     );
   }
 
   @Test
   void implicitCast() {
-    BlockPos o = new BlockPos(1, 1, 1);
+    Position o = new Position(1, 1, 1);
     assertSame(o, this.typeInstance.implicitCast(this.p.getScope(), o));
     assertEquals(o, this.typeInstance.implicitCast(this.p.getScope(), o));
   }
 
   @ParameterizedTest
   @MethodSource("provideArgsForExplicitCast")
-  void explicitCast(BlockPos expected, Object o) {
+  void explicitCast(Position expected, Object o) {
     assertEquals(expected, this.typeInstance.explicitCast(this.p.getScope(), o));
   }
 
@@ -471,9 +467,9 @@ class PosTypeTest extends TypeTest<PosType> {
     map.put("y", 2L);
     map.put("z", 3L);
     return Stream.of(
-        Arguments.of(new BlockPos(1, 2, 3), new BlockPos(1, 2, 3)),
-        Arguments.of(new BlockPos(1, 2, 3), new MCList(Arrays.asList(1L, 2L, 3L))),
-        Arguments.of(new BlockPos(1, 2, 3), map)
+        Arguments.of(new Position(1, 2, 3), new Position(1, 2, 3)),
+        Arguments.of(new Position(1, 2, 3), new MCList(Arrays.asList(1L, 2L, 3L))),
+        Arguments.of(new Position(1, 2, 3), map)
     );
   }
 
@@ -575,13 +571,13 @@ class PosTypeTest extends TypeTest<PosType> {
 
   @Test
   void toBoolean() {
-    assertTrue(this.typeInstance.toBoolean(new BlockPos(1, 1, 1)));
-    assertTrue(this.typeInstance.toBoolean(new BlockPos(0, 0, 0)));
+    assertTrue(this.typeInstance.toBoolean(new Position(1, 1, 1)));
+    assertTrue(this.typeInstance.toBoolean(new Position(0, 0, 0)));
   }
 
   @Test
   void copy() {
-    BlockPos pos = new BlockPos(0, 0, 0);
+    Position pos = new Position(0, 0, 0);
     assertSame(pos, this.typeInstance.copy(this.p.getScope(), pos));
     assertEquals(pos, this.typeInstance.copy(this.p.getScope(), pos));
   }
@@ -593,7 +589,7 @@ class PosTypeTest extends TypeTest<PosType> {
     tag.setInteger(PosType.X_KEY, 1);
     tag.setInteger(PosType.Y_KEY, 2);
     tag.setInteger(PosType.Z_KEY, 3);
-    assertEquals(tag, this.typeInstance.writeToNBT(new BlockPos(1, 2, 3)));
+    assertEquals(tag, this.typeInstance.writeToNBT(new Position(1, 2, 3)));
   }
 
   @Test
@@ -603,7 +599,7 @@ class PosTypeTest extends TypeTest<PosType> {
     tag.setInteger(PosType.X_KEY, 1);
     tag.setInteger(PosType.Y_KEY, 2);
     tag.setInteger(PosType.Z_KEY, 3);
-    assertEquals(new BlockPos(1, 2, 3), this.typeInstance.readFromNBT(this.p.getScope(), tag));
+    assertEquals(new Position(1, 2, 3), this.typeInstance.readFromNBT(this.p.getScope(), tag));
   }
 
   @Override

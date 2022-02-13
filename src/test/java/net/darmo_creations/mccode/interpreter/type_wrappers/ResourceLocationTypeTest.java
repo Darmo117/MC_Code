@@ -4,14 +4,10 @@ import net.darmo_creations.mccode.interpreter.SetupProgramManager;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -113,7 +109,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.EQUAL, new ResourceLocation("minecraft:stone"), new MCList(), false),
         Arguments.of(BinaryOperator.EQUAL, new ResourceLocation("minecraft:stone"), new MCSet(), false),
         Arguments.of(BinaryOperator.EQUAL, new ResourceLocation("minecraft:stone"), new MCMap(), false),
-        Arguments.of(BinaryOperator.EQUAL, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), false),
+        Arguments.of(BinaryOperator.EQUAL, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), false),
         Arguments.of(BinaryOperator.EQUAL, new ResourceLocation("minecraft:stone"), new Range(1, 2, 1), false),
         Arguments.of(BinaryOperator.EQUAL, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), false),
         Arguments.of(BinaryOperator.EQUAL, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), true),
@@ -131,7 +127,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.NOT_EQUAL, new ResourceLocation("minecraft:stone"), new MCList(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new ResourceLocation("minecraft:stone"), new MCSet(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new ResourceLocation("minecraft:stone"), new MCMap(), true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new ResourceLocation("minecraft:stone"), new Range(1, 2, 1), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), false),
@@ -187,7 +183,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.PLUS, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -201,7 +197,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.SUB, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -225,7 +221,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.DIV, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -238,7 +234,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.INT_DIV, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -251,7 +247,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.MOD, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -265,7 +261,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.POW, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -279,7 +275,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.GT, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.GE, new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class),
@@ -292,7 +288,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.GE, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LT, new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class),
@@ -305,7 +301,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.LT, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.LE, new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class),
@@ -318,7 +314,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.LE, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
 
         Arguments.of(BinaryOperator.IN, new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class),
@@ -330,7 +326,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.IN, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -343,7 +339,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.NOT_IN, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -356,7 +352,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.GET_ITEM, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -369,7 +365,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(BinaryOperator.DEL_ITEM, new ResourceLocation("minecraft:stone"), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new ResourceLocation("minecraft:stone"), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new ResourceLocation("minecraft:stone"), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
@@ -410,7 +406,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1))
     );
   }
@@ -432,7 +428,7 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(TernaryOperator.SET_ITEM, new ResourceLocation("minecraft:stone"), new MCList(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new ResourceLocation("minecraft:stone"), new MCSet(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new ResourceLocation("minecraft:stone"), new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new ResourceLocation("minecraft:stone"), new BlockPos(0, 0, 0), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new ResourceLocation("minecraft:stone"), new Position(0, 0, 0), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new ResourceLocation("minecraft:stone"), new Range(1, 1, 1), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new ResourceLocation("minecraft:stone"), new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class)
 
@@ -520,8 +516,8 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(new MCMap()),
         Arguments.of(new Item()),
 //        Arguments.of(new Block(Material.AIR)), // FIXME raises error because of sound system not initialized
-        Arguments.of(new BlockPos(0, 0, 0)),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(0, 0, 0)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of("a"),
         Arguments.of("")
     );
@@ -547,8 +543,8 @@ class ResourceLocationTypeTest extends TypeTest<ResourceLocationType> {
         Arguments.of(new MCSet()),
         Arguments.of(new Item()),
 //        Arguments.of(new Block(Material.AIR)), // FIXME raises error because of sound system not initialized
-        Arguments.of(new BlockPos(0, 0, 0)),
-        Arguments.of(new BlockPos(1, 1, 1))
+        Arguments.of(new Position(0, 0, 0)),
+        Arguments.of(new Position(1, 1, 1))
     );
   }
 

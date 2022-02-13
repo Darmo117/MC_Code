@@ -6,8 +6,8 @@ import net.darmo_creations.mccode.interpreter.Utils;
 import net.darmo_creations.mccode.interpreter.annotations.Doc;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
+import net.darmo_creations.mccode.interpreter.types.Position;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 
 /**
  * Wrapper type for {@link Double}.
@@ -67,8 +67,8 @@ public class FloatType extends Type<Double> {
       return self * (Double) o;
     } else if (o instanceof Boolean) {
       return self * ((Boolean) o ? 1 : 0);
-    } else if (o instanceof BlockPos) {
-      return ProgramManager.getTypeInstance(PosType.class).__mul__(scope, (BlockPos) o, self, inPlace);
+    } else if (o instanceof Position) {
+      return ProgramManager.getTypeInstance(PosType.class).__mul__(scope, (Position) o, self, inPlace);
     }
     return super.__mul__(scope, self, o, inPlace);
   }

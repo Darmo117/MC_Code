@@ -10,7 +10,7 @@ import net.darmo_creations.mccode.interpreter.annotations.Method;
 import net.darmo_creations.mccode.interpreter.annotations.Property;
 import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.RelativeBlockPos;
+import net.darmo_creations.mccode.interpreter.types.Position;
 import net.darmo_creations.mccode.interpreter.types.WorldProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -226,14 +226,17 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "clone")
   @Doc("Clones blocks from one region to another. " +
       "Returns the number of affected blocks or -1 if the action failed.")
-  public Long clone(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final BlockPos destination,
+  public Long clone(final Scope scope, WorldProxy self, final Position pos1, final Position pos2, final Position destination,
                     final String maskMode, final String cloneMode) {
+    BlockPos p1 = pos1.toBlockPos();
+    BlockPos p2 = pos2.toBlockPos();
+    BlockPos dest = destination.toBlockPos();
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_BLOCKS,
         "clone",
-        "" + pos1.getX(), "" + pos1.getY(), "" + pos1.getZ(),
-        "" + pos2.getX(), "" + pos2.getY(), "" + pos2.getZ(),
-        "" + destination.getX(), "" + destination.getY(), "" + destination.getZ(),
+        "" + p1.getX(), "" + p1.getY(), "" + p1.getZ(),
+        "" + p2.getX(), "" + p2.getY(), "" + p2.getZ(),
+        "" + dest.getX(), "" + dest.getY(), "" + dest.getZ(),
         maskMode, cloneMode
     ).orElse(-1L);
   }
@@ -241,14 +244,17 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "clone_filtered")
   @Doc("Clones blocks from one region to another with the \"filter\" mask. " +
       "Returns the number of affected blocks or -1 if the action failed.")
-  public Long clone(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final BlockPos destination,
+  public Long clone(final Scope scope, WorldProxy self, final Position pos1, final Position pos2, final Position destination,
                     final String blockToClone, final Object metaOrStateToClone, final String cloneMode) {
+    BlockPos p1 = pos1.toBlockPos();
+    BlockPos p2 = pos2.toBlockPos();
+    BlockPos dest = destination.toBlockPos();
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_BLOCKS,
         "clone",
-        "" + pos1.getX(), "" + pos1.getY(), "" + pos1.getZ(),
-        "" + pos2.getX(), "" + pos2.getY(), "" + pos2.getZ(),
-        "" + destination.getX(), "" + destination.getY(), "" + destination.getZ(),
+        "" + p1.getX(), "" + p1.getY(), "" + p1.getZ(),
+        "" + p2.getX(), "" + p2.getY(), "" + p2.getZ(),
+        "" + dest.getX(), "" + dest.getY(), "" + dest.getZ(),
         blockToClone, metaOrStateToString(scope, metaOrStateToClone), cloneMode
     ).orElse(-1L);
   }
@@ -332,11 +338,10 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "execute_command")
   @Doc("Executes a command relatively to the selected entities. " +
       "Returns true if the action was successful, false otherwise.")
-  public Boolean executeCommand(final Scope scope, WorldProxy self, final String targetSelector, final BlockPos pos,
-                                final Boolean relativePosition, final String command) {
-    String posPref = relativePosition ? "~" : "";
+  public Boolean executeCommand(final Scope scope, WorldProxy self, final String targetSelector, final Position pos,
+                                final String command) {
     List<String> args = new ArrayList<>(Arrays.asList(
-        targetSelector, posPref + pos.getX(), posPref + pos.getY(), posPref + pos.getZ()
+        targetSelector, pos.getXCommandRepresentation(), pos.getYCommandRepresentation(), pos.getZCommandRepresentation()
     ));
     args.addAll(Arrays.asList(command.split(" ")));
     return executeCommand(
@@ -416,11 +421,14 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "fill")
   @Doc("Fills the region between the given positions in this world with the specified block and metadata. " +
       "Returns the number of affected blocks or -1 if the action failed.")
-  public Long fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final String block, final Object metaOrState,
+  public Long fill(final Scope scope, WorldProxy self, final Position pos1, final Position pos2,
+                   final String block, final Object metaOrState,
                    final String mode, final MCMap dataTags) {
+    BlockPos p1 = pos1.toBlockPos();
+    BlockPos p2 = pos2.toBlockPos();
     List<String> args = new ArrayList<>(Arrays.asList(
-        "" + pos1.getX(), "" + pos1.getY(), "" + pos1.getZ(),
-        "" + pos2.getX(), "" + pos2.getY(), "" + pos2.getZ(),
+        "" + p1.getX(), "" + p1.getY(), "" + p1.getZ(),
+        "" + p2.getX(), "" + p2.getY(), "" + p2.getZ(),
         block, metaOrStateToString(scope, metaOrState), mode
     ));
     if (!"replace".equals(mode)) {
@@ -436,13 +444,16 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "fill_replace")
   @Doc("Fills the region between the given positions in this world with the specified block and metadata. " +
       "Returns the number of affected blocks or -1 if the action failed.")
-  public Long fill(final Scope scope, WorldProxy self, final BlockPos pos1, final BlockPos pos2, final String block, final Object metaOrState,
+  public Long fill(final Scope scope, WorldProxy self, final Position pos1, final Position pos2,
+                   final String block, final Object metaOrState,
                    final String blockToReplace, final Object metaOrStateToReplace, final MCMap dataTags) {
+    BlockPos p1 = pos1.toBlockPos();
+    BlockPos p2 = pos2.toBlockPos();
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_BLOCKS,
         "fill",
-        "" + pos1.getX(), "" + pos1.getY(), "" + pos1.getZ(),
-        "" + pos2.getX(), "" + pos2.getY(), "" + pos2.getZ(),
+        "" + p1.getX(), "" + p1.getY(), "" + p1.getZ(),
+        "" + p2.getX(), "" + p2.getY(), "" + p2.getZ(),
         block, metaOrStateToString(scope, metaOrState),
         "replace", blockToReplace, metaOrStateToString(scope, metaOrStateToReplace),
         mapToJSON(dataTags)
@@ -470,14 +481,15 @@ public class WorldType extends Type<WorldProxy> {
 
   @Method(name = "get_block")
   @Doc("Returns the block at the given position in this world.")
-  public Block getBlock(final Scope scope, final WorldProxy self, final BlockPos pos) {
-    return self.getWorld().getBlockState(pos).getBlock();
+  public Block getBlock(final Scope scope, final WorldProxy self, final Position pos) {
+    return self.getWorld().getBlockState(pos.toBlockPos()).getBlock();
   }
 
   @Method(name = "get_block_state")
   @Doc("Returns the block state at the given position in this world.")
-  public MCMap getBlockState(final Scope scope, final WorldProxy self, final BlockPos pos) {
-    ImmutableMap<IProperty<?>, Comparable<?>> properties = self.getWorld().getBlockState(pos).getActualState(self.getWorld(), pos).getProperties();
+  public MCMap getBlockState(final Scope scope, final WorldProxy self, final Position pos) {
+    ImmutableMap<IProperty<?>, Comparable<?>> properties = self.getWorld().getBlockState(pos.toBlockPos())
+        .getActualState(self.getWorld(), pos.toBlockPos()).getProperties();
     return new MCMap(properties.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().getName(), e -> {
       Comparable<?> value = e.getValue();
       if (value instanceof Enum || value instanceof Character) {
@@ -493,8 +505,8 @@ public class WorldType extends Type<WorldProxy> {
 
   @Method(name = "is_block_loaded")
   @Doc("Returns whether the block at the given position is currently loaded.")
-  public Boolean isBlockLoaded(final Scope scope, final WorldProxy self, final BlockPos pos) {
-    return self.getWorld().isBlockLoaded(pos);
+  public Boolean isBlockLoaded(final Scope scope, final WorldProxy self, final Position pos) {
+    return self.getWorld().isBlockLoaded(pos.toBlockPos());
   }
 
   /*
@@ -520,9 +532,13 @@ public class WorldType extends Type<WorldProxy> {
   @Doc("Returns the coordinates of the closest structure around the given point. " +
       "If the last parameter is true, unexplored structures will also be scanned. " +
       "Result may be null.")
-  public BlockPos locateStructure(final Scope scope, final WorldProxy self, final String structureName,
-                                  final BlockPos around, final Boolean findUnexplored) {
-    return self.getWorld().findNearestStructure(structureName, around, findUnexplored);
+  public Position locateStructure(final Scope scope, final WorldProxy self, final String structureName,
+                                  final Position around, final Boolean findUnexplored) {
+    BlockPos pos = self.getWorld().findNearestStructure(structureName, around.toBlockPos(), findUnexplored);
+    if (pos == null) {
+      return null;
+    }
+    return new Position(pos);
   }
 
   /*
@@ -553,7 +569,7 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "spawn_particles")
   @Doc("Spawns particles at the given position. " +
       "Returns true if the action was successful, false otherwise.")
-  public Boolean spawnParticles(final Scope scope, WorldProxy self, final String name, final BlockPos pos,
+  public Boolean spawnParticles(final Scope scope, WorldProxy self, final String name, final Position pos,
                                 final Double deltaX, final Double deltaY, final Double deltaZ,
                                 final Double speed, final Long count,
                                 final Boolean force, final String targetSelector) {
@@ -1057,12 +1073,13 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "set_block")
   @Doc("Sets the block at the given position in this world with the given block and metadata. " +
       "Returns the number of affected blocks or -1 if the action failed.")
-  public Long setBlock(final Scope scope, WorldProxy self, final BlockPos pos, final String block, final Object metaOrState,
+  public Long setBlock(final Scope scope, WorldProxy self, final Position pos, final String block, final Object metaOrState,
                        final String mode, final MCMap dataTags) {
+    BlockPos p = pos.toBlockPos();
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_BLOCKS,
         "setblock",
-        "" + pos.getX(), "" + pos.getY(), "" + pos.getZ(),
+        "" + p.getX(), "" + p.getY(), "" + p.getZ(),
         block, metaOrStateToString(scope, metaOrState),
         mode, mapToJSON(dataTags)
     ).orElse(-1L);
@@ -1075,11 +1092,12 @@ public class WorldType extends Type<WorldProxy> {
   @Method(name = "set_world_spawn")
   @Doc("Sets the world's spawn. " +
       "Returns true if the action was successful, false otherwise.")
-  public Boolean setWorldSpawn(final Scope scope, WorldProxy self, final BlockPos pos) {
+  public Boolean setWorldSpawn(final Scope scope, WorldProxy self, final Position pos) {
+    BlockPos p = pos.toBlockPos();
     return executeCommand(
         self, CommandResultStats.Type.SUCCESS_COUNT,
         "setworldspawn",
-        "" + pos.getX(), "" + pos.getY(), "" + pos.getZ()
+        "" + p.getX(), "" + p.getY(), "" + p.getZ()
     ).orElse(-1L) > 0;
   }
 
@@ -1088,13 +1106,14 @@ public class WorldType extends Type<WorldProxy> {
    */
 
   @Method(name = "set_spawn")
-  @Doc("Sets the spawn point of the selected players. " +
+  @Doc("Sets the spawn point of the selected players. Position is relative to the targetted players." +
       "Returns the number of affected players or -1 if the action failed.")
-  public Long setSpawn(final Scope scope, WorldProxy self, final String targetSelector, final BlockPos pos) {
+  public Long setSpawn(final Scope scope, WorldProxy self, final String targetSelector, final Position pos) {
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_ENTITIES,
         "spawnpoint",
-        targetSelector, "" + pos.getX(), "" + pos.getY(), "" + pos.getZ()
+        targetSelector,
+        pos.getXCommandRepresentation(), pos.getYCommandRepresentation(), pos.getZCommandRepresentation()
     ).orElse(-1L);
   }
 
@@ -1168,22 +1187,18 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Method(name = "tp_entities_to_pos")
-  @Doc("Teleports the selected entities to the provided position. " +
+  @Doc("Teleports the selected entities to the provided position (relative to the targetted entities). " +
       "Returns the number of affected entities or -1 if the action failed")
   public Long teleportEntitiesToPos(final Scope scope, WorldProxy self, final String targetSelector,
-                                    final BlockPos destination,
+                                    final Position destination,
                                     final Double yawAngle, final Boolean yawRelative,
                                     final Double pitchAngle, final Boolean pitchRelative) {
-    List<String> args = new ArrayList<>(Collections.singletonList(targetSelector));
-    if (destination instanceof RelativeBlockPos) {
-      args.add(((RelativeBlockPos) destination).x());
-      args.add(((RelativeBlockPos) destination).y());
-      args.add(((RelativeBlockPos) destination).z());
-    } else {
-      args.add("" + destination.getX());
-      args.add("" + destination.getY());
-      args.add("" + destination.getZ());
-    }
+    List<String> args = new ArrayList<>(Arrays.asList(
+        targetSelector,
+        destination.getXCommandRepresentation(),
+        destination.getYCommandRepresentation(),
+        destination.getZCommandRepresentation()
+    ));
     if (yawAngle != null && pitchAngle != null) {
       args.add((yawRelative ? "~" + (yawAngle != 0 ? "" + yawAngle : "") : "" + yawAngle));
       args.add((pitchRelative ? "~" + (pitchAngle != 0 ? "" + pitchAngle : "") : "" + pitchAngle));

@@ -7,13 +7,9 @@ import net.darmo_creations.mccode.interpreter.Variable;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EmptyCollectionException;
 import net.darmo_creations.mccode.interpreter.type_wrappers.AnyType;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -84,7 +80,7 @@ class MaxFunctionTest extends BuiltinFunctionTest<MaxFunction> {
         Arguments.of(new MCMap(), CastException.class),
         Arguments.of(new Item(), CastException.class),
 //        Arguments.of(Blocks.STONE, CastException.class), // TODO not initialized
-        Arguments.of(new BlockPos(0, 0, 0), CastException.class),
+        Arguments.of(new Position(0, 0, 0), CastException.class),
         Arguments.of(new ResourceLocation("minecraft:stone"), CastException.class)
     );
   }

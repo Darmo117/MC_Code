@@ -6,15 +6,11 @@ import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.IndexOutOfBoundsException;
 import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -186,7 +182,7 @@ class ListTypeTest extends TypeTest<ListType> {
 
   @Test
   void iteration() {
-    Object[] o = {1L, 2L, "a", new BlockPos(1, 2, 3)};
+    Object[] o = {1L, 2L, "a", new Position(1, 2, 3)};
     Iterator<?> it = (Iterator<?>) this.typeInstance.applyOperator(this.p.getScope(), UnaryOperator.ITERATE, new MCList(Arrays.asList(o)), null, null, false);
     int i = 0;
     while (it.hasNext()) {
@@ -352,7 +348,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.EQUAL, new MCList(), new MCSet(), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(), new MCMap(), false, false),
-        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(0L, 0L, 0L)), new BlockPos(0, 0, 0), false, false),
+        Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(0L, 0L, 0L)), new Position(0, 0, 0), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 1L, 1L)), new Range(1, 1, 1), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), false, false),
         Arguments.of(BinaryOperator.EQUAL, new MCList(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), false, false),
@@ -376,7 +372,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), new MCSet(), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), new MCSet(Arrays.asList(1L, 2L)), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(), new MCMap(), true, false),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(0L, 0L, 0L)), new BlockPos(0, 0, 0), true, false),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(0L, 0L, 0L)), new Position(0, 0, 0), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 1L, 1L)), new Range(1, 1, 1), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), true, false),
         Arguments.of(BinaryOperator.NOT_EQUAL, new MCList(Arrays.asList(1L, 2L)), new ResourceLocation("minecraft:stone"), true, false),
@@ -421,7 +417,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(new MCList())), new MCList(), true, false),
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(new MCSet())), new MCSet(), true, false),
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(new MCMap())), new MCMap(), true, false),
-        Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(new BlockPos(0, 0, 0))), new BlockPos(0, 0, 0), true, false),
+        Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(new Position(0, 0, 0))), new Position(0, 0, 0), true, false),
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(new Range(1, 1, 1))), new Range(1, 1, 1), true, false),
         Arguments.of(BinaryOperator.IN, new MCList(Collections.singletonList(new ResourceLocation("minecraft:stone"))), new ResourceLocation("minecraft:stone"), true, false),
 
@@ -437,7 +433,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(new MCList())), new MCList(), false, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(new MCSet())), new MCSet(), false, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(new MCMap())), new MCMap(), false, false),
-        Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(new BlockPos(0, 0, 0))), new BlockPos(0, 0, 0), false, false),
+        Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(new Position(0, 0, 0))), new Position(0, 0, 0), false, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(new Range(1, 1, 1))), new Range(1, 1, 1), false, false),
         Arguments.of(BinaryOperator.NOT_IN, new MCList(Collections.singletonList(new ResourceLocation("minecraft:stone"))), new ResourceLocation("minecraft:stone"), false, false),
 
@@ -466,7 +462,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.PLUS, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCList(), new MCSet(Collections.singletonList(1)), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -480,7 +476,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.SUB, new MCList(), null, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -505,7 +501,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.DIV, new MCList(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -519,7 +515,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -533,7 +529,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.MOD, new MCList(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -547,7 +543,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.POW, new MCList(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -560,7 +556,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.GT, new MCList(), null, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -573,7 +569,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.GE, new MCList(), null, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -586,7 +582,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.LT, new MCList(), null, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -599,7 +595,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.LE, new MCList(), null, UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -614,7 +610,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -629,7 +625,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
@@ -675,7 +671,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1))
     );
   }
@@ -697,7 +693,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(TernaryOperator.SET_ITEM, new MCList(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCList(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCList(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new MCList(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new MCList(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCList(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new MCList(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
@@ -752,7 +748,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(new Item()),
 //        Arguments.of(Blocks.STONE), // FIXME raises error because of sound system not initialized
         Arguments.of((Object) null),
-        Arguments.of(new BlockPos(0, 0, 0)),
+        Arguments.of(new Position(0, 0, 0)),
         Arguments.of(new Range(1, 1, 1)),
         Arguments.of(new ResourceLocation("minecraft:stone"))
     );
@@ -782,7 +778,7 @@ class ListTypeTest extends TypeTest<ListType> {
         Arguments.of(new Item()),
 //        Arguments.of(Blocks.STONE), // FIXME raises error because of sound system not initialized
         Arguments.of((Object) null),
-        Arguments.of(new BlockPos(0, 0, 0)),
+        Arguments.of(new Position(0, 0, 0)),
         Arguments.of(new Range(1, 1, 1)),
         Arguments.of(new ResourceLocation("minecraft:stone"))
     );
@@ -819,9 +815,9 @@ class ListTypeTest extends TypeTest<ListType> {
     NBTTagList list = new NBTTagList();
     list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
     list.appendTag(ProgramManager.getTypeInstance(StringType.class).writeToNBT("ab"));
-    list.appendTag(ProgramManager.getTypeInstance(PosType.class).writeToNBT(new BlockPos(1, 2, 3)));
+    list.appendTag(ProgramManager.getTypeInstance(PosType.class).writeToNBT(new Position(1, 2, 3)));
     tag.setTag(ListType.VALUES_KEY, list);
-    assertEquals(tag, this.typeInstance.writeToNBT(new MCList(Arrays.asList(1L, "ab", new BlockPos(1, 2, 3)))));
+    assertEquals(tag, this.typeInstance.writeToNBT(new MCList(Arrays.asList(1L, "ab", new Position(1, 2, 3)))));
   }
 
   @Test
@@ -831,9 +827,9 @@ class ListTypeTest extends TypeTest<ListType> {
     NBTTagList list = new NBTTagList();
     list.appendTag(ProgramManager.getTypeInstance(IntType.class).writeToNBT(1L));
     list.appendTag(ProgramManager.getTypeInstance(StringType.class).writeToNBT("ab"));
-    list.appendTag(ProgramManager.getTypeInstance(PosType.class).writeToNBT(new BlockPos(1, 2, 3)));
+    list.appendTag(ProgramManager.getTypeInstance(PosType.class).writeToNBT(new Position(1, 2, 3)));
     tag.setTag(ListType.VALUES_KEY, list);
-    assertEquals(new MCList(Arrays.asList(1L, "ab", new BlockPos(1, 2, 3))),
+    assertEquals(new MCList(Arrays.asList(1L, "ab", new Position(1, 2, 3))),
         this.typeInstance.readFromNBT(this.p.getScope(), tag));
   }
 

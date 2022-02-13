@@ -6,9 +6,9 @@ import net.darmo_creations.mccode.interpreter.type_wrappers.BinaryOperator;
 import net.darmo_creations.mccode.interpreter.types.MCList;
 import net.darmo_creations.mccode.interpreter.types.MCMap;
 import net.darmo_creations.mccode.interpreter.types.MCSet;
+import net.darmo_creations.mccode.interpreter.types.Position;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,7 +56,7 @@ class BinaryOperatorNodeTest extends NodeTest {
         Arguments.of(BinaryOperator.PLUS,
             TestUtils.blockPosNode(1, 2, 3),
             TestUtils.blockPosNode(1, 2, 3),
-            new BlockPos(2, 4, 6)),
+            new Position(2, 4, 6)),
         Arguments.of(BinaryOperator.PLUS,
             TestUtils.nodeList(new IntLiteralNode(1, 0, 0)),
             TestUtils.nodeList(new IntLiteralNode(2, 0, 0)),
@@ -95,7 +95,7 @@ class BinaryOperatorNodeTest extends NodeTest {
         Arguments.of(BinaryOperator.SUB,
             TestUtils.blockPosNode(1, 2, 3),
             TestUtils.blockPosNode(3, 2, 1),
-            new BlockPos(-2, 0, 2)),
+            new Position(-2, 0, 2)),
         Arguments.of(BinaryOperator.SUB,
             TestUtils.nodeList(new IntLiteralNode(1, 0, 0), new IntLiteralNode(3, 0, 0)),
             TestUtils.nodeList(new IntLiteralNode(1, 0, 0)),
@@ -158,35 +158,35 @@ class BinaryOperatorNodeTest extends NodeTest {
         Arguments.of(BinaryOperator.MUL,
             TestUtils.blockPosNode(1, 2, 3),
             new IntLiteralNode(2, 0, 0),
-            new BlockPos(2, 4, 6)),
+            new Position(2, 4, 6)),
         Arguments.of(BinaryOperator.MUL,
             TestUtils.blockPosNode(1, 2, 3),
             new FloatLiteralNode(2.5, 0, 0),
-            new BlockPos(2, 5, 7)),
+            new Position(2, 5, 7)),
         Arguments.of(BinaryOperator.MUL,
             TestUtils.blockPosNode(1, 2, 3),
             new BooleanLiteralNode(true, 0, 0),
-            new BlockPos(1, 2, 3)),
+            new Position(1, 2, 3)),
         Arguments.of(BinaryOperator.MUL,
             TestUtils.blockPosNode(1, 2, 3),
             new BooleanLiteralNode(false, 0, 0),
-            new BlockPos(0, 0, 0)),
+            new Position(0, 0, 0)),
         Arguments.of(BinaryOperator.MUL,
             new IntLiteralNode(2, 0, 0),
             TestUtils.blockPosNode(1, 2, 3),
-            new BlockPos(2, 4, 6)),
+            new Position(2, 4, 6)),
         Arguments.of(BinaryOperator.MUL,
             new FloatLiteralNode(2.5, 0, 0),
             TestUtils.blockPosNode(1, 2, 3),
-            new BlockPos(2, 5, 7)),
+            new Position(2, 5, 7)),
         Arguments.of(BinaryOperator.MUL,
             new BooleanLiteralNode(true, 0, 0),
             TestUtils.blockPosNode(1, 2, 3),
-            new BlockPos(1, 2, 3)),
+            new Position(1, 2, 3)),
         Arguments.of(BinaryOperator.MUL,
             new BooleanLiteralNode(false, 0, 0),
             TestUtils.blockPosNode(1, 2, 3),
-            new BlockPos(0, 0, 0)),
+            new Position(0, 0, 0)),
         Arguments.of(BinaryOperator.MUL,
             new IntLiteralNode(2, 0, 0),
             TestUtils.nodeList(new FloatLiteralNode(1.0, 0, 0), new FloatLiteralNode(2.0, 0, 0)),
@@ -234,15 +234,15 @@ class BinaryOperatorNodeTest extends NodeTest {
         Arguments.of(BinaryOperator.DIV,
             TestUtils.blockPosNode(2, 4, 6),
             new IntLiteralNode(2, 0, 0),
-            new BlockPos(1, 2, 3)),
+            new Position(1, 2, 3)),
         Arguments.of(BinaryOperator.DIV,
             TestUtils.blockPosNode(2, 5, 7),
             new FloatLiteralNode(2.5, 0, 0),
-            new BlockPos(0, 2, 2)),
+            new Position(0, 2, 2)),
         Arguments.of(BinaryOperator.DIV,
             TestUtils.blockPosNode(1, 2, 3),
             new BooleanLiteralNode(true, 0, 0),
-            new BlockPos(1, 2, 3)),
+            new Position(1, 2, 3)),
 
         // TODO test div by 0
         Arguments.of(BinaryOperator.INT_DIV, new IntLiteralNode(3, 0, 0), new IntLiteralNode(2, 0, 0), 1L),
@@ -259,15 +259,15 @@ class BinaryOperatorNodeTest extends NodeTest {
         Arguments.of(BinaryOperator.INT_DIV,
             TestUtils.blockPosNode(2, 4, 6),
             new IntLiteralNode(2, 0, 0),
-            new BlockPos(1, 2, 3)),
+            new Position(1, 2, 3)),
         Arguments.of(BinaryOperator.INT_DIV,
             TestUtils.blockPosNode(2, 5, 7),
             new FloatLiteralNode(2.5, 0, 0),
-            new BlockPos(0, 2, 2)),
+            new Position(0, 2, 2)),
         Arguments.of(BinaryOperator.INT_DIV,
             TestUtils.blockPosNode(1, 2, 3),
             new BooleanLiteralNode(true, 0, 0),
-            new BlockPos(1, 2, 3)),
+            new Position(1, 2, 3)),
 
         // TODO test div by 0
         Arguments.of(BinaryOperator.MOD, new IntLiteralNode(3, 0, 0), new IntLiteralNode(2, 0, 0), 1L),
@@ -284,15 +284,15 @@ class BinaryOperatorNodeTest extends NodeTest {
         Arguments.of(BinaryOperator.MOD,
             TestUtils.blockPosNode(2, 4, 6),
             new IntLiteralNode(3, 0, 0),
-            new BlockPos(2, 1, 0)),
+            new Position(2, 1, 0)),
         Arguments.of(BinaryOperator.MOD,
             TestUtils.blockPosNode(2, 4, 6),
             new FloatLiteralNode(3.0, 0, 0),
-            new BlockPos(2, 1, 0)),
+            new Position(2, 1, 0)),
         Arguments.of(BinaryOperator.MOD,
             TestUtils.blockPosNode(1, 2, 3),
             new BooleanLiteralNode(true, 0, 0),
-            new BlockPos(0, 0, 0))
+            new Position(0, 0, 0))
 
         // TODO comparison, logic, collections
     );

@@ -87,7 +87,7 @@ public class MethodCallNode extends OperationNode {
     } else {
       MemberFunction method = selfType.getMethod(this.methodName);
       if (method == null) {
-        throw new EvaluationException(scope, "mccode.interpreter.error.no_method_for_type", this, this.methodName);
+        throw new EvaluationException(scope, "mccode.interpreter.error.no_method_for_type", selfType.getName(), this.methodName);
       }
       Scope functionScope = new Scope(method.getName(), scope);
 

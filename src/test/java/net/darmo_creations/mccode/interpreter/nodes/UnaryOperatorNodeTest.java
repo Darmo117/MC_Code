@@ -3,9 +3,9 @@ package net.darmo_creations.mccode.interpreter.nodes;
 import net.darmo_creations.mccode.TestUtils;
 import net.darmo_creations.mccode.interpreter.SetupProgramManager;
 import net.darmo_creations.mccode.interpreter.type_wrappers.UnaryOperator;
+import net.darmo_creations.mccode.interpreter.types.Position;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,7 +35,7 @@ class UnaryOperatorNodeTest extends NodeTest {
         Arguments.of(UnaryOperator.MINUS, new FloatLiteralNode(1.0, 0, 0), -1.0),
         Arguments.of(UnaryOperator.MINUS, new BooleanLiteralNode(true, 0, 0), -1L),
         Arguments.of(UnaryOperator.MINUS, new BooleanLiteralNode(false, 0, 0), 0L),
-        Arguments.of(UnaryOperator.MINUS, TestUtils.blockPosNode(1, 2, 3), new BlockPos(-1, -2, -3)),
+        Arguments.of(UnaryOperator.MINUS, TestUtils.blockPosNode(1, 2, 3), new Position(-1, -2, -3)),
 
         Arguments.of(UnaryOperator.NOT, new IntLiteralNode(1, 0, 0), false),
         Arguments.of(UnaryOperator.NOT, new IntLiteralNode(0, 0, 0), true),

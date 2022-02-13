@@ -4,14 +4,10 @@ import net.darmo_creations.mccode.interpreter.SetupProgramManager;
 import net.darmo_creations.mccode.interpreter.exceptions.CastException;
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
 import net.darmo_creations.mccode.interpreter.exceptions.UnsupportedOperatorException;
-import net.darmo_creations.mccode.interpreter.types.MCList;
-import net.darmo_creations.mccode.interpreter.types.MCMap;
-import net.darmo_creations.mccode.interpreter.types.MCSet;
-import net.darmo_creations.mccode.interpreter.types.Range;
+import net.darmo_creations.mccode.interpreter.types.*;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -109,7 +105,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.EQUAL, new Item(), new MCList(), false),
         Arguments.of(BinaryOperator.EQUAL, new Item(), new MCSet(), false),
         Arguments.of(BinaryOperator.EQUAL, new Item(), new MCMap(), false),
-        Arguments.of(BinaryOperator.EQUAL, new Item(), new BlockPos(0, 0, 0), false),
+        Arguments.of(BinaryOperator.EQUAL, new Item(), new Position(0, 0, 0), false),
         Arguments.of(BinaryOperator.EQUAL, new Item(), new Range(1, 1, 1), false),
         Arguments.of(BinaryOperator.EQUAL, new Item(), new ResourceLocation("minecraft:stone"), false),
 
@@ -127,7 +123,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.NOT_EQUAL, new Item(), new MCList(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new Item(), new MCSet(), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new Item(), new MCMap(), true),
-        Arguments.of(BinaryOperator.NOT_EQUAL, new Item(), new BlockPos(0, 0, 0), true),
+        Arguments.of(BinaryOperator.NOT_EQUAL, new Item(), new Position(0, 0, 0), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new Item(), new Range(1, 1, 1), true),
         Arguments.of(BinaryOperator.NOT_EQUAL, new Item(), new ResourceLocation("minecraft:stone"), true)
     );
@@ -150,7 +146,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.PLUS, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.PLUS, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.PLUS, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.PLUS, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -164,7 +160,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.SUB, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.SUB, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.SUB, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.SUB, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -188,7 +184,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.DIV, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DIV, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DIV, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DIV, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -201,7 +197,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.INT_DIV, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.INT_DIV, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.INT_DIV, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.INT_DIV, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -214,7 +210,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.MOD, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.MOD, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.MOD, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.MOD, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -228,7 +224,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.POW, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.POW, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.POW, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.POW, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -242,7 +238,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.GT, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GT, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GT, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GT, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -256,7 +252,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.GE, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GE, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GE, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GE, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -270,7 +266,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.LT, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LT, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LT, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LT, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -284,7 +280,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.LE, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.LE, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.LE, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.LE, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -297,7 +293,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.IN, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.IN, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.IN, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.IN, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -310,7 +306,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.NOT_IN, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.NOT_IN, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.NOT_IN, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.NOT_IN, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -323,7 +319,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.GET_ITEM, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.GET_ITEM, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.GET_ITEM, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.GET_ITEM, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class),
 
@@ -336,7 +332,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(BinaryOperator.DEL_ITEM, new Item(), new MCList(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new Item(), new MCSet(), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new Item(), new MCMap(), UnsupportedOperatorException.class),
-        Arguments.of(BinaryOperator.DEL_ITEM, new Item(), new BlockPos(0, 0, 0), UnsupportedOperatorException.class),
+        Arguments.of(BinaryOperator.DEL_ITEM, new Item(), new Position(0, 0, 0), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new Item(), new Range(1, 1, 1), UnsupportedOperatorException.class),
         Arguments.of(BinaryOperator.DEL_ITEM, new Item(), new ResourceLocation("minecraft:stone"), UnsupportedOperatorException.class)
     );
@@ -374,7 +370,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
         Arguments.of(new ResourceLocation("minecraft:stone")),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1))
     );
   }
@@ -396,7 +392,7 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(TernaryOperator.SET_ITEM, new Item(), new MCList(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new Item(), new MCSet(), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new Item(), new MCMap(), true, UnsupportedOperatorException.class),
-        Arguments.of(TernaryOperator.SET_ITEM, new Item(), new BlockPos(0, 0, 0), true, UnsupportedOperatorException.class),
+        Arguments.of(TernaryOperator.SET_ITEM, new Item(), new Position(0, 0, 0), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new Item(), new Range(1, 1, 1), true, UnsupportedOperatorException.class),
         Arguments.of(TernaryOperator.SET_ITEM, new Item(), new ResourceLocation("minecraft:stone"), true, UnsupportedOperatorException.class)
 
@@ -456,8 +452,8 @@ class ItemTypeTest extends TypeTest<ItemType> {
         Arguments.of(new MCMap(Collections.singletonMap("a", 1))),
         Arguments.of(new MCMap()),
         Arguments.of((Object) null),
-        Arguments.of(new BlockPos(0, 0, 0)),
-        Arguments.of(new BlockPos(1, 1, 1)),
+        Arguments.of(new Position(0, 0, 0)),
+        Arguments.of(new Position(1, 1, 1)),
         Arguments.of(new Range(1, 1, 1))
     );
   }
