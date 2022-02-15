@@ -13,6 +13,9 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.io.*;
@@ -86,6 +89,13 @@ public class ProgramManager implements NBTDeserializable {
         this.readFromNBT(CompressedStreamTools.readCompressed(fileinputstream));
       } catch (Exception e) {
         e.printStackTrace();
+        if (this.world.getGameRules().getBoolean(MCCode.GR_SHOW_ERROR_MESSAGES)) {
+          //noinspection ConstantConditions
+          this.world.getMinecraftServer().sendMessage(
+              new TextComponentTranslation("mccode.interpreter.error.exception",
+                  e.getClass().getSimpleName(), e.getMessage()).setStyle(new Style().setColor(TextFormatting.RED))
+          );
+        }
       }
     }
   }

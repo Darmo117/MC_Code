@@ -140,10 +140,13 @@ public class Program {
       switch (argType) {
         case "int":
           this.args.add(t.getInteger(ARG_VALUE_KEY));
+          break;
         case "float":
           this.args.add(t.getDouble(ARG_VALUE_KEY));
+          break;
         case "boolean":
           this.args.add(t.getBoolean(ARG_VALUE_KEY));
+          break;
         default:
           throw new MCCodeException("invalid arg type " + argType);
       }
@@ -333,6 +336,7 @@ public class Program {
       }
       argsList.appendTag(t);
     }
+    tag.setTag(ARGS_KEY, argsList);
     return tag;
   }
 
