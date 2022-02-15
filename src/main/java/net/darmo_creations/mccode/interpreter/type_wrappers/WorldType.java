@@ -591,14 +591,11 @@ public class WorldType extends Type<WorldProxy> {
   @Doc("Plays the specified sound. Position may be null. " +
       "Returns the number of affected players or -1 if the action failed.")
   public Long playSound(final Scope scope, WorldProxy self, final String sound, final String source,
-                        final String targetSelector, final Double posX, final Boolean xRelative,
-                        final Double posY, final Boolean yRelative, final Double posZ, final Boolean zRelative) {
-    List<String> args = new ArrayList<>(Arrays.asList(sound, source, targetSelector));
-    if (posX != null && posY != null && posZ != null) {
-      args.add(xRelative ? "~" + (posX != 0 ? "" + posX : "") : "" + posX);
-      args.add(yRelative ? "~" + (posY != 0 ? "" + posY : "") : "" + posY);
-      args.add(zRelative ? "~" + (posZ != 0 ? "" + posZ : "") : "" + posZ);
-    }
+                        final String targetSelector, final Position pos) {
+    List<String> args = new ArrayList<>(Arrays.asList(
+        sound, source, targetSelector,
+        pos.getXCommandRepresentation(), pos.getYCommandRepresentation(), pos.getZCommandRepresentation()
+    ));
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_ENTITIES,
         "playsound",
@@ -610,15 +607,12 @@ public class WorldType extends Type<WorldProxy> {
   @Doc("Plays the specified sound. Pitch and volume may be null. " +
       "Returns the number of affected players or -1 if the action failed.")
   public Long playSoundWithVolume(final Scope scope, WorldProxy self, final String sound, final String source,
-                                  final String targetSelector, final Double posX, final Boolean xRelative,
-                                  final Double posY, final Boolean yRelative, final Double posZ, final Boolean zRelative,
+                                  final String targetSelector, final Position pos,
                                   final Double volume, final Double pitch, final Double minVolume) {
-    List<String> args = new ArrayList<>(Arrays.asList(sound, source, targetSelector));
-    if (posX != null && posY != null && posZ != null) {
-      args.add(xRelative ? "~" + (posX != 0 ? "" + posX : "") : "" + posX);
-      args.add(yRelative ? "~" + (posY != 0 ? "" + posY : "") : "" + posY);
-      args.add(zRelative ? "~" + (posZ != 0 ? "" + posZ : "") : "" + posZ);
-    }
+    List<String> args = new ArrayList<>(Arrays.asList(
+        sound, source, targetSelector,
+        pos.getXCommandRepresentation(), pos.getYCommandRepresentation(), pos.getZCommandRepresentation()
+    ));
     args.add(volume.toString());
     if (pitch != null) {
       args.add(pitch.toString());
@@ -1207,6 +1201,20 @@ public class WorldType extends Type<WorldProxy> {
         self, CommandResultStats.Type.AFFECTED_ENTITIES,
         "tp",
         args.toArray(args.toArray(new String[0]))
+    ).orElse(-1L);
+  }
+
+  /*
+   * /testfor command
+   */
+
+  @Method(name = "entities_match")
+  @Doc("Tests whether entities match the given target selector.")
+  public Long entitiesMatch(final Scope scope, WorldProxy self, final String targetSelector, final MCMap dataTags) {
+    return executeCommand(
+        self, CommandResultStats.Type.AFFECTED_ENTITIES,
+        "testfor",
+        targetSelector, mapToJSON(dataTags)
     ).orElse(-1L);
   }
 
