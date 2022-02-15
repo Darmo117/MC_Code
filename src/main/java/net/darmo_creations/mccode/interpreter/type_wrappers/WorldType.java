@@ -1414,6 +1414,12 @@ public class WorldType extends Type<WorldProxy> {
     ).orElse(-1L) > 0;
   }
 
+  @Method(name = "get_entities_data")
+  @Doc("Returns data of all entities that match the given selector.")
+  public MCMap getEntitiesData(final Scope scope, final WorldProxy self, final String targetSelector) {
+    return new MCMap(); // TODO
+  }
+
   @Override
   protected Object __add__(final Scope scope, final WorldProxy self, final Object o, final boolean inPlace) {
     if (o instanceof String) {
