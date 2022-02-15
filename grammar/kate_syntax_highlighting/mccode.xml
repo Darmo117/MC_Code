@@ -118,6 +118,13 @@
       <item>random_int</item>
       <item>random_float</item>
     </list>
+    <list name="comment_tasks">
+      <item>TODO</item>
+      <item>FIXME</item>
+      <item>TEST</item>
+      <item>DEBUG</item>
+      <item>XXXX</item>
+    </list>
     <contexts>
       <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text">
         <Float attribute="Float" context="#stay"/>
@@ -139,7 +146,9 @@
         <RegExpr attribute="Error" String="\\[^n&quot;\\]" context="#stay"/>
         <DetectChar attribute="String" context="#pop" char="&quot;"/>
       </context>
-      <context attribute="Comment" lineEndContext="#pop" name="comment"/>
+      <context attribute="Comment" lineEndContext="#pop" name="comment">
+        <keyword attribute="Comment Task" context="#stay" String="comment_tasks"/>
+      </context>
     </contexts>
     <itemDatas>
       <itemData name="Normal Text" defStyleNum="dsNormal"/>
@@ -155,6 +164,7 @@
       <itemData name="Builtin Function" defStyleNum="dsBuiltIn"/>
       <itemData name="Command Argument" defStyleNum="dsBuiltIn"/>
       <itemData name="Comment" defStyleNum="dsComment"/>
+      <itemData name="Comment Task" defStyleNum="dsAlert"/>
       <itemData name="Error" defStyleNum="dsError"/>
     </itemDatas>
   </highlighting>
