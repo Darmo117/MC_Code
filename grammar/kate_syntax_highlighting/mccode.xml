@@ -117,6 +117,7 @@
       <item>set_random_seed</item>
       <item>random_int</item>
       <item>random_float</item>
+      <item>is_instance</item>
     </list>
     <list name="comment_tasks">
       <item>TODO</item>
