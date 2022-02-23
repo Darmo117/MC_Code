@@ -19,7 +19,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.*;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -1423,9 +1423,67 @@ public class WorldType extends Type<WorldProxy> {
   }
 
   @Method(name = "get_entities_data")
-  @Doc("Returns data of all entities that match the given selector.")
-  public MCMap getEntitiesData(final Scope scope, final WorldProxy self, final String targetSelector) {
-    return new MCMap(); // TODO
+  @Doc("Returns data of all entities that match the given selector. Returns null if an error occurs.")
+  public MCList getEntitiesData(final Scope scope, final WorldProxy self, final String targetSelector) {
+    List<Entity> entities;
+    try {
+      //noinspection ConstantConditions
+      entities = CommandBase.getEntityList(self.getWorld().getMinecraftServer(), self.getWorld().getMinecraftServer(), targetSelector);
+    } catch (CommandException e) {
+      e.printStackTrace();
+      return null;
+    }
+    return new MCList(entities.stream().map(e -> toMap(e.writeToNBT(new NBTTagCompound()))).collect(Collectors.toList()));
+  }
+
+  private static MCMap toMap(final NBTTagCompound tag) {
+    MCMap map = new MCMap();
+    for (String key : tag.getKeySet()) {
+      Object value = deserializeNBTTag(tag.getTag(key));
+      if (value != null) {
+        map.put(key, value);
+      }
+    }
+    return map;
+  }
+
+  private static Object deserializeNBTTag(final NBTBase tag) {
+    if (tag instanceof NBTTagByte) {
+      return (long) ((NBTTagByte) tag).getByte();
+    } else if (tag instanceof NBTTagShort) {
+      return (long) ((NBTTagShort) tag).getShort();
+    } else if (tag instanceof NBTTagInt) {
+      return (long) ((NBTTagInt) tag).getInt();
+    } else if (tag instanceof NBTTagLong) {
+      return ((NBTTagLong) tag).getLong();
+    } else if (tag instanceof NBTTagFloat) {
+      return (double) ((NBTTagFloat) tag).getFloat();
+    } else if (tag instanceof NBTTagDouble) {
+      return ((NBTTagDouble) tag).getDouble();
+    } else if (tag instanceof NBTTagString) {
+      return ((NBTTagString) tag).getString();
+    } else if (tag instanceof NBTTagByteArray) {
+      MCList list = new MCList();
+      for (byte b : ((NBTTagByteArray) tag).getByteArray()) {
+        list.add((long) b);
+      }
+      return list;
+    } else if (tag instanceof NBTTagIntArray) {
+      MCList list = new MCList();
+      for (int b : ((NBTTagIntArray) tag).getIntArray()) {
+        list.add((long) b);
+      }
+      return list;
+    } else if (tag instanceof NBTTagList) {
+      MCList list = new MCList();
+      for (NBTBase t : (NBTTagList) tag) {
+        list.add(deserializeNBTTag(t));
+      }
+      return list;
+    } else if (tag instanceof NBTTagCompound) {
+      return toMap((NBTTagCompound) tag);
+    }
+    return null;
   }
 
   @Override
