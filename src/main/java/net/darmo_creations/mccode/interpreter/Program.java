@@ -139,7 +139,7 @@ public class Program {
       String argType = t.getString(ARG_TYPE_KEY);
       switch (argType) {
         case "int":
-          this.args.add(t.getInteger(ARG_VALUE_KEY));
+          this.args.add(t.getLong(ARG_VALUE_KEY));
           break;
         case "float":
           this.args.add(t.getDouble(ARG_VALUE_KEY));
