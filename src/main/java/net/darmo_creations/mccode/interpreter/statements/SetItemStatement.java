@@ -69,7 +69,7 @@ public class SetItemStatement extends Statement {
     Type<?> oldValueType = ProgramManager.getTypeForValue(oldValue);
     Object resultValue = this.operator.getBaseOperator()
         .map(op -> oldValueType.applyOperator(scope, op, oldValue, newValue, null, false))
-        .orElse(targetObject);
+        .orElse(newValue);
     targetObjectType.applyOperator(scope, TernaryOperator.SET_ITEM, targetObject, keyValue, resultValue, true);
 
     return StatementAction.PROCEED;
