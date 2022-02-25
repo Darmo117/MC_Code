@@ -114,7 +114,12 @@ public class CommandProgram extends CommandBase {
     try {
       pm.loadProgram(programName, alias, false, parsedArgs);
     } catch (SyntaxErrorException e) {
-      throw new CommandException(e.getTranslationKey(), e.getArgs());
+      Object[] a = new Object[e.getArgs().length + 3];
+      a[0] = programName;
+      a[1] = e.getLine();
+      a[2] = e.getColumn();
+      System.arraycopy(e.getArgs(), 0, a, 3, e.getArgs().length);
+      throw new CommandException(e.getTranslationKey(), a);
     } catch (ProgramStatusException e) {
       throw new CommandException(e.getTranslationKey(), e.getProgramName());
     }

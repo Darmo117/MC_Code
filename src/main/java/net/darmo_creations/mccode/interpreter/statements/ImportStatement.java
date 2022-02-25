@@ -3,6 +3,8 @@ package net.darmo_creations.mccode.interpreter.statements;
 import net.darmo_creations.mccode.interpreter.Program;
 import net.darmo_creations.mccode.interpreter.Scope;
 import net.darmo_creations.mccode.interpreter.Variable;
+import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
+import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -56,8 +58,18 @@ public class ImportStatement extends Statement {
   @Override
   protected StatementAction executeWrapped(Scope scope) {
     String name = this.getModulePath();
-    Program module = scope.getProgram().getProgramManager().loadProgram(name, null, true);
-    module.execute();
+    Program module;
+    try {
+      module = scope.getProgram().getProgramManager().loadProgram(name, null, true);
+      module.execute();
+    } catch (SyntaxErrorException e) {
+      Object[] a = new Object[e.getArgs().length + 3];
+      a[0] = name;
+      a[1] = e.getLine();
+      a[2] = e.getColumn();
+      System.arraycopy(e.getArgs(), 0, a, 3, e.getArgs().length);
+      throw new MCCodeRuntimeException(scope, null, e.getTranslationKey(), a);
+    }
     scope.declareVariable(new Variable(this.alias != null ? this.alias : name.replace('.', '_'),
         false, false, false, true, module));
     return StatementAction.PROCEED;
