@@ -1,7 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 /**
- * Enumarates all available unary operators.
+ * Enumerates all available unary operators.
  */
 public enum UnaryOperator implements Operator {
   // Math

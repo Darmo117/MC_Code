@@ -31,7 +31,7 @@ INTDIV: '//';
 MOD   : '%';
 POWER : '^';
 
-EQUAL : '=';
+EQUAL : '==';
 NEQUAL: '!=';
 GT    : '>';
 GE    : '>=';

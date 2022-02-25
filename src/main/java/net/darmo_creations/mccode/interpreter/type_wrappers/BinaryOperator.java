@@ -1,7 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 /**
- * Enumarates all available binary operators.
+ * Enumerates all available binary operators.
  */
 public enum BinaryOperator implements Operator {
   // Math
@@ -14,7 +14,7 @@ public enum BinaryOperator implements Operator {
   POW("^"),
 
   // Comparison
-  EQUAL("="),
+  EQUAL("=="),
   NOT_EQUAL("!="),
   GT(">"),
   GE(">="),

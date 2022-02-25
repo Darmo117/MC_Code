@@ -1,7 +1,7 @@
 package net.darmo_creations.mccode.interpreter.type_wrappers;
 
 /**
- * Enumarates all available ternary operators.
+ * Enumerates all available ternary operators.
  */
 public enum TernaryOperator implements Operator {
   SET_ITEM("set_item"),
