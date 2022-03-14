@@ -347,7 +347,7 @@ public class WorldType extends Type<WorldProxy> {
     return executeCommand(
         self, CommandResultStats.Type.SUCCESS_COUNT,
         "execute",
-        args.toArray(args.toArray(new String[0]))
+        args.toArray(new String[0])
     ).orElse(-1L) > 0;
   }
 
@@ -708,7 +708,7 @@ public class WorldType extends Type<WorldProxy> {
     return executeCommand(
         self, CommandResultStats.Type.SUCCESS_COUNT,
         "scoreboard",
-        args.toArray(args.toArray(new String[0]))
+        args.toArray(new String[0])
     ).orElse(-1L) > 0;
   }
 
@@ -920,7 +920,7 @@ public class WorldType extends Type<WorldProxy> {
     return executeCommand(
         self, CommandResultStats.Type.SUCCESS_COUNT,
         "scoreboard",
-        args.toArray(args.toArray(new String[0]))
+        args.toArray(new String[0])
     ).orElse(-1L) > 0;
   }
 
@@ -1146,7 +1146,7 @@ public class WorldType extends Type<WorldProxy> {
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_ENTITIES,
         "spreadplayers",
-        args.toArray(args.toArray(new String[0]))
+        args.toArray(new String[0])
     ).orElse(-1L);
   }
 
@@ -1200,7 +1200,7 @@ public class WorldType extends Type<WorldProxy> {
     return executeCommand(
         self, CommandResultStats.Type.AFFECTED_ENTITIES,
         "tp",
-        args.toArray(args.toArray(new String[0]))
+        args.toArray(new String[0])
     ).orElse(-1L);
   }
 
