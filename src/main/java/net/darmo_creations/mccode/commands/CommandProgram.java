@@ -100,7 +100,7 @@ public class CommandProgram extends CommandBase {
     ProgramManager pm = MCCode.INSTANCE.PROGRAM_MANAGERS.get(sender.getEntityWorld());
     String programName = args[0];
     String alias = null;
-    Object[] parsedArgs = new Object[0];
+    String[] arguments = new String[0];
     if (args.length > 1) {
       int argsOffset = 1;
       if (args.length >= 3 && "as".equals(args[1])) {
@@ -108,11 +108,11 @@ public class CommandProgram extends CommandBase {
         argsOffset = 3;
       }
       if (argsOffset < args.length) {
-        parsedArgs = this.parseArgs(Arrays.copyOfRange(args, argsOffset, args.length));
+        arguments = Arrays.copyOfRange(args, argsOffset, args.length);
       }
     }
     try {
-      pm.loadProgram(programName, alias, false, parsedArgs);
+      pm.loadProgram(programName, alias, false, arguments);
     } catch (SyntaxErrorException e) {
       Object[] a = new Object[e.getArgs().length + 3];
       a[0] = programName;
@@ -124,27 +124,6 @@ public class CommandProgram extends CommandBase {
       throw new CommandException(e.getTranslationKey(), e.getProgramName());
     }
     notifyCommandListener(sender, this, "commands.program.feedback.program_loaded", programName);
-  }
-
-  private Object[] parseArgs(String[] args) {
-    Object[] parsedArgs = new Object[args.length];
-
-    for (int i = 0, argsLength = args.length; i < argsLength; i++) {
-      String arg = args[i];
-      Object o;
-      try {
-        o = Long.parseLong(arg);
-      } catch (NumberFormatException e) {
-        try {
-          o = Double.parseDouble(arg);
-        } catch (NumberFormatException e1) {
-          o = Boolean.parseBoolean(arg);
-        }
-      }
-      parsedArgs[i] = o;
-    }
-
-    return parsedArgs;
   }
 
   private void unloadProgram(ICommandSender sender, String[] args) throws CommandException {

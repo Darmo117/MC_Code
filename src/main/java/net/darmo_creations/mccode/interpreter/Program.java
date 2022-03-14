@@ -1,7 +1,6 @@
 package net.darmo_creations.mccode.interpreter;
 
 import net.darmo_creations.mccode.interpreter.exceptions.EvaluationException;
-import net.darmo_creations.mccode.interpreter.exceptions.MCCodeException;
 import net.darmo_creations.mccode.interpreter.exceptions.MCCodeRuntimeException;
 import net.darmo_creations.mccode.interpreter.exceptions.SyntaxErrorException;
 import net.darmo_creations.mccode.interpreter.statements.Statement;
@@ -12,6 +11,7 @@ import net.darmo_creations.mccode.interpreter.types.WorldProxy;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,8 +34,6 @@ public class Program {
   public static final String IP_KEY = "IP";
   public static final String IS_MODULE_KEY = "IsModule";
   public static final String ARGS_KEY = "CommandArgs";
-  public static final String ARG_TYPE_KEY = "Type";
-  public static final String ARG_VALUE_KEY = "Value";
 
   private final String name;
   private final List<Statement> statements;
@@ -51,7 +49,7 @@ public class Program {
   private int ip;
   private final Random rng = new Random();
 
-  private final List<Object> args;
+  private final List<String> args;
 
   /**
    * Create a new program.
@@ -65,7 +63,7 @@ public class Program {
    * @throws MCCodeRuntimeException If the schedule delay or repeat amount is negative,
    *                                or a repeat amount is defined without a schedule delay.
    */
-  public Program(final String name, final List<Statement> statements, final Long scheduleDelay, final Long repeatAmount, ProgramManager programManager, Object... args) {
+  public Program(final String name, final List<Statement> statements, final Long scheduleDelay, final Long repeatAmount, ProgramManager programManager, String... args) {
     this.programManager = Objects.requireNonNull(programManager);
     this.name = Objects.requireNonNull(name);
     this.statements = Objects.requireNonNull(statements);
@@ -134,22 +132,8 @@ public class Program {
     }
     this.ip = tag.getInteger(IP_KEY);
     this.args = new ArrayList<>();
-    for (NBTBase nbtBase : tag.getTagList(ARGS_KEY, new NBTTagCompound().getId())) {
-      NBTTagCompound t = (NBTTagCompound) nbtBase;
-      String argType = t.getString(ARG_TYPE_KEY);
-      switch (argType) {
-        case "int":
-          this.args.add(t.getLong(ARG_VALUE_KEY));
-          break;
-        case "float":
-          this.args.add(t.getDouble(ARG_VALUE_KEY));
-          break;
-        case "boolean":
-          this.args.add(t.getBoolean(ARG_VALUE_KEY));
-          break;
-        default:
-          throw new MCCodeException("invalid arg type " + argType);
-      }
+    for (NBTBase nbtBase : tag.getTagList(ARGS_KEY, new NBTTagString().getId())) {
+      this.args.add(((NBTTagString) nbtBase).getString());
     }
     this.setup();
   }
@@ -322,20 +306,7 @@ public class Program {
     tag.setInteger(IP_KEY, this.ip);
     tag.setBoolean(IS_MODULE_KEY, this.isModule);
     NBTTagList argsList = new NBTTagList();
-    for (Object arg : this.args) {
-      NBTTagCompound t = new NBTTagCompound();
-      if (arg instanceof Long) {
-        t.setString(ARG_TYPE_KEY, "int");
-        t.setLong(ARG_VALUE_KEY, (Long) arg);
-      } else if (arg instanceof Double) {
-        t.setString(ARG_TYPE_KEY, "float");
-        t.setDouble(ARG_VALUE_KEY, (Double) arg);
-      } else if (arg instanceof Boolean) {
-        t.setString(ARG_TYPE_KEY, "boolean");
-        t.setBoolean(ARG_VALUE_KEY, (Boolean) arg);
-      }
-      argsList.appendTag(t);
-    }
+    this.args.stream().map(NBTTagString::new).forEach(argsList::appendTag);
     tag.setTag(ARGS_KEY, argsList);
     return tag;
   }
